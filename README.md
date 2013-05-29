@@ -15,7 +15,7 @@ COMPILING
 ---------
 
 The system can be build using the ros build tool `catkin`. Just create a catkin workspace, put the content of this repository in the src repository and run `catkin_make` to build the system.
-check [this] tutorial to get more info on catkin.
+check [this](http://ros.org/wiki/catkin/Tutorials/create_a_workspace) tutorial to get more info on catkin.
 
 
 Copyright & contacts
