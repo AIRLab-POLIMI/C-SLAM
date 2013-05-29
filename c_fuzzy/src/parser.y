@@ -43,6 +43,7 @@
 %token CLOSE_B
 %token THEN
 %token IS
+%token IF
 
 %token LIKE
 %token COMMA
@@ -92,9 +93,9 @@ parametersList		: PARAMETER
 			}
 			;
 
-ruleSet 		: wellFormedFormula fuzzyAssignment END_RULE ruleSet
+ruleSet 		: IF wellFormedFormula fuzzyAssignment END_RULE ruleSet
 			{
-				builder.buildRule($1, $2);
+				builder.buildRule($2, $3);
 			}
 			| /* Empty */
 			;

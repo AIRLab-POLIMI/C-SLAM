@@ -28,7 +28,7 @@ inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 	knowledgeBase->push_back(fuzzyRule);
 }
 
-inline void FuzzyReasoner::addInput(std::string name, int value)
+void FuzzyReasoner::addInput(std::string name, int value)
 {
 	(*inputTable)[name] = value;
 }

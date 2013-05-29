@@ -23,6 +23,7 @@
 
 #include "FuzzyBuilder.h"
 #include "FuzzyReasoner.h"
+#include <map>
 
 int main(int argc, char *argv[])
 {
@@ -31,4 +32,12 @@ int main(int argc, char *argv[])
 	builder.parse("/home/dave/prova.fuzzy");
 
 	FuzzyReasoner* reasoner = builder.createReasoner();
+
+	reasoner->addInput("Input", 5);
+
+	std::map<std::string, double> results = reasoner->run();
+
+	std::cout << results["Output"] << std::endl;
+
+	delete reasoner;
 }

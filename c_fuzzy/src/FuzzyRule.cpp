@@ -22,10 +22,12 @@
  */
 
 #include "FuzzyRule.h"
+#include <iostream>
 
 double FuzzyRule::evaluate()
 {
 	double weight = antecedent->evaluate();
+	std::cerr << "weight: " << weight << std::endl;
 	conseguent->setInput(weight);
 	conseguent->evaluate();
 	return weight;

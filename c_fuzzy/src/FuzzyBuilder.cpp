@@ -116,23 +116,28 @@ void FuzzyBuilder::buildMF(std::string* name, std::string* shape, std::vector<in
 	{
 		case TOL:
 			assert(p.size() == 2);
-			map[*name] = buildTol(p[0], p[1]);
+			assert(p[1] < p[0]);
+			map[*name] = buildTol(p[1], p[0]);
 			break;
 		case TOR:
 			assert(p.size() == 2);
-			map[*name] = buildTor(p[0], p[1]);
+			assert(p[1] < p[0]);
+			map[*name] = buildTor(p[1], p[0]);
 			break;
 		case TRA:
 			assert(p.size() == 4);
-			map[*name] = buildTra(p[0],p[1], p[2], p[3]);
+			assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
+			map[*name] = buildTra(p[3],p[2], p[1], p[0]);
 			break;
 		case TRI:
 			assert(p.size() == 3);
-			map[*name] = buildTri(p[0], p[1], p[2]);
+			assert(p[2] < p[1] && p[1] < p[0]);
+			map[*name] = buildTri(p[2], p[1], p[0]);
 			break;
 		case INT:
 			assert(p.size() == 2);
-			map[*name] = buildInt(p[0], p[1]);
+			assert(p[1] < p[0]);
+			map[*name] = buildInt(p[1], p[0]);
 			break;
 		case SGT:
 			assert(p.size() == 1);

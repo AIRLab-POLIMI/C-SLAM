@@ -26,10 +26,8 @@
 double FuzzyIs::evaluate()
 {
 	int crispData = leftOperand->evaluateInt();
-	//TODO lock this
 	rightOperand->setInput(crispData);
 	return rightOperand->evaluate();
-	//TODO end lock;
 }
 
 double FuzzyAnd::evaluate()

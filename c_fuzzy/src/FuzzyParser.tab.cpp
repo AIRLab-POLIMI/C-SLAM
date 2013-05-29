@@ -455,7 +455,7 @@ namespace yy {
       {
           case 3:
 /* Line 664 of lalr1.cc  */
-#line 68 "src/parser.y"
+#line 69 "src/parser.y"
     {
 				builder.buildMF((yysemantic_stack_[(5) - (1)].str), (yysemantic_stack_[(5) - (3)].str), (yysemantic_stack_[(5) - (4)].fshape));
 			}
@@ -463,7 +463,7 @@ namespace yy {
 
   case 4:
 /* Line 664 of lalr1.cc  */
-#line 72 "src/parser.y"
+#line 73 "src/parser.y"
     {
 				builder.buildMF((yysemantic_stack_[(6) - (1)].str), (yysemantic_stack_[(6) - (3)].str), (yysemantic_stack_[(6) - (4)].fshape));
 			}
@@ -471,7 +471,7 @@ namespace yy {
 
   case 5:
 /* Line 664 of lalr1.cc  */
-#line 78 "src/parser.y"
+#line 79 "src/parser.y"
     {
 				(yyval.fshape) = (yysemantic_stack_[(3) - (2)].fshape);
 			}
@@ -479,7 +479,7 @@ namespace yy {
 
   case 6:
 /* Line 664 of lalr1.cc  */
-#line 84 "src/parser.y"
+#line 85 "src/parser.y"
     { 
 				(yyval.fshape) = new std::vector<int>;
 				(yyval.fshape)->push_back((yysemantic_stack_[(1) - (1)].integer));
@@ -488,7 +488,7 @@ namespace yy {
 
   case 7:
 /* Line 664 of lalr1.cc  */
-#line 89 "src/parser.y"
+#line 90 "src/parser.y"
     { 
 				(yyval.fshape) = (yysemantic_stack_[(3) - (3)].fshape);
 				(yyval.fshape)->push_back((yysemantic_stack_[(3) - (1)].integer));
@@ -497,15 +497,15 @@ namespace yy {
 
   case 8:
 /* Line 664 of lalr1.cc  */
-#line 96 "src/parser.y"
+#line 97 "src/parser.y"
     {
-				builder.buildRule((yysemantic_stack_[(4) - (1)].node), (yysemantic_stack_[(4) - (2)].node));
+				builder.buildRule((yysemantic_stack_[(5) - (2)].node), (yysemantic_stack_[(5) - (3)].node));
 			}
     break;
 
   case 10:
 /* Line 664 of lalr1.cc  */
-#line 103 "src/parser.y"
+#line 104 "src/parser.y"
     {
 				(yyval.node) = (yysemantic_stack_[(1) - (1)].node);
 			}
@@ -513,7 +513,7 @@ namespace yy {
 
   case 11:
 /* Line 664 of lalr1.cc  */
-#line 107 "src/parser.y"
+#line 108 "src/parser.y"
     {
 				(yyval.node) = (yysemantic_stack_[(3) - (2)].node);
 			}
@@ -521,7 +521,7 @@ namespace yy {
 
   case 12:
 /* Line 664 of lalr1.cc  */
-#line 111 "src/parser.y"
+#line 112 "src/parser.y"
     {
 				(yyval.node) = builder.buildNot((yysemantic_stack_[(2) - (2)].node));
 			}
@@ -529,7 +529,7 @@ namespace yy {
 
   case 13:
 /* Line 664 of lalr1.cc  */
-#line 115 "src/parser.y"
+#line 116 "src/parser.y"
     {
 				(yyval.node) = builder.buildOr((yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node));
 			}
@@ -537,7 +537,7 @@ namespace yy {
 
   case 14:
 /* Line 664 of lalr1.cc  */
-#line 119 "src/parser.y"
+#line 120 "src/parser.y"
     {
 				(yyval.node) = builder.buildAnd((yysemantic_stack_[(3) - (1)].node),(yysemantic_stack_[(3) - (3)].node));
 			}
@@ -545,7 +545,7 @@ namespace yy {
 
   case 15:
 /* Line 664 of lalr1.cc  */
-#line 125 "src/parser.y"
+#line 126 "src/parser.y"
     {
 				Node* left = builder.buildCrispData((yysemantic_stack_[(5) - (2)].str));
 				Node* right = builder.buildMFLabel((yysemantic_stack_[(5) - (4)].str));
@@ -555,7 +555,7 @@ namespace yy {
 
   case 16:
 /* Line 664 of lalr1.cc  */
-#line 133 "src/parser.y"
+#line 134 "src/parser.y"
     {
 				(yyval.node) = builder.buildAssignment((yysemantic_stack_[(6) - (3)].str), (yysemantic_stack_[(6) - (5)].str));
 			}
@@ -863,15 +863,15 @@ namespace yy {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char FuzzyParser::yypact_ninf_ = -7;
+  const signed char FuzzyParser::yypact_ninf_ = -10;
   const signed char
   FuzzyParser::yypact_[] =
   {
-         2,     1,    14,     9,     4,    -7,     9,    -1,    -7,    -2,
-      -7,    11,    -7,    10,     6,     9,     9,    12,    18,     8,
-      20,    22,    -7,    -7,    21,    24,     9,    15,    23,     2,
-      25,    19,    -7,     8,    -7,    -7,    -7,    26,    -7,    27,
-      -7
+         2,     0,    14,     7,     3,   -10,     9,   -10,    12,     9,
+      -1,    -2,   -10,     5,    18,   -10,    13,     6,     9,     9,
+      15,    21,    16,    17,     2,    24,   -10,   -10,    23,    26,
+       7,     5,   -10,   -10,    22,    25,   -10,   -10,   -10,    29,
+      28,   -10
   };
 
   /* YYDEFACT[S] -- default reduction number in state S.  Performed when
@@ -880,25 +880,25 @@ namespace yy {
   const unsigned char
   FuzzyParser::yydefact_[] =
   {
-         0,     0,     0,     9,     0,     1,     0,     0,     2,     0,
-      10,     0,    12,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    11,    13,    14,     0,     9,     6,     0,     3,
-       0,     0,     8,     0,     5,     4,    15,     0,     7,     0,
-      16
+         0,     0,     0,     9,     0,     1,     0,     2,     0,     0,
+       0,     0,    10,     0,     0,    12,     0,     0,     0,     0,
+       0,     0,     6,     0,     3,     0,    11,    13,    14,     0,
+       9,     0,     5,     4,     0,     0,     8,     7,    15,     0,
+       0,    16
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   FuzzyParser::yypgoto_[] =
   {
-        -7,    -7,    13,    -7,     0,     5,    -6,    -7,    -7
+       -10,   -10,    10,   -10,     4,     8,    -9,   -10,   -10
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   FuzzyParser::yydefgoto_[] =
   {
-        -1,     2,     3,    20,    28,     8,     9,    10,    18
+        -1,     2,     3,    14,    23,     7,    11,    12,    21
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -908,22 +908,20 @@ namespace yy {
   const unsigned char
   FuzzyParser::yytable_[] =
   {
-        12,    14,    13,    15,    16,     1,     6,     7,    17,    23,
-      24,    15,    16,     4,     5,    22,     6,     7,    11,    19,
-      25,    21,    26,    27,    29,    30,    15,    31,    33,    39,
-      37,    32,    34,    38,    36,     0,    40,     0,     0,     0,
-       0,     0,    35
+        15,    17,    16,    18,    19,     1,     9,    10,    20,    27,
+      28,    18,    19,     4,     5,    26,     9,    10,     8,     6,
+      13,    22,    24,    29,    25,    30,    32,    34,    18,    35,
+      31,    38,    40,     0,    33,    37,    39,    41,    36
   };
 
   /* YYCHECK.  */
   const signed char
   FuzzyParser::yycheck_[] =
   {
-         6,     7,     3,     5,     6,     3,     7,     8,    10,    15,
-      16,     5,     6,    12,     0,     9,     7,     8,    14,     8,
-       8,    11,     4,    15,     4,     3,     5,     3,    13,     3,
-      11,    26,     9,    33,     9,    -1,     9,    -1,    -1,    -1,
-      -1,    -1,    29
+         9,    10,     3,     5,     6,     3,     7,     8,    10,    18,
+      19,     5,     6,    13,     0,     9,     7,     8,    15,    12,
+       8,    16,     4,     8,    11,     4,     9,     3,     5,     3,
+      14,     9,     3,    -1,    24,    31,    11,     9,    30
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -931,11 +929,11 @@ namespace yy {
   const unsigned char
   FuzzyParser::yystos_[] =
   {
-         0,     3,    17,    18,    12,     0,     7,     8,    21,    22,
-      23,    14,    22,     3,    22,     5,     6,    10,    24,     8,
-      19,    11,     9,    22,    22,     8,     4,    15,    20,     4,
-       3,     3,    21,    13,     9,    18,     9,    11,    20,     3,
-       9
+         0,     3,    18,    19,    13,     0,    12,    22,    15,     7,
+       8,    23,    24,     8,    20,    23,     3,    23,     5,     6,
+      10,    25,    16,    21,     4,    11,     9,    23,    23,     8,
+       4,    14,     9,    19,     3,     3,    22,    21,     9,    11,
+       3,     9
   };
 
 #if YYDEBUG
@@ -945,7 +943,7 @@ namespace yy {
   FuzzyParser::yytoken_number_[] =
   {
          0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270
+     265,   266,   267,   268,   269,   270,   271
   };
 #endif
 
@@ -953,15 +951,15 @@ namespace yy {
   const unsigned char
   FuzzyParser::yyr1_[] =
   {
-         0,    16,    17,    18,    18,    19,    20,    20,    21,    21,
-      22,    22,    22,    22,    22,    23,    24
+         0,    17,    18,    19,    19,    20,    21,    21,    22,    22,
+      23,    23,    23,    23,    23,    24,    25
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
   const unsigned char
   FuzzyParser::yyr2_[] =
   {
-         0,     2,     2,     5,     6,     3,     1,     3,     4,     0,
+         0,     2,     2,     5,     6,     3,     1,     3,     5,     0,
        1,     3,     2,     3,     3,     5,     6
   };
 
@@ -972,8 +970,8 @@ namespace yy {
   const FuzzyParser::yytname_[] =
   {
     "$end", "error", "$undefined", "ID", "END_RULE", "OP_OR", "OP_AND",
-  "OP_NOT", "OPEN_B", "CLOSE_B", "THEN", "IS", "LIKE", "COMMA", "F_LABEL",
-  "PARAMETER", "$accept", "fuzzyFile", "fuzzySet", "shape",
+  "OP_NOT", "OPEN_B", "CLOSE_B", "THEN", "IS", "IF", "LIKE", "COMMA",
+  "F_LABEL", "PARAMETER", "$accept", "fuzzyFile", "fuzzySet", "shape",
   "parametersList", "ruleSet", "wellFormedFormula", "fuzzyComparison",
   "fuzzyAssignment", YY_NULL
   };
@@ -983,13 +981,13 @@ namespace yy {
   const FuzzyParser::rhs_number_type
   FuzzyParser::yyrhs_[] =
   {
-        17,     0,    -1,    18,    21,    -1,     3,    12,    14,    19,
-       4,    -1,     3,    12,    14,    19,     4,    18,    -1,     8,
-      20,     9,    -1,    15,    -1,    15,    13,    20,    -1,    22,
-      24,     4,    21,    -1,    -1,    23,    -1,     8,    22,     9,
-      -1,     7,    22,    -1,    22,     5,    22,    -1,    22,     6,
-      22,    -1,     8,     3,    11,     3,     9,    -1,    10,     8,
-       3,    11,     3,     9,    -1
+        18,     0,    -1,    19,    22,    -1,     3,    13,    15,    20,
+       4,    -1,     3,    13,    15,    20,     4,    19,    -1,     8,
+      21,     9,    -1,    16,    -1,    16,    14,    21,    -1,    12,
+      23,    25,     4,    22,    -1,    -1,    24,    -1,     8,    23,
+       9,    -1,     7,    23,    -1,    23,     5,    23,    -1,    23,
+       6,    23,    -1,     8,     3,    11,     3,     9,    -1,    10,
+       8,     3,    11,     3,     9,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -997,16 +995,16 @@ namespace yy {
   const unsigned char
   FuzzyParser::yyprhs_[] =
   {
-         0,     0,     3,     6,    12,    19,    23,    25,    29,    34,
-      35,    37,    41,    44,    48,    52,    58
+         0,     0,     3,     6,    12,    19,    23,    25,    29,    35,
+      36,    38,    42,    45,    49,    53,    59
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
   const unsigned char
   FuzzyParser::yyrline_[] =
   {
-         0,    64,    64,    67,    71,    77,    83,    88,    95,    99,
-     102,   106,   110,   114,   118,   124,   132
+         0,    65,    65,    68,    72,    78,    84,    89,    96,   100,
+     103,   107,   111,   115,   119,   125,   133
   };
 
   // Print the state stack on the debug stream.
@@ -1073,7 +1071,7 @@ namespace yy {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+      15,    16
     };
     if ((unsigned int) t <= yyuser_token_number_max_)
       return translate_table[t];
@@ -1082,23 +1080,23 @@ namespace yy {
   }
 
   const int FuzzyParser::yyeof_ = 0;
-  const int FuzzyParser::yylast_ = 42;
+  const int FuzzyParser::yylast_ = 38;
   const int FuzzyParser::yynnts_ = 9;
   const int FuzzyParser::yyempty_ = -2;
   const int FuzzyParser::yyfinal_ = 5;
   const int FuzzyParser::yyterror_ = 1;
   const int FuzzyParser::yyerrcode_ = 256;
-  const int FuzzyParser::yyntokens_ = 16;
+  const int FuzzyParser::yyntokens_ = 17;
 
-  const unsigned int FuzzyParser::yyuser_token_number_max_ = 270;
+  const unsigned int FuzzyParser::yyuser_token_number_max_ = 271;
   const FuzzyParser::token_number_type FuzzyParser::yyundef_token_ = 2;
 
 
 } // yy
 /* Line 1135 of lalr1.cc  */
-#line 1100 "/home/dave/CognitiveSlam/src/c_fuzzy/src/FuzzyParser.tab.cpp"
+#line 1098 "/home/dave/CognitiveSlam/src/c_fuzzy/src/FuzzyParser.tab.cpp"
 /* Line 1136 of lalr1.cc  */
-#line 137 "src/parser.y"
+#line 138 "src/parser.y"
 
 
 void yy::FuzzyParser::error(const yy::FuzzyParser::location_type& l, const std::string& msg)

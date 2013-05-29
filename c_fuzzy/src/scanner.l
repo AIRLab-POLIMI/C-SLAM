@@ -29,18 +29,19 @@ FUZZYLABEL tol|tor|tri|tra|int|sgt
 %%
 
 {BLANK} { }
-{NEWLINE} {this->newLine();}
+{NEWLINE} { this->newLine(); }
 {CAPITAL}({LETTER}|{DIGIT})* { yylval->str = new std::string(yytext); return token::ID; }
 {DIGIT}+ { yylval->integer = atoi(yytext); return token::PARAMETER; }
 {FUZZYLABEL} { yylval->str = new std::string(yytext); return token::F_LABEL; }
-"and" { return token::OP_AND; }
-"or" { return token::OP_OR; }
-"~" { return token::OP_NOT; }
-"==>" { return token::THEN; }
-"is" { return token::IS; }
+"and"|"AND" { return token::OP_AND; }
+"or"|"OR" { return token::OP_OR; }
+"~"|"not"|"NOT" { return token::OP_NOT; }
+"then"|"THEN" { return token::THEN; }
+"is"|"IS" { return token::IS; }
+"if"|"IF" { return token::IF; }
 "(" { return token::OPEN_B; }
 ")" { return token::CLOSE_B; }
 ";" { return token::END_RULE; }
-"->" { return token::LIKE; }
+":=" { return token::LIKE; }
 "," { return token::COMMA; }
 . { cerr << "Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; return UNKNOWN; }

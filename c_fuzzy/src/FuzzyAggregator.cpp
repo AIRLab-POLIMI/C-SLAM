@@ -22,11 +22,13 @@
  */
 
 #include "FuzzyAggregator.h"
+#include <iostream>
 
 void FuzzyAggregator::addValue(std::string name, double weight, double value)
 {
 	if (aggregationMap.count(name) == 0)
 	{
+		std::cerr << "aggregation weight " << weight << " value " << value << std::endl;
 		Couple couple;
 		couple.sumOfValues = value;
 		couple.sumOfWeights = weight;
