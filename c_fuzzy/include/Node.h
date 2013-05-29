@@ -47,9 +47,10 @@ public:
 	{
 	}
 
-	inline void setInput(int value)
+	inline double evaluate(int value)
 	{
 		this->input = value;
+		return evaluate();
 	}
 
 protected:
