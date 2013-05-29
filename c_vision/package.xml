@@ -1,0 +1,14 @@
+<package>
+	<name>c_vision</name>
+	<version>1.0.0</version>
+	<description>
+		c_vision, cognitive vision package
+	</description>
+	<maintainer email="davide.tateo90@gmail.com">Davide Tateo</maintainer>
+	<license>GPLv3</license>
+	
+	<author>Davide Tateo</author>
+	<url>http://ros.org/wiki/c_vision</url>
+	
+	<buildtool_depend>catkin</buildtool_depend>
+</package>

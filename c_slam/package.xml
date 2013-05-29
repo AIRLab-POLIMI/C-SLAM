@@ -1,0 +1,17 @@
+<package>
+	<name>c_slam</name>
+	<version>1.0.0</version>
+	<description>
+		c_slam - Cognitive Slam System for low cost Robotics
+	</description>
+	<maintainer email="davide.tateo90@gmail.com">Davide Tateo</maintainer>
+	<license>GPLv3</license>
+	
+	<author>Davide Tateo</author>
+	<url>http://ros.org/wiki/c_slam</url>
+	
+	<buildtool_depend>catkin</buildtool_depend>
+
+</package>
+
+

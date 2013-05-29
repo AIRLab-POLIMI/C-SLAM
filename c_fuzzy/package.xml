@@ -1,0 +1,16 @@
+<package>
+	<name>c_fuzzy</name>
+	<version>1.1.1</version>
+	<description>
+	c_fuzzy, a fuzzy library for a cognitive system
+	</description>
+	<maintainer email="davide.tateo90@gmail.com">Davide Tateo</maintainer>
+	<license>GPLv3</license>
+	
+	<author>Davide Tateo</author>
+	<url>http://ros.org/wiki/c_fuzzy</url>
+	
+	<buildtool_depend>catkin</buildtool_depend>
+</package>
+
+
