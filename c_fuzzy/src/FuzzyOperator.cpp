@@ -22,7 +22,6 @@
  */
 
 #include "FuzzyOperator.h"
-#include <iostream>
 
 double FuzzyIs::evaluate()
 {
@@ -57,7 +56,6 @@ FuzzyNot::~FuzzyNot()
 
 double FuzzyAssignment::evaluate()
 {
-	std::cerr << "Defuzzifico con "<< mfLabel <<", Input vale: " << input << std::endl;
 	FuzzyMF* mf = lookUpTable[mfLabel];
 	double result = mf->defuzzify(input);
 	aggregator.addValue(output, input, result);

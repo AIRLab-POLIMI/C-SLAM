@@ -33,11 +33,35 @@ int main(int argc, char *argv[])
 
 	FuzzyReasoner* reasoner = builder.createReasoner();
 
-	reasoner->addInput("Input", 5);
+	char stop;
+	do
+	{
+		int value;
+		std::string name;
+		std::cout << "insert input name: " << std::endl;
+		std::cin >> name;
+		std::cout << "insert input value: " << std::endl;
+		std::cin >> value;
+
+		reasoner->addInput(name, value);
+
+		do
+		{
+			std::cout << "another input? [y/n]" << std::endl;
+			std::cin >> stop;
+		}while(stop != 'n' && stop != 'y');
+
+	} while (stop != 'n');
 
 	std::map<std::string, double> results = reasoner->run();
 
-	std::cerr << "Reasoning terminato, risultato: " << results["Output1"] << std::endl;
+	std::cout << "Reasoning terminato, risultati:" << std::endl;
+
+	for (std::map<std::string, double>::iterator it = results.begin();
+			it != results.end(); ++it)
+	{
+		std::cout << it->first << " = " << it->second << std::endl;
+	}
 
 	delete reasoner;
 }

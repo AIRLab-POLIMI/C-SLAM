@@ -27,7 +27,6 @@
 double FuzzyRule::evaluate()
 {
 	double weight = antecedent->evaluate();
-	std::cerr << "weight: " << weight << std::endl;
 	conseguent->evaluate(weight);
 	return weight;
 }
