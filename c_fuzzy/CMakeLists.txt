@@ -3,13 +3,20 @@ cmake_minimum_required(VERSION 2.4.6)
 find_package(catkin)
 project(c_fuzzy)
 
-catkin_package()
+# If catkin is not found, just compile the executable without ROS goodies
+if(catkin_FOUND)
+	catkin_package()
+	include_directories(include ${catkin_INCLUDE_DIRS})
+else()
+	include_directories(${PROJECT_SOURCE_DIR}/include)
+endif()
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
+
 #search for Bison and Flex packages
-find_package(BISON)
-find_package(FLEX)
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
 
 #generate parser and lexer from flex and Bison sources
 BISON_TARGET(Parser src/parser.y ${PROJECT_SOURCE_DIR}/src/FuzzyParser.tab.cpp COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/FuzzyParser.tab.h")
