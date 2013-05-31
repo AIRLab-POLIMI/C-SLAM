@@ -35,8 +35,9 @@ void FuzzyReasoner::addInput(std::string name, int value)
 
 std::map<std::string, double> FuzzyReasoner::run()
 {
-	for (std::vector<Node*>::iterator it = knowledgeBase->begin();
-				it != knowledgeBase->end(); ++it)
+	//works backwards because MF are stored in reverse order by the parser...
+	for (std::vector<Node*>::reverse_iterator it = knowledgeBase->rbegin();
+				it != knowledgeBase->rend(); ++it)
 	{
 		Node* rule = *it;
 		rule->evaluate();

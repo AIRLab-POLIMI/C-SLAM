@@ -28,7 +28,8 @@ void FuzzyAggregator::addValue(std::string name, double weight, double value)
 {
 	if (aggregationMap.count(name) == 0)
 	{
-		std::cerr << "aggregation weight " << weight << " value " << value << std::endl;
+		std::cerr << "aggregation weight " << weight << " value " << value
+				<< std::endl;
 		Couple couple;
 		couple.sumOfValues = value;
 		couple.sumOfWeights = weight;
@@ -48,7 +49,12 @@ std::map<std::string, double> FuzzyAggregator::getOutputs()
 	for (std::map<std::string, Couple>::iterator it = aggregationMap.begin();
 			it != aggregationMap.end(); ++it)
 	{
-		double output = it->second.sumOfValues / it->second.sumOfWeights;
+		double output;
+		if (it->second.sumOfWeights != 0)
+			output = it->second.sumOfValues / it->second.sumOfWeights;
+		else
+			output = 0;
+
 		outputMap[it->first] = output;
 	}
 

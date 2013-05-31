@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
 	std::map<std::string, double> results = reasoner->run();
 
-	std::cerr << results["Output"] << std::endl;
+	std::cerr << "Reasoning terminato, risultato: " << results["Output1"] << std::endl;
 
 	delete reasoner;
 }
