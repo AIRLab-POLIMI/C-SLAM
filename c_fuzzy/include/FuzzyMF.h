@@ -187,7 +187,7 @@ public:
 	}
 	double evaluate()
 	{
-		return lookUpTable[label]->evaluate();
+		return lookUpTable[label]->evaluate(input);
 	}
 
 private:

@@ -39,10 +39,13 @@ FuzzyBuilder::~FuzzyBuilder()
 void FuzzyBuilder::parse(const char *filename)
 {
 	assert(filename != NULL);
-	std::ifstream in_file(filename);
-	if (!in_file.good())
+	std::ifstream inputFile(filename);
+	if (!inputFile.good())
+	{
+		std::perror("Error");
 		exit(-1);
-	scanner = new FuzzyScanner(&in_file);
+	}
+	scanner = new FuzzyScanner(&inputFile);
 	/* check to see if its initialized */
 	assert(scanner != NULL);
 	parser = new yy::FuzzyParser((*scanner), (*this));
