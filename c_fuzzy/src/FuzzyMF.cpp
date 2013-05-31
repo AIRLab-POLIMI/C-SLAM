@@ -108,5 +108,5 @@ double SgtMF::evaluate()
 
 double SgtMF::defuzzify(double level)
 {
-	return input * level;
+	return value * level;
 }

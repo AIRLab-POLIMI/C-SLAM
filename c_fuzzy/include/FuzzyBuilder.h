@@ -79,7 +79,7 @@ public:
 	//Function to add a rule to the rulebase
 	void buildRule(Node* antecedent, Node* Conseguent);
 
-	//fFunction to build an assignment
+	//Function to build an assignment
 	Node* buildAssignment(std::string* output, std::string* label);
 
 	//Functions to build fuzzy operators

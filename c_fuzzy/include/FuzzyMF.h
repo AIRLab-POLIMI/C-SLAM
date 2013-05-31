@@ -174,7 +174,7 @@ private:
 
 /**
  *	Membership function label class
- *	Class used to acces a specific MF from a fuzzy rule
+ *	Class used to access a specific MF from a fuzzy rule
  *
  *
  */

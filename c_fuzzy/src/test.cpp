@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
 	FuzzyBuilder builder;
 
-	builder.parse("/home/dave/prova.fuzzy");
+	builder.parse(argv[1]);
 
 	FuzzyReasoner* reasoner = builder.createReasoner();
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
 	std::map<std::string, double> results = reasoner->run();
 
-	std::cout << results["Output"] << std::endl;
+	std::cerr << results["Output"] << std::endl;
 
 	delete reasoner;
 }
