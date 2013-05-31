@@ -8,7 +8,7 @@ The aim of this project is to work get a realiable SLAM system in noisy and muta
 USAGE
 -----
 
-You need to install the [ROS middleware](www.ros.org) to compile and execute the code in this repository. Furthermore, some part of the code need the OpenCV libraries to be installed on your system (this should be automatically done by ROS), `flex` and `bison`.
+You need to install the [ROS middleware](http://www.ros.org) to compile and execute the code in this repository. Furthermore, some part of the code need the OpenCV libraries to be installed on your system (this should be automatically done by ROS), `flex` and `bison`.
 
 
 COMPILING
