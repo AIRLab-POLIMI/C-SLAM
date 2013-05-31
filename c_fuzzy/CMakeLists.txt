@@ -19,8 +19,8 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 #generate parser and lexer from flex and Bison sources
-BISON_TARGET(Parser src/parser.y ${PROJECT_SOURCE_DIR}/src/FuzzyParser.tab.cpp COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/FuzzyParser.tab.h")
-FLEX_TARGET(Scanner src/scanner.l ${PROJECT_SOURCE_DIR}/src/FuzzyScanner.cpp)
+bison_target(Parser src/parser.y ${PROJECT_SOURCE_DIR}/src/FuzzyParser.tab.cpp COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/FuzzyParser.tab.h")
+flex_target(Scanner src/scanner.l ${PROJECT_SOURCE_DIR}/src/FuzzyScanner.cpp)
 
 #move generated files into include directory
 add_custom_target(Headers
@@ -30,7 +30,7 @@ add_custom_target(Headers
 		DEPENDS ${BISON_Parser_OUTPUTS})
 
 #add dependencies between parser and scanner (.l e .y)
-ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
+add_flex_bison_dependency(Scanner Parser)
 
 
 #build the library
