@@ -123,15 +123,19 @@ void ClusterFilter::createClusters(Cluster& cluster)
 		std::vector<cv::KeyPoint>& currentVector = **it;
 		bool sameCluster = true;
 		//create a cluster
-		//TODO: correggere caso particolare in cui la colonna i+1 abbia cluster separati prima della colonna i sulla y
 		while (currentVector.size() > 0 && sameCluster)
 		{
 			cv::KeyPoint point = currentVector.back();
-			sameCluster = cluster.addToCluster(&point, windowSize);
-
-			//delete point from the matrix if is in the cluster
-			if (sameCluster)
+			//check if the point belongs to cluster
+			sameCluster = cluster.pointsBelongsTo(&point, windowSize);
+			//if so...
+			if(sameCluster)
+			{
+				//add the point to the cluster
+				cluster.addToCluster(&point, windowSize);
+				//delete point from the matrix if is in the cluster
 				currentVector.pop_back();
+			}
 		}
 	}
 }

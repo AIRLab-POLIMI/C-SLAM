@@ -30,8 +30,18 @@
 class Cluster
 {
 public:
+
+	Cluster()
+	{
+		start = 0;
+		massCenter.pt.x = 0;
+		massCenter.pt.y = 0;
+		massCenter.size = 0;
+	}
+
 	bool isEmpty();
-	bool addToCluster(cv::KeyPoint* point, int windowSize);
+	bool pointsBelongsTo(cv::KeyPoint* point, int windowSize);
+	void addToCluster(cv::KeyPoint* point, int windowSize);
 	cv::KeyPoint getMassCenter();
 
 private:
@@ -40,7 +50,5 @@ private:
 	cv::KeyPoint massCenter;
 
 };
-
-
 
 #endif /* CLUSTER_H_ */

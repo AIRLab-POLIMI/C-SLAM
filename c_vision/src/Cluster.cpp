@@ -28,34 +28,28 @@ bool Cluster::isEmpty()
 	return points.size() == 0;
 }
 
-bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
+bool Cluster::pointsBelongsTo(cv::KeyPoint* point, int windowSize)
+{
+	return isEmpty() || point->pt.y < start + windowSize;
+}
+
+void Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 {
 	int y = point->pt.y;
 	int x = point->pt.x;
 	float size = point->size;
 
-	if (points.size() == 0)
+	if (isEmpty())
 	{
 		start = y;
-		massCenter.pt.x = x * size;
-		massCenter.pt.y = y * size;
+	}
 
-		massCenter.size = size;
-		points.push_back(point);
-		return true;
-	}
-	else if (y < start + windowSize)
-	{
-		massCenter.pt.x += x * size;
-		massCenter.pt.y += y * size;
-		massCenter.size += size;
-		points.push_back(point);
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	massCenter.pt.x += x * size;
+	massCenter.pt.y += y * size;
+	massCenter.size += size;
+
+	points.push_back(point);
+
 }
 
 cv::KeyPoint Cluster::getMassCenter()
