@@ -37,8 +37,8 @@ bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 	if (points.size() == 0)
 	{
 		start = y;
-		massCenter.pt.x = x;
-		massCenter.pt.y = y;
+		massCenter.pt.x = x * size;
+		massCenter.pt.y = y * size;
 
 		massCenter.size = size;
 		points.push_back(point);
@@ -46,8 +46,8 @@ bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 	}
 	else if (y < start + windowSize)
 	{
-		massCenter.pt.x += x;
-		massCenter.pt.y += y;
+		massCenter.pt.x += x * size;
+		massCenter.pt.y += y * size;
 		massCenter.size += size;
 		points.push_back(point);
 		return true;
@@ -61,10 +61,8 @@ bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 cv::KeyPoint Cluster::getMassCenter()
 {
 
-	int n = points.size();
-
-	massCenter.pt.x /= n;
-	massCenter.pt.y /= n;
+	massCenter.pt.x /= massCenter.size;
+	massCenter.pt.y /= massCenter.size;
 
 	return massCenter;
 }
