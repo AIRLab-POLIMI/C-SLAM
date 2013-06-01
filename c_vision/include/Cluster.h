@@ -30,9 +30,8 @@
 class Cluster
 {
 public:
-
+	bool isEmpty();
 	bool addToCluster(cv::KeyPoint* point, int windowSize);
-
 	cv::KeyPoint getMassCenter();
 
 private:

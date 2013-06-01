@@ -46,12 +46,6 @@ public:
 
 		//the matrix used within the algoritm
 		keyPoints = new std::vector<cv::KeyPoint>[width];
-		/*for (int i = 0; i < width; i++)
-		{
-			std::vector<cv::KeyPoint>
-			keyPoints[i] = new std::vector<cv::KeyPoint>();
-		}*/
-
 		assert(windowSize < width);
 	}
 
@@ -64,7 +58,9 @@ private:
 	void orderVectors(int begin, int end);
 	void savePoints(std::vector<Cluster>& clusters,
 			std::vector<cv::KeyPoint>& output);
-	void createClusters(Cluster& cluster, int& remaining);
+	void createClusters(Cluster& cluster);
+	int countRemaining();
+	std::vector<std::vector<cv::KeyPoint>*> getOrderedKeyPoints();
 
 private:
 	int windowSize;
@@ -85,6 +81,14 @@ private:
 		{
 			return i.pt.y < j.pt.y;
 		}
+
+		bool operator()(std::vector<cv::KeyPoint>* i, std::vector<cv::KeyPoint>* j)
+		{
+			std::vector<cv::KeyPoint>& v1 = *i;
+			std::vector<cv::KeyPoint>& v2 = *j;
+			return (*this)(v1[0],v2[0]);
+		}
+
 	} comparator;
 };
 

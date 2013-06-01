@@ -38,7 +38,7 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 
 	cvtColor(output, output, CV_GRAY2BGR);
 
-	ClusterFilter filterObject(10, input.cols, input.rows);
+	ClusterFilter filterObject(4, input.cols, input.rows);
 
 	keyPoints = filterObject.filter(keyPoints);
 

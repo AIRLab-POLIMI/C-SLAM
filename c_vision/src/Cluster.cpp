@@ -23,16 +23,24 @@
 
 #include "Cluster.h"
 
+bool Cluster::isEmpty()
+{
+	return points.size() == 0;
+}
+
 bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 {
 	int y = point->pt.y;
 	int x = point->pt.x;
+	float size = point->size;
 
 	if (points.size() == 0)
 	{
 		start = y;
 		massCenter.pt.x = x;
 		massCenter.pt.y = y;
+
+		massCenter.size = size;
 		points.push_back(point);
 		return true;
 	}
@@ -40,6 +48,7 @@ bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 	{
 		massCenter.pt.x += x;
 		massCenter.pt.y += y;
+		massCenter.size += size;
 		points.push_back(point);
 		return true;
 	}

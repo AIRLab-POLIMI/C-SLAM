@@ -30,11 +30,6 @@ std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 	orderKeyPoints(input);
 	std::vector<cv::KeyPoint> output;
 
-	std::cerr << "il vettore contiene " << output.size() << std::endl;
-	std::cerr << "la finestra è larga " << windowSize << std::endl;
-	std::cerr << "in media ci sono " << output.size() / width << " punti per finestra " << std::endl;
-
-
 	//main algorithm loop
 	while (baseIndex < width)
 	{
@@ -46,8 +41,10 @@ std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 		while (remaining > 0)
 		{
 			Cluster cluster;
-			createClusters(cluster, remaining);
-			clusters.push_back(cluster);
+			createClusters(cluster);
+			if (!cluster.isEmpty())
+				clusters.push_back(cluster);
+			remaining = countRemaining();
 		}
 		//save results
 		savePoints(clusters, output);
@@ -115,34 +112,63 @@ void ClusterFilter::savePoints(std::vector<Cluster>& clusters,
 	}
 }
 
-void ClusterFilter::createClusters(Cluster& cluster, int& remaining)
+void ClusterFilter::createClusters(Cluster& cluster)
 {
-	std::cerr << "baseIndex = " << baseIndex << " topIndex = " << topIndex <<std::endl;
-	for (int i = baseIndex; i < topIndex; i++)
+	std::vector<std::vector<cv::KeyPoint>*> points = getOrderedKeyPoints();
+
+	std::vector<std::vector<cv::KeyPoint>*>::iterator it;
+
+	for (it = points.begin(); it != points.end(); ++it)
 	{
+		std::vector<cv::KeyPoint>& currentVector = **it;
 		bool sameCluster = true;
 		//create a cluster
 		//TODO: correggere caso particolare in cui la colonna i+1 abbia cluster separati prima della colonna i sulla y
-		while (keyPoints[i].size() > 0 && sameCluster)
+		while (currentVector.size() > 0 && sameCluster)
 		{
-			cv::KeyPoint point = keyPoints[i].back();
+			cv::KeyPoint point = currentVector.back();
 			sameCluster = cluster.addToCluster(&point, windowSize);
 
 			//delete point from the matrix if is in the cluster
 			if (sameCluster)
-				keyPoints[i].pop_back();
-
-			//update remaining if a column has no more points
-			if (keyPoints[i].size() == 0)
-				remaining--;
+				currentVector.pop_back();
 		}
 	}
 }
 
+int ClusterFilter::countRemaining()
+{
+	int remaining = 0;
+
+	for (int i = baseIndex; i < topIndex; i++)
+	{
+		if (keyPoints[i].size() != 0)
+			remaining++;
+	}
+
+	return remaining;
+}
+
+std::vector<std::vector<cv::KeyPoint>*> ClusterFilter::getOrderedKeyPoints()
+{
+	std::vector<std::vector<cv::KeyPoint>*> points;
+	for (int i = baseIndex; i < topIndex; i++)
+	{
+		if (keyPoints[i].size() > 0)
+			points.push_back(&keyPoints[i]);
+	}
+
+	std::vector<std::vector<cv::KeyPoint>*>::iterator begin = points.begin();
+	std::vector<std::vector<cv::KeyPoint>*>::iterator end = points.end();
+	std::sort(begin, end, comparator);
+
+	std::sort(begin, end, comparator);
+
+	return points;
+}
+
 ClusterFilter::~ClusterFilter()
 {
-	/*for (int i = 0; i < width; i++)
-		delete keyPoints[i];*/
 	delete[] keyPoints;
 }
 
