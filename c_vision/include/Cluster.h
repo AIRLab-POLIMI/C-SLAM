@@ -21,42 +21,27 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
+#ifndef CLUSTER_H_
+#define CLUSTER_H_
+
+#include <vector>
 #include <opencv2/features2d/features2d.hpp>
-#include "CornerDetector.h"
-#include "ClusterFilter.h"
 
-cv::Mat CornerDetector::detect(cv::Mat& input)
+class Cluster
 {
+public:
 
-	cv::Mat output;
-	std::vector<cv::KeyPoint> keyPoints;
+	bool addToCluster(cv::KeyPoint* point, int windowSize);
 
-	cvtColor(input, output, CV_BGR2GRAY);
+	cv::KeyPoint getMassCenter();
 
-	FAST(output, keyPoints, threshold);
+private:
+	int start;
+	std::vector<cv::KeyPoint*> points;
+	cv::KeyPoint massCenter;
 
-	cvtColor(output, output, CV_GRAY2BGR);
+};
 
-	ClusterFilter filterObject(10, input.cols, input.rows);
 
-	keyPoints = filterObject.filter(keyPoints);
 
-	for (size_t i = 0; i < keyPoints.size(); ++i)
-	{
-		const cv::KeyPoint& kp = keyPoints[i];
-		circle(output, kp.pt, kp.size / 2, CV_RGB(255, 0, 0));
-	}
-
-	return output;
-}
-
-int CornerDetector::getThreshold() const
-{
-	return threshold;
-}
-
-void CornerDetector::setThreshold(int threshold)
-{
-	this->threshold = threshold;
-}
+#endif /* CLUSTER_H_ */

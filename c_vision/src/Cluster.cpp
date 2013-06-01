@@ -21,42 +21,41 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include "CornerDetector.h"
-#include "ClusterFilter.h"
+#include "Cluster.h"
 
-cv::Mat CornerDetector::detect(cv::Mat& input)
+bool Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
 {
+	int y = point->pt.y;
+	int x = point->pt.x;
 
-	cv::Mat output;
-	std::vector<cv::KeyPoint> keyPoints;
-
-	cvtColor(input, output, CV_BGR2GRAY);
-
-	FAST(output, keyPoints, threshold);
-
-	cvtColor(output, output, CV_GRAY2BGR);
-
-	ClusterFilter filterObject(10, input.cols, input.rows);
-
-	keyPoints = filterObject.filter(keyPoints);
-
-	for (size_t i = 0; i < keyPoints.size(); ++i)
+	if (points.size() == 0)
 	{
-		const cv::KeyPoint& kp = keyPoints[i];
-		circle(output, kp.pt, kp.size / 2, CV_RGB(255, 0, 0));
+		start = y;
+		massCenter.pt.x = x;
+		massCenter.pt.y = y;
+		points.push_back(point);
+		return true;
 	}
-
-	return output;
+	else if (y < start + windowSize)
+	{
+		massCenter.pt.x += x;
+		massCenter.pt.y += y;
+		points.push_back(point);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-int CornerDetector::getThreshold() const
+cv::KeyPoint Cluster::getMassCenter()
 {
-	return threshold;
-}
 
-void CornerDetector::setThreshold(int threshold)
-{
-	this->threshold = threshold;
+	int n = points.size();
+
+	massCenter.pt.x /= n;
+	massCenter.pt.y /= n;
+
+	return massCenter;
 }

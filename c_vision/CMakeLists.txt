@@ -13,7 +13,9 @@ add_executable(example src/main.cpp
 			src/Callbacks.cpp
 			src/BorderDetection.cpp  
 			src/CornerDetector.cpp  
-			src/LineDetector.cpp)
+			src/LineDetector.cpp
+			src/ClusterFilter.cpp
+			src/Cluster.cpp)
 
 target_link_libraries(example ${OpenCV_LIBS})
 
