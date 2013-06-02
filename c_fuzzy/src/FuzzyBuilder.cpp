@@ -69,7 +69,7 @@ void FuzzyBuilder::createMap()
 
 FuzzyReasoner* FuzzyBuilder::createReasoner()
 {
-	return new FuzzyReasoner(inputTable, mfTable, aggregator, ruleList);
+	return new FuzzyReasoner(inputTable, domainTable, aggregator, ruleList);
 }
 
 void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
@@ -91,30 +91,44 @@ Node* FuzzyBuilder::buildOr(Node* left, Node* right)
 			static_cast<FuzzyOperator*>(right));
 }
 
-Node* FuzzyBuilder::buildIs(Node* left, Node* right)
-{
-	return new FuzzyIs(static_cast<CrispData*>(left),
-			static_cast<MFLabel*>(right));
-}
-
 Node* FuzzyBuilder::buildNot(Node* operand)
 {
 	return new FuzzyNot(static_cast<FuzzyOperator*>(operand));
 }
 
+Node* FuzzyBuilder::buildIs(Node* left, std::string* mfLabel)
+{
+	//TODO assertion to check existence of all the stuff...
+	CrispData* crispData = static_cast<CrispData*>(left);
+	return new FuzzyIs(domainTable, crispData, *mfLabel);
+}
+
 Node* FuzzyBuilder::buildAssignment(std::string* output, std::string* label)
 {
-	return new FuzzyAssignment(mfTable, aggregator, *output, *label);
+	return new FuzzyAssignment(domainTable, aggregator, *output, *label);
+}
+
+//Fuzzy domain
+void FuzzyBuilder::buildDomain(std::vector<std::string> variables)
+{
+	DomainTable& map = *domainTable;
+	mfTable = new MFTable();
+	std::vector<std::string>::iterator it;
+	for (it = variables.begin(); it != variables.end(); it++)
+	{
+		map[*it] = mfTable;
+	}
 }
 
 //Fuzzy MF
-void FuzzyBuilder::buildMF(std::string* name, std::string* shape, std::vector<int>* parameters)
+void FuzzyBuilder::buildMF(std::string* name, std::string* shape,
+		std::vector<int>* parameters)
 {
-	std::map<std::string, FuzzyMF*>& map = *mfTable;
+	MFTable& map = *mfTable;
 	std::vector<int>& p = *parameters;
 
 	//assert that the number of parameters matches the MF shape
-	//then create the corrispondent MF labelled "name"
+	//then create the correspondent MF labeled "name"
 	switch (fuzzyMap[*shape])
 	{
 		case TOL:
@@ -130,7 +144,7 @@ void FuzzyBuilder::buildMF(std::string* name, std::string* shape, std::vector<in
 		case TRA:
 			assert(p.size() == 4);
 			assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
-			map[*name] = buildTra(p[3],p[2], p[1], p[0]);
+			map[*name] = buildTra(p[3], p[2], p[1], p[0]);
 			break;
 		case TRI:
 			assert(p.size() == 3);
@@ -149,13 +163,6 @@ void FuzzyBuilder::buildMF(std::string* name, std::string* shape, std::vector<in
 		default:
 			break;
 	}
-}
-
-Node* FuzzyBuilder::buildMFLabel(std::string* label)
-{
-	//Makes sure that the Label has been defined
-	assert(mfTable->count(*label) == 1);
-	return new MFLabel(mfTable, *label);
 }
 
 FuzzyMF* FuzzyBuilder::buildTor(int bottom, int top)

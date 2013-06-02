@@ -48,6 +48,11 @@ public:
 		return lookUpTable[label];
 	}
 
+	inline std::string getLabel()
+	{
+		return label;
+	}
+
 private:
 	std::map<std::string, int>& lookUpTable;
 	std::string label;

@@ -28,6 +28,7 @@ LETTER [a-z]|{CAPITAL}
 BLANK [ \t]
 NEWLINE \n\r|\n
 FUZZYLABEL tol|tor|tri|tra|int|sgt
+SIGN [-+]
 
 %%
 
@@ -62,7 +63,7 @@ FUZZYLABEL tol|tor|tri|tra|int|sgt
 
  /* identificators */
 {CAPITAL}({LETTER}|{DIGIT})* { yylval->str = new std::string(yytext); return token::ID; }
-{DIGIT}+ { yylval->integer = atoi(yytext); return token::PARAMETER; }
+-?{DIGIT}+ { yylval->integer = atoi(yytext); return token::PARAMETER; }
 {FUZZYLABEL} { yylval->str = new std::string(yytext); return token::F_LABEL; }
 
  /* unknown tokens */

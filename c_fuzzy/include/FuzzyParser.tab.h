@@ -80,7 +80,7 @@ namespace yy {
     {
 /* Line 33 of lalr1.cc  */
 #line 35 "src/parser.y"
-int integer; std::string* str; Node* node; std::vector<int>* fshape;
+int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector<std::string>* fvars; 
 
 /* Line 33 of lalr1.cc  */
 #line 87 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"

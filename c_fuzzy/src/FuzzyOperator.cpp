@@ -23,11 +23,7 @@
 
 #include "FuzzyOperator.h"
 
-double FuzzyIs::evaluate()
-{
-	int crispData = leftOperand->evaluateInt();
-	return rightOperand->evaluate(crispData);
-}
+
 
 double FuzzyAnd::evaluate()
 {
@@ -56,10 +52,25 @@ FuzzyNot::~FuzzyNot()
 
 double FuzzyAssignment::evaluate()
 {
-	FuzzyMF* mf = lookUpTable[mfLabel];
+	MFTable& mfTable = *lookUpTable[output];
+	FuzzyMF* mf = mfTable[mfLabel];
 	double result = mf->defuzzify(input);
 	aggregator.addValue(output, input, result);
 	return result;
+}
+
+
+double FuzzyIs::evaluate()
+{
+	MFTable& mfTable = *lookUpTable[crispData->getLabel()];
+	Node* mFunction = mfTable[mfLabel];
+	int crispValue = crispData->evaluateInt();
+	return mFunction->evaluate(crispValue);
+}
+
+FuzzyIs::~FuzzyIs()
+{
+	delete crispData;
 }
 
 BinaryFuzzyOperator::~BinaryFuzzyOperator()

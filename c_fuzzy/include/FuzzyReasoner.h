@@ -41,9 +41,9 @@ class FuzzyReasoner
 {
 public:
 	FuzzyReasoner(std::map<std::string, int>* inputTable,
-			std::map<std::string, FuzzyMF*>* mfTable,
+			DomainTable* mfTable,
 			FuzzyAggregator* aggregator, std::vector<Node*>* knowledgeBase) :
-			inputTable(inputTable), mfTable(mfTable), aggregator(aggregator), knowledgeBase(
+			inputTable(inputTable), domainTable(mfTable), aggregator(aggregator), knowledgeBase(
 					knowledgeBase)
 	{
 	}
@@ -53,12 +53,13 @@ public:
 	~FuzzyReasoner();
 
 private:
-	void deleteMF();
+	void deleteDomains();
+	void deleteMF(MFTable* mfTable);
 	void deleteRules();
 
 private:
 	std::map<std::string, int>* inputTable;
-	std::map<std::string, FuzzyMF*>* mfTable;
+	DomainTable* domainTable;
 	FuzzyAggregator* aggregator;
 	std::vector<Node*>* knowledgeBase;
 };

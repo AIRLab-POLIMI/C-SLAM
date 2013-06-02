@@ -37,7 +37,6 @@ std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 		int remaining = windowSize;
 
 		//start clustering
-
 		while (remaining > 0)
 		{
 			Cluster cluster;
@@ -46,8 +45,10 @@ std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 				clusters.push_back(cluster);
 			remaining = countRemaining();
 		}
+
 		//save results
 		savePoints(clusters, output);
+
 		//reorder new points
 		orderVectors(baseIndex + stepSize + 1, topIndex);
 

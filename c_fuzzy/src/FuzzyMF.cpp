@@ -70,7 +70,7 @@ double TriMF::defuzzify(double level)
 
 double TraMF::evaluate()
 {
-	if (input < bottomLeft || input > bottomRight)
+	if (input <= bottomLeft || input >= bottomRight)
 		return FUZZY_MIN_V;
 	else if (input > bottomLeft && input < topLeft)
 		return line(bottomLeft, FUZZY_MIN_V, topLeft, FUZZY_MAX_V, input);

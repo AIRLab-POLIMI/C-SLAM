@@ -62,21 +62,6 @@ protected:
 };
 
 /**
- * The IS operator
- * returns the membership value of a crisp data to a given fuzzy set
- *
- */
-class FuzzyIs: public BinaryFuzzyOperator
-{
-public:
-	FuzzyIs(CrispData* left, MFLabel* right) :
-			BinaryFuzzyOperator(left, right)
-	{
-	}
-	double evaluate();
-};
-
-/**
  * The Fuzzy And operator
  * Implements a T-Norm operator
  *
@@ -126,6 +111,27 @@ private:
 };
 
 /**
+ * The IS operator
+ * returns the membership value of a crisp data to a given fuzzy set
+ *
+ */
+class FuzzyIs: public FuzzyOperator
+{
+public:
+	FuzzyIs(DomainTable* lookUpTable, CrispData* crispData, std::string mfLabel) :
+			lookUpTable(*lookUpTable), crispData(crispData), mfLabel(mfLabel)
+	{
+	}
+	double evaluate();
+	~FuzzyIs();
+
+private:
+	CrispData* crispData;
+	DomainTable& lookUpTable;
+	std::string mfLabel;
+};
+
+/**
  * Fuzzy assignment operator.
  * Assign a semantic label to an output
  *
@@ -133,15 +139,16 @@ private:
 class FuzzyAssignment: public FuzzyOperator
 {
 public:
-	FuzzyAssignment(std::map<std::string, FuzzyMF*>* lookUpTable,
-			FuzzyAggregator* aggregator, std::string name, std::string mfLabel) :
-			lookUpTable(*lookUpTable), aggregator(*aggregator), mfLabel(mfLabel), output(name)
+	FuzzyAssignment(DomainTable* lookUpTable, FuzzyAggregator* aggregator,
+			std::string name, std::string mfLabel) :
+			lookUpTable(*lookUpTable), aggregator(*aggregator), mfLabel(
+					mfLabel), output(name)
 	{
 	}
 	double evaluate();
 
 private:
-	std::map<std::string, FuzzyMF*>& lookUpTable;
+	DomainTable& lookUpTable;
 	FuzzyAggregator& aggregator;
 	std::string mfLabel;
 	std::string output;

@@ -24,6 +24,9 @@
 #ifndef FUZZYMF_H_
 #define FUZZYMF_H_
 
+#include <string>
+#include <map>
+
 #include "Node.h"
 
 /**
@@ -172,27 +175,7 @@ private:
 	int value;
 };
 
-/**
- *	Membership function label class
- *	Class used to access a specific MF from a fuzzy rule
- *
- *
- */
-class MFLabel: public Node
-{
-public:
-	MFLabel(std::map<std::string, FuzzyMF*>* lookUpTable, std::string label) :
-			lookUpTable(*lookUpTable), label(label)
-	{
-	}
-	double evaluate()
-	{
-		return lookUpTable[label]->evaluate(input);
-	}
-
-private:
-	std::map<std::string, FuzzyMF*>& lookUpTable;
-	std::string label;
-};
+typedef std::map<std::string, FuzzyMF*> MFTable;
+typedef std::map<std::string, MFTable*> DomainTable;
 
 #endif /* FUZZYMF_H_ */

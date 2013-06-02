@@ -35,6 +35,7 @@
 #include "FuzzyScanner.h"
 #include "FuzzyParser.tab.h"
 
+
 enum FuzzySets
 {
 	TOL, TOR, TRA, TRI, INT, SGT
@@ -50,7 +51,8 @@ public:
 		createMap();
 		inputTable = new std::map<std::string, int>();
 		aggregator = new FuzzyAggregator();
-		mfTable = new std::map<std::string, FuzzyMF*>();
+		domainTable = new DomainTable();
+		mfTable = NULL;
 		ruleList = new std::vector<Node*>();
 	}
 
@@ -71,7 +73,8 @@ private:
 	//Data needed to get FuzzyReasoner working
 	std::map<std::string, int>* inputTable;
 	FuzzyAggregator* aggregator;
-	std::map<std::string, FuzzyMF*>* mfTable;
+	DomainTable* domainTable;
+	MFTable* mfTable;
 	std::vector<Node*>* ruleList;
 
 public:
@@ -79,30 +82,29 @@ public:
 	//Function to add a rule to the rulebase
 	void buildRule(Node* antecedent, Node* Conseguent);
 
-	//Function to build an assignment
-	Node* buildAssignment(std::string* output, std::string* label);
-
 	//Functions to build fuzzy operators
 	Node* buildAnd(Node* left, Node* right);
 	Node* buildOr(Node* left, Node* right);
-	Node* buildIs(Node* left, Node* right);
 	Node* buildNot(Node* operand);
+	Node* buildAssignment(std::string* output, std::string* label);
+	Node* buildIs(Node* crispData, std::string* mfLabel);
+
+	//Function to build a fuzzy Domain
+	void buildDomain(std::vector<std::string> variables);
 
 	//Functions to build fuzzy MF
 	void buildMF(std::string* name, std::string* shape,
 			std::vector<int>* parameters);
 	FuzzyMF* buildTor(int bottom, int top);
 	FuzzyMF* buildTol(int top, int bottom);
-	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight, int bottomRight);
+	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
+			int bottomRight);
 	FuzzyMF* buildTri(int left, int center, int right);
 	FuzzyMF* buildInt(int left, int right);
 	FuzzyMF* buildSgt(int value);
 
 	//Functions to build crisp data
 	Node* buildCrispData(std::string* label);
-
-	//Functions to build MF labels, to get MF in mfTable
-	Node* buildMFLabel(std::string* label);
 
 private:
 	void createMap();

@@ -37,7 +37,7 @@ std::map<std::string, double> FuzzyReasoner::run()
 {
 	//works backwards because MF are stored in reverse order by the parser...
 	for (std::vector<Node*>::reverse_iterator it = knowledgeBase->rbegin();
-				it != knowledgeBase->rend(); ++it)
+			it != knowledgeBase->rend(); ++it)
 	{
 		Node* rule = *it;
 		rule->evaluate();
@@ -55,11 +55,20 @@ void FuzzyReasoner::deleteRules()
 	}
 }
 
-void FuzzyReasoner::deleteMF()
+void FuzzyReasoner::deleteMF(MFTable* mfTable)
 {
-	for (std::map<std::string, FuzzyMF*>::iterator it = mfTable->begin();
-			it != mfTable->end(); ++it)
+	for (MFTable::iterator it = mfTable->begin(); it != mfTable->end(); ++it)
 	{
+		delete it->second;
+	}
+}
+
+void FuzzyReasoner::deleteDomains()
+{
+	for (DomainTable::iterator it = domainTable->begin();
+			it != domainTable->end(); ++it)
+	{
+		deleteMF(it->second);
 		delete it->second;
 	}
 }
@@ -67,8 +76,8 @@ void FuzzyReasoner::deleteMF()
 FuzzyReasoner::~FuzzyReasoner()
 {
 	delete inputTable;
-	deleteMF();
-	delete mfTable;
+	deleteDomains();
+	delete domainTable;
 	delete aggregator;
 	deleteRules();
 	delete knowledgeBase;
