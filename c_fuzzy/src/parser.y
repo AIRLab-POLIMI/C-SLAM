@@ -68,8 +68,12 @@
 fuzzyFile		: fuzzySet ruleSet 
 			;
 
-fuzzySet		: FUZZIFY ID fuzzyTerm END_FUZZIFY 
-			| FUZZIFY ID fuzzyTerm END_FUZZIFY fuzzySet
+fuzzySet		: FUZZIFY fuzzyId fuzzyTerm END_FUZZIFY 
+			| FUZZIFY fuzzyId fuzzyTerm END_FUZZIFY fuzzySet
+			;
+
+fuzzyId			: ID COMMA fuzzyId
+			| ID
 			;
 
 fuzzyTerm		: ID LIKE F_LABEL shape END_RULE
