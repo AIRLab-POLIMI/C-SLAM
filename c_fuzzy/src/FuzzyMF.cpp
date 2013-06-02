@@ -25,9 +25,9 @@
 
 double TolMF::evaluate()
 {
-	if (input < top)
+	if (input <= top)
 		return FUZZY_MAX_V;
-	else if (input > bottom)
+	else if (input >= bottom)
 		return FUZZY_MIN_V;
 	else
 		return line(top, FUZZY_MAX_V, bottom, FUZZY_MIN_V, input);
@@ -35,14 +35,15 @@ double TolMF::evaluate()
 
 double TolMF::defuzzify(double level)
 {
+	//TODO implementare!
 	return 0;
 }
 
 double TorMF::evaluate()
 {
-	if (input > top)
+	if (input >= top)
 		return FUZZY_MAX_V;
-	else if (input < bottom)
+	else if (input <= bottom)
 		return FUZZY_MIN_V;
 	else
 		return line(bottom, FUZZY_MIN_V, top, FUZZY_MAX_V, input);
@@ -50,12 +51,15 @@ double TorMF::evaluate()
 
 double TorMF::defuzzify(double level)
 {
+	//TODO implementare!
 	return 0;
 }
 
 double TriMF::evaluate()
 {
-	if (input < center)
+	if (input <= left || input >= right)
+		return FUZZY_MIN_V;
+	else if (input < center)
 		return line(left, FUZZY_MIN_V, right, FUZZY_MAX_V, input);
 	else if (input > center)
 		return line(left, FUZZY_MAX_V, right, FUZZY_MIN_V, input);
@@ -65,6 +69,7 @@ double TriMF::evaluate()
 
 double TriMF::defuzzify(double level)
 {
+	//TODO implementare!
 	return 0;
 }
 
@@ -82,12 +87,13 @@ double TraMF::evaluate()
 
 double TraMF::defuzzify(double level)
 {
+	//TODO implementare!
 	return 0;
 }
 
 double IntMF::evaluate()
 {
-	if (input > left && input < right)
+	if (input >= left && input <= right)
 		return FUZZY_MAX_V;
 	else
 		return FUZZY_MIN_V;
@@ -95,6 +101,7 @@ double IntMF::evaluate()
 
 double IntMF::defuzzify(double level)
 {
+	//TODO implementare!
 	return 0;
 }
 
