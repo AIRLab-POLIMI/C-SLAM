@@ -114,6 +114,8 @@ void ClusterFilter::savePoints(std::vector<Cluster>& clusters,
 
 void ClusterFilter::createClusters(Cluster& cluster)
 {
+	//Get the ordered keyPoints of the current analyzed window
+	//We use only a pointer to that data, for efficiency reasons.
 	std::vector<std::vector<cv::KeyPoint>*> points = getOrderedKeyPoints();
 
 	std::vector<std::vector<cv::KeyPoint>*>::iterator it;
