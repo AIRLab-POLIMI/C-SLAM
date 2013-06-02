@@ -45,6 +45,9 @@
 %token IS
 %token IF
 
+%token FUZZIFY
+%token END_FUZZIFY
+
 %token LIKE
 %token COMMA
 %token<str> F_LABEL
@@ -65,16 +68,20 @@
 fuzzyFile		: fuzzySet ruleSet 
 			;
 
-fuzzySet		: ID LIKE F_LABEL shape END_RULE
+fuzzySet		: FUZZIFY ID fuzzyTerm END_FUZZIFY 
+			| FUZZIFY ID fuzzyTerm END_FUZZIFY fuzzySet
+			;
+
+fuzzyTerm		: ID LIKE F_LABEL shape END_RULE
 			{
 				builder.buildMF($1, $3, $4);
 			}
-			| ID LIKE F_LABEL shape END_RULE fuzzySet 
+			| ID LIKE F_LABEL shape END_RULE fuzzyTerm 
 			{
 				builder.buildMF($1, $3, $4);
 			}
 			;
-			
+
 shape			: OPEN_B parametersList CLOSE_B 
 			{
 				$$ = $2;

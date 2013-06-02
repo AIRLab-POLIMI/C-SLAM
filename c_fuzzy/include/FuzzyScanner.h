@@ -67,12 +67,26 @@ public:
 		return line;
 	}
 
+	inline void saveLastState(int state)
+	{
+		caller.push_back(state);
+	}
+
+	inline int getLastState()
+	{
+		int lastState = caller.back();
+		caller.pop_back();
+		return lastState;
+	}
+
 private:
 	/* hide this one from public view */
 	int yylex();
 	/* yyval ptr */
 	yy::FuzzyParser::semantic_type *yylval;
 	int column, line;
+	/*comment eater stack*/
+	std::vector<int> caller;
 };
 
 #endif /* FUZZYSCANNER_H_ */

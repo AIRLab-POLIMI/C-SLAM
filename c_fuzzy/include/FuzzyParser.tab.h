@@ -105,10 +105,12 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape;
      THEN = 265,
      IS = 266,
      IF = 267,
-     LIKE = 268,
-     COMMA = 269,
-     F_LABEL = 270,
-     PARAMETER = 271
+     FUZZIFY = 268,
+     END_FUZZIFY = 269,
+     LIKE = 270,
+     COMMA = 271,
+     F_LABEL = 272,
+     PARAMETER = 273
    };
 
     };
@@ -291,7 +293,7 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape;
 
 } // yy
 /* Line 33 of lalr1.cc  */
-#line 295 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"
+#line 297 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"
 
 
 
