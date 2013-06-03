@@ -38,7 +38,7 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 
 	cvtColor(output, output, CV_GRAY2BGR);
 
-	ClusterFilter filterObject(4, input.cols, input.rows);
+	ClusterFilter filterObject(clusterWindow, clusterMinSize, input.cols, input.rows);
 
 	keyPoints = filterObject.filter(keyPoints);
 
@@ -59,4 +59,24 @@ int CornerDetector::getThreshold() const
 void CornerDetector::setThreshold(int threshold)
 {
 	this->threshold = threshold;
+}
+
+int CornerDetector::getClusterMinSize() const
+{
+	return clusterMinSize;
+}
+
+void CornerDetector::setClusterMinSize(int clusterMinSize)
+{
+	this->clusterMinSize = clusterMinSize;
+}
+
+int CornerDetector::getClusterWindow() const
+{
+	return clusterWindow;
+}
+
+void CornerDetector::setClusterWindow(int clusterWindow)
+{
+	this->clusterWindow = clusterWindow;
 }

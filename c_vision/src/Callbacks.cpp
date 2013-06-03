@@ -26,6 +26,8 @@
 #include "BorderDetector.h"
 #include "CornerDetector.h"
 
+
+/* Canny detectors callback*/
 void minCanny(int value, void* data)
 {
 	BorderDetector* borderD = static_cast<BorderDetector*>(data);
@@ -38,12 +40,27 @@ void maxCanny(int value, void* data)
 	borderD->setThreshold2(value);
 }
 
+/* Corner detector callback */
 void thresholdCorner(int value, void* data)
 {
 	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
 	cornerD->setThreshold(value);
 }
 
+void windowSizeCorner(int value, void* data)
+{
+	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	cornerD->setClusterWindow(value);
+}
+
+void minClusterSizeCorner(int value, void* data)
+{
+	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	cornerD->setClusterMinSize(value);
+}
+
+
+/* HoughP detector callback*/
 void thresholdHoughP(int value, void* data)
 {
 	ProbabilisticHoughLineDetector* lineD =

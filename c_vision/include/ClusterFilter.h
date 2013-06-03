@@ -33,8 +33,9 @@
 class ClusterFilter
 {
 public:
-	ClusterFilter(int windowSize, int width, int height) :
-			windowSize(windowSize), width(width), height(height)
+	ClusterFilter(int windowSize, int clusterMinSize, int width, int height) :
+			windowSize(windowSize), clusterMinSize(clusterMinSize), width(
+					width), height(height)
 	{
 		//the stepsize is the half of the windowSize
 		// add 1 if the windowsize is not even
@@ -64,6 +65,8 @@ private:
 
 private:
 	int windowSize;
+	int clusterMinSize;
+
 	int width;
 	int height;
 
@@ -82,11 +85,12 @@ private:
 			return i.pt.y < j.pt.y;
 		}
 
-		bool operator()(std::vector<cv::KeyPoint>* i, std::vector<cv::KeyPoint>* j)
+		bool operator()(std::vector<cv::KeyPoint>* i,
+				std::vector<cv::KeyPoint>* j)
 		{
 			std::vector<cv::KeyPoint>& v1 = *i;
 			std::vector<cv::KeyPoint>& v2 = *j;
-			return (*this)(v1[0],v2[0]);
+			return (*this)(v1[0], v2[0]);
 		}
 
 	} comparator;

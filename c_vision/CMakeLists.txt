@@ -9,7 +9,15 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 find_package(OpenCV REQUIRED)
 
 #common commands for building c++ executables and libraries
-add_executable(example src/main.cpp
+add_executable(detector src/main.cpp
+			src/Callbacks.cpp
+			src/BorderDetection.cpp  
+			src/CornerDetector.cpp  
+			src/LineDetector.cpp
+			src/ClusterFilter.cpp
+			src/Cluster.cpp)
+			
+add_executable(comparator src/comparison.cpp
 			src/Callbacks.cpp
 			src/BorderDetection.cpp  
 			src/CornerDetector.cpp  
@@ -17,5 +25,5 @@ add_executable(example src/main.cpp
 			src/ClusterFilter.cpp
 			src/Cluster.cpp)
 
-target_link_libraries(example ${OpenCV_LIBS})
-
+target_link_libraries(detector ${OpenCV_LIBS})
+target_link_libraries(comparator ${OpenCV_LIBS})

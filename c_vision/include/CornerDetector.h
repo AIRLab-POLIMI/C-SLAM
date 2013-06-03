@@ -29,7 +29,9 @@
 class CornerDetector
 {
 public:
-	CornerDetector(int threshold) : threshold(threshold)
+	CornerDetector(int threshold, int clusterWindow, int clusterMinSize) :
+			threshold(threshold), clusterWindow(clusterWindow), clusterMinSize(
+					clusterMinSize)
 	{
 	}
 
@@ -38,12 +40,15 @@ public:
 	//getters and setters
 	int getThreshold() const;
 	void setThreshold(int threshold);
-
-
+	int getClusterMinSize() const;
+	void setClusterMinSize(int clusterMinSize);
+	int getClusterWindow() const;
+	void setClusterWindow(int clusterWindow);
 
 private:
 	int threshold;
+	int clusterWindow;
+	int clusterMinSize;
 };
-
 
 #endif /* CORNERDETECTOR_H_ */

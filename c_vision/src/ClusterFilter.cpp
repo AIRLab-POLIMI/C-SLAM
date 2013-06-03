@@ -27,6 +27,8 @@
 
 std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 {
+	if(windowSize == 0)
+		return input;
 	orderKeyPoints(input);
 	std::vector<cv::KeyPoint> output;
 
@@ -102,11 +104,12 @@ void ClusterFilter::savePoints(std::vector<Cluster>& clusters,
 		//but only those who are needed for the next window
 		if (x - baseIndex > stepSize)
 		{
+			//TODO: CORREGGERE!
 			keyPoints[x].push_back(massCenter);
 		}
 		//puts the new points in the output
 		//but only the ones who are already done
-		else
+		else if(massCenter.size < clusterMinSize)
 		{
 			output.push_back(massCenter);
 		}

@@ -21,28 +21,28 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CALLBACKS_H_
-#define CALLBACKS_H_
+#ifndef DEFAULTPARAMETERS_H_
+#define DEFAULTPARAMETERS_H_
 
-///Canny min threshold trackbar callback
-void minCanny(int value, void* data);
-///Canny max threshold trackbar callback
-void maxCanny(int value, void* data);
+struct CornerParam
+{
+	static const int threshold = 12;
+	static const int windowSize = 4;
+	static const int clusterMinSize = 15;
+} cornerP;
 
-///FAST threshold
-void thresholdCorner(int value, void* data);
-///Clustering algorithm window Size
-void windowSizeCorner(int value, void* data);
-///Cluster minimum size to become an object
-void minClusterSizeCorner(int value, void* data);
+struct CannyParam
+{
+	static const int minCanny = 90;
+	static const int maxCanny = 300;
+} cannyP;
 
-///HoughLineP threshold trackbar callback
-void thresholdHoughP(int value, void* data);
-///HoughLineP minimum line length
-void minLineLengthHoughP(int value, void* data);
-///HoughLineP max line gap trackbar callback
-void maxLineGapHoughP(int value, void* data);
-
+struct HougPParam
+{
+	static const int threshold = 75;
+	static const int minLineLenght = 70;
+	static const int maxLineGap = 20;
+} houghPP;
 
 
-#endif /* CALLBACKS_H_ */
+#endif /* DEFAULTPARAMETERS_H_ */
