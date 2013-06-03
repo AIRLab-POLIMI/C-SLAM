@@ -26,9 +26,9 @@
 
 struct CornerParam
 {
-	static const int threshold = 12;
+	static const int threshold = 18;
 	static const int windowSize = 4;
-	static const int clusterMinSize = 15;
+	static const int clusterMinSize = 10;
 } cornerP;
 
 struct CannyParam

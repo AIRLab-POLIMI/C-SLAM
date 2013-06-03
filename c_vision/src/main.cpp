@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	VideoCapture videoCapture(videoPath);
 	Mat sizeFrame;
 	videoCapture >> sizeFrame;
-	VideoWriter videoWriter("/home/dave/output.avi", CV_FOURCC('M','P','4','2'), 30, sizeFrame.size(), true);
+	VideoWriter videoWriter("/home/dave/output.avi", CV_FOURCC('D','I','V','X'), 25, sizeFrame.size(), true);
 
 	if (!videoCapture.isOpened())
 	{
