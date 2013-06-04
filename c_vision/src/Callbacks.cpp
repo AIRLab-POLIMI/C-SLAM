@@ -59,6 +59,24 @@ void minClusterSizeCorner(int value, void* data)
 	cornerD->setClusterMinSize(value);
 }
 
+void noisebarrierCorner(int value, void* data)
+{
+	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	cornerD->setNoiseBarrier(value);
+}
+
+void objectWindoCorner(int value, void* data)
+{
+	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	cornerD->setObjectWindow(value);
+}
+
+void objectMinSizeCorner(int value, void* data)
+{
+	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	cornerD->setObjectMinSize(value);
+}
+
 
 /* HoughP detector callback*/
 void thresholdHoughP(int value, void* data)

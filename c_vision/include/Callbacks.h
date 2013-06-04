@@ -35,6 +35,12 @@ void thresholdCorner(int value, void* data);
 void windowSizeCorner(int value, void* data);
 ///Cluster minimum size to become an object
 void minClusterSizeCorner(int value, void* data);
+///level used to exclude noisy points
+void noisebarrierCorner(int value, void* data);
+///object clustering window
+void objectWindoCorner(int value, void* data);
+///minimum size to be considered an object
+void objectMinSizeCorner(int value, void* data);
 
 ///HoughLineP threshold trackbar callback
 void thresholdHoughP(int value, void* data);

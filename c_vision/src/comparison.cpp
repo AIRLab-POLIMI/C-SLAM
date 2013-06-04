@@ -97,7 +97,15 @@ int main(int argc, char *argv[])
 	createTrackbar("minSize", cornerDetection, NULL, 350, minClusterSizeCorner,
 			(void*) &cornerD);
 	setTrackbarPos("minSize", cornerDetection, cornerP.clusterMinSize);
-
+	createTrackbar("noiseBarrier", cornerDetection, NULL, 350,
+			noisebarrierCorner, (void*) &cornerD);
+	setTrackbarPos("noiseBarrier", cornerDetection, cornerP.noiseBarrier);
+	createTrackbar("objectWindow", cornerDetection, NULL, 350,
+			objectWindoCorner, (void*) &cornerD);
+	setTrackbarPos("objectWindow", cornerDetection, cornerP.objectWindow);
+	createTrackbar("minObjectSize", cornerDetection, NULL, 350,
+			objectMinSizeCorner, (void*) &cornerD);
+	setTrackbarPos("minObjectSize", cornerDetection, cornerP.objectMinSize);
 	//controls for HoughLineP
 	createTrackbar("pThreshold", lineDetectionP, NULL, 150, thresholdHoughP,
 			(void*) &lineD1);
