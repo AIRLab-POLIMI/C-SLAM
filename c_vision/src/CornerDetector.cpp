@@ -31,6 +31,8 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 
 	cv::Mat output;
 	std::vector<cv::KeyPoint> keyPoints;
+	std::vector<cv::KeyPoint> bigKeypoints;
+	std::vector<cv::KeyPoint> complexObjects;
 
 	cvtColor(input, output, CV_BGR2GRAY);
 
@@ -38,15 +40,30 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 
 	cvtColor(output, output, CV_GRAY2BGR);
 
-	ClusterFilter filterObject(clusterWindow, clusterMinSize, input.cols, input.rows);
+	ClusterFilter filterObject(clusterWindow, clusterMinSize, noiseBarrier,
+			input.cols, input.rows);
+	ClusterFilter objectFinder(objectWindow, objectMinSize, noiseBarrier,
+			input.cols, input.rows);
 
 	keyPoints = filterObject.filter(keyPoints);
+	bigKeypoints = filterObject.getComplexObjects();
 
+	//finds complex objects
+	complexObjects = objectFinder.filter(bigKeypoints);
+
+
+	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
 		const cv::KeyPoint& kp = keyPoints[i];
 		circle(output, kp.pt, kp.size / 2, CV_RGB(255, 0, 0));
 	}
+
+	for (size_t i = 0; i < complexObjects.size(); ++i)
+		{
+			const cv::KeyPoint& kp = complexObjects[i];
+			circle(output, kp.pt, 20, CV_RGB(0, 0, 255));
+		}
 
 	return output;
 }
@@ -80,3 +97,34 @@ void CornerDetector::setClusterWindow(int clusterWindow)
 {
 	this->clusterWindow = clusterWindow;
 }
+
+int CornerDetector::getNoiseBarrier() const
+{
+	return noiseBarrier;
+}
+
+void CornerDetector::setNoiseBarrier(int noiseBarrier)
+{
+	this->noiseBarrier = noiseBarrier;
+}
+
+int CornerDetector::getObjectMinSize() const
+{
+	return objectMinSize;
+}
+
+void CornerDetector::setObjectMinSize(int objectMinSize)
+{
+	this->objectMinSize = objectMinSize;
+}
+
+int CornerDetector::getObjectWindow() const
+{
+	return objectWindow;
+}
+
+void CornerDetector::setObjectWindow(int objectWindow)
+{
+	this->objectWindow = objectWindow;
+}
+

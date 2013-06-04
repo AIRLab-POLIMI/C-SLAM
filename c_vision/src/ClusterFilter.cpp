@@ -27,42 +27,126 @@
 
 std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 {
-	if(windowSize == 0)
+	if (windowSize == 0 || input.size() == 0)
 		return input;
+
 	orderKeyPoints(input);
-	std::vector<cv::KeyPoint> output;
 
 	//main algorithm loop
 	while (baseIndex < width)
 	{
+		//The vector of clusters
 		std::vector<Cluster> clusters;
-		int remaining = windowSize;
 
-		//start clustering
-		while (remaining > 0)
-		{
-			Cluster cluster;
-			createClusters(cluster);
-			if (!cluster.isEmpty())
-				clusters.push_back(cluster);
-			remaining = countRemaining();
-		}
+		//find clusters in the input
+		findClusters(clusters);
 
-		//save results
-		savePoints(clusters, output);
+		//save results of clustering stage
+		savePoints(clusters);
 
-		//reorder new points
+		//reorder new points added to the clusters
 		orderVectors(baseIndex + stepSize + 1, topIndex);
 
 		//Update the indexes
-		baseIndex += stepSize;
-		topIndex = baseIndex + windowSize;
-		if (topIndex > width)
-			topIndex = width;
-
+		updateIndexes();
 	}
 
 	return output;
+}
+
+std::vector<cv::KeyPoint> ClusterFilter::getComplexObjects()
+{
+	return complexObjects;
+}
+
+void ClusterFilter::findClusters(std::vector<Cluster>& clusters)
+{
+	int remaining;
+
+	//start clustering
+	do
+	{
+		Cluster cluster;
+		createClusters(cluster);
+		if (!cluster.isEmpty())
+			clusters.push_back(cluster);
+		remaining = countRemaining();
+	} while (remaining > 0);
+}
+
+void ClusterFilter::savePoints(std::vector<Cluster>& clusters)
+{
+	std::vector<Cluster>::iterator it;
+	for (it = clusters.begin(); it != clusters.end(); ++it)
+	{
+		cv::KeyPoint massCenter = it->getMassCenter();
+		int x = massCenter.pt.x;
+		//puts new points in the matrix
+		//but only those who are needed for the next window
+		if (x - baseIndex > stepSize)
+		{
+			keyPoints[x].push_back(massCenter);
+		}
+		//puts the new points in the output
+		//but only the ones who are already done
+		else if (massCenter.size < clusterMinSize)
+		{
+			output.push_back(massCenter);
+		}
+		//puts the biggest points in the pipeline for complex objects recognition
+		else if (massCenter.size > noiseBarrier)
+		{
+			complexObjects.push_back(massCenter);
+		}
+	}
+}
+
+void ClusterFilter::createClusters(Cluster& cluster)
+{
+	//Get the ordered keyPoints of the current analyzed window
+	//We use only a pointer to that data, for efficiency reasons.
+	std::vector<std::vector<cv::KeyPoint>*> points = getOrderedKeyPoints();
+
+	std::vector<std::vector<cv::KeyPoint>*>::iterator it;
+
+	for (it = points.begin(); it != points.end(); ++it)
+	{
+		std::vector<cv::KeyPoint>& currentVector = **it;
+		bool sameCluster = true;
+		//create a cluster
+		while (currentVector.size() > 0 && sameCluster)
+		{
+			cv::KeyPoint point = currentVector.back();
+			//check if the point belongs to cluster
+			sameCluster = cluster.pointsBelongsTo(&point, windowSize);
+			//if so...
+			if (sameCluster)
+			{
+				//add the point to the cluster
+				cluster.addToCluster(&point, windowSize);
+				//delete point from the matrix if is in the cluster
+				currentVector.pop_back();
+			}
+		}
+	}
+}
+
+std::vector<std::vector<cv::KeyPoint>*> ClusterFilter::getOrderedKeyPoints()
+{
+	std::vector<std::vector<cv::KeyPoint>*> points;
+	for (int i = baseIndex; i < topIndex; i++)
+	{
+		if (keyPoints[i].size() > 0)
+			points.push_back(&keyPoints[i]);
+	}
+
+	std::vector<std::vector<cv::KeyPoint>*>::iterator begin = points.begin();
+	std::vector<std::vector<cv::KeyPoint>*>::iterator end = points.end();
+	std::sort(begin, end, comparator);
+
+	std::sort(begin, end, comparator);
+
+	return points;
 }
 
 void ClusterFilter::orderKeyPoints(std::vector<cv::KeyPoint>& input)
@@ -92,60 +176,6 @@ void ClusterFilter::orderVectors(int begin, int end)
 	}
 }
 
-void ClusterFilter::savePoints(std::vector<Cluster>& clusters,
-		std::vector<cv::KeyPoint>& output)
-{
-	std::vector<Cluster>::iterator it;
-	for (it = clusters.begin(); it != clusters.end(); ++it)
-	{
-		cv::KeyPoint massCenter = it->getMassCenter();
-		int x = massCenter.pt.x;
-		//puts new points in the matrix
-		//but only those who are needed for the next window
-		if (x - baseIndex > stepSize)
-		{
-			//TODO: CORREGGERE!
-			keyPoints[x].push_back(massCenter);
-		}
-		//puts the new points in the output
-		//but only the ones who are already done
-		else if(massCenter.size < clusterMinSize)
-		{
-			output.push_back(massCenter);
-		}
-	}
-}
-
-void ClusterFilter::createClusters(Cluster& cluster)
-{
-	//Get the ordered keyPoints of the current analyzed window
-	//We use only a pointer to that data, for efficiency reasons.
-	std::vector<std::vector<cv::KeyPoint>*> points = getOrderedKeyPoints();
-
-	std::vector<std::vector<cv::KeyPoint>*>::iterator it;
-
-	for (it = points.begin(); it != points.end(); ++it)
-	{
-		std::vector<cv::KeyPoint>& currentVector = **it;
-		bool sameCluster = true;
-		//create a cluster
-		while (currentVector.size() > 0 && sameCluster)
-		{
-			cv::KeyPoint point = currentVector.back();
-			//check if the point belongs to cluster
-			sameCluster = cluster.pointsBelongsTo(&point, windowSize);
-			//if so...
-			if(sameCluster)
-			{
-				//add the point to the cluster
-				cluster.addToCluster(&point, windowSize);
-				//delete point from the matrix if is in the cluster
-				currentVector.pop_back();
-			}
-		}
-	}
-}
-
 int ClusterFilter::countRemaining()
 {
 	int remaining = 0;
@@ -159,22 +189,13 @@ int ClusterFilter::countRemaining()
 	return remaining;
 }
 
-std::vector<std::vector<cv::KeyPoint>*> ClusterFilter::getOrderedKeyPoints()
+void ClusterFilter::updateIndexes()
 {
-	std::vector<std::vector<cv::KeyPoint>*> points;
-	for (int i = baseIndex; i < topIndex; i++)
-	{
-		if (keyPoints[i].size() > 0)
-			points.push_back(&keyPoints[i]);
-	}
-
-	std::vector<std::vector<cv::KeyPoint>*>::iterator begin = points.begin();
-	std::vector<std::vector<cv::KeyPoint>*>::iterator end = points.end();
-	std::sort(begin, end, comparator);
-
-	std::sort(begin, end, comparator);
-
-	return points;
+	//Update the indexes
+	baseIndex += stepSize;
+	topIndex = baseIndex + windowSize;
+	if (topIndex > width)
+		topIndex = width;
 }
 
 ClusterFilter::~ClusterFilter()

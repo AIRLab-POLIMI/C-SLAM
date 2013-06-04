@@ -33,9 +33,10 @@
 class ClusterFilter
 {
 public:
-	ClusterFilter(int windowSize, int clusterMinSize, int width, int height) :
-			windowSize(windowSize), clusterMinSize(clusterMinSize), width(
-					width), height(height)
+	ClusterFilter(int windowSize, int clusterMinSize, int noiseBarrier,
+			int width, int height) :
+			windowSize(windowSize), clusterMinSize(clusterMinSize), noiseBarrier(
+					noiseBarrier), width(width), height(height)
 	{
 		//the stepsize is the half of the windowSize
 		// add 1 if the windowsize is not even
@@ -51,21 +52,24 @@ public:
 	}
 
 	std::vector<cv::KeyPoint> filter(std::vector<cv::KeyPoint> input);
+	std::vector<cv::KeyPoint> getComplexObjects();
 
 	~ClusterFilter();
 
 private:
+	void findClusters(std::vector<Cluster>& clusters);
+	void savePoints(std::vector<Cluster>& clusters);
 	void orderKeyPoints(std::vector<cv::KeyPoint>& input);
 	void orderVectors(int begin, int end);
-	void savePoints(std::vector<Cluster>& clusters,
-			std::vector<cv::KeyPoint>& output);
 	void createClusters(Cluster& cluster);
 	int countRemaining();
 	std::vector<std::vector<cv::KeyPoint>*> getOrderedKeyPoints();
+	void updateIndexes();
 
 private:
 	int windowSize;
 	int clusterMinSize;
+	int noiseBarrier;
 
 	int width;
 	int height;
@@ -75,6 +79,8 @@ private:
 	int topIndex;
 
 	std::vector<cv::KeyPoint>* keyPoints;
+	std::vector<cv::KeyPoint> output;
+	std::vector<cv::KeyPoint> complexObjects;
 
 private:
 	class Comparator

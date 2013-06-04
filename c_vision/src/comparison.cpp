@@ -76,7 +76,8 @@ int main(int argc, char *argv[])
 			houghPP.minLineLenght, houghPP.maxLineGap);
 	HoughLineDetector lineD2(1, CV_PI / 180, 120);
 	CornerDetector cornerD(cornerP.threshold, cornerP.windowSize,
-			cornerP.clusterMinSize);
+			cornerP.clusterMinSize, cornerP.noiseBarrier, cornerP.objectWindow,
+			cornerP.objectMinSize);
 
 	//controls for Canny
 	createTrackbar("minCanny", borderDetection, NULL, 300, minCanny,

@@ -66,7 +66,8 @@ int main(int argc, char *argv[])
 	VideoCapture videoCapture(videoPath);
 	Mat sizeFrame;
 	videoCapture >> sizeFrame;
-	VideoWriter videoWriter("/home/dave/output.avi", CV_FOURCC('D','I','V','X'), 25, sizeFrame.size(), true);
+	VideoWriter videoWriter("/home/dave/output.avi",
+			CV_FOURCC('D', 'I', 'V', 'X'), 25, sizeFrame.size(), true);
 
 	if (!videoCapture.isOpened())
 	{
@@ -89,7 +90,8 @@ int main(int argc, char *argv[])
 
 	//instantiate detectors
 	CornerDetector cornerD(cornerP.threshold, cornerP.windowSize,
-			cornerP.clusterMinSize);
+			cornerP.clusterMinSize, cornerP.noiseBarrier, cornerP.objectWindow,
+			cornerP.objectMinSize);
 
 	//Controls for corner
 	createTrackbar("threshold", cornerDetection, NULL, 50, thresholdCorner,
