@@ -31,23 +31,41 @@ class Cluster
 {
 public:
 
-	Cluster()
+	Cluster(int windowSize)
 	{
-		start = 0;
+		this->windowSize = windowSize;
 		massCenter.pt.x = 0;
 		massCenter.pt.y = 0;
 		massCenter.size = 0;
 	}
 
 	bool isEmpty();
-	bool pointsBelongsTo(cv::KeyPoint* point, int windowSize);
-	void addToCluster(cv::KeyPoint* point, int windowSize);
+	bool belongTo(cv::KeyPoint* point);
+	void add(cv::KeyPoint* point);
 	cv::KeyPoint getMassCenter();
 
 private:
-	int start;
+	int distance(cv::KeyPoint start,cv::KeyPoint end);
+
+protected:
 	std::vector<cv::KeyPoint*> points;
+	int windowSize;
+
+private:
 	cv::KeyPoint massCenter;
+
+};
+
+class MetaCluster: public Cluster
+{
+public:
+
+	MetaCluster(int windowSize) :
+			Cluster(windowSize)
+	{
+	}
+
+	std::vector<cv::KeyPoint> getMassCenters();
 
 };
 

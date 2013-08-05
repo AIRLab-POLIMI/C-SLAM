@@ -57,11 +57,11 @@ public:
 	~ClusterFilter();
 
 private:
-	void findClusters(std::vector<Cluster>& clusters);
-	void savePoints(std::vector<Cluster>& clusters);
+	void findClusters(std::vector<MetaCluster>& clusters);
+	void savePoints(std::vector<MetaCluster>& clusters);
 	void orderKeyPoints(std::vector<cv::KeyPoint>& input);
 	void orderVectors(int begin, int end);
-	void createClusters(Cluster& cluster);
+	void createClusters(MetaCluster& cluster);
 	int countRemaining();
 	std::vector<std::vector<cv::KeyPoint>*> getOrderedKeyPoints();
 	void updateIndexes();

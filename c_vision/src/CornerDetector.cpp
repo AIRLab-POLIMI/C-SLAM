@@ -51,7 +51,6 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 	//finds complex objects
 	complexObjects = objectFinder.filter(bigKeypoints);
 
-
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
@@ -60,10 +59,10 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 	}
 
 	for (size_t i = 0; i < complexObjects.size(); ++i)
-		{
-			const cv::KeyPoint& kp = complexObjects[i];
-			circle(output, kp.pt, 20, CV_RGB(0, 0, 255));
-		}
+	{
+		const cv::KeyPoint& kp = complexObjects[i];
+		circle(output, kp.pt, 20, CV_RGB(0, 0, 255));
+	}
 
 	return output;
 }

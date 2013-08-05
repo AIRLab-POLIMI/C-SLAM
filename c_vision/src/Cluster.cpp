@@ -28,35 +28,63 @@ bool Cluster::isEmpty()
 	return points.size() == 0;
 }
 
-bool Cluster::pointsBelongsTo(cv::KeyPoint* point, int windowSize)
+bool Cluster::belongTo(cv::KeyPoint* point)
 {
-	return isEmpty() || point->pt.y < start + windowSize;
+	return isEmpty() || distance(*point, massCenter)*2 < windowSize;
 }
 
-void Cluster::addToCluster(cv::KeyPoint* point, int windowSize)
+void Cluster::add(cv::KeyPoint* point)
 {
 	int y = point->pt.y;
 	int x = point->pt.x;
 	float size = point->size;
 
-	if (isEmpty())
-	{
-		start = y;
-	}
+	massCenter.pt.x = massCenter.pt.x *  massCenter.size + x * size;
+	massCenter.pt.y = massCenter.pt.y *  massCenter.size + y * size;
 
-	massCenter.pt.x += x * size;
-	massCenter.pt.y += y * size;
 	massCenter.size += size;
-
-	points.push_back(point);
-
-}
-
-cv::KeyPoint Cluster::getMassCenter()
-{
 
 	massCenter.pt.x /= massCenter.size;
 	massCenter.pt.y /= massCenter.size;
 
+	points.push_back(point);
+}
+
+cv::KeyPoint Cluster::getMassCenter()
+{
 	return massCenter;
+}
+
+int Cluster::distance(cv::KeyPoint start,cv::KeyPoint end)
+{
+	int ystart = start.pt.y;
+	int yend = end.pt.y;
+
+	int distance = ystart-yend;
+	distance = (distance < 0) ? -distance : distance;
+
+	return distance;
+
+}
+
+
+std::vector<cv::KeyPoint> MetaCluster::getMassCenters()
+{
+	std::vector<cv::KeyPoint> massCenters;
+
+	//get all sub clusters of meta-cluster
+	while(!points.empty())
+	{
+		Cluster cluster(windowSize);
+
+		while(!points.empty() && cluster.belongTo(points.back()))
+		{
+			cluster.add(points.back());
+			points.pop_back();
+		}
+
+		massCenters.push_back(cluster.getMassCenter());
+	}
+
+	return massCenters;
 }

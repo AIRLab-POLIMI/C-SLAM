@@ -36,7 +36,7 @@ std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 	while (baseIndex < width)
 	{
 		//The vector of clusters
-		std::vector<Cluster> clusters;
+		std::vector<MetaCluster> clusters;
 
 		//find clusters in the input
 		findClusters(clusters);
@@ -59,14 +59,14 @@ std::vector<cv::KeyPoint> ClusterFilter::getComplexObjects()
 	return complexObjects;
 }
 
-void ClusterFilter::findClusters(std::vector<Cluster>& clusters)
+void ClusterFilter::findClusters(std::vector<MetaCluster>& clusters)
 {
 	int remaining;
 
 	//start clustering
 	do
 	{
-		Cluster cluster;
+		MetaCluster cluster(windowSize);
 		createClusters(cluster);
 		if (!cluster.isEmpty())
 			clusters.push_back(cluster);
@@ -74,9 +74,9 @@ void ClusterFilter::findClusters(std::vector<Cluster>& clusters)
 	} while (remaining > 0);
 }
 
-void ClusterFilter::savePoints(std::vector<Cluster>& clusters)
+void ClusterFilter::savePoints(std::vector<MetaCluster>& clusters)
 {
-	std::vector<Cluster>::iterator it;
+	std::vector<MetaCluster>::iterator it;
 	for (it = clusters.begin(); it != clusters.end(); ++it)
 	{
 		cv::KeyPoint massCenter = it->getMassCenter();
@@ -101,7 +101,7 @@ void ClusterFilter::savePoints(std::vector<Cluster>& clusters)
 	}
 }
 
-void ClusterFilter::createClusters(Cluster& cluster)
+void ClusterFilter::createClusters(MetaCluster& cluster)
 {
 	//Get the ordered keyPoints of the current analyzed window
 	//We use only a pointer to that data, for efficiency reasons.
@@ -118,12 +118,12 @@ void ClusterFilter::createClusters(Cluster& cluster)
 		{
 			cv::KeyPoint point = currentVector.back();
 			//check if the point belongs to cluster
-			sameCluster = cluster.pointsBelongsTo(&point, windowSize);
+			sameCluster = cluster.belongTo(&point);
 			//if so...
 			if (sameCluster)
 			{
 				//add the point to the cluster
-				cluster.addToCluster(&point, windowSize);
+				cluster.add(&point);
 				//delete point from the matrix if is in the cluster
 				currentVector.pop_back();
 			}
