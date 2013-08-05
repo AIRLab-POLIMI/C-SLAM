@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 	createTrackbar("threshold", cornerDetection, NULL, 50, thresholdCorner,
 			(void*) &cornerD);
 	setTrackbarPos("threshold", cornerDetection, cornerP.threshold);
-	createTrackbar("windowSize", cornerDetection, NULL, 15, windowSizeCorner,
+	createTrackbar("windowSize", cornerDetection, NULL, 100, windowSizeCorner,
 			(void*) &cornerD);
 	setTrackbarPos("windowSize", cornerDetection, cornerP.windowSize);
 	createTrackbar("minSize", cornerDetection, NULL, 350, minClusterSizeCorner,
