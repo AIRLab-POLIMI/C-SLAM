@@ -4,13 +4,21 @@
 	<description>
 		c_vision, cognitive vision package
 	</description>
-	<maintainer email="davide.tateo90@gmail.com">Davide Tateo</maintainer>
+	<maintainer email="davide.tateo@mail.polimi.it">Davide Tateo</maintainer>
 	<license>GPLv3</license>
-	
+
 	<author>Davide Tateo</author>
 	<url>http://ros.org/wiki/c_vision</url>
-	
+
 	<build_depend>roscpp</build_depend>
-	
+	<build_depend>sensor_msgs</build_depend>
+	<build_depend>ardrone_autonomy</build_depend>
+	<build_depend>sensor_msgs</build_depend>
+	<build_depend>opencv2</build_depend>
+	<build_depend>cv_bridge</build_depend>
+	<build_depend>roscpp</build_depend>
+	<build_depend>std_msgs</build_depend>
+	<build_depend>image_transport</build_depend>
+
 	<buildtool_depend>catkin</buildtool_depend>
 </package>

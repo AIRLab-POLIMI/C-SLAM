@@ -21,27 +21,38 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <string>
+#ifndef DISPATCHER_H_
+#define DISPATCHER_H_
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <sensor_msgs/image_encodings.h>
+#include <ardrone_autonomy/Navdata.h>
 
-#include "Dispatcher.h"
+#include "CognitiveDetector.h"
 
 
-using namespace cv;
-
-int main(int argc, char *argv[])
+class Dispatcher
 {
-	ros::init(argc, argv, "cognitive_vision");
-	ros::NodeHandle n;
+public:
+	Dispatcher(ros::NodeHandle& n) :
+			it(n), roll(0), pitch(0), yaw(0)
+	{
+		n.subscribe("/ardrone/navdata", 1, &Dispatcher::handleNavdata, this);
+		it.subscribe("/ardrone/image_raw", 1, &Dispatcher::handleImage, this);
+	}
+	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
+	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 
-	Dispatcher dispatcher(n);
+private:
+	image_transport::ImageTransport it;
+	CognitiveDetector detector;
 
-	ros::spin();
+	double roll;
+	double pitch;
+	double yaw;
 
-}
+};
+
+#endif /* DISPATCHER_H_ */

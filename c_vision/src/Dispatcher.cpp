@@ -22,26 +22,32 @@
  */
 
 #include <iostream>
-#include <string>
-
-#include <ros/ros.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 #include "Dispatcher.h"
 
+namespace enc = sensor_msgs::image_encodings;
 
-using namespace cv;
-
-int main(int argc, char *argv[])
+void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
-	ros::init(argc, argv, "cognitive_vision");
-	ros::NodeHandle n;
+	roll = navdata.rotX;
+	pitch = navdata.rotY;
+	yaw = navdata.rotZ;
+}
 
-	Dispatcher dispatcher(n);
+void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
+{
 
-	ros::spin();
+	std::cerr << "calback chiamato!" << std::endl;
+	cv_bridge::CvImagePtr cv_ptr;
+	try
+	{
+		cv_ptr = cv_bridge::toCvCopy(msg, enc::BGR8);
+	} catch (cv_bridge::Exception& e)
+	{
+		ROS_ERROR("cv_bridge exception: %s", e.what());
+		return;
+	}
+
+	detector.detect(cv_ptr->image);
 
 }

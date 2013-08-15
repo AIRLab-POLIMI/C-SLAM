@@ -21,27 +21,12 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <string>
+#include "CognitiveDetector.h"
 
-#include <ros/ros.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include "Dispatcher.h"
-
-
-using namespace cv;
-
-int main(int argc, char *argv[])
+void CognitiveDetector::detect(cv::Mat frame)
 {
-	ros::init(argc, argv, "cognitive_vision");
-	ros::NodeHandle n;
-
-	Dispatcher dispatcher(n);
-
-	ros::spin();
-
+	cv::Mat cornerFrame;
+	cornerFrame = cornerDetector.detect(frame);
+	imshow(WINDOW, cornerFrame);
+	cvWaitKey(33);
 }

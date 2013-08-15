@@ -21,27 +21,39 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <string>
+#ifndef COGNITIVEDETECTOR_H_
+#define COGNITIVEDETECTOR_H_
 
-#include <ros/ros.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
+#include <string>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "Dispatcher.h"
+#include "DefaultParameters.h"
+#include "CornerDetector.h"
 
+static const std::string WINDOW = "Detected Image";
 
-using namespace cv;
-
-int main(int argc, char *argv[])
+class CognitiveDetector
 {
-	ros::init(argc, argv, "cognitive_vision");
-	ros::NodeHandle n;
+public:
+	CognitiveDetector() :
+			cornerDetector(cornerP.threshold, cornerP.windowSize,
+					cornerP.clusterMinSize, cornerP.noiseBarrier,
+					cornerP.objectWindow, cornerP.objectMinSize)
+	{
+		cv::namedWindow(WINDOW);
+	}
 
-	Dispatcher dispatcher(n);
+	~CognitiveDetector()
+	{
+		cv::destroyWindow(WINDOW);
+	}
 
-	ros::spin();
+	void detect(cv::Mat image);
 
-}
+private:
+	CornerDetector cornerDetector;
+
+};
+
+#endif /* COGNITIVEDETECTOR_H_ */

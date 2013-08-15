@@ -24,7 +24,7 @@
 #ifndef DEFAULTPARAMETERS_H_
 #define DEFAULTPARAMETERS_H_
 
-struct CornerParam
+static struct CornerParam
 {
 	static const int threshold = 35;
 	static const int windowSize = 30;
@@ -34,13 +34,13 @@ struct CornerParam
 	static const int objectMinSize = 300;
 } cornerP;
 
-struct CannyParam
+static struct CannyParam
 {
 	static const int minCanny = 90;
 	static const int maxCanny = 300;
 } cannyP;
 
-struct HougPParam
+static struct HougPParam
 {
 	static const int threshold = 75;
 	static const int minLineLenght = 70;
