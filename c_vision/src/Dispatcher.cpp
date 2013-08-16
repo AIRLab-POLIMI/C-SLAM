@@ -29,15 +29,14 @@ namespace enc = sensor_msgs::image_encodings;
 
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
-	roll = navdata.rotX;
-	pitch = navdata.rotY;
-	yaw = navdata.rotZ;
+	detector.setRoll(navdata.rotX);
+	detector.setPitch(navdata.rotY);
+	detector.setYaw(navdata.rotZ);
 }
 
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
 
-	std::cerr << "calback chiamato!" << std::endl;
 	cv_bridge::CvImagePtr cv_ptr;
 	try
 	{

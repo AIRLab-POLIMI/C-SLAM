@@ -39,7 +39,8 @@ public:
 	CognitiveDetector() :
 			cornerDetector(cornerP.threshold, cornerP.windowSize,
 					cornerP.clusterMinSize, cornerP.noiseBarrier,
-					cornerP.objectWindow, cornerP.objectMinSize)
+					cornerP.objectWindow, cornerP.objectMinSize), pitch(0), roll(
+					0), yaw(0)
 	{
 		cv::namedWindow(WINDOW);
 	}
@@ -51,8 +52,30 @@ public:
 
 	void detect(cv::Mat image);
 
+	inline void setPitch(double pitch)
+	{
+		this->pitch = pitch;
+	}
+
+	inline void setRoll(double roll)
+	{
+		this->roll = roll;
+	}
+
+	inline void setYaw(double yaw)
+	{
+		this->yaw = yaw;
+	}
+
+private:
+	void drawAxis(cv::Mat& input);
+
 private:
 	CornerDetector cornerDetector;
+
+	double pitch;
+	double roll;
+	double yaw;
 
 };
 

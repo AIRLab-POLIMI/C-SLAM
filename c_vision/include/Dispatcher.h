@@ -32,26 +32,26 @@
 
 #include "CognitiveDetector.h"
 
-
 class Dispatcher
 {
 public:
 	Dispatcher(ros::NodeHandle& n) :
-			it(n), roll(0), pitch(0), yaw(0)
+			it(n)
 	{
-		n.subscribe("/ardrone/navdata", 1, &Dispatcher::handleNavdata, this);
-		it.subscribe("/ardrone/image_raw", 1, &Dispatcher::handleImage, this);
+		navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
+				&Dispatcher::handleNavdata, this);
+		imageSubscriber = it.subscribe("/ardrone/image_raw", 1,
+				&Dispatcher::handleImage, this);
 	}
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 
 private:
 	image_transport::ImageTransport it;
-	CognitiveDetector detector;
+	ros::Subscriber navdataSubscriber;
+	image_transport::Subscriber imageSubscriber;
 
-	double roll;
-	double pitch;
-	double yaw;
+	CognitiveDetector detector;
 
 };
 

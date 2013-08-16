@@ -23,10 +23,33 @@
 
 #include "CognitiveDetector.h"
 
+#include <iostream>
+
 void CognitiveDetector::detect(cv::Mat frame)
 {
 	cv::Mat cornerFrame;
 	cornerFrame = cornerDetector.detect(frame);
+	drawAxis(cornerFrame);
+
 	imshow(WINDOW, cornerFrame);
-	cvWaitKey(33);
+	cvWaitKey(60);
+}
+
+void CognitiveDetector::drawAxis(cv::Mat& input)
+{
+	cv::Point center, zAxis;
+	center.x = input.cols / 2;
+	center.y = input.rows / 2;
+
+
+	double xOffset = 100 * sin(roll * M_PI / 180.0);
+	double yOffset = 100 * cos(roll * M_PI / 180.0);
+
+	zAxis.x = center.x - xOffset;
+	zAxis.y = center.y - yOffset;
+
+
+	cv::line(input, center, zAxis, cv::Scalar(0, 0, 0));
+	cv::circle(input, center, 20, cv::Scalar(0, 0, 0));
+
 }
