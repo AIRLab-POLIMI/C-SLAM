@@ -25,39 +25,38 @@
 
 #include <iostream>
 
-std::vector<cv::KeyPoint> ClusterFilter::filter(std::vector<cv::KeyPoint> input)
+void ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 {
 	if (windowSize == 0 || input.size() == 0)
-		return input;
-
-	orderKeyPoints(input);
-
-	//main algorithm loop
-	while (baseIndex < width)
 	{
-		//The vector of clusters
-		std::vector<MetaCluster> clusters;
-
-		//find clusters in the input
-		findClusters(clusters);
-
-		//save results of clustering stage
-		savePoints(clusters);
-
-		//reorder new points added to the clusters
-		orderVectors(baseIndex + stepSize + 1, topIndex);
-
-		//Update the indexes
-		updateIndexes();
+		output = input;
 	}
+	else
+	{
 
-	return output;
+		orderKeyPoints(input);
+
+		//main algorithm loop
+		while (baseIndex < width)
+		{
+			//The vector of clusters
+			std::vector<MetaCluster> clusters;
+
+			//find clusters in the input
+			findClusters(clusters);
+
+			//save results of clustering stage
+			savePoints(clusters);
+
+			//reorder new points added to the clusters
+			orderVectors(baseIndex + stepSize + 1, topIndex);
+
+			//Update the indexes
+			updateIndexes();
+		}
+	}
 }
 
-std::vector<cv::KeyPoint> ClusterFilter::getComplexObjects()
-{
-	return complexObjects;
-}
 
 void ClusterFilter::findClusters(std::vector<MetaCluster>& clusters)
 {

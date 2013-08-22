@@ -51,8 +51,15 @@ public:
 		assert(windowSize < width);
 	}
 
-	std::vector<cv::KeyPoint> filter(std::vector<cv::KeyPoint> input);
-	std::vector<cv::KeyPoint> getComplexObjects();
+	void filter(std::vector<cv::KeyPoint> input);
+	inline std::vector<cv::KeyPoint> getFilteredKeyPoints()
+	{
+		return output;
+	}
+	inline std::vector<cv::KeyPoint> getComplexObjects()
+	{
+		return complexObjects;
+	}
 
 	~ClusterFilter();
 

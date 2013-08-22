@@ -43,6 +43,7 @@ public:
 					0), yaw(0)
 	{
 		cv::namedWindow(WINDOW);
+		createTrackBars();
 	}
 
 	~CognitiveDetector()
@@ -69,6 +70,7 @@ public:
 
 private:
 	void drawAxis(cv::Mat& input);
+	void createTrackBars();
 
 private:
 	CornerDetector cornerDetector;

@@ -27,10 +27,10 @@
 static struct CornerParam
 {
 	static const int threshold = 35;
-	static const int windowSize = 30;
-	static const int clusterMinSize = 10;
-	static const int noiseBarrier = 50;
-	static const int objectWindow = 50;
+	static const int windowSize = 35;
+	static const int clusterMinSize = 20;
+	static const int noiseBarrier = 40;
+	static const int objectWindow = 60;
 	static const int objectMinSize = 300;
 } cornerP;
 

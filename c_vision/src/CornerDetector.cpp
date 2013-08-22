@@ -45,17 +45,19 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 	ClusterFilter objectFinder(objectWindow, objectMinSize, noiseBarrier,
 			input.cols, input.rows);
 
-	keyPoints = filterObject.filter(keyPoints);
+	filterObject.filter(keyPoints);
+	keyPoints = filterObject.getFilteredKeyPoints();
 	bigKeypoints = filterObject.getComplexObjects();
 
 	//finds complex objects
-	complexObjects = objectFinder.filter(bigKeypoints);
+	objectFinder.filter(bigKeypoints);
+	complexObjects = objectFinder.getFilteredKeyPoints();
 
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
 		const cv::KeyPoint& kp = keyPoints[i];
-		circle(output, kp.pt, kp.size / 2, CV_RGB(255, 0, 0));
+		circle(output, kp.pt, 2, CV_RGB(255, 0, 0));
 	}
 
 	for (size_t i = 0; i < complexObjects.size(); ++i)

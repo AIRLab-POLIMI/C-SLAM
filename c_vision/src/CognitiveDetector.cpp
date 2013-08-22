@@ -23,6 +23,8 @@
 
 #include "CognitiveDetector.h"
 
+#include "Callbacks.h"
+
 #include <iostream>
 
 void CognitiveDetector::detect(cv::Mat frame)
@@ -37,19 +39,49 @@ void CognitiveDetector::detect(cv::Mat frame)
 
 void CognitiveDetector::drawAxis(cv::Mat& input)
 {
-	cv::Point center, zAxis;
+	cv::Point center, y1, y2, z1, z2;
 	center.x = input.cols / 2;
 	center.y = input.rows / 2;
 
+	double offset1 = 50 * sin(roll * M_PI / 180.0);
+	double offset2 = 50 * cos(roll * M_PI / 180.0);
 
-	double xOffset = 100 * sin(roll * M_PI / 180.0);
-	double yOffset = 100 * cos(roll * M_PI / 180.0);
+	y1.x = center.x + offset2;
+	y1.y = center.y - offset1;
+	y2.x = center.x - offset2;
+	y2.y = center.y + offset1;
 
-	zAxis.x = center.x - xOffset;
-	zAxis.y = center.y - yOffset;
+	z1.x = center.x - offset1;
+	z1.y = center.y - offset2;
+	z2.x = center.x + offset1;
+	z2.y = center.y + offset2;
 
+	cv::line(input, y1, y2, cv::Scalar(0, 0, 0));
+	cv::line(input, z1, z2, cv::Scalar(0, 0, 0));
+	cv::circle(input, center, 5, cv::Scalar(0, 0, 0));
 
-	cv::line(input, center, zAxis, cv::Scalar(0, 0, 0));
-	cv::circle(input, center, 20, cv::Scalar(0, 0, 0));
+}
+
+void CognitiveDetector::createTrackBars()
+{
+	//Controls for corner
+	cv::createTrackbar("threshold", WINDOW, NULL, 100, thresholdCorner,
+			(void*) &cornerDetector);
+	cv::setTrackbarPos("threshold", WINDOW, cornerP.threshold);
+	cv::createTrackbar("windowSize", WINDOW, NULL, 100, windowSizeCorner,
+			(void*) &cornerDetector);
+	cv::setTrackbarPos("windowSize", WINDOW, cornerP.windowSize);
+	cv::createTrackbar("minSize", WINDOW, NULL, 350, minClusterSizeCorner,
+			(void*) &cornerDetector);
+	cv::setTrackbarPos("minSize", WINDOW, cornerP.clusterMinSize);
+	cv::createTrackbar("noiseBarrier", WINDOW, NULL, 350, noisebarrierCorner,
+			(void*) &cornerDetector);
+	cv::setTrackbarPos("noiseBarrier", WINDOW, cornerP.noiseBarrier);
+	cv::createTrackbar("objectWindow", WINDOW, NULL, 350, objectWindoCorner,
+			(void*) &cornerDetector);
+	cv::setTrackbarPos("objectWindow", WINDOW, cornerP.objectWindow);
+	cv::createTrackbar("minObjectSize", WINDOW, NULL, 350, objectMinSizeCorner,
+			(void*) &cornerDetector);
+	cv::setTrackbarPos("minObjectSize", WINDOW, cornerP.objectMinSize);
 
 }

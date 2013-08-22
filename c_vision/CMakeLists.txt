@@ -21,7 +21,7 @@ add_executable(detector src/detector.cpp src/Callbacks.cpp)
 add_executable(comparator src/comparator.cpp src/Callbacks.cpp)
 
 #build the recognition node
-add_executable(cognitive_vision src/main.cpp src/Dispatcher.cpp src/CognitiveDetector.cpp)
+add_executable(cognitive_vision src/main.cpp src/Dispatcher.cpp src/CognitiveDetector.cpp src/Callbacks.cpp)
 
 #link libriaries
 target_link_libraries(recognition_library ${OpenCV_LIBRARIES})
