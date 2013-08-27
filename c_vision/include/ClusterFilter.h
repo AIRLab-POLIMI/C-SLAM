@@ -52,6 +52,7 @@ public:
 	}
 
 	void filter(std::vector<cv::KeyPoint> input);
+
 	inline std::vector<cv::KeyPoint> getFilteredKeyPoints()
 	{
 		return output;

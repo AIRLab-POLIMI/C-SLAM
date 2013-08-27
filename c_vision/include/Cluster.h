@@ -27,7 +27,24 @@
 #include <vector>
 #include <opencv2/features2d/features2d.hpp>
 
-class Cluster
+class AbstractCluster
+{
+public:
+	inline bool isEmpty()
+	{
+		return points.size() == 0;
+	}
+	virtual bool belongTo(cv::KeyPoint* point) = 0;
+	virtual void add(cv::KeyPoint* point) = 0;
+	virtual ~AbstractCluster()
+	{
+	}
+
+protected:
+	std::vector<cv::KeyPoint*> points;
+};
+
+class Cluster: public AbstractCluster
 {
 public:
 
@@ -39,16 +56,14 @@ public:
 		massCenter.size = 0;
 	}
 
-	bool isEmpty();
 	bool belongTo(cv::KeyPoint* point);
 	void add(cv::KeyPoint* point);
 	cv::KeyPoint getMassCenter();
 
 private:
-	int distance(cv::KeyPoint start,cv::KeyPoint end);
+	int distance(cv::KeyPoint start, cv::KeyPoint end);
 
 protected:
-	std::vector<cv::KeyPoint*> points;
 	int windowSize;
 
 private:
@@ -67,6 +82,36 @@ public:
 
 	std::vector<cv::KeyPoint> getMassCenters();
 
+};
+
+class LineCluster: AbstractCluster
+{
+public:
+	LineCluster(double m, int maxDelta) :
+			m(m), q(0), maxDelta(maxDelta)
+	{
+	}
+
+	bool belongTo(cv::KeyPoint* point);
+	void add(cv::KeyPoint* point);
+
+	inline cv::KeyPoint getLineStart()
+	{
+		return calculateEdge(points.front());
+	}
+
+	inline cv::KeyPoint getLineEnd()
+	{
+		return calculateEdge(points.back());
+	}
+
+private:
+	cv::KeyPoint calculateEdge(cv::KeyPoint* point);
+
+private:
+	double m;
+	double q;
+	double maxDelta;
 };
 
 #endif /* CLUSTER_H_ */

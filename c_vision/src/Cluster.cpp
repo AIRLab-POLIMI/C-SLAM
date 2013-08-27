@@ -23,14 +23,9 @@
 
 #include "Cluster.h"
 
-bool Cluster::isEmpty()
-{
-	return points.size() == 0;
-}
-
 bool Cluster::belongTo(cv::KeyPoint* point)
 {
-	return isEmpty() || distance(*point, massCenter)*2 < windowSize;
+	return isEmpty() || distance(*point, massCenter) * 2 < windowSize;
 }
 
 void Cluster::add(cv::KeyPoint* point)
@@ -39,8 +34,8 @@ void Cluster::add(cv::KeyPoint* point)
 	int x = point->pt.x;
 	float size = point->size;
 
-	massCenter.pt.x = massCenter.pt.x *  massCenter.size + x * size;
-	massCenter.pt.y = massCenter.pt.y *  massCenter.size + y * size;
+	massCenter.pt.x = massCenter.pt.x * massCenter.size + x * size;
+	massCenter.pt.y = massCenter.pt.y * massCenter.size + y * size;
 
 	massCenter.size += size;
 
@@ -55,29 +50,28 @@ cv::KeyPoint Cluster::getMassCenter()
 	return massCenter;
 }
 
-int Cluster::distance(cv::KeyPoint start,cv::KeyPoint end)
+int Cluster::distance(cv::KeyPoint start, cv::KeyPoint end)
 {
 	int ystart = start.pt.y;
 	int yend = end.pt.y;
 
-	int distance = ystart-yend;
+	int distance = ystart - yend;
 	distance = (distance < 0) ? -distance : distance;
 
 	return distance;
 
 }
 
-
 std::vector<cv::KeyPoint> MetaCluster::getMassCenters()
 {
 	std::vector<cv::KeyPoint> massCenters;
 
 	//get all sub clusters of meta-cluster
-	while(!points.empty())
+	while (!points.empty())
 	{
 		Cluster cluster(windowSize);
 
-		while(!points.empty() && cluster.belongTo(points.back()))
+		while (!points.empty() && cluster.belongTo(points.back()))
 		{
 			cluster.add(points.back());
 			points.pop_back();
@@ -88,3 +82,38 @@ std::vector<cv::KeyPoint> MetaCluster::getMassCenters()
 
 	return massCenters;
 }
+
+cv::KeyPoint LineCluster::calculateEdge(cv::KeyPoint* point)
+{
+	cv::KeyPoint edge;
+	int y = point->pt.y;
+	int x = point->pt.x;
+	edge.pt.y = y;
+	edge.pt.x = m * x + q;
+
+	return edge;
+}
+
+bool LineCluster::belongTo(cv::KeyPoint* point)
+{
+	int y = point->pt.y;
+	int x = point->pt.x;
+
+	double d2 = (double) (x - m*y - q)*(x - m*y - q) / (1 +m*m);
+
+	return isEmpty() || d2 <= maxDelta*maxDelta ;
+}
+
+void LineCluster::add(cv::KeyPoint* point)
+{
+	int y = point->pt.y;
+	int x = point->pt.x;
+	int n = points.size();
+
+	double qn = x-m*y;
+
+	q = (n*q + qn) / n;
+
+	points.push_back(point);
+}
+

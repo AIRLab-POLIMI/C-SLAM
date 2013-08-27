@@ -40,18 +40,65 @@ public:
 	cv::Mat detect(cv::Mat& input);
 
 	//getters and setters
-	int getThreshold() const;
-	void setThreshold(int threshold);
-	int getClusterMinSize() const;
-	void setClusterMinSize(int clusterMinSize);
-	int getClusterWindow() const;
-	void setClusterWindow(int clusterWindow);
-	int getNoiseBarrier() const;
-	void setNoiseBarrier(int noiseBarrier);
-	int getObjectMinSize() const;
-	void setObjectMinSize(int objectMinSize);
-	int getObjectWindow() const;
-	void setObjectWindow(int objectWindow);
+	inline int getThreshold() const
+	{
+		return threshold;
+	}
+
+	inline void setThreshold(int threshold)
+	{
+		this->threshold = threshold;
+	}
+
+	inline int getClusterMinSize() const
+	{
+		return clusterMinSize;
+	}
+
+	inline void setClusterMinSize(int clusterMinSize)
+	{
+		this->clusterMinSize = clusterMinSize;
+	}
+
+	inline int getClusterWindow() const
+	{
+		return clusterWindow;
+	}
+
+	inline void setClusterWindow(int clusterWindow)
+	{
+		this->clusterWindow = clusterWindow;
+	}
+
+	inline int getNoiseBarrier() const
+	{
+		return noiseBarrier;
+	}
+
+	inline void setNoiseBarrier(int noiseBarrier)
+	{
+		this->noiseBarrier = noiseBarrier;
+	}
+
+	inline int getObjectMinSize() const
+	{
+		return objectMinSize;
+	}
+
+	inline void setObjectMinSize(int objectMinSize)
+	{
+		this->objectMinSize = objectMinSize;
+	}
+
+	inline int getObjectWindow() const
+	{
+		return objectWindow;
+	}
+
+	inline void setObjectWindow(int objectWindow)
+	{
+		this->objectWindow = objectWindow;
+	}
 
 private:
 	int threshold;
