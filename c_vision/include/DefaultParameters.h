@@ -24,28 +24,35 @@
 #ifndef DEFAULTPARAMETERS_H_
 #define DEFAULTPARAMETERS_H_
 
-static struct CornerParam
+static struct FeatureParam
 {
-	static const int threshold = 35;
-	static const int windowSize = 35;
-	static const int clusterMinSize = 20;
+	static const int threshold = 70;
+	static const int windowSize = 40;
+	static const int clusterMinSize = 40;
 	static const int noiseBarrier = 40;
-	static const int objectWindow = 60;
+	static const int objectWindow = 100;
 	static const int objectMinSize = 300;
 } cornerP;
 
+static struct LineParam
+{
+	static const double maxDelta = 25.0;
+} lineP;
+
 static struct CannyParam
 {
-	static const int minCanny = 90;
-	static const int maxCanny = 300;
+	static const int minCanny = 80;
+	static const int maxCanny = 200;
+	static const int apertureSize = 3;
 } cannyP;
 
-static struct HougPParam
+static struct HougParam
 {
-	static const int threshold = 75;
-	static const int minLineLenght = 70;
-	static const int maxLineGap = 20;
-} houghPP;
-
+	static const int rho = 1;
+	static const double teta = CV_PI / 180;
+	static const int threshold = 100;
+	static const int minLineLenght = 120;
+	static const int maxLineGap = 50;
+} houghP;
 
 #endif /* DEFAULTPARAMETERS_H_ */

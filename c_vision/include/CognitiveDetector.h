@@ -29,20 +29,27 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "DefaultParameters.h"
-#include "CornerDetector.h"
+#include "FeatureDetector.h"
+#include "LineDetector.h"
+#include "HoughDetector.h"
 
 static const std::string WINDOW = "Detected Image";
+static const std::string LINE_WINDOW = "Line Image";
 
 class CognitiveDetector
 {
 public:
 	CognitiveDetector() :
-			cornerDetector(cornerP.threshold, cornerP.windowSize,
+			featureDetector(cornerP.threshold, cornerP.windowSize,
 					cornerP.clusterMinSize, cornerP.noiseBarrier,
-					cornerP.objectWindow, cornerP.objectMinSize), pitch(0), roll(
-					0), yaw(0)
+					cornerP.objectWindow, cornerP.objectMinSize), lineFinder(
+					lineP.maxDelta), lineDetector(cannyP.minCanny,
+					cannyP.maxCanny, cannyP.apertureSize, houghP.rho, houghP.teta,
+					houghP.threshold, houghP.minLineLenght,
+					houghP.maxLineGap), pitch(0), roll(0), yaw(0)
 	{
 		cv::namedWindow(WINDOW);
+		cv::namedWindow(LINE_WINDOW);
 		createTrackBars();
 	}
 
@@ -69,11 +76,20 @@ public:
 	}
 
 private:
+	std::vector<Line> findLines(std::vector<cv::KeyPoint> keyPoints);
+	std::vector<Line> findLines(double roll,
+			const std::vector<cv::KeyPoint>& keyPoints);
 	void drawAxis(cv::Mat& input);
 	void createTrackBars();
+	void displayResults(const std::vector<cv::KeyPoint>& keyPoints,
+			const std::vector<cv::KeyPoint>& complexObjects,
+			const std::vector<Line>& lines, cv::Mat& frame);
+	void addOldKeyPoints(std::vector<cv::KeyPoint>& keyPoints);
 
 private:
-	CornerDetector cornerDetector;
+	FeatureDetector featureDetector;
+	LineDetector lineFinder;
+	HoughDetector lineDetector;
 
 	double pitch;
 	double roll;

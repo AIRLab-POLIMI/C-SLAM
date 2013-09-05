@@ -36,7 +36,7 @@ class Dispatcher
 {
 public:
 	Dispatcher(ros::NodeHandle& n) :
-			it(n)
+			it(n), rotX(0), rotY(0), rotZ(0)
 	{
 		navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
@@ -50,6 +50,9 @@ private:
 	image_transport::ImageTransport it;
 	ros::Subscriber navdataSubscriber;
 	image_transport::Subscriber imageSubscriber;
+
+	double rotX, rotY, rotZ;
+
 
 	CognitiveDetector detector;
 

@@ -29,9 +29,9 @@ namespace enc = sensor_msgs::image_encodings;
 
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
-	detector.setRoll(navdata.rotX);
-	detector.setPitch(navdata.rotY);
-	detector.setYaw(navdata.rotZ);
+	rotX = navdata.rotX;
+	rotY = navdata.rotY;
+	rotZ = navdata.rotZ;
 }
 
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
@@ -46,6 +46,10 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 		ROS_ERROR("cv_bridge exception: %s", e.what());
 		return;
 	}
+
+	detector.setRoll(rotX);
+	detector.setPitch(rotY);
+	detector.setYaw(rotZ);
 
 	detector.detect(cv_ptr->image);
 

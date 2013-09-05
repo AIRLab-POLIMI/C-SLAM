@@ -24,11 +24,6 @@
 #ifndef CALLBACKS_H_
 #define CALLBACKS_H_
 
-///Canny min threshold trackbar callback
-void minCanny(int value, void* data);
-///Canny max threshold trackbar callback
-void maxCanny(int value, void* data);
-
 ///FAST threshold
 void thresholdCorner(int value, void* data);
 ///Clustering algorithm window Size
@@ -42,13 +37,17 @@ void objectWindoCorner(int value, void* data);
 ///minimum size to be considered an object
 void objectMinSizeCorner(int value, void* data);
 
+
+///Canny min threshold trackbar callback
+void minCanny(int value, void* data);
+///Canny max threshold trackbar callback
+void maxCanny(int value, void* data);
 ///HoughLineP threshold trackbar callback
 void thresholdHoughP(int value, void* data);
 ///HoughLineP minimum line length
 void minLineLengthHoughP(int value, void* data);
 ///HoughLineP max line gap trackbar callback
 void maxLineGapHoughP(int value, void* data);
-
 
 
 #endif /* CALLBACKS_H_ */

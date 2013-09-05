@@ -84,16 +84,18 @@ public:
 
 };
 
-class LineCluster: AbstractCluster
+class AbstractLineCluster: public AbstractCluster
 {
 public:
-	LineCluster(double m, int maxDelta) :
-			m(m), q(0), maxDelta(maxDelta)
+	AbstractLineCluster(double maxDelta) :
+			q(0), maxDelta(maxDelta)
 	{
 	}
 
-	bool belongTo(cv::KeyPoint* point);
-	void add(cv::KeyPoint* point);
+	inline bool isLine()
+	{
+		return points.size() >= 2;
+	}
 
 	inline cv::KeyPoint getLineStart()
 	{
@@ -105,13 +107,46 @@ public:
 		return calculateEdge(points.back());
 	}
 
-private:
+protected:
+	virtual cv::KeyPoint calculateEdge(cv::KeyPoint* point) = 0;
+
+protected:
+	double q;
+	double maxDelta;
+};
+
+class LineCluster: public AbstractLineCluster
+{
+public:
+	LineCluster(double m, double maxDelta) :
+			AbstractLineCluster(maxDelta), m(m)
+	{
+	}
+
+	bool belongTo(cv::KeyPoint* point);
+	void add(cv::KeyPoint* point);
+
+protected:
 	cv::KeyPoint calculateEdge(cv::KeyPoint* point);
 
 private:
 	double m;
-	double q;
-	double maxDelta;
+};
+
+class HorizontalLineCluster: public AbstractLineCluster
+{
+public:
+	HorizontalLineCluster(double maxDelta) :
+			AbstractLineCluster(maxDelta)
+	{
+	}
+
+	bool belongTo(cv::KeyPoint* point);
+	void add(cv::KeyPoint* point);
+
+protected:
+	cv::KeyPoint calculateEdge(cv::KeyPoint* point);
+
 };
 
 #endif /* CLUSTER_H_ */

@@ -21,103 +21,67 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
 #include "LineDetector.h"
 
-cv::Mat LineDetector::detect(cv::Mat& input)
+#include <iostream>
+
+void LineDetector::detect(std::vector<cv::KeyPoint> points, double m)
 {
-	cv::Mat output;
+	Comparator comparator(m);
+	std::sort(points.begin(), points.end(), comparator);
 
-	cvtColor(input, output, CV_GRAY2BGR);
-	return output;
-}
-
-cv::Mat HoughLineDetector::detect(cv::Mat& input)
-{
-	cv::Mat output = this->LineDetector::detect(input);
-	std::vector<cv::Vec2f> lines;
-	HoughLines(input, lines, rho, theta, threshold, 0, 0);
-
-	for (size_t i = 0; i < lines.size(); i++)
+	for (size_t i = 0; i < points.size(); i++)
 	{
-		float rho = lines[i][0], theta = lines[i][1];
-		cv::Point pt1, pt2;
-		double a = cos(theta), b = sin(theta);
-		double x0 = a * rho, y0 = b * rho;
-		pt1.x = cvRound(x0 + 1000 * (-b));
-		pt1.y = cvRound(y0 + 1000 * (a));
-		pt2.x = cvRound(x0 - 1000 * (-b));
-		pt2.y = cvRound(y0 - 1000 * (a));
-		line(output, pt1, pt2, cv::Scalar(0, 0, 255), 3, CV_AA);
+		LineCluster* cluster = new LineCluster(m, maxDelta);
+
+		while (i < points.size() && cluster->belongTo(&points[i]))
+		{
+			cluster->add(&points[i]);
+			i++;
+		}
+
+		if (cluster->isLine())
+			clusters.push_back(cluster);
 	}
 
-	return output;
 }
 
-cv::Mat ProbabilisticHoughLineDetector::detect(cv::Mat& input)
+void LineDetector::detect(std::vector<cv::KeyPoint> points)
 {
-	cv::Mat output = this->LineDetector::detect(input);
+	ComparatorY comparator;
+	std::sort(points.begin(), points.end(), comparator);
 
-	std::vector<cv::Vec4i> lines;
-
-	HoughLinesP(input, lines, rho, theta, threshold, minLineLength, maxLineGap);
-
-	for (size_t i = 0; i < lines.size(); i++)
+	for (size_t i = 0; i < points.size(); i++)
 	{
-		cv::Vec4i l = lines[i];
-		line(output, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
-				cv::Scalar(0, 0, 255), 3, 8);
+		HorizontalLineCluster* cluster = new HorizontalLineCluster(maxDelta);
+
+		while (i < points.size() && cluster->belongTo(&points[i]))
+		{
+			cluster->add(&points[i]);
+			i++;
+		}
+
+		if (cluster->isLine())
+			clusters.push_back(cluster);
 	}
 
-	return output;
 }
 
-int ProbabilisticHoughLineDetector::getMaxLineGap()
+std::vector<Line> LineDetector::getLines()
 {
-	return maxLineGap;
-}
+	std::vector<Line> lines;
+	std::vector<AbstractLineCluster*>::iterator it;
+	for (it = clusters.begin(); it != clusters.end(); it++)
+	{
+		AbstractLineCluster* cluster = *it;
+		Line line;
+		line.start = cluster->getLineStart();
+		line.end = cluster->getLineEnd();
+		lines.push_back(line);
+	}
 
-void ProbabilisticHoughLineDetector::setMaxLineGap(int maxLineGap)
-{
-	this->maxLineGap = maxLineGap;
-}
+	clusters.erase(clusters.begin(), clusters.end());
 
-int ProbabilisticHoughLineDetector::getMinLineLength()
-{
-	return minLineLength;
-}
+	return lines;
 
-void ProbabilisticHoughLineDetector::setMinLineLength(int minLineLength)
-{
-	this->minLineLength = minLineLength;
-}
-
-int LineDetector::getRho()
-{
-	return rho;
-}
-
-void LineDetector::setRho(int rho)
-{
-	this->rho = rho;
-}
-
-double LineDetector::getTheta()
-{
-	return theta;
-}
-
-void LineDetector::setTheta(double theta)
-{
-	this->theta = theta;
-}
-
-int LineDetector::getThreshold()
-{
-	return threshold;
-}
-
-void LineDetector::setThreshold(int threshold)
-{
-	this->threshold = threshold;
 }

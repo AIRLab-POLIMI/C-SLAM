@@ -24,89 +24,68 @@
 #ifndef LINEDETECTOR_H_
 #define LINEDETECTOR_H_
 
-#include <opencv2/core/core.hpp>
+#include <vector>
+#include <opencv2/features2d/features2d.hpp>
+#include "Cluster.h"
 
-/*!
- * Class used to Detect Lines
- *
- *
- */
+struct Line
+{
+	cv::KeyPoint start, end;
+};
+
 class LineDetector
 {
 
 public:
-	LineDetector(int rho, double theta, int threshold) :
-			rho(rho), theta(theta), threshold(threshold)
+	LineDetector(double maxDelta) :
+			maxDelta(maxDelta)
 	{
 	}
-
-	virtual cv::Mat detect(cv::Mat& input);
-
-	//getters
-	int getRho();
-	void setRho(int rho);
-	double getTheta();
-	void setTheta(double theta);
-	int getThreshold();
-	void setThreshold(int threshold);
-
-	virtual ~LineDetector()
-	{
-	}
-
-protected:
-	///Distance resolution of the accumulator in pixels
-	int rho;
-	///Angle resolution of the accumulator in radians
-	double theta;
-	///The accumulator threshold parameter. Only those lines are returned that get enough votes
-	int threshold;
-};
-
-class HoughLineDetector: public LineDetector
-{
-
-public:
-	HoughLineDetector(int rho, double theta, int threshold) :
-			LineDetector(rho, theta, threshold)
-	{
-	}
-	cv::Mat detect(cv::Mat& input);
-
-	~HoughLineDetector()
-	{
-	}
-
-};
-
-class ProbabilisticHoughLineDetector: public LineDetector
-{
-
-public:
-	ProbabilisticHoughLineDetector(int rho, double theta, int threshold,
-			int minLineLenght, int maxLineGap) :
-			LineDetector(rho, theta, threshold), minLineLength(minLineLenght), maxLineGap(
-					maxLineGap)
-	{
-	}
-
-	cv::Mat detect(cv::Mat& input);
-
-	//getters
-	int getMaxLineGap();
-	void setMaxLineGap(int maxLineGap);
-	int getMinLineLength();
-	void setMinLineLength(int minLineLength);
-
-	~ProbabilisticHoughLineDetector()
-	{
-	}
+	void detect(std::vector<cv::KeyPoint> input, double m);
+	void detect(std::vector<cv::KeyPoint> points);
+	std::vector<Line> getLines();
 
 private:
-	///The minimum line length. Line segments shorter than that will be rejected
-	int minLineLength;
-	///The maximum allowed gap between points on the same line to link them.
-	int maxLineGap;
+	std::vector<AbstractLineCluster*> clusters;
+	double maxDelta;
+
+private:
+	class Comparator
+	{
+	public:
+
+		Comparator(double m) :
+				m(m)
+		{
+		}
+
+		bool operator()(cv::KeyPoint i, cv::KeyPoint j)
+		{
+			int yi = i.pt.y;
+			int xi = i.pt.x;
+			double qi = xi - m * yi;
+
+			int yj = j.pt.y;
+			int xj = j.pt.x;
+			double qj = xj - m * yj;
+
+			return qi < qj;
+		}
+
+	private:
+		double m;
+	};
+
+	class ComparatorY
+	{
+	public:
+
+		bool operator()(cv::KeyPoint i, cv::KeyPoint j)
+		{
+			return i.pt.y < j.pt.y;
+		}
+	};
+
 };
 
 #endif /* LINEDETECTOR_H_ */

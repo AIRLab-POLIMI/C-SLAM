@@ -21,20 +21,60 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include "CognitiveDetector.h"
-
 #include "Callbacks.h"
-
-#include <iostream>
 
 void CognitiveDetector::detect(cv::Mat frame)
 {
-	cv::Mat cornerFrame;
-	cornerFrame = cornerDetector.detect(frame);
-	drawAxis(cornerFrame);
+	cv::Mat lineFrame = lineDetector.detect(frame);
+	featureDetector.detect(frame);
+	std::vector<cv::KeyPoint> keyPoints = featureDetector.getKeyPoints();
 
-	imshow(WINDOW, cornerFrame);
+	std::vector<cv::KeyPoint> complexObjects =
+			featureDetector.getComplexObject();
+
+	std::vector<Line> lines = findLines(keyPoints);
+
+	//display results
+	displayResults(keyPoints, complexObjects, lines, frame);
+	drawAxis(frame);
+
+	imshow(WINDOW, frame);
+	imshow(LINE_WINDOW, lineFrame);
 	cvWaitKey(60);
+}
+
+std::vector<Line> CognitiveDetector::findLines(
+		std::vector<cv::KeyPoint> keyPoints)
+{
+
+	std::vector<Line> lines;
+	std::vector<Line> tmp;
+
+	lines = findLines(-roll, keyPoints);
+	tmp = findLines(-(roll + 90), keyPoints);
+	lines.insert(lines.end(), tmp.begin(), tmp.end());
+
+	return lines;
+
+}
+
+std::vector<Line> CognitiveDetector::findLines(double roll,
+		const std::vector<cv::KeyPoint>& keyPoints)
+{
+	if (fmod(roll, 180) != 0)
+	{
+		double m = tan(roll * M_PI / 180.0);
+		lineFinder.detect(keyPoints, m);
+	}
+	else
+	{
+		lineFinder.detect(keyPoints);
+	}
+
+	return lineFinder.getLines();
 }
 
 void CognitiveDetector::drawAxis(cv::Mat& input)
@@ -62,26 +102,69 @@ void CognitiveDetector::drawAxis(cv::Mat& input)
 
 }
 
+void CognitiveDetector::displayResults(
+		const std::vector<cv::KeyPoint>& keyPoints,
+		const std::vector<cv::KeyPoint>& complexObjects,
+		const std::vector<Line>& lines, cv::Mat& frame)
+{
+	//display results
+	for (size_t i = 0; i < keyPoints.size(); ++i)
+	{
+		const cv::KeyPoint& kp = keyPoints[i];
+		cv::circle(frame, kp.pt, 2, CV_RGB(255, 0, 0));
+	}
+
+	for (size_t i = 0; i < complexObjects.size(); ++i)
+	{
+		const cv::KeyPoint& kp = complexObjects[i];
+		cv::circle(frame, kp.pt, 20, CV_RGB(0, 0, 255));
+	}
+
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		Line line = lines[i];
+		cv::line(frame, line.start.pt, line.end.pt, cv::Scalar(0, 255, 0), 2,
+				8);
+	}
+}
+
 void CognitiveDetector::createTrackBars()
 {
 	//Controls for corner
 	cv::createTrackbar("threshold", WINDOW, NULL, 100, thresholdCorner,
-			(void*) &cornerDetector);
+			(void*) &featureDetector);
 	cv::setTrackbarPos("threshold", WINDOW, cornerP.threshold);
 	cv::createTrackbar("windowSize", WINDOW, NULL, 100, windowSizeCorner,
-			(void*) &cornerDetector);
+			(void*) &featureDetector);
 	cv::setTrackbarPos("windowSize", WINDOW, cornerP.windowSize);
 	cv::createTrackbar("minSize", WINDOW, NULL, 350, minClusterSizeCorner,
-			(void*) &cornerDetector);
+			(void*) &featureDetector);
 	cv::setTrackbarPos("minSize", WINDOW, cornerP.clusterMinSize);
 	cv::createTrackbar("noiseBarrier", WINDOW, NULL, 350, noisebarrierCorner,
-			(void*) &cornerDetector);
+			(void*) &featureDetector);
 	cv::setTrackbarPos("noiseBarrier", WINDOW, cornerP.noiseBarrier);
 	cv::createTrackbar("objectWindow", WINDOW, NULL, 350, objectWindoCorner,
-			(void*) &cornerDetector);
+			(void*) &featureDetector);
 	cv::setTrackbarPos("objectWindow", WINDOW, cornerP.objectWindow);
 	cv::createTrackbar("minObjectSize", WINDOW, NULL, 350, objectMinSizeCorner,
-			(void*) &cornerDetector);
+			(void*) &featureDetector);
 	cv::setTrackbarPos("minObjectSize", WINDOW, cornerP.objectMinSize);
+
+	//controls for line
+	cv::createTrackbar("minCanny", LINE_WINDOW, NULL, 300, minCanny,
+			(void*) &lineDetector);
+	cv::setTrackbarPos("minCanny", LINE_WINDOW, cannyP.minCanny);
+	cv::createTrackbar("maxCanny", LINE_WINDOW, NULL, 500, maxCanny,
+			(void*) &lineDetector);
+	cv::setTrackbarPos("maxCanny", LINE_WINDOW, cannyP.maxCanny);
+	cv::createTrackbar("pThreshold", LINE_WINDOW, NULL, 150, thresholdHoughP,
+			(void*) &lineDetector);
+	cv::setTrackbarPos("pThreshold", LINE_WINDOW, houghP.threshold);
+	cv::createTrackbar("minLineLenght", LINE_WINDOW, NULL, 150,
+			minLineLengthHoughP, (void*) &lineDetector);
+	cv::setTrackbarPos("minLineLenght", LINE_WINDOW, houghP.minLineLenght);
+	cv::createTrackbar("maxLineGap", LINE_WINDOW, NULL, 50, maxLineGapHoughP,
+			(void*) &lineDetector);
+	cv::setTrackbarPos("maxLineGap", LINE_WINDOW, houghP.maxLineGap);
 
 }

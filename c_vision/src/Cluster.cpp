@@ -99,9 +99,9 @@ bool LineCluster::belongTo(cv::KeyPoint* point)
 	int y = point->pt.y;
 	int x = point->pt.x;
 
-	double d2 = (double) (x - m*y - q)*(x - m*y - q) / (1 +m*m);
+	double d2 = (double) (x - m * y - q) * (x - m * y - q) / (1 + m * m);
 
-	return isEmpty() || d2 <= maxDelta*maxDelta ;
+	return isEmpty() || d2 <= maxDelta * maxDelta;
 }
 
 void LineCluster::add(cv::KeyPoint* point)
@@ -110,9 +110,38 @@ void LineCluster::add(cv::KeyPoint* point)
 	int x = point->pt.x;
 	int n = points.size();
 
-	double qn = x-m*y;
+	double qn = x - m * y;
 
-	q = (n*q + qn) / n;
+	q = (n * q + qn) / (n + 1);
+
+	points.push_back(point);
+}
+
+cv::KeyPoint HorizontalLineCluster::calculateEdge(cv::KeyPoint* point)
+{
+	cv::KeyPoint edge;
+
+	edge.pt.y = q;
+	edge.pt.x = point->pt.x;
+
+	return edge;
+}
+
+bool HorizontalLineCluster::belongTo(cv::KeyPoint* point)
+{
+	int y = point->pt.y;
+
+	double d = q - y;
+
+	return isEmpty() || d <= maxDelta;
+}
+
+void HorizontalLineCluster::add(cv::KeyPoint* point)
+{
+	int y = point->pt.y;
+	int n = points.size();
+
+	q = (n * q + y) / (n + 1);
 
 	points.push_back(point);
 }

@@ -21,38 +21,31 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BORDERDETECTOR_H_
-#define BORDERDETECTOR_H_
+#include "HoughDetector.h"
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
-class BorderDetector
+cv::Mat HoughDetector::detect(cv::Mat& input)
 {
-public:
-	BorderDetector(int threshold1, int threshold2, int apertureSize,
-			bool advancedMode) :
-			threshold1(threshold1), threshold2(threshold2), apertureSize(
-					apertureSize), advancedMode(advancedMode)
+
+	cv::Mat canny, output;
+
+	Canny(input, canny, threshold1, threshold2, apertureSize);
+
+	std::vector<cv::Vec4i> lines;
+
+	HoughLinesP(canny, lines, rho, theta, threshold, minLineLength, maxLineGap);
+
+
+	output = input.clone();
+
+	for (size_t i = 0; i < lines.size(); i++)
 	{
+		cv::Vec4i l = lines[i];
+		line(output, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
+				cv::Scalar(0, 0, 255), 3, 8);
 	}
 
-	cv::Mat detect(cv::Mat& input);
+	return output;
 
-	//Getters and setters
-	bool isAdvancedMode();
-	void setAdvancedMode(bool advancedMode);
-	int getApertureSize();
-	void setApertureSize(int apertureSize);
-	int getThreshold1();
-	void setThreshold1(int threshold1);
-	int getThreshold2();
-	void setThreshold2(int threshold2);
-
-private:
-	int threshold1;
-	int threshold2;
-	int apertureSize;
-	bool advancedMode;
-};
-
-#endif /* BORDERDETECTOR_H_ */
+}

@@ -22,23 +22,20 @@
  */
 
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include "CornerDetector.h"
+#include "FeatureDetector.h"
 #include "ClusterFilter.h"
 
-cv::Mat CornerDetector::detect(cv::Mat& input)
+void FeatureDetector::detect(cv::Mat& input)
 {
 
-	cv::Mat output;
-	std::vector<cv::KeyPoint> keyPoints;
+	cv::Mat greyFrame, equalizedFrame;
 	std::vector<cv::KeyPoint> bigKeypoints;
-	std::vector<cv::KeyPoint> complexObjects;
 
-	cvtColor(input, output, CV_BGR2GRAY);
+	cvtColor(input, greyFrame, CV_BGR2GRAY);
 
-	FAST(output, keyPoints, threshold);
+	equalizeHist(greyFrame, equalizedFrame);
 
-	cvtColor(output, output, CV_GRAY2BGR);
+	FAST(equalizedFrame, keyPoints, threshold);
 
 	ClusterFilter filterObject(clusterWindow, clusterMinSize, noiseBarrier,
 			input.cols, input.rows);
@@ -53,18 +50,4 @@ cv::Mat CornerDetector::detect(cv::Mat& input)
 	objectFinder.filter(bigKeypoints);
 	complexObjects = objectFinder.getFilteredKeyPoints();
 
-	//display results
-	for (size_t i = 0; i < keyPoints.size(); ++i)
-	{
-		const cv::KeyPoint& kp = keyPoints[i];
-		circle(output, kp.pt, 2, CV_RGB(255, 0, 0));
-	}
-
-	for (size_t i = 0; i < complexObjects.size(); ++i)
-	{
-		const cv::KeyPoint& kp = complexObjects[i];
-		circle(output, kp.pt, 20, CV_RGB(0, 0, 255));
-	}
-
-	return output;
 }

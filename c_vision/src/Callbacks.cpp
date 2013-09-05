@@ -22,80 +22,72 @@
  */
 
 #include "Callbacks.h"
-#include "LineDetector.h"
-#include "BorderDetector.h"
-#include "CornerDetector.h"
-
-
-/* Canny detectors callback*/
-void minCanny(int value, void* data)
-{
-	BorderDetector* borderD = static_cast<BorderDetector*>(data);
-	borderD->setThreshold1(value);
-}
-
-void maxCanny(int value, void* data)
-{
-	BorderDetector* borderD = static_cast<BorderDetector*>(data);
-	borderD->setThreshold2(value);
-}
+#include "FeatureDetector.h"
+#include "HoughDetector.h"
 
 /* Corner detector callback */
 void thresholdCorner(int value, void* data)
 {
-	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
 	cornerD->setThreshold(value);
 }
 
 void windowSizeCorner(int value, void* data)
 {
-	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
 	cornerD->setClusterWindow(value);
 }
 
 void minClusterSizeCorner(int value, void* data)
 {
-	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
 	cornerD->setClusterMinSize(value);
 }
 
 void noisebarrierCorner(int value, void* data)
 {
-	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
 	cornerD->setNoiseBarrier(value);
 }
 
 void objectWindoCorner(int value, void* data)
 {
-	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
 	cornerD->setObjectWindow(value);
 }
 
 void objectMinSizeCorner(int value, void* data)
 {
-	CornerDetector* cornerD = static_cast<CornerDetector*>(data);
+	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
 	cornerD->setObjectMinSize(value);
 }
 
+void minCanny(int value, void* data)
+{
+	HoughDetector* borderD = static_cast<HoughDetector*>(data);
+	borderD->setThreshold1(value);
+}
 
-/* HoughP detector callback*/
+void maxCanny(int value, void* data)
+{
+	HoughDetector* borderD = static_cast<HoughDetector*>(data);
+	borderD->setThreshold2(value);
+}
+
 void thresholdHoughP(int value, void* data)
 {
-	ProbabilisticHoughLineDetector* lineD =
-			static_cast<ProbabilisticHoughLineDetector*>(data);
+	HoughDetector* lineD = static_cast<HoughDetector*>(data);
 	lineD->setThreshold(value);
 }
 
 void minLineLengthHoughP(int value, void* data)
 {
-	ProbabilisticHoughLineDetector* lineD =
-			static_cast<ProbabilisticHoughLineDetector*>(data);
+	HoughDetector* lineD = static_cast<HoughDetector*>(data);
 	lineD->setMinLineLength(value);
 }
 
 void maxLineGapHoughP(int value, void* data)
 {
-	ProbabilisticHoughLineDetector* lineD =
-			static_cast<ProbabilisticHoughLineDetector*>(data);
+	HoughDetector* lineD = static_cast<HoughDetector*>(data);
 	lineD->setMaxLineGap(value);
 }

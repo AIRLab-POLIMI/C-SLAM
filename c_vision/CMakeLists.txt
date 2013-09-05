@@ -9,22 +9,16 @@ catkin_package()
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-#build the recognition library
-add_library(recognition_library STATIC src/BorderDetection.cpp  
-			src/CornerDetector.cpp  
-			src/LineDetector.cpp
-			src/ClusterFilter.cpp
-			src/Cluster.cpp)
-
-#build test executables
-add_executable(detector src/detector.cpp src/Callbacks.cpp)
-add_executable(comparator src/comparator.cpp src/Callbacks.cpp)
-
 #build the recognition node
-add_executable(cognitive_vision src/main.cpp src/Dispatcher.cpp src/CognitiveDetector.cpp src/Callbacks.cpp)
+add_executable(cognitive_vision src/Callbacks.cpp
+                                src/Cluster.cpp  
+                                src/ClusterFilter.cpp  
+                                src/CognitiveDetector.cpp  
+                                src/Dispatcher.cpp  
+                                src/FeatureDetector.cpp
+                                src/HoughDetector.cpp  
+                                src/LineDetector.cpp  
+                                src/main.cpp)
 
 #link libriaries
-target_link_libraries(recognition_library ${OpenCV_LIBRARIES})
-target_link_libraries(detector recognition_library)
-target_link_libraries(comparator recognition_library)
-target_link_libraries(cognitive_vision recognition_library ${catkin_LIBRARIES})
+target_link_libraries(cognitive_vision ${catkin_LIBRARIES})

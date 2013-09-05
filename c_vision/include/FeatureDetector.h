@@ -21,15 +21,16 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CORNERDETECTOR_H_
-#define CORNERDETECTOR_H_
+#ifndef FEATUREDETECTOR_H_
+#define FEATUREDETECTOR_H_
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
 
-class CornerDetector
+class FeatureDetector
 {
 public:
-	CornerDetector(int threshold, int clusterWindow, int clusterMinSize,
+	FeatureDetector(int threshold, int clusterWindow, int clusterMinSize,
 			int noiseBarrier, int objectWindow, int objectMinSize) :
 			threshold(threshold), clusterWindow(clusterWindow), clusterMinSize(
 					clusterMinSize), noiseBarrier(noiseBarrier), objectWindow(
@@ -37,7 +38,7 @@ public:
 	{
 	}
 
-	cv::Mat detect(cv::Mat& input);
+	void detect(cv::Mat& input);
 
 	//getters and setters
 	inline int getThreshold() const
@@ -100,6 +101,17 @@ public:
 		this->objectWindow = objectWindow;
 	}
 
+	inline std::vector<cv::KeyPoint> getComplexObject()
+	{
+		return complexObjects;
+	}
+
+
+	inline std::vector<cv::KeyPoint> getKeyPoints()
+	{
+		return keyPoints;
+	}
+
 private:
 	int threshold;
 	int clusterWindow;
@@ -107,6 +119,11 @@ private:
 	int noiseBarrier;
 	int objectWindow;
 	int objectMinSize;
+
+private:
+	std::vector<cv::KeyPoint> complexObjects;
+	std::vector<cv::KeyPoint> keyPoints;
+	std::vector<cv::KeyPoint> oldKeypoints;
 };
 
-#endif /* CORNERDETECTOR_H_ */
+#endif /* FEATUREDETECTOR_H_ */

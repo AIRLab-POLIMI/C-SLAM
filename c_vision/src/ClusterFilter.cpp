@@ -23,8 +23,6 @@
 
 #include "ClusterFilter.h"
 
-#include <iostream>
-
 void ClusterFilter::filter(std::vector<cv::KeyPoint> input)
 {
 	if (windowSize == 0 || input.size() == 0)
