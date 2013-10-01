@@ -32,30 +32,31 @@
 #include "FeatureDetector.h"
 #include "LineDetector.h"
 #include "HoughDetector.h"
+#include "DBScan.h"
 
-static const std::string WINDOW = "Detected Image";
+static const std::string CORNER_WINDOW = "Detected Image";
 static const std::string LINE_WINDOW = "Line Image";
 
 class CognitiveDetector
 {
 public:
 	CognitiveDetector() :
-			featureDetector(cornerP.threshold, cornerP.windowSize,
-					cornerP.clusterMinSize, cornerP.noiseBarrier,
-					cornerP.objectWindow, cornerP.objectMinSize), lineFinder(
-					lineP.maxDelta), lineDetector(cannyP.minCanny,
-					cannyP.maxCanny, cannyP.apertureSize, houghP.rho, houghP.teta,
-					houghP.threshold, houghP.minLineLenght,
-					houghP.maxLineGap), pitch(0), roll(0), yaw(0)
+			featureDetector(cornerP.threshold), clusterDetector(
+					clusterP.maxDistance, clusterP.minPoints), lineDetector(
+					cannyP.minCanny, cannyP.maxCanny, cannyP.apertureSize,
+					houghP.rho, houghP.teta, houghP.threshold,
+					houghP.minLineLenght, houghP.maxLineGap), pitch(0), roll(0), yaw(
+					0)
 	{
-		cv::namedWindow(WINDOW);
+		cv::namedWindow(CORNER_WINDOW);
 		cv::namedWindow(LINE_WINDOW);
 		createTrackBars();
 	}
 
 	~CognitiveDetector()
 	{
-		cv::destroyWindow(WINDOW);
+		cv::destroyWindow(CORNER_WINDOW);
+		cv::destroyWindow(LINE_WINDOW);
 	}
 
 	void detect(cv::Mat image);
@@ -76,19 +77,15 @@ public:
 	}
 
 private:
-	std::vector<Line> findLines(std::vector<cv::KeyPoint> keyPoints);
-	std::vector<Line> findLines(double roll,
-			const std::vector<cv::KeyPoint>& keyPoints);
 	void drawAxis(cv::Mat& input);
 	void createTrackBars();
 	void displayResults(const std::vector<cv::KeyPoint>& keyPoints,
-			const std::vector<cv::KeyPoint>& complexObjects,
-			const std::vector<Line>& lines, cv::Mat& frame);
-	void addOldKeyPoints(std::vector<cv::KeyPoint>& keyPoints);
+			const std::vector<std::vector<cv::KeyPoint> >& clusters,
+			cv::Mat& frame);
 
 private:
 	FeatureDetector featureDetector;
-	LineDetector lineFinder;
+	DBScan clusterDetector;
 	HoughDetector lineDetector;
 
 	double pitch;

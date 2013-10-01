@@ -24,6 +24,7 @@
 #include "Callbacks.h"
 #include "FeatureDetector.h"
 #include "HoughDetector.h"
+#include "DBScan.h"
 
 /* Corner detector callback */
 void thresholdCorner(int value, void* data)
@@ -32,34 +33,16 @@ void thresholdCorner(int value, void* data)
 	cornerD->setThreshold(value);
 }
 
-void windowSizeCorner(int value, void* data)
+void maxDistanceCluster(int maxDistance, void* data)
 {
-	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
-	cornerD->setClusterWindow(value);
+	DBScan* clusterD = static_cast<DBScan*>(data);
+	clusterD->setMaxDistance(maxDistance);
 }
 
-void minClusterSizeCorner(int value, void* data)
+void minPointsCluster(int minPoints, void* data)
 {
-	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
-	cornerD->setClusterMinSize(value);
-}
-
-void noisebarrierCorner(int value, void* data)
-{
-	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
-	cornerD->setNoiseBarrier(value);
-}
-
-void objectWindoCorner(int value, void* data)
-{
-	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
-	cornerD->setObjectWindow(value);
-}
-
-void objectMinSizeCorner(int value, void* data)
-{
-	FeatureDetector* cornerD = static_cast<FeatureDetector*>(data);
-	cornerD->setObjectMinSize(value);
+	DBScan* clusterD = static_cast<DBScan*>(data);
+	clusterD->setMinPoints(minPoints);
 }
 
 void minCanny(int value, void* data)

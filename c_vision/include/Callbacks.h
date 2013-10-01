@@ -26,16 +26,11 @@
 
 ///FAST threshold
 void thresholdCorner(int value, void* data);
-///Clustering algorithm window Size
-void windowSizeCorner(int value, void* data);
-///Cluster minimum size to become an object
-void minClusterSizeCorner(int value, void* data);
-///level used to exclude noisy points
-void noisebarrierCorner(int value, void* data);
-///object clustering window
-void objectWindoCorner(int value, void* data);
-///minimum size to be considered an object
-void objectMinSizeCorner(int value, void* data);
+
+///Cluster max distance
+void maxDistanceCluster(int maxDistance, void* data);
+///Cluster min points
+void minPointsCluster(int minPoints, void* data);
 
 
 ///Canny min threshold trackbar callback

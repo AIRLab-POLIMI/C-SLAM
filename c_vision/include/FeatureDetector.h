@@ -30,15 +30,12 @@
 class FeatureDetector
 {
 public:
-	FeatureDetector(int threshold, int clusterWindow, int clusterMinSize,
-			int noiseBarrier, int objectWindow, int objectMinSize) :
-			threshold(threshold), clusterWindow(clusterWindow), clusterMinSize(
-					clusterMinSize), noiseBarrier(noiseBarrier), objectWindow(
-					objectWindow), objectMinSize(objectMinSize)
+	FeatureDetector(int threshold) :
+			threshold(threshold)
 	{
 	}
 
-	void detect(cv::Mat& input);
+	std::vector<cv::KeyPoint> detect(cv::Mat& input);
 
 	//getters and setters
 	inline int getThreshold() const
@@ -51,79 +48,9 @@ public:
 		this->threshold = threshold;
 	}
 
-	inline int getClusterMinSize() const
-	{
-		return clusterMinSize;
-	}
-
-	inline void setClusterMinSize(int clusterMinSize)
-	{
-		this->clusterMinSize = clusterMinSize;
-	}
-
-	inline int getClusterWindow() const
-	{
-		return clusterWindow;
-	}
-
-	inline void setClusterWindow(int clusterWindow)
-	{
-		this->clusterWindow = clusterWindow;
-	}
-
-	inline int getNoiseBarrier() const
-	{
-		return noiseBarrier;
-	}
-
-	inline void setNoiseBarrier(int noiseBarrier)
-	{
-		this->noiseBarrier = noiseBarrier;
-	}
-
-	inline int getObjectMinSize() const
-	{
-		return objectMinSize;
-	}
-
-	inline void setObjectMinSize(int objectMinSize)
-	{
-		this->objectMinSize = objectMinSize;
-	}
-
-	inline int getObjectWindow() const
-	{
-		return objectWindow;
-	}
-
-	inline void setObjectWindow(int objectWindow)
-	{
-		this->objectWindow = objectWindow;
-	}
-
-	inline std::vector<cv::KeyPoint> getComplexObject()
-	{
-		return complexObjects;
-	}
-
-
-	inline std::vector<cv::KeyPoint> getKeyPoints()
-	{
-		return keyPoints;
-	}
-
 private:
 	int threshold;
-	int clusterWindow;
-	int clusterMinSize;
-	int noiseBarrier;
-	int objectWindow;
-	int objectMinSize;
 
-private:
-	std::vector<cv::KeyPoint> complexObjects;
-	std::vector<cv::KeyPoint> keyPoints;
-	std::vector<cv::KeyPoint> oldKeypoints;
 };
 
 #endif /* FEATUREDETECTOR_H_ */

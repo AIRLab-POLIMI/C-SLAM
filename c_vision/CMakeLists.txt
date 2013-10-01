@@ -13,7 +13,8 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 add_executable(cognitive_vision src/Callbacks.cpp
                                 src/Cluster.cpp  
                                 src/ClusterFilter.cpp  
-                                src/CognitiveDetector.cpp  
+                                src/CognitiveDetector.cpp
+                                src/DBScan.cpp
                                 src/Dispatcher.cpp  
                                 src/FeatureDetector.cpp
                                 src/HoughDetector.cpp  

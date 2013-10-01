@@ -34,6 +34,12 @@ static struct FeatureParam
 	static const int objectMinSize = 300;
 } cornerP;
 
+static struct DBScanParam
+{
+	static const int minPoints = 5;
+	static const double maxDistance = 20;
+} clusterP;
+
 static struct LineParam
 {
 	static const double maxDelta = 25.0;

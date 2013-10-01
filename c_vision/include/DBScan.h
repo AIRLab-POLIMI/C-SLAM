@@ -21,22 +21,50 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include "FeatureDetector.h"
-#include "ClusterFilter.h"
+#ifndef DBSCAN_H_
+#define DBSCAN_H_
 
-std::vector<cv::KeyPoint>  FeatureDetector::detect(cv::Mat& input)
+#include <vector>
+#include <opencv2/features2d/features2d.hpp>
+
+class DBScan
 {
+public:
+	DBScan(double eps, int minPts) :
+			maxDistance(eps), minPoints(minPts)
+	{
+	}
+	std::vector<std::vector<cv::KeyPoint> > detect(
+			std::vector<cv::KeyPoint> &keypoints);
 
-	cv::Mat greyFrame, equalizedFrame;
-	std::vector<cv::KeyPoint> keyPoints;
+	inline double getMaxDistance() const
+	{
+		return maxDistance;
+	}
 
-	cvtColor(input, greyFrame, CV_BGR2GRAY);
+	inline void setMaxDistance(double eps)
+	{
+		this->maxDistance = eps;
+	}
 
-	equalizeHist(greyFrame, equalizedFrame);
+	inline int getMinPoints() const
+	{
+		return minPoints;
+	}
 
-	FAST(equalizedFrame, keyPoints, threshold);
+	inline void setMinPoints(int minPts)
+	{
+		this->minPoints = minPts;
+	}
 
-	return keyPoints;
+private:
+	std::vector<int> listNeighbors(std::vector<cv::KeyPoint> &keypoints,
+			cv::KeyPoint &keypoint);
 
-}
+private:
+	double maxDistance;
+	int minPoints;
+
+};
+
+#endif /* DBSCAN_H_ */
