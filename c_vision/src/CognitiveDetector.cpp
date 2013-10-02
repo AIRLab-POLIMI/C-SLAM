@@ -27,14 +27,14 @@
 #include "Callbacks.h"
 #include "DBScan.h"
 
+
 void CognitiveDetector::detect(cv::Mat frame)
 {
 	cv::Mat lineFrame = lineDetector.detect(frame);
 
 	std::vector<cv::KeyPoint> keyPoints = featureDetector.detect(frame);
 
-	std::vector<std::vector<cv::KeyPoint> > clusters = clusterDetector.detect(
-			keyPoints);
+	std::vector<ObjectCluster> clusters = clusterDetector.detect(keyPoints);
 
 	//display results
 	displayResults(keyPoints, clusters, frame);
@@ -71,31 +71,22 @@ void CognitiveDetector::drawAxis(cv::Mat& input)
 }
 
 void CognitiveDetector::displayResults(
-		const std::vector<cv::KeyPoint>& keyPoints,
-		const std::vector<std::vector<cv::KeyPoint> >& clusters, cv::Mat& frame)
+		std::vector<cv::KeyPoint>& keyPoints,
+		std::vector<ObjectCluster>& clusters, cv::Mat& frame)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
 		const cv::KeyPoint& kp = keyPoints[i];
-		cv::circle(frame, kp.pt, 2, CV_RGB(255, 0, 0));
+		cv::circle(frame, kp.pt, 2, cv::Scalar(0, 0, 255));
 	}
 
-	int color[] =
-	{ 255, 0, 0 };
 
 	/*display clusters*/
-
 	for (size_t i = 0; i < clusters.size(); i++)
 	{
-		color[i % 3] = 0;
-		color[(i + 1) % 3] = 0;
-		color[(i + 2) % 3] = 255;
-		for (size_t j = 0; j < clusters[i].size(); j++)
-		{
-			cv::KeyPoint kp = clusters[i][j];
-			cv::circle(frame, kp.pt, 10, CV_RGB(color[1], color[2], color[3]));
-		}
+
+		clusters[i].draw(frame, cv::Scalar(255, 0, 0));
 	}
 }
 

@@ -79,9 +79,8 @@ public:
 private:
 	void drawAxis(cv::Mat& input);
 	void createTrackBars();
-	void displayResults(const std::vector<cv::KeyPoint>& keyPoints,
-			const std::vector<std::vector<cv::KeyPoint> >& clusters,
-			cv::Mat& frame);
+	void displayResults(std::vector<cv::KeyPoint>& keyPoints,
+			std::vector<ObjectCluster>& clusters, cv::Mat& frame);
 
 private:
 	FeatureDetector featureDetector;

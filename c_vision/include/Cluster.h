@@ -71,6 +71,7 @@ private:
 
 };
 
+
 class MetaCluster: public Cluster
 {
 public:
@@ -114,6 +115,7 @@ protected:
 	double q;
 	double maxDelta;
 };
+
 
 class LineCluster: public AbstractLineCluster
 {

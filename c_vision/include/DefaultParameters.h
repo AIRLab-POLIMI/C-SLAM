@@ -36,8 +36,8 @@ static struct FeatureParam
 
 static struct DBScanParam
 {
-	static const int minPoints = 5;
-	static const double maxDistance = 20;
+	static const int minPoints = 4;
+	static const double maxDistance = 15;
 } clusterP;
 
 static struct LineParam
