@@ -40,7 +40,7 @@ public:
 	{
 		navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
-		imageSubscriber = it.subscribe("/ardrone/image_raw", 1,
+		imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 	}
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
