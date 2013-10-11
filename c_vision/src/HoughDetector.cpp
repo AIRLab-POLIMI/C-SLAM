@@ -25,7 +25,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
-cv::Mat HoughDetector::detect(cv::Mat& input)
+std::vector<cv::Vec4i> HoughDetector::detect(cv::Mat& input)
 {
 
 	cv::Mat canny, output;
@@ -36,16 +36,6 @@ cv::Mat HoughDetector::detect(cv::Mat& input)
 
 	HoughLinesP(canny, lines, rho, theta, threshold, minLineLength, maxLineGap);
 
-
-	output = input.clone();
-
-	for (size_t i = 0; i < lines.size(); i++)
-	{
-		cv::Vec4i l = lines[i];
-		line(output, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
-				cv::Scalar(0, 0, 255), 3, 8);
-	}
-
-	return output;
+	return lines;
 
 }

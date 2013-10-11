@@ -37,7 +37,7 @@ public:
 	{
 	}
 
-	cv::Mat detect(cv::Mat& input);
+	std::vector<cv::Vec4i> detect(cv::Mat& input);
 
 	int getApertureSize() const
 	{

@@ -34,6 +34,8 @@
 #include "HoughDetector.h"
 #include "DBScan.h"
 
+#include <iostream>
+
 static const std::string CORNER_WINDOW = "Detected Image";
 static const std::string LINE_WINDOW = "Line Image";
 
@@ -69,6 +71,8 @@ public:
 	inline void setRoll(double roll)
 	{
 		this->roll = roll;
+		std::cerr << "roll is: " << roll << std::endl;
+
 	}
 
 	inline void setYaw(double yaw)
@@ -79,8 +83,12 @@ public:
 private:
 	void drawAxis(cv::Mat& input);
 	void createTrackBars();
-	void displayResults(std::vector<cv::KeyPoint>& keyPoints,
+	void displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
 			std::vector<ObjectCluster>& clusters, cv::Mat& frame);
+	void displayLineResults(std::vector<cv::Vec4i> lines, cv::Mat& frame);
+
+private:
+	std::vector<cv::Vec4i> extractVerticalLines(std::vector<cv::Vec4i> lines);
 
 private:
 	FeatureDetector featureDetector;

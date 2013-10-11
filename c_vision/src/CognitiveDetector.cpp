@@ -27,17 +27,20 @@
 #include "Callbacks.h"
 #include "DBScan.h"
 
-
 void CognitiveDetector::detect(cv::Mat frame)
 {
-	cv::Mat lineFrame = lineDetector.detect(frame);
+
+	cv::Mat lineFrame = frame.clone();
+	std::vector<cv::Vec4i> lines = lineDetector.detect(frame);
+	std::vector<cv::Vec4i> verticalLines = extractVerticalLines(lines);
 
 	std::vector<cv::KeyPoint> keyPoints = featureDetector.detect(frame);
 
 	std::vector<ObjectCluster> clusters = clusterDetector.detect(keyPoints);
 
 	//display results
-	displayResults(keyPoints, clusters, frame);
+	displayClusterResults(keyPoints, clusters, frame);
+	displayLineResults(lines, lineFrame);
 	drawAxis(frame);
 
 	imshow(CORNER_WINDOW, frame);
@@ -70,7 +73,7 @@ void CognitiveDetector::drawAxis(cv::Mat& input)
 
 }
 
-void CognitiveDetector::displayResults(
+void CognitiveDetector::displayClusterResults(
 		std::vector<cv::KeyPoint>& keyPoints,
 		std::vector<ObjectCluster>& clusters, cv::Mat& frame)
 {
@@ -81,13 +84,43 @@ void CognitiveDetector::displayResults(
 		cv::circle(frame, kp.pt, 2, cv::Scalar(0, 0, 255));
 	}
 
-
 	/*display clusters*/
 	for (size_t i = 0; i < clusters.size(); i++)
 	{
 
 		clusters[i].draw(frame, cv::Scalar(255, 0, 0));
 	}
+}
+
+void CognitiveDetector::displayLineResults(std::vector<cv::Vec4i> lines, cv::Mat& frame)
+{
+
+	//display lines
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		cv::Vec4i l = lines[i];
+		line(frame, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
+				cv::Scalar(0, 0, 255), 3, 8);
+	}
+
+}
+
+void CognitiveDetector::extractVerticalLines(std::vector<cv::Vec4i> lines)
+{
+
+	double m_robot = tan(roll * M_PI / 180.0);
+	for(size_t i; i < lines.size(); i++)
+	{
+		cv::Vec4i& line = lines[i];
+		double m_line = (line[0] - line[2]) / (line[1] - line[3]);
+
+		if((m_robot - m_line < 0.1) && (m_robot - m_line > 0.1))
+		{
+
+
+		}
+	}
+
 }
 
 void CognitiveDetector::createTrackBars()
