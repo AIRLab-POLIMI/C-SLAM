@@ -30,7 +30,11 @@ std::vector<cv::Vec4i> HoughDetector::detect(cv::Mat& input)
 
 	cv::Mat canny, output;
 
-	Canny(input, canny, threshold1, threshold2, apertureSize);
+	double high_thres = cv::threshold(input, canny, 0, 255,
+			CV_THRESH_BINARY + CV_THRESH_OTSU);
+	double low_thres = high_thres * 0.5;
+
+	Canny(input, canny, low_thres, high_thres, apertureSize);
 
 	std::vector<cv::Vec4i> lines;
 

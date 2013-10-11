@@ -24,135 +24,61 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "CognitiveDetector.h"
-#include "Callbacks.h"
 #include "DBScan.h"
 
-void CognitiveDetector::detect(cv::Mat frame)
+void CognitiveDetector::detect(cv::Mat& frame)
 {
-
-	cv::Mat lineFrame = frame.clone();
-	std::vector<cv::Vec4i> lines = lineDetector.detect(frame);
+	cv::Mat equalizedFrame = preprocessing(frame);
+	std::vector<cv::Vec4i> lines = lineDetector.detect(equalizedFrame);
 	std::vector<cv::Vec4i> verticalLines = extractVerticalLines(lines);
 
-	std::vector<cv::KeyPoint> keyPoints = featureDetector.detect(frame);
+	std::vector<cv::KeyPoint> keyPoints = featureDetector.detect(
+			equalizedFrame);
 
 	std::vector<ObjectCluster> clusters = clusterDetector.detect(keyPoints);
 
 	//display results
-	displayClusterResults(keyPoints, clusters, frame);
-	displayLineResults(lines, lineFrame);
-	drawAxis(frame);
-
-	imshow(CORNER_WINDOW, frame);
-	imshow(LINE_WINDOW, lineFrame);
-	cvWaitKey(60);
+	viewer.setRoll(roll);
+	viewer.setKeyPoints(&keyPoints);
+	viewer.setVerticalLines(&verticalLines);
+	viewer.setClusters(&clusters);
+	viewer.display(frame);
 }
 
-void CognitiveDetector::drawAxis(cv::Mat& input)
+/* Image Processing Methods */
+
+cv::Mat CognitiveDetector::preprocessing(cv::Mat& input)
 {
-	cv::Point center, y1, y2, z1, z2;
-	center.x = input.cols / 2;
-	center.y = input.rows / 2;
+	cv::Mat greyFrame, equalizedFrame;
 
-	double offset1 = 50 * sin(roll * M_PI / 180.0);
-	double offset2 = 50 * cos(roll * M_PI / 180.0);
+	cvtColor(input, greyFrame, CV_BGR2GRAY);
+	equalizeHist(greyFrame, equalizedFrame);
 
-	y1.x = center.x + offset2;
-	y1.y = center.y - offset1;
-	y2.x = center.x - offset2;
-	y2.y = center.y + offset1;
-
-	z1.x = center.x - offset1;
-	z1.y = center.y - offset2;
-	z2.x = center.x + offset1;
-	z2.y = center.y + offset2;
-
-	cv::line(input, y1, y2, cv::Scalar(0, 0, 0));
-	cv::line(input, z1, z2, cv::Scalar(0, 0, 0));
-	cv::circle(input, center, 5, cv::Scalar(0, 0, 0));
-
+	return equalizedFrame;
 }
 
-void CognitiveDetector::displayClusterResults(
-		std::vector<cv::KeyPoint>& keyPoints,
-		std::vector<ObjectCluster>& clusters, cv::Mat& frame)
+std::vector<cv::Vec4i> CognitiveDetector::extractVerticalLines(
+		std::vector<cv::Vec4i> lines)
 {
-	//display results
-	for (size_t i = 0; i < keyPoints.size(); ++i)
-	{
-		const cv::KeyPoint& kp = keyPoints[i];
-		cv::circle(frame, kp.pt, 2, cv::Scalar(0, 0, 255));
-	}
+	const double delta_max = 5 * M_PI / 180; //5 degrees of error
+	const double alpha_robot = roll * M_PI / 180.0;
 
-	/*display clusters*/
-	for (size_t i = 0; i < clusters.size(); i++)
-	{
+	std::vector<cv::Vec4i> verticalLines;
 
-		clusters[i].draw(frame, cv::Scalar(255, 0, 0));
-	}
-}
-
-void CognitiveDetector::displayLineResults(std::vector<cv::Vec4i> lines, cv::Mat& frame)
-{
-
-	//display lines
 	for (size_t i = 0; i < lines.size(); i++)
 	{
-		cv::Vec4i l = lines[i];
-		line(frame, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
-				cv::Scalar(0, 0, 255), 3, 8);
-	}
-
-}
-
-void CognitiveDetector::extractVerticalLines(std::vector<cv::Vec4i> lines)
-{
-
-	double m_robot = tan(roll * M_PI / 180.0);
-	for(size_t i; i < lines.size(); i++)
-	{
 		cv::Vec4i& line = lines[i];
-		double m_line = (line[0] - line[2]) / (line[1] - line[3]);
+		int dx = line[0] - line[2];
+		int dy = line[1] - line[3];
 
-		if((m_robot - m_line < 0.1) && (m_robot - m_line > 0.1))
+		double alpha_line = atan2(dx, dy);
+
+		if ((alpha_robot - alpha_line < delta_max)
+				&& (alpha_robot - alpha_line > -delta_max))
 		{
-
-
+			verticalLines.push_back(lines[i]);
 		}
 	}
 
-}
-
-void CognitiveDetector::createTrackBars()
-{
-	//controls for corners
-	cv::createTrackbar("threshold", CORNER_WINDOW, NULL, 300, thresholdCorner,
-			(void*) &featureDetector);
-	cv::setTrackbarPos("threshold", CORNER_WINDOW, cornerP.threshold);
-
-	//control for clustering
-	cv::createTrackbar("minPoints", CORNER_WINDOW, NULL, 20, minPointsCluster,
-			(void*) &clusterDetector);
-	cv::setTrackbarPos("minPoints", CORNER_WINDOW, clusterP.minPoints);
-	cv::createTrackbar("distance", CORNER_WINDOW, NULL, 100, maxDistanceCluster,
-			(void*) &clusterDetector);
-	cv::setTrackbarPos("distance", CORNER_WINDOW, clusterP.maxDistance);
-
-	//controls for line
-	cv::createTrackbar("minCanny", LINE_WINDOW, NULL, 300, minCanny,
-			(void*) &lineDetector);
-	cv::setTrackbarPos("minCanny", LINE_WINDOW, cannyP.minCanny);
-	cv::createTrackbar("maxCanny", LINE_WINDOW, NULL, 500, maxCanny,
-			(void*) &lineDetector);
-	cv::setTrackbarPos("maxCanny", LINE_WINDOW, cannyP.maxCanny);
-	cv::createTrackbar("pThreshold", LINE_WINDOW, NULL, 150, thresholdHoughP,
-			(void*) &lineDetector);
-	cv::setTrackbarPos("pThreshold", LINE_WINDOW, houghP.threshold);
-	cv::createTrackbar("minLineLenght", LINE_WINDOW, NULL, 150,
-			minLineLengthHoughP, (void*) &lineDetector);
-	cv::setTrackbarPos("minLineLenght", LINE_WINDOW, houghP.minLineLenght);
-	cv::createTrackbar("maxLineGap", LINE_WINDOW, NULL, 50, maxLineGapHoughP,
-			(void*) &lineDetector);
-	cv::setTrackbarPos("maxLineGap", LINE_WINDOW, houghP.maxLineGap);
-
+	return verticalLines;
 }

@@ -1,0 +1,9 @@
+<launch>
+	<group ns="/ardrone">
+		<node name="image_proc" pkg="image_proc" type="image_proc" />
+	</group>
+	
+	<node name="rqt_bag" pkg="rqt_bag" type="rqt_bag" /> 
+	
+	<node name="cognitive_vision" pkg="c_vision" type="cognitive_vision" /> 	
+</launch> 

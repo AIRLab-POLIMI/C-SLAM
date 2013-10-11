@@ -26,7 +26,7 @@
 
 static struct FeatureParam
 {
-	static const int threshold = 70;
+	static const int threshold = 30;
 	static const int windowSize = 40;
 	static const int clusterMinSize = 40;
 	static const int noiseBarrier = 40;
@@ -56,9 +56,9 @@ static struct HougParam
 {
 	static const int rho = 1;
 	static const double teta = CV_PI / 180;
-	static const int threshold = 100;
+	static const int threshold = 90;
 	static const int minLineLenght = 120;
-	static const int maxLineGap = 50;
+	static const int maxLineGap = 30;
 } houghP;
 
 #endif /* DEFAULTPARAMETERS_H_ */

@@ -27,15 +27,9 @@
 
 std::vector<cv::KeyPoint>  FeatureDetector::detect(cv::Mat& input)
 {
-
-	cv::Mat greyFrame, equalizedFrame;
 	std::vector<cv::KeyPoint> keyPoints;
 
-	cvtColor(input, greyFrame, CV_BGR2GRAY);
-
-	equalizeHist(greyFrame, equalizedFrame);
-
-	FAST(equalizedFrame, keyPoints, threshold);
+	FAST(input, keyPoints, threshold);
 
 	return keyPoints;
 

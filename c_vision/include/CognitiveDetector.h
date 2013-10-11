@@ -24,9 +24,7 @@
 #ifndef COGNITIVEDETECTOR_H_
 #define COGNITIVEDETECTOR_H_
 
-#include <string>
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 #include "DefaultParameters.h"
 #include "FeatureDetector.h"
@@ -34,10 +32,7 @@
 #include "HoughDetector.h"
 #include "DBScan.h"
 
-#include <iostream>
-
-static const std::string CORNER_WINDOW = "Detected Image";
-static const std::string LINE_WINDOW = "Line Image";
+#include "ImageView.h"
 
 class CognitiveDetector
 {
@@ -48,20 +43,12 @@ public:
 					cannyP.minCanny, cannyP.maxCanny, cannyP.apertureSize,
 					houghP.rho, houghP.teta, houghP.threshold,
 					houghP.minLineLenght, houghP.maxLineGap), pitch(0), roll(0), yaw(
-					0)
+					0), viewer("Detected Image", (void*) &featureDetector,
+					(void*) &clusterDetector, (void*) &lineDetector)
 	{
-		cv::namedWindow(CORNER_WINDOW);
-		cv::namedWindow(LINE_WINDOW);
-		createTrackBars();
 	}
 
-	~CognitiveDetector()
-	{
-		cv::destroyWindow(CORNER_WINDOW);
-		cv::destroyWindow(LINE_WINDOW);
-	}
-
-	void detect(cv::Mat image);
+	void detect(cv::Mat& image);
 
 	inline void setPitch(double pitch)
 	{
@@ -71,8 +58,6 @@ public:
 	inline void setRoll(double roll)
 	{
 		this->roll = roll;
-		std::cerr << "roll is: " << roll << std::endl;
-
 	}
 
 	inline void setYaw(double yaw)
@@ -81,13 +66,7 @@ public:
 	}
 
 private:
-	void drawAxis(cv::Mat& input);
-	void createTrackBars();
-	void displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
-			std::vector<ObjectCluster>& clusters, cv::Mat& frame);
-	void displayLineResults(std::vector<cv::Vec4i> lines, cv::Mat& frame);
-
-private:
+	cv::Mat preprocessing(cv::Mat& input);
 	std::vector<cv::Vec4i> extractVerticalLines(std::vector<cv::Vec4i> lines);
 
 private:
@@ -98,6 +77,9 @@ private:
 	double pitch;
 	double roll;
 	double yaw;
+
+private:
+	ImageView viewer;
 
 };
 

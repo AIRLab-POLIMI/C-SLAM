@@ -17,9 +17,15 @@ add_executable(cognitive_vision src/Callbacks.cpp
                                 src/DBScan.cpp
                                 src/Dispatcher.cpp  
                                 src/FeatureDetector.cpp
-                                src/HoughDetector.cpp  
+                                src/HoughDetector.cpp 
+                                src/ImageView.cpp 
                                 src/LineDetector.cpp  
                                 src/main.cpp)
 
 #link libriaries
 target_link_libraries(cognitive_vision ${catkin_LIBRARIES})
+
+#install launch files
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
