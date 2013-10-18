@@ -30,6 +30,7 @@ void ImageView::display(cv::Mat& frame)
 {
 	displayClusterResults(*keyPoints, *clusters, frame);
 	displayLineResults(*verticalLines, frame);
+	displayLineResults(*horizontalLines, frame);
 	drawAxis(frame);
 
 	imshow(viewName, frame);

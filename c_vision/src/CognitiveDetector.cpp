@@ -25,12 +25,17 @@
 
 #include "CognitiveDetector.h"
 #include "DBScan.h"
+#include "LineFilter.h"
 
 void CognitiveDetector::detect(cv::Mat& frame)
 {
 	cv::Mat equalizedFrame = preprocessing(frame);
 	std::vector<cv::Vec4i> lines = lineDetector.detect(equalizedFrame);
-	std::vector<cv::Vec4i> verticalLines = extractVerticalLines(lines);
+
+	LineFilter filter;
+	filter.filter(lines, roll);
+	std::vector<cv::Vec4i> verticalLines = filter.getVerticalLines();
+	std::vector<cv::Vec4i> horizontalLines = filter.getHorizontalLines();
 
 	std::vector<cv::KeyPoint> keyPoints = featureDetector.detect(
 			equalizedFrame);
@@ -41,6 +46,7 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	viewer.setRoll(roll);
 	viewer.setKeyPoints(&keyPoints);
 	viewer.setVerticalLines(&verticalLines);
+	viewer.setHorizontalLines(&horizontalLines);
 	viewer.setClusters(&clusters);
 	viewer.display(frame);
 }
@@ -57,28 +63,3 @@ cv::Mat CognitiveDetector::preprocessing(cv::Mat& input)
 	return equalizedFrame;
 }
 
-std::vector<cv::Vec4i> CognitiveDetector::extractVerticalLines(
-		std::vector<cv::Vec4i> lines)
-{
-	const double delta_max = 5 * M_PI / 180; //5 degrees of error
-	const double alpha_robot = roll * M_PI / 180.0;
-
-	std::vector<cv::Vec4i> verticalLines;
-
-	for (size_t i = 0; i < lines.size(); i++)
-	{
-		cv::Vec4i& line = lines[i];
-		int dx = line[0] - line[2];
-		int dy = line[1] - line[3];
-
-		double alpha_line = atan2(dx, dy);
-
-		if ((alpha_robot - alpha_line < delta_max)
-				&& (alpha_robot - alpha_line > -delta_max))
-		{
-			verticalLines.push_back(lines[i]);
-		}
-	}
-
-	return verticalLines;
-}

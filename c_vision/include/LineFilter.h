@@ -21,25 +21,34 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "HoughDetector.h"
+#ifndef LINEFILTER_H_
+#define LINEFILTER_H_
 
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
 
-std::vector<cv::Vec4i> HoughDetector::detect(cv::Mat& input)
+class LineFilter
 {
+public:
 
-	cv::Mat canny, output;
+	void filter(std::vector<cv::Vec4i> lines, double roll);
 
-	double high_thres = cv::threshold(input, canny, 0, 255,
-			CV_THRESH_BINARY + CV_THRESH_OTSU);
-	double low_thres = high_thres * 0.75;
 
-	Canny(input, canny, low_thres, high_thres, apertureSize);
+	std::vector<cv::Vec4i> getVerticalLines()
+	{
+		return verticalLines;
+	}
 
-	std::vector<cv::Vec4i> lines;
+	std::vector<cv::Vec4i> getHorizontalLines()
+	{
+		return horizontalLines;
+	}
 
-	HoughLinesP(canny, lines, rho, theta, threshold, minLineLength, maxLineGap);
+private:
+	bool sameSlope(double alpha, double beta, double maxDelta);
 
-	return lines;
+private:
+	std::vector<cv::Vec4i> verticalLines;
+	std::vector<cv::Vec4i> horizontalLines;
+};
 
-}
+#endif /* LINEFILTER_H_ */

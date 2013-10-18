@@ -49,12 +49,10 @@ public:
 
 	void display(cv::Mat& frame);
 
-
 	void setClusters(std::vector<ObjectCluster>* clusters)
 	{
 		this->clusters = clusters;
 	}
-
 
 	void setKeyPoints(std::vector<cv::KeyPoint>* keyPoints)
 	{
@@ -66,10 +64,14 @@ public:
 		this->roll = roll;
 	}
 
-
 	void setVerticalLines(std::vector<cv::Vec4i>* verticalLines)
 	{
 		this->verticalLines = verticalLines;
+	}
+
+	void setHorizontalLines(std::vector<cv::Vec4i>* horizontalLines)
+	{
+		this->horizontalLines = horizontalLines;
 	}
 
 private:
@@ -87,8 +89,8 @@ private:
 	std::vector<cv::KeyPoint>* keyPoints;
 	std::vector<ObjectCluster>* clusters;
 	std::vector<cv::Vec4i>* verticalLines;
+	std::vector<cv::Vec4i>* horizontalLines;
 	double roll;
-
 
 };
 

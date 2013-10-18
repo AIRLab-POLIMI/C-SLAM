@@ -20,6 +20,7 @@ add_executable(cognitive_vision src/Callbacks.cpp
                                 src/HoughDetector.cpp 
                                 src/ImageView.cpp 
                                 src/LineDetector.cpp  
+                                src/LineFilter.cpp
                                 src/main.cpp)
 
 #link libriaries

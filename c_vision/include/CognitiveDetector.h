@@ -67,7 +67,6 @@ public:
 
 private:
 	cv::Mat preprocessing(cv::Mat& input);
-	std::vector<cv::Vec4i> extractVerticalLines(std::vector<cv::Vec4i> lines);
 
 private:
 	FeatureDetector featureDetector;
