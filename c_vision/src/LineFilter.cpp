@@ -23,19 +23,26 @@
 
 #include "LineFilter.h"
 
-void LineFilter::filter(std::vector<cv::Vec4i> lines, double roll)
+#include <algorithm>
+
+using namespace cv;
+using namespace std;
+
+bool isHighestLine(cv::Vec4i i, cv::Vec4i j);
+bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
+
+void LineFilter::filter(vector<Vec4i> lines, double roll)
 {
 	const double delta_max_vertical = 5 * M_PI / 180; //5 degrees of error
 	const double delta_max_horizontal = 5 * M_PI / 180; //5 degrees of error
 
 	const double orizontal_line1 = roll * M_PI / 180.0;
 	const double orizontal_line2 = orizontal_line1 + M_PI;
-	const double vertical_line = orizontal_line1 + M_PI/2;
-
+	const double vertical_line = orizontal_line1 + M_PI / 2;
 
 	for (size_t i = 0; i < lines.size(); i++)
 	{
-		cv::Vec4i& line = lines[i];
+		Vec4i& line = lines[i];
 		int dx = line[0] - line[2];
 		int dy = line[1] - line[3];
 
@@ -45,12 +52,15 @@ void LineFilter::filter(std::vector<cv::Vec4i> lines, double roll)
 		{
 			verticalLines.push_back(lines[i]);
 		}
-		else if (sameSlope(orizontal_line1, alpha_line, delta_max_horizontal) ||
-				sameSlope(orizontal_line2, alpha_line, delta_max_horizontal))
+		else if (sameSlope(orizontal_line1, alpha_line, delta_max_horizontal)
+				|| sameSlope(orizontal_line2, alpha_line, delta_max_horizontal))
 		{
 			horizontalLines.push_back(lines[i]);
 		}
 	}
+
+	sort(verticalLines.begin(), verticalLines.end(), isLeftmostLine);
+	sort(horizontalLines.begin(), horizontalLines.end(), isHighestLine);
 
 }
 
@@ -62,12 +72,12 @@ bool LineFilter::sameSlope(double alpha, double beta, double maxDelta)
 
 }
 
-bool isHighestLine(cv::Vec4i i, cv::Vec4i j)
+bool isHighestLine(Vec4i i, Vec4i j)
 {
-	return true;
+	return (i[1] > j[1]) && (i[3] > j[3]);
 }
 
-bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j)
+bool isLeftmostLine(Vec4i i, Vec4i j)
 {
-	return true;
+	return (i[0] < j[0]) && (i[2] < j[2]);
 }

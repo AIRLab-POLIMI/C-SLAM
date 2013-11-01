@@ -74,32 +74,34 @@ vector<vector<Point> > CognitiveDetector::detectSquares(
 		std::vector<cv::Vec4i> horizontalLines)
 {
 	vector<vector<Point> > squares;
-	for (int i = 0; i < verticalLines.size() - 1; i++)
-	{
-		Vec4i v1 = verticalLines[i];
-		Vec4i v2 = verticalLines[i + 1];
-		for (int j = 0; j < horizontalLines.size() - 1; j++)
-		{
-			Vec4i h1 = horizontalLines[j];
-			for (int k = j + 1; k < horizontalLines.size(); k++)
+	if (!verticalLines.empty() && !horizontalLines.empty())
+		for (size_t i = 0; i + 1 < verticalLines.size(); i++)
+		{	//i+1 instead size-1 to avoid integer overflow
+			Vec4i v1 = verticalLines[i];
+			Vec4i v2 = verticalLines[i + 1];
+
+			for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
 			{
-				vector<Point> square;
-				Vec4i h2 = horizontalLines[k];
-				Point a, b, c, d;
-				a = findInterceptions(h1, v1);
-				b = findInterceptions(h1, v2);
-				c = findInterceptions(h2, v1);
-				d = findInterceptions(h2, v2);
-				square.push_back(a);
-				square.push_back(b);
-				square.push_back(c);
-				square.push_back(d);
+				Vec4i h1 = horizontalLines[j];
+				for (size_t k = j + 1; k < horizontalLines.size(); k++)
+				{
+					vector<Point> square;
+					Vec4i h2 = horizontalLines[k];
+					Point a, b, c, d;
+					a = findInterceptions(h1, v1);
+					b = findInterceptions(h1, v2);
+					c = findInterceptions(h2, v1);
+					d = findInterceptions(h2, v2);
+					square.push_back(a);
+					square.push_back(b);
+					square.push_back(c);
+					square.push_back(d);
 
-				squares.push_back(square);
+					squares.push_back(square);
+				}
 			}
-		}
 
-	}
+		}
 
 	return squares;
 

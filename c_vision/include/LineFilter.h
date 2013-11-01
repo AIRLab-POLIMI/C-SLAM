@@ -45,9 +45,6 @@ public:
 private:
 	bool sameSlope(double alpha, double beta, double maxDelta);
 
-	bool isHighestLine(cv::Vec4i i, cv::Vec4i j);
-	bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
-
 private:
 	std::vector<cv::Vec4i> verticalLines;
 	std::vector<cv::Vec4i> horizontalLines;
