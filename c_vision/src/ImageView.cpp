@@ -26,11 +26,17 @@
 #include "Callbacks.h"
 #include "DefaultParameters.h"
 
+#include <opencv2/imgproc/imgproc.hpp>
+
+using namespace std;
+using namespace cv;
+
 void ImageView::display(cv::Mat& frame)
 {
 	displayClusterResults(*keyPoints, *clusters, frame);
 	displayLineResults(*verticalLines, frame);
 	displayLineResults(*horizontalLines, frame);
+	displaySquareResults(*squares, frame);
 	drawAxis(frame);
 
 	imshow(viewName, frame);
@@ -39,7 +45,7 @@ void ImageView::display(cv::Mat& frame)
 
 void ImageView::drawAxis(cv::Mat& input)
 {
-	cv::Point center, y1, y2, z1, z2;
+	Point center, y1, y2, z1, z2;
 	center.x = input.cols / 2;
 	center.y = input.rows / 2;
 
@@ -56,9 +62,9 @@ void ImageView::drawAxis(cv::Mat& input)
 	z2.x = center.x + offset1;
 	z2.y = center.y + offset2;
 
-	cv::line(input, y1, y2, cv::Scalar(0, 0, 0));
-	cv::line(input, z1, z2, cv::Scalar(0, 0, 0));
-	cv::circle(input, center, 5, cv::Scalar(0, 0, 0));
+	line(input, y1, y2, Scalar(0, 0, 0));
+	line(input, z1, z2, Scalar(0, 0, 0));
+	circle(input, center, 5, Scalar(0, 0, 0));
 
 }
 
@@ -69,28 +75,33 @@ void ImageView::displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
 		const cv::KeyPoint& kp = keyPoints[i];
-		cv::circle(frame, kp.pt, 2, cv::Scalar(0, 0, 255));
+		circle(frame, kp.pt, 2, Scalar(0, 0, 255));
 	}
 
 	/*display clusters*/
 	for (size_t i = 0; i < clusters.size(); i++)
 	{
 
-		clusters[i].draw(frame, cv::Scalar(255, 0, 0));
+		clusters[i].draw(frame, Scalar(255, 0, 0));
 	}
 }
 
-void ImageView::displayLineResults(std::vector<cv::Vec4i> lines, cv::Mat& frame)
+void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 {
 
 	//display lines
 	for (size_t i = 0; i < lines.size(); i++)
 	{
-		cv::Vec4i l = lines[i];
-		line(frame, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
-				cv::Scalar(0, 0, 255));
+		Vec4i l = lines[i];
+		line(frame, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255));
 	}
 
+}
+
+void ImageView::displaySquareResults(vector<vector<Point> >& squares,
+		Mat& frame)
+{
+	drawContours(frame, squares, -1, Scalar(0, 255, 0));
 }
 
 void ImageView::createTrackBars(void* featureObject, void* clusterObjetc,

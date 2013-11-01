@@ -61,3 +61,13 @@ bool LineFilter::sameSlope(double alpha, double beta, double maxDelta)
 	return delta < maxDelta;
 
 }
+
+bool isHighestLine(cv::Vec4i i, cv::Vec4i j)
+{
+	return true;
+}
+
+bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j)
+{
+	return true;
+}

@@ -66,6 +66,10 @@ public:
 	}
 
 private:
+	std::vector<std::vector<cv::Point> > detectSquares(
+			std::vector<cv::Vec4i> verticalLines,
+			std::vector<cv::Vec4i> horizontalLines);
+	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
 	cv::Mat preprocessing(cv::Mat& input);
 
 private:
