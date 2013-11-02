@@ -90,8 +90,8 @@ vector<vector<Point> > CognitiveDetector::detectSquares(
 					Point a, b, c, d;
 					a = findInterceptions(h1, v1);
 					b = findInterceptions(h1, v2);
-					c = findInterceptions(h2, v1);
-					d = findInterceptions(h2, v2);
+					c = findInterceptions(h2, v2);
+					d = findInterceptions(h2, v1);
 					square.push_back(a);
 					square.push_back(b);
 					square.push_back(c);
