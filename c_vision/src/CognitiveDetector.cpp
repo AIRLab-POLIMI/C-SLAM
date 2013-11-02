@@ -114,14 +114,15 @@ Point CognitiveDetector::findInterceptions(Vec4i l1, Vec4i l2)
 	int x3 = l2[0], x4 = l2[2];
 	int y3 = l2[1], y4 = l2[3];
 
-	double a =
-			-(x2 * (y4 - y3) + x3 * (y2 - y4) + x4 * (y3 - y2))
-					/ (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
-							+ x3 * (y1 - y2));
-	double b =
-			(x1 * (y4 - y2) + x2 * (y1 - y4) + x4 * (y2 - y1))
-					/ (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
-							+ x3 * (y1 - y2));
+	double an = -(x2 * (y4 - y3) + x3 * (y2 - y4) + x4 * (y3 - y2));
+	double ad = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
+			+ x3 * (y1 - y2));
+	double a = an / ad;
+
+	double bn = (x1 * (y4 - y2) + x2 * (y1 - y4) + x4 * (y2 - y1));
+	double bd = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
+			+ x3 * (y1 - y2));
+	double b = bn / bd;
 	int x = a * x1 + (1 - a) * x2;
 	int y = a * y1 + (1 - a) * y2;
 
