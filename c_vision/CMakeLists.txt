@@ -17,6 +17,7 @@ add_executable(cognitive_vision src/Callbacks.cpp
                                 src/DBScan.cpp
                                 src/Dispatcher.cpp  
                                 src/FeatureDetector.cpp
+                                src/HighLevelDetector.cpp
                                 src/HoughDetector.cpp 
                                 src/ImageView.cpp 
                                 src/LineDetector.cpp  

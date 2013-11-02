@@ -21,24 +21,35 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CALLBACKS_H_
-#define CALLBACKS_H_
+#ifndef HIGHLEVELDETECTOR_H_
+#define HIGHLEVELDETECTOR_H_
 
-///FAST threshold
-void thresholdCorner(int value, void* data);
+#include <vector>
+#include <opencv2/core/core.hpp>
 
-///Cluster max distance
-void maxDistanceCluster(int maxDistance, void* data);
-///Cluster min points
-void minPointsCluster(int minPoints, void* data);
+class HighLevelDetector
+{
+public:
+	void detect(std::vector<cv::Vec4i> verticalLines,
+			std::vector<cv::Vec4i> horizontalLines);
 
+	const std::vector<std::vector<cv::Point> >& getPoles() const
+	{
+		return poles;
+	}
 
-///HoughLineP threshold trackbar callback
-void thresholdHoughP(int value, void* data);
-///HoughLineP minimum line length
-void minLineLengthHoughP(int value, void* data);
-///HoughLineP max line gap trackbar callback
-void maxLineGapHoughP(int value, void* data);
+	const std::vector<std::vector<cv::Point> >& getSquares() const
+	{
+		return squares;
+	}
 
+private:
+	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
 
-#endif /* CALLBACKS_H_ */
+private:
+	std::vector<std::vector<cv::Point> > squares;
+	std::vector<std::vector<cv::Point> > poles;
+
+};
+
+#endif /* HIGHLEVELDETECTOR_H_ */

@@ -45,18 +45,6 @@ void minPointsCluster(int minPoints, void* data)
 	clusterD->setMinPoints(minPoints);
 }
 
-void minCanny(int value, void* data)
-{
-	HoughDetector* borderD = static_cast<HoughDetector*>(data);
-	borderD->setThreshold1(value);
-}
-
-void maxCanny(int value, void* data)
-{
-	HoughDetector* borderD = static_cast<HoughDetector*>(data);
-	borderD->setThreshold2(value);
-}
-
 void thresholdHoughP(int value, void* data)
 {
 	HoughDetector* lineD = static_cast<HoughDetector*>(data);

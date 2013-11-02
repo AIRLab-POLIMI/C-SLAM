@@ -29,11 +29,11 @@
 class HoughDetector
 {
 public:
-	HoughDetector(int threshold1, int threshold2, int apertureSize, int rho,
-			double theta, int threshold, int minLineLenght, int maxLineGap) :
-			threshold1(threshold1), threshold2(threshold2), apertureSize(
-					apertureSize), rho(rho), theta(theta), threshold(threshold), minLineLength(
-					minLineLenght), maxLineGap(maxLineGap)
+	HoughDetector(int apertureSize, int rho, double theta, int threshold,
+			int minLineLenght, int maxLineGap) :
+			apertureSize(apertureSize), rho(rho), theta(theta), threshold(
+					threshold), minLineLength(minLineLenght), maxLineGap(
+					maxLineGap)
 	{
 	}
 
@@ -99,29 +99,7 @@ public:
 		this->threshold = threshold;
 	}
 
-	int getThreshold1() const
-	{
-		return threshold1;
-	}
-
-	void setThreshold1(int threshold1)
-	{
-		this->threshold1 = threshold1;
-	}
-
-	int getThreshold2() const
-	{
-		return threshold2;
-	}
-
-	void setThreshold2(int threshold2)
-	{
-		this->threshold2 = threshold2;
-	}
-
 private:
-	int threshold1;
-	int threshold2;
 	int apertureSize;
 	int rho;
 	double theta;

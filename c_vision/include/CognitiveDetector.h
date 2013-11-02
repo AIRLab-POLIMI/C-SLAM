@@ -40,11 +40,11 @@ public:
 	CognitiveDetector() :
 			featureDetector(cornerP.threshold), clusterDetector(
 					clusterP.maxDistance, clusterP.minPoints), lineDetector(
-					cannyP.minCanny, cannyP.maxCanny, cannyP.apertureSize,
-					houghP.rho, houghP.teta, houghP.threshold,
-					houghP.minLineLenght, houghP.maxLineGap), pitch(0), roll(0), yaw(
-					0), viewer("Detected Image", (void*) &featureDetector,
-					(void*) &clusterDetector, (void*) &lineDetector)
+					cannyP.apertureSize, houghP.rho, houghP.teta,
+					houghP.threshold, houghP.minLineLenght, houghP.maxLineGap), pitch(
+					0), roll(0), yaw(0), viewer("Detected Image",
+					(void*) &featureDetector, (void*) &clusterDetector,
+					(void*) &lineDetector)
 	{
 	}
 
