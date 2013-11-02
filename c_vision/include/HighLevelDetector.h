@@ -44,11 +44,24 @@ public:
 	}
 
 private:
+	inline void getPointsCoordinates(cv::Vec4i l, int& x1, int& y1, int& x2,
+			int& y2)
+	{
+		x1 = l[0];
+		y1 = l[1];
+
+		x2 = l[2];
+		y2 = l[3];
+	}
+
+private:
 	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
+	void findPoles(cv::Vec4i l1, cv::Vec4i l2);
 
 private:
 	std::vector<std::vector<cv::Point> > squares;
 	std::vector<std::vector<cv::Point> > poles;
+	const int polesFormFactor = 50;
 
 };
 
