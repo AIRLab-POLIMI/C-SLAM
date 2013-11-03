@@ -37,6 +37,7 @@ void ImageView::display(cv::Mat& frame)
 	displayLineResults(*verticalLines, frame);
 	displayLineResults(*horizontalLines, frame);
 	displaySquareResults(*squares, frame);
+	displayPoleResults(*poles, frame);
 	drawAxis(frame);
 
 	imshow(viewName, frame);
@@ -102,6 +103,12 @@ void ImageView::displaySquareResults(vector<vector<Point> >& squares,
 		Mat& frame)
 {
 	drawContours(frame, squares, -1, Scalar(0, 255, 0));
+}
+
+void ImageView::displayPoleResults(std::vector<std::vector<cv::Point> >& poles,
+		cv::Mat& frame)
+{
+	drawContours(frame, poles, -1, Scalar(255, 255, 0));
 }
 
 void ImageView::createTrackBars(void* featureObject, void* clusterObjetc,

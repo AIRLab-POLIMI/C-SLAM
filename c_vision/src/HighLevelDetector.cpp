@@ -23,13 +23,14 @@
 
 #include "HighLevelDetector.h"
 
+#include <iostream>
+
 using namespace cv;
 using namespace std;
 
 void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 		std::vector<cv::Vec4i> horizontalLines)
 {
-	vector<vector<Point> > squares;
 	if (!verticalLines.empty() && !horizontalLines.empty())
 		for (size_t i = 0; i + 1 < verticalLines.size(); i++)
 		{	//i+1 instead size-1 to avoid integer overflow
@@ -43,18 +44,30 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 				for (size_t k = j + 1; k < horizontalLines.size(); k++)
 				{
 					vector<Point> square;
-					Vec4i h2 = horizontalLines[k];
-					Point a, b, c, d;
-					a = findInterceptions(h1, v1);
-					b = findInterceptions(h1, v2);
-					c = findInterceptions(h2, v2);
-					d = findInterceptions(h2, v1);
-					square.push_back(a);
-					square.push_back(b);
-					square.push_back(c);
-					square.push_back(d);
+					vector<double> a;
+					vector<double> b;
 
-					squares.push_back(square);
+					a.resize(4);
+					b.resize(4);
+
+					Vec4i h2 = horizontalLines[k];
+					Point x, y, z, w;
+
+					x = findInterceptions(h1, v1, a[0], b[0]);
+					y = findInterceptions(h1, v2, a[1], b[1]);
+					z = findInterceptions(h2, v2, a[2], b[2]);
+					w = findInterceptions(h2, v1, a[3], b[3]);
+
+					if (isSquare(a, b))
+					{
+						square.push_back(x);
+						square.push_back(y);
+						square.push_back(z);
+						square.push_back(w);
+
+						squares.push_back(square);
+					}
+
 				}
 			}
 
@@ -62,7 +75,8 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 
 }
 
-Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2)
+Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2, double& a,
+		double& b)
 {
 	int x1, x2, x3, x4;
 	int y1, y2, y3, y4;
@@ -73,12 +87,15 @@ Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2)
 	double an = -(x2 * (y4 - y3) + x3 * (y2 - y4) + x4 * (y3 - y2));
 	double ad = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
 			+ x3 * (y1 - y2));
-	double a = an / ad;
+
+	a = an / ad;
 
 	double bn = (x1 * (y4 - y2) + x2 * (y1 - y4) + x4 * (y2 - y1));
 	double bd = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
 			+ x3 * (y1 - y2));
-	double b = bn / bd;
+
+	b = bn / bd;
+
 	int x = a * x1 + (1 - a) * x2;
 	int y = a * y1 + (1 - a) * y2;
 
@@ -91,23 +108,54 @@ void HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 	int x1, x2, x3, x4;
 	int y1, y2, y3, y4;
 
-	int dx, dy;
+	double dx, dy;
 
 	getPointsCoordinates(l1, x1, y1, x2, y2);
 	getPointsCoordinates(l2, x3, y3, x4, y4);
 
-	//calculate the dx and dy medium
+	//calculate the average dx and dy
 	dx = abs(x1 + x2 - x3 - x4) / 2;
-	dy = abs(y1 + y2 - y3 - y4) / 2;
+	dy = abs((y1 - y2) + (y3 - y4)) / 2;
 
 	if (dy / dx > polesFormFactor)
 	{
 		vector<Point> pole;
 		pole.push_back(Point(x1, y1));
 		pole.push_back(Point(x2, y2));
-		pole.push_back(Point(x3, y3));
 		pole.push_back(Point(x4, y4));
+		pole.push_back(Point(x3, y3));
 		poles.push_back(pole);
 	}
 
 }
+
+inline void HighLevelDetector::getPointsCoordinates(cv::Vec4i l, int& x1,
+		int& y1, int& x2, int& y2)
+{
+	x1 = l[0];
+	y1 = l[1];
+
+	x2 = l[2];
+	y2 = l[3];
+}
+
+bool HighLevelDetector::isSquare(vector<double> a, vector<double> b)
+{
+	int interceptionCounter = 0;
+
+	for (size_t i; i < a.size() && i < b.size(); i++)
+	{
+		if (a[i] >= -1.0 && a[i] <= 2.0)
+			interceptionCounter++;
+		if (b[i] >= -1.0 && b[i] <= 2.0)
+			interceptionCounter++;
+	}
+
+	cerr << "(" << a[0] << "," << a[1] << "," << a[2] << "," << a[3] << ")" << endl
+			<< "(" << b[0] << "," << b[1] << "," << b[2] << "," << b[3] << ")" << endl
+			<< "IC: " << interceptionCounter << endl;
+
+
+	return interceptionCounter > 3;
+}
+
