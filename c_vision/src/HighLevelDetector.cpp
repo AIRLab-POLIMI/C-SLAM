@@ -143,12 +143,12 @@ bool HighLevelDetector::isSquare(vector<double> a, vector<double> b)
 {
 	int interceptionCounter = 0;
 
+	cerr << "#a=" << a.size() << "#b=" << b.size() << endl;
+
 	for (size_t i; i < a.size() && i < b.size(); i++)
 	{
-		if (a[i] >= -1.0 && a[i] <= 2.0)
-			interceptionCounter++;
-		if (b[i] >= -1.0 && b[i] <= 2.0)
-			interceptionCounter++;
+		interceptionCounter+= (-1.0 <= a[i]) && (a[i] <= 2.0);
+		interceptionCounter+= (-1.0 <= b[i]) && (b[i] <= 2.0);
 	}
 
 	cerr << "(" << a[0] << "," << a[1] << "," << a[2] << "," << a[3] << ")" << endl
