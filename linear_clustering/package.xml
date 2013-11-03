@@ -1,0 +1,17 @@
+<package>
+	<name>linear_clustering</name>
+	<version>1.0.0</version>
+	<description>
+		linear_clustering, some basic clustering algorithm for opencv keypoints, linear in an ordered dataset
+	</description>
+	<maintainer email="davide.tateo@mail.polimi.it">Davide Tateo</maintainer>
+	<license>GPLv3</license>
+
+	<author>Davide Tateo</author>
+	<url>http://ros.org/wiki/c_vision</url>
+
+	<build_depend>roscpp</build_depend>
+	<build_depend>opencv2</build_depend>
+	
+	<buildtool_depend>catkin</buildtool_depend>
+</package>

@@ -28,7 +28,6 @@
 
 #include "DefaultParameters.h"
 #include "FeatureDetector.h"
-#include "LineDetector.h"
 #include "HoughDetector.h"
 #include "DBScan.h"
 

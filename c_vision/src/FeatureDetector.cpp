@@ -23,7 +23,6 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include "FeatureDetector.h"
-#include "ClusterFilter.h"
 
 std::vector<cv::KeyPoint>  FeatureDetector::detect(cv::Mat& input)
 {
