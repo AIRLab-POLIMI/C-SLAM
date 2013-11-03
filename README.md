@@ -17,6 +17,15 @@ COMPILING
 The system can be build using the ros build tool `catkin`. Just create a catkin workspace, put the content of this repository in the src repository and run `catkin_make` to build the system.
 check [this](http://ros.org/wiki/catkin/Tutorials/create_a_workspace) tutorial to get more info on catkin.
 
+RUNNING WITH BAGS
+-----------------
+
+There is a launch file that can be used to launch the system, opening rqt_bag to testthe system with AR Drone bags. It also launch the image_proc node to rectify the AR drone input image.
+You can use the launch file with the following command:
+
+`roslaunch c_vision c_vision.launch`
+
+
 
 Copyright & contacts
 --------------------
