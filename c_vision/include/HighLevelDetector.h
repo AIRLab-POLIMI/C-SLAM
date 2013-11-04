@@ -48,7 +48,8 @@ private:
 			int& y2);
 	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2, double& a, double& b);
 	void findPoles(cv::Vec4i l1, cv::Vec4i l2);
-	bool isSquare(std::vector<double> a, std::vector<double> b);
+	bool isQuadrilateral(std::vector<double> a, std::vector<double> b);
+	bool lineBelongToQuadrilateral(double a1, double a2);
 
 private:
 	std::vector<std::vector<cv::Point> > squares;

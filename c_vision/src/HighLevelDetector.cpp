@@ -58,7 +58,7 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 					z = findInterceptions(h2, v2, a[2], b[2]);
 					w = findInterceptions(h2, v1, a[3], b[3]);
 
-					if (isSquare(a, b))
+					if (isQuadrilateral(a, b))
 					{
 						square.push_back(x);
 						square.push_back(y);
@@ -139,23 +139,23 @@ inline void HighLevelDetector::getPointsCoordinates(cv::Vec4i l, int& x1,
 	y2 = l[3];
 }
 
-bool HighLevelDetector::isSquare(vector<double> a, vector<double> b)
+bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 {
 	int interceptionCounter = 0;
+	int segmentCounter = 0;
 
-	cerr << "#a=" << a.size() << "#b=" << b.size() << endl;
-
-	for (size_t i; i < a.size() && i < b.size(); i++)
+	for (size_t i = 0; i < a.size() && i < b.size(); i++)
 	{
-		interceptionCounter+= (-1.0 <= a[i]) && (a[i] <= 2.0);
-		interceptionCounter+= (-1.0 <= b[i]) && (b[i] <= 2.0);
+		interceptionCounter += (-0.1 <= a[i]) && (a[i] <= 1.1);
+		interceptionCounter += (-0.1 <= b[i]) && (b[i] <= 1.1);
 	}
 
-	cerr << "(" << a[0] << "," << a[1] << "," << a[2] << "," << a[3] << ")" << endl
-			<< "(" << b[0] << "," << b[1] << "," << b[2] << "," << b[3] << ")" << endl
-			<< "IC: " << interceptionCounter << endl;
+	segmentCounter += lineBelongToQuadrilateral(a[0], a[1]);
+	segmentCounter += lineBelongToQuadrilateral(a[2], a[3]);
+	segmentCounter += lineBelongToQuadrilateral(b[0], b[1]);
+	segmentCounter += lineBelongToQuadrilateral(b[2], b[3]);
 
+	return (interceptionCounter > 3) && (segmentCounter == 4);
 
-	return interceptionCounter > 3;
 }
 
