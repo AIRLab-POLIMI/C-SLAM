@@ -34,7 +34,7 @@ bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 void LineFilter::filter(vector<Vec4i> lines, double roll)
 {
 	const double delta_max_vertical = 5 * M_PI / 180; //5 degrees of error
-	const double delta_max_horizontal = 5 * M_PI / 180; //5 degrees of error
+	const double delta_max_horizontal = 10 * M_PI / 180; //5 degrees of error
 
 	const double orizontal_line1 = roll * M_PI / 180.0;
 	const double orizontal_line2 = orizontal_line1 + M_PI;

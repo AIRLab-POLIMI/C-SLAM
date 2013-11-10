@@ -34,8 +34,8 @@ using namespace cv;
 void ImageView::display(cv::Mat& frame)
 {
 	displayClusterResults(*keyPoints, *clusters, frame);
-	displayLineResults(*verticalLines, frame);
-	displayLineResults(*horizontalLines, frame);
+	//displayLineResults(*verticalLines, frame);
+	//displayLineResults(*horizontalLines, frame);
 	displaySquareResults(*squares, frame);
 	displayPoleResults(*poles, frame);
 	drawAxis(frame);

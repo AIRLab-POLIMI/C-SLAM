@@ -159,3 +159,9 @@ bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 
 }
 
+bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
+{
+	double a = a1 * a2;
+	return (a < 0) || ((a1 > 0) && (a < 1));
+}
+
