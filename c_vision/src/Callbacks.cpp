@@ -24,7 +24,7 @@
 #include "Callbacks.h"
 #include "FeatureDetector.h"
 #include "HoughDetector.h"
-#include "DBScan.h"
+#include "DBSCAN.h"
 
 /* Corner detector callback */
 void thresholdCorner(int value, void* data)
@@ -35,13 +35,13 @@ void thresholdCorner(int value, void* data)
 
 void maxDistanceCluster(int maxDistance, void* data)
 {
-	DBScan* clusterD = static_cast<DBScan*>(data);
+	DBSCAN* clusterD = static_cast<DBSCAN*>(data);
 	clusterD->setMaxDistance(maxDistance);
 }
 
 void minPointsCluster(int minPoints, void* data)
 {
-	DBScan* clusterD = static_cast<DBScan*>(data);
+	DBSCAN* clusterD = static_cast<DBSCAN*>(data);
 	clusterD->setMinPoints(minPoints);
 }
 

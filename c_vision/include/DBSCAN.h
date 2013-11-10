@@ -71,10 +71,10 @@ private:
 
 };
 
-class DBScan
+class DBSCAN
 {
 public:
-	DBScan(double eps, int minPts) :
+	DBSCAN(double eps, int minPts) :
 			maxDistance(eps), minPoints(minPts)
 	{
 	}

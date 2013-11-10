@@ -12,7 +12,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 #build the recognition node
 add_executable(cognitive_vision src/Callbacks.cpp
                                 src/CognitiveDetector.cpp
-                                src/DBScan.cpp
+                                src/DBSCAN.cpp
                                 src/Dispatcher.cpp  
                                 src/FeatureDetector.cpp
                                 src/HighLevelDetector.cpp

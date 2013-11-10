@@ -30,7 +30,7 @@
 #include "FeatureDetector.h"
 #include "HoughDetector.h"
 #include "HighLevelDetector.h"
-#include "DBScan.h"
+#include "DBSCAN.h"
 
 #include "ImageView.h"
 
@@ -74,7 +74,7 @@ private:
 
 private:
 	FeatureDetector featureDetector;
-	DBScan clusterDetector;
+	DBSCAN clusterDetector;
 	HoughDetector lineDetector;
 
 	double pitch;

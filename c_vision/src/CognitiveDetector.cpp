@@ -24,7 +24,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "CognitiveDetector.h"
-#include "DBScan.h"
+#include "DBSCAN.h"
 #include "LineFilter.h"
 
 using namespace cv;

@@ -21,7 +21,7 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DBScan.h"
+#include "DBSCAN.h"
 #include <set>
 
 using namespace std;
@@ -73,7 +73,7 @@ void ObjectCluster::updateBoundingBox(KeyPoint point)
 
 }
 
-vector<ObjectCluster> DBScan::detect(vector<KeyPoint> &keypoints)
+vector<ObjectCluster> DBSCAN::detect(vector<KeyPoint> &keypoints)
 {
 	vector<ObjectCluster> clusters;
 	set<int> clustered;
@@ -130,7 +130,7 @@ vector<ObjectCluster> DBScan::detect(vector<KeyPoint> &keypoints)
 	return clusters;
 }
 
-vector<int> DBScan::listNeighbors(vector<KeyPoint> &keypoints,
+vector<int> DBSCAN::listNeighbors(vector<KeyPoint> &keypoints,
 		KeyPoint& keypoint)
 {
 	float dist;
