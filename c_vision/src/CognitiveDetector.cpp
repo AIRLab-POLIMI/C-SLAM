@@ -47,7 +47,7 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	HighLevelDetector highLevelDetector;
 	highLevelDetector.detect(verticalLines, horizontalLines);
 
-	vector<vector<Point> > squares = highLevelDetector.getSquares();
+	vector<vector<Point> > rectangles = highLevelDetector.getRectangles();
 	vector<vector<Point> > poles = highLevelDetector.getPoles();
 
 	//display results
@@ -56,7 +56,7 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	viewer.setVerticalLines(&verticalLines);
 	viewer.setHorizontalLines(&horizontalLines);
 	viewer.setClusters(&clusters);
-	viewer.setSquares(&squares);
+	viewer.setRectangles(&rectangles);
 	viewer.setPoles(&poles);
 	viewer.display(frame);
 }

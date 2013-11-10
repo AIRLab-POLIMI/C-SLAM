@@ -43,7 +43,7 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 				Vec4i h1 = horizontalLines[j];
 				for (size_t k = j + 1; k < horizontalLines.size(); k++)
 				{
-					vector<Point> square;
+					vector<Point> rectangle;
 					vector<double> a;
 					vector<double> b;
 
@@ -60,12 +60,12 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 
 					if (isQuadrilateral(a, b))
 					{
-						square.push_back(x);
-						square.push_back(y);
-						square.push_back(z);
-						square.push_back(w);
+						rectangle.push_back(x);
+						rectangle.push_back(y);
+						rectangle.push_back(z);
+						rectangle.push_back(w);
 
-						squares.push_back(square);
+						rectangles.push_back(rectangle);
 					}
 
 				}

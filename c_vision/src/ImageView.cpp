@@ -36,7 +36,7 @@ void ImageView::display(cv::Mat& frame)
 	displayClusterResults(*keyPoints, *clusters, frame);
 	//displayLineResults(*verticalLines, frame);
 	//displayLineResults(*horizontalLines, frame);
-	displaySquareResults(*squares, frame);
+	displayRectanglesResults(*rectangles, frame);
 	displayPoleResults(*poles, frame);
 	drawAxis(frame);
 
@@ -99,10 +99,10 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 
 }
 
-void ImageView::displaySquareResults(vector<vector<Point> >& squares,
+void ImageView::displayRectanglesResults(vector<vector<Point> >& rectangles,
 		Mat& frame)
 {
-	drawContours(frame, squares, -1, Scalar(0, 255, 0));
+	drawContours(frame, rectangles, -1, Scalar(0, 255, 0));
 }
 
 void ImageView::displayPoleResults(std::vector<std::vector<cv::Point> >& poles,

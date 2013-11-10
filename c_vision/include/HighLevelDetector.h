@@ -38,9 +38,9 @@ public:
 		return poles;
 	}
 
-	const std::vector<std::vector<cv::Point> >& getSquares() const
+	const std::vector<std::vector<cv::Point> >& getRectangles() const
 	{
-		return squares;
+		return rectangles;
 	}
 
 private:
@@ -52,7 +52,7 @@ private:
 	bool lineBelongToQuadrilateral(double a1, double a2);
 
 private:
-	std::vector<std::vector<cv::Point> > squares;
+	std::vector<std::vector<cv::Point> > rectangles;
 	std::vector<std::vector<cv::Point> > poles;
 	static const int polesFormFactor = 20;
 

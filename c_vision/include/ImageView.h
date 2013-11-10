@@ -74,9 +74,9 @@ public:
 		this->horizontalLines = horizontalLines;
 	}
 
-	void setSquares(std::vector<std::vector<cv::Point> >* squares)
+	void setRectangles(std::vector<std::vector<cv::Point> >* rectangles)
 	{
-		this->squares = squares;
+		this->rectangles = rectangles;
 	}
 
 	void setPoles(std::vector<std::vector<cv::Point> >* poles)
@@ -89,7 +89,7 @@ private:
 	void displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
 			std::vector<ObjectCluster>& clusters, cv::Mat& frame);
 	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
-	void displaySquareResults(std::vector<std::vector<cv::Point> >& squares, cv::Mat& frame);
+	void displayRectanglesResults(std::vector<std::vector<cv::Point> >& rectangles, cv::Mat& frame);
 	void displayPoleResults(std::vector<std::vector<cv::Point> >& poles, cv::Mat& frame);
 
 	void createTrackBars(void* featureObject, void* clusterObjetc,
@@ -102,7 +102,7 @@ private:
 	std::vector<ObjectCluster>* clusters;
 	std::vector<cv::Vec4i>* verticalLines;
 	std::vector<cv::Vec4i>* horizontalLines;
-	std::vector<std::vector<cv::Point> >* squares;
+	std::vector<std::vector<cv::Point> >* rectangles;
 	std::vector<std::vector<cv::Point> >* poles;
 	double roll;
 
