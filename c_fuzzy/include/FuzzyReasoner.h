@@ -32,6 +32,18 @@
 #include "FuzzyMF.h"
 #include "FuzzyAggregator.h"
 
+
+/**
+ * The class implementing the defuzzyfier
+ * this is intended to be an extensible defuzzifyer, but for now, implementing the centroid
+ * only with singletons.
+ */
+class Defuzzyfier
+{
+public:
+	std::map<std::string, double> defuzzify(std::map<std::string, DataMap>& aggregatedData);
+};
+
 /**
  * The class implementing the reasoner.
  *
@@ -62,6 +74,7 @@ private:
 	DomainTable* domainTable;
 	FuzzyAggregator* aggregator;
 	std::vector<Node*>* knowledgeBase;
+	Defuzzyfier defuzzyfier;
 };
 
 #endif /* FUZZYREASONER_H_ */

@@ -46,10 +46,10 @@ map<string, double> FuzzyReasoner::run()
 	}
 
 	map<string, DataMap> aggregatedResults = aggregator->getAggregations();
-	//TODO correggere
 
 	map<string, double> map;
-	return map; //FIXME momentaneo
+
+	return defuzzyfier.defuzzify(aggregatedResults); //FIXME momentaneo
 }
 
 void FuzzyReasoner::deleteRules()
@@ -89,3 +89,28 @@ FuzzyReasoner::~FuzzyReasoner()
 	delete knowledgeBase;
 }
 
+map<string, double> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
+{
+	map<string, double> results;
+	for (map<string, DataMap>::iterator i = aggregatedData.begin();
+			i != aggregatedData.end(); ++i)
+	{
+		DataMap dataMap = i->second;
+		double value = 0, weight = 0;
+		int cardinality = dataMap.size();
+		for(DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
+		{
+			Data data = j->second;
+			weight += data.weight;
+			value += data.weight*data.value;
+		}
+
+		if(cardinality > 1)
+			value /= weight;
+
+		results[i->first] = value;
+	}
+
+	return results;
+
+}
