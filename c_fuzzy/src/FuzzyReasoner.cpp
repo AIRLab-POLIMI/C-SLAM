@@ -23,32 +23,38 @@
 
 #include "FuzzyReasoner.h"
 
+using namespace std;
+
 inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 {
 	knowledgeBase->push_back(fuzzyRule);
 }
 
-void FuzzyReasoner::addInput(std::string name, int value)
+void FuzzyReasoner::addInput(string name, int value)
 {
 	(*inputTable)[name] = value;
 }
 
-std::map<std::string, double> FuzzyReasoner::run()
+map<string, double> FuzzyReasoner::run()
 {
 	//works backwards because MF are stored in reverse order by the parser...
-	for (std::vector<Node*>::reverse_iterator it = knowledgeBase->rbegin();
+	for (vector<Node*>::reverse_iterator it = knowledgeBase->rbegin();
 			it != knowledgeBase->rend(); ++it)
 	{
 		Node* rule = *it;
 		rule->evaluate();
 	}
 
-	return aggregator->getOutputs();
+	map<string, DataMap> aggregatedResults = aggregator->getAggregations();
+	//TODO correggere
+
+	map<string, double> map;
+	return map; //FIXME momentaneo
 }
 
 void FuzzyReasoner::deleteRules()
 {
-	for (std::vector<Node*>::iterator it = knowledgeBase->begin();
+	for (vector<Node*>::iterator it = knowledgeBase->begin();
 			it != knowledgeBase->end(); ++it)
 	{
 		delete *it;

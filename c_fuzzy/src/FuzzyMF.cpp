@@ -23,77 +23,73 @@
 
 #include "FuzzyMF.h"
 
-double TolMF::evaluate()
+double TolMF::evaluate(int value)
 {
-	if (input <= top)
+	if (value <= top)
 		return FUZZY_MAX_V;
-	else if (input >= bottom)
+	else if (value >= bottom)
 		return FUZZY_MIN_V;
 	else
-		return line(top, FUZZY_MAX_V, bottom, FUZZY_MIN_V, input);
+		return line(top, FUZZY_MAX_V, bottom, FUZZY_MIN_V, value);
 }
 
 double TolMF::defuzzify(double level)
 {
-	//TODO implementare!
-	return 0;
+	return throwUnimplementedException();
 }
 
-double TorMF::evaluate()
+double TorMF::evaluate(int value)
 {
-	if (input >= top)
+	if (value >= top)
 		return FUZZY_MAX_V;
-	else if (input <= bottom)
+	else if (value <= bottom)
 		return FUZZY_MIN_V;
 	else
-		return line(bottom, FUZZY_MIN_V, top, FUZZY_MAX_V, input);
+		return line(bottom, FUZZY_MIN_V, top, FUZZY_MAX_V, value);
 }
 
 double TorMF::defuzzify(double level)
 {
-	//TODO implementare!
-	return 0;
+	return throwUnimplementedException();
 }
 
-double TriMF::evaluate()
+double TriMF::evaluate(int value)
 {
-	if (input <= left || input >= right)
+	if (value <= left || value >= right)
 		return FUZZY_MIN_V;
-	else if (input < center)
-		return line(left, FUZZY_MIN_V, right, FUZZY_MAX_V, input);
-	else if (input > center)
-		return line(left, FUZZY_MAX_V, right, FUZZY_MIN_V, input);
+	else if (value < center)
+		return line(left, FUZZY_MIN_V, right, FUZZY_MAX_V, value);
+	else if (value > center)
+		return line(left, FUZZY_MAX_V, right, FUZZY_MIN_V, value);
 	else
 		return FUZZY_MAX_V;
 }
 
 double TriMF::defuzzify(double level)
 {
-	//TODO implementare!
-	return 0;
+	return throwUnimplementedException();
 }
 
-double TraMF::evaluate()
+double TraMF::evaluate(int value)
 {
-	if (input <= bottomLeft || input >= bottomRight)
+	if (value <= bottomLeft || value >= bottomRight)
 		return FUZZY_MIN_V;
-	else if (input > bottomLeft && input < topLeft)
-		return line(bottomLeft, FUZZY_MIN_V, topLeft, FUZZY_MAX_V, input);
-	else if (input > topRight && input < bottomRight)
-		return line(topRight, FUZZY_MAX_V, bottomRight, FUZZY_MIN_V, input);
+	else if (value > bottomLeft && value < topLeft)
+		return line(bottomLeft, FUZZY_MIN_V, topLeft, FUZZY_MAX_V, value);
+	else if (value > topRight && value < bottomRight)
+		return line(topRight, FUZZY_MAX_V, bottomRight, FUZZY_MIN_V, value);
 	else
 		return FUZZY_MAX_V;
 }
 
 double TraMF::defuzzify(double level)
 {
-	//TODO implementare!
-	return 0;
+	return throwUnimplementedException();
 }
 
-double IntMF::evaluate()
+double IntMF::evaluate(int value)
 {
-	if (input >= left && input <= right)
+	if (value >= left && value <= right)
 		return FUZZY_MAX_V;
 	else
 		return FUZZY_MIN_V;
@@ -101,13 +97,12 @@ double IntMF::evaluate()
 
 double IntMF::defuzzify(double level)
 {
-	//TODO implementare!
-	return 0;
+	return throwUnimplementedException();
 }
 
-double SgtMF::evaluate()
+double SgtMF::evaluate(int value)
 {
-	if (input == value)
+	if (value == value)
 		return FUZZY_MAX_V;
 	else
 		return FUZZY_MIN_V;
@@ -115,5 +110,5 @@ double SgtMF::evaluate()
 
 double SgtMF::defuzzify(double level)
 {
-	return value * level;
+	return value;
 }

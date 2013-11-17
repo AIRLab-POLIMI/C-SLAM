@@ -26,29 +26,38 @@
 
 #include <map>
 #include <string>
+
+/**
+ * Helper struct for passing data about fuzzy labels
+ */
+struct Data
+{
+	double weight;
+	double value;
+	int cardinality;
+};
+
+typedef std::map<std::string, Data> DataMap;
+
 /**
  * Fuzzy aggregation operator
- * the aggregation operation used is the weighted average
+ * the aggregation operation used is the average
  *
  */
 class FuzzyAggregator
 {
 public:
-	void addValue(std::string name, double weight, double value);
-	std::map<std::string, double> getOutputs();
+	void addValue(std::string output, std::string mfLabel, double weight,
+			double value);
+	std::map<std::string, DataMap> getAggregations();
 
 private:
-	/**
-	 * Helper struct
-	 */
-	struct Couple
-	{
-		double sumOfWeights;
-		double sumOfValues;
-	};
+	DataMap getAggregation(DataMap outputs);
+	DataMap createDataMap(std::string mfLabel, double value, double weight);
+	Data createData(double value, double weight);
 
 private:
-	std::map<std::string, Couple> aggregationMap;
+	std::map<std::string, DataMap> aggregationMap;
 
 };
 

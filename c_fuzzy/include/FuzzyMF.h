@@ -65,7 +65,7 @@ public:
 			top(top), bottom(bottom)
 	{
 	}
-	double evaluate();
+	virtual double evaluate(int value);
 	double defuzzify(double level);
 
 private:
@@ -85,7 +85,7 @@ public:
 			top(top), bottom(bottom)
 	{
 	}
-	double evaluate();
+	virtual double evaluate(int value);
 	double defuzzify(double level);
 
 private:
@@ -106,7 +106,7 @@ public:
 			left(left), right(right), center(center)
 	{
 	}
-	double evaluate();
+	virtual double evaluate(int value);
 	double defuzzify(double level);
 
 private:
@@ -127,7 +127,7 @@ public:
 					bottomRight)
 	{
 	}
-	double evaluate();
+	virtual double evaluate(int value);
 	double defuzzify(double level);
 
 private:
@@ -148,7 +148,7 @@ public:
 			left(left), right(right)
 	{
 	}
-	double evaluate();
+	virtual double evaluate(int value);
 	double defuzzify(double level);
 
 private:
@@ -168,7 +168,7 @@ public:
 			value(value)
 	{
 	}
-	double evaluate();
+	virtual double evaluate(int value);
 	double defuzzify(double level);
 
 private:

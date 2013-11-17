@@ -40,8 +40,10 @@ int main(int argc, char *argv[])
 		std::string name;
 		std::cout << "insert input name: " << std::endl;
 		std::cin >> name;
+		//name = "Input";
 		std::cout << "insert input value: " << std::endl;
 		std::cin >> value;
+		//value = 150;
 
 		reasoner->addInput(name, value);
 
@@ -49,6 +51,7 @@ int main(int argc, char *argv[])
 		{
 			std::cout << "another input? [y/n]" << std::endl;
 			std::cin >> stop;
+			//stop = 'n';
 		}while(stop != 'n' && stop != 'y');
 
 	} while (stop != 'n');

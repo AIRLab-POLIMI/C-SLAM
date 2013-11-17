@@ -24,37 +24,77 @@
 #include "FuzzyAggregator.h"
 #include <iostream>
 
-void FuzzyAggregator::addValue(std::string name, double weight, double value)
+using namespace std;
+
+
+void FuzzyAggregator::addValue(string output, string mfLabel, double weight,
+		double value)
 {
-	if (aggregationMap.count(name) == 0)
+	if (aggregationMap.count(output) == 0)
 	{
-		Couple couple;
-		couple.sumOfValues = value;
-		couple.sumOfWeights = weight;
-		aggregationMap[name] = couple;
+		DataMap dataMap = createDataMap(mfLabel, value, weight);
+		aggregationMap[output] = dataMap;
 	}
 	else
 	{
-		Couple& couple = aggregationMap[name];
-		couple.sumOfWeights += weight;
-		couple.sumOfValues += value;
+		DataMap& dataMap = aggregationMap[output];
+		if (dataMap.count(mfLabel) == 0)
+		{
+			aggregationMap[output][mfLabel] = createData(value, weight);
+		}
+		else
+		{
+			Data& data = aggregationMap[output][mfLabel];
+			data.weight += weight;
+			data.cardinality++;
+		}
 	}
 }
 
-std::map<std::string, double> FuzzyAggregator::getOutputs()
+Data FuzzyAggregator::createData(double value, double weight)
 {
-	std::map<std::string, double> outputMap;
-	for (std::map<std::string, Couple>::iterator it = aggregationMap.begin();
+	Data data;
+	data.value = value;
+	data.weight = weight;
+	data.cardinality = 1;
+	return data;
+}
+
+DataMap FuzzyAggregator::createDataMap(string mfLabel, double value,
+		double weight)
+{
+	DataMap dataMap;
+	dataMap[mfLabel] = createData(value, weight);
+	return dataMap;
+}
+
+map<string, DataMap> FuzzyAggregator::getAggregations()
+{
+	map<string, DataMap> aggregationsOutput;
+	for (map<string, DataMap>::iterator it = aggregationMap.begin();
 			it != aggregationMap.end(); ++it)
 	{
-		double output;
-		if (it->second.sumOfWeights != 0)
-			output = it->second.sumOfValues / it->second.sumOfWeights;
-		else
-			output = 0;
+		aggregationsOutput[it->first] = getAggregation(it->second);
+
+	}
+
+	return aggregationsOutput;
+}
+
+DataMap FuzzyAggregator::getAggregation(DataMap outputs)
+{
+	DataMap outputMap;
+	for (DataMap::iterator it = outputs.begin(); it != outputs.end(); ++it)
+	{
+		Data output;
+
+		output.cardinality = it->second.cardinality;
+		output.value = it->second.value;
+		output.weight = it->second.weight / output.cardinality;
 
 		outputMap[it->first] = output;
 	}
 
 	return outputMap;
 }
+

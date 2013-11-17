@@ -29,6 +29,7 @@
 #include "CrispData.h"
 #include "FuzzyAggregator.h"
 
+
 /**
  * Abstract class for a generic fuzzy operator
  *
@@ -145,7 +146,7 @@ public:
 					mfLabel), output(name)
 	{
 	}
-	double evaluate();
+	double evaluate(double value);
 
 private:
 	DomainTable& lookUpTable;

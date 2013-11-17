@@ -24,9 +24,9 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-#include<string>
-#include<map>
-
+#include <string>
+#include <map>
+#include <stdexcept>
 
 /**
  * Base abstract class Node
@@ -36,25 +36,35 @@
 class Node
 {
 public:
-	virtual double evaluate() = 0;
+	virtual double evaluate()
+	{
+		return throwUnimplementedException();
+	}
 
 	virtual inline int evaluateInt()
 	{
 		return (int) evaluate();
 	}
 
+	virtual inline double evaluate(int value)
+	{
+		return throwUnimplementedException();
+	}
+
+	virtual inline double evaluate(double value)
+	{
+		return throwUnimplementedException();
+	}
+
 	virtual ~Node()
 	{
 	}
 
-	inline double evaluate(int value)
-	{
-		this->input = value;
-		return evaluate();
-	}
-
 protected:
-	int input;
+	int throwUnimplementedException()
+	{
+		throw std::logic_error("Unimplemented method");
+	}
 
 };
 

@@ -50,12 +50,12 @@ FuzzyNot::~FuzzyNot()
 }
 
 
-double FuzzyAssignment::evaluate()
+double FuzzyAssignment::evaluate(double value)
 {
 	MFTable& mfTable = *lookUpTable[output];
 	FuzzyMF* mf = mfTable[mfLabel];
-	double result = mf->defuzzify(input);
-	aggregator.addValue(output, input, result);
+	double result = mf->defuzzify(value);
+	aggregator.addValue(output, mfLabel, value, result);
 	return result;
 }
 
