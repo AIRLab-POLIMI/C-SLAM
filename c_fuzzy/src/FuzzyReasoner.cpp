@@ -34,15 +34,16 @@ inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 
 void FuzzyReasoner::addInput(string name, int value)
 {
+	string maskS, ruleS1, ruleS2;
+	boost::to_string(rulesMask,ruleS1);
+
 	(*inputTable)[name] = value;
-	cout << rulesMask[0] << ", " << rulesMask[1] << ", " << rulesMask[3]
-				<< endl;
 	rulesMask &= *variableMasks->at(name);
-	cout << (*variableMasks->at(name))[0] << ", "
-			<< (*variableMasks->at(name))[1] << ", "
-			<< (*variableMasks->at(name))[3] << endl;
-	cout << rulesMask[0] << ", " << rulesMask[1] << ", " << rulesMask[3]
-			<< endl;
+
+
+	boost::to_string(*variableMasks->at(name),maskS);
+	boost::to_string(rulesMask,ruleS2);
+	cout << ruleS1 << ", " << maskS << ", " << ruleS2 << endl;
 }
 
 map<string, double> FuzzyReasoner::run()

@@ -62,6 +62,7 @@ public:
 					variableMasks)
 	{
 		rulesMask.resize(knowledgeBase->size(), true);
+		rulesMask.set();
 	}
 	void addRule(Node* fuzzyRule);
 	void addInput(std::string name, int value);

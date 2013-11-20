@@ -121,11 +121,15 @@ parametersList		: PARAMETER
 			}
 			;
 
-ruleSet 		: IF wellFormedFormula fuzzyAssignment END_RULE ruleSet
+ruleSet 		: rule ruleSet
+			| /* Empty */
+			;
+
+
+rule 			: IF wellFormedFormula fuzzyAssignment END_RULE
 			{
 				builder.buildRule($2, $3);
 			}
-			| /* Empty */
 			;
 
 wellFormedFormula	: fuzzyComparison 
