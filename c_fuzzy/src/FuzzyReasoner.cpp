@@ -23,6 +23,8 @@
 
 #include "FuzzyReasoner.h"
 
+#include <iostream>
+
 using namespace std;
 
 inline void FuzzyReasoner::addRule(Node* fuzzyRule)
@@ -33,23 +35,32 @@ inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 void FuzzyReasoner::addInput(string name, int value)
 {
 	(*inputTable)[name] = value;
+	cout << rulesMask[0] << ", " << rulesMask[1] << ", " << rulesMask[3]
+				<< endl;
+	rulesMask &= *variableMasks->at(name);
+	cout << (*variableMasks->at(name))[0] << ", "
+			<< (*variableMasks->at(name))[1] << ", "
+			<< (*variableMasks->at(name))[3] << endl;
+	cout << rulesMask[0] << ", " << rulesMask[1] << ", " << rulesMask[3]
+			<< endl;
 }
 
 map<string, double> FuzzyReasoner::run()
 {
-	//works backwards because MF are stored in reverse order by the parser...
-	for (vector<Node*>::reverse_iterator it = knowledgeBase->rbegin();
-			it != knowledgeBase->rend(); ++it)
+	size_t index = rulesMask.find_first();
+	while (index != boost::dynamic_bitset<>::npos)
 	{
-		Node* rule = *it;
+		Node* rule = knowledgeBase->at(index);
 		rule->evaluate();
+		index = rulesMask.find_next(index);
 	}
 
 	map<string, DataMap> aggregatedResults = aggregator->getAggregations();
 
-	map<string, double> map;
+	inputTable->clear();
+	rulesMask.set();
 
-	return defuzzyfier.defuzzify(aggregatedResults); //FIXME momentaneo
+	return defuzzyfier.defuzzify(aggregatedResults);
 }
 
 void FuzzyReasoner::deleteRules()
@@ -78,6 +89,14 @@ void FuzzyReasoner::deleteDomains()
 		delete it->second;
 	}
 }
+void FuzzyReasoner::deleteMasks()
+{
+	for (map<string, boost::dynamic_bitset<>*>::iterator it =
+			variableMasks->begin(); it != variableMasks->end(); ++it)
+	{
+		delete it->second;
+	}
+}
 
 FuzzyReasoner::~FuzzyReasoner()
 {
@@ -87,6 +106,8 @@ FuzzyReasoner::~FuzzyReasoner()
 	delete aggregator;
 	deleteRules();
 	delete knowledgeBase;
+	deleteMasks();
+	delete variableMasks;
 }
 
 map<string, double> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
@@ -98,14 +119,14 @@ map<string, double> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
 		DataMap dataMap = i->second;
 		double value = 0, weight = 0;
 		int cardinality = dataMap.size();
-		for(DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
+		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
 		{
 			Data data = j->second;
 			weight += data.weight;
-			value += data.weight*data.value;
+			value += data.weight * data.value;
 		}
 
-		if(cardinality > 1)
+		if (cardinality > 1)
 			value /= weight;
 
 		results[i->first] = value;

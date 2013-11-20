@@ -152,8 +152,7 @@ wellFormedFormula	: fuzzyComparison
 
 fuzzyComparison		: OPEN_B ID IS ID CLOSE_B 
 			{
-				Node* left = builder.buildCrispData($2);
-				$$ = builder.buildIs(left, $4);
+				$$ = builder.buildIs($2, $4);
 				delete $2;
 				delete $4;
 			}

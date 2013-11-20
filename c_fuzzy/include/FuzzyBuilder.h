@@ -28,12 +28,16 @@
 #include<vector>
 #include<map>
 
+#include <boost/dynamic_bitset.hpp>
+
 #include "Node.h"
 #include "FuzzyMF.h"
 #include "FuzzyRule.h"
 #include "FuzzyReasoner.h"
 #include "FuzzyScanner.h"
 #include "FuzzyParser.tab.h"
+
+
 
 
 enum FuzzySets
@@ -54,6 +58,7 @@ public:
 		domainTable = new DomainTable();
 		mfTable = NULL;
 		ruleList = new std::vector<Node*>();
+		variableMasks = new std::map<std::string, boost::dynamic_bitset<>* >();
 	}
 
 	FuzzyReasoner* createReasoner();
@@ -76,6 +81,7 @@ private:
 	DomainTable* domainTable;
 	MFTable* mfTable;
 	std::vector<Node*>* ruleList;
+	std::map<std::string, boost::dynamic_bitset<>* > *variableMasks;
 
 public:
 
@@ -87,7 +93,7 @@ public:
 	Node* buildOr(Node* left, Node* right);
 	Node* buildNot(Node* operand);
 	Node* buildAssignment(std::string* output, std::string* label);
-	Node* buildIs(Node* crispData, std::string* mfLabel);
+	Node* buildIs(std::string* domain, std::string* mfLabel);
 
 	//Function to build a fuzzy Domain
 	void buildDomain(std::vector<std::string> variables);
@@ -103,12 +109,10 @@ public:
 	FuzzyMF* buildInt(int left, int right);
 	FuzzyMF* buildSgt(int value);
 
-	//Functions to build crisp data
-	Node* buildCrispData(std::string* label);
-
 private:
 	void createMap();
-
+	void updateVariableMask(std::string& label);
+	void normalizeVariableMasks();
 };
 
 #endif /* FUZZYBUILDER_H_ */

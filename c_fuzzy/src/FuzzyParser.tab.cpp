@@ -579,8 +579,7 @@ namespace yy {
 /* Line 664 of lalr1.cc  */
 #line 154 "src/parser.y"
     {
-				Node* left = builder.buildCrispData((yysemantic_stack_[(5) - (2)].str));
-				(yyval.node) = builder.buildIs(left, (yysemantic_stack_[(5) - (4)].str));
+				(yyval.node) = builder.buildIs((yysemantic_stack_[(5) - (2)].str), (yysemantic_stack_[(5) - (4)].str));
 				delete (yysemantic_stack_[(5) - (2)].str);
 				delete (yysemantic_stack_[(5) - (4)].str);
 			}
@@ -588,7 +587,7 @@ namespace yy {
 
   case 21:
 /* Line 664 of lalr1.cc  */
-#line 163 "src/parser.y"
+#line 162 "src/parser.y"
     {
 				(yyval.node) = builder.buildAssignment((yysemantic_stack_[(6) - (3)].str), (yysemantic_stack_[(6) - (5)].str));
 				delete (yysemantic_stack_[(6) - (3)].str);
@@ -598,7 +597,7 @@ namespace yy {
 
 
 /* Line 664 of lalr1.cc  */
-#line 602 "/home/dave/CognitiveSlam/src/c_fuzzy/src/FuzzyParser.tab.cpp"
+#line 601 "/home/dave/CognitiveSlam/src/c_fuzzy/src/FuzzyParser.tab.cpp"
       default:
         break;
       }
@@ -1053,7 +1052,7 @@ namespace yy {
   {
          0,    69,    69,    72,    72,    73,    76,    82,    90,    97,
      106,   112,   117,   124,   128,   131,   135,   139,   143,   147,
-     153,   162
+     153,   161
   };
 
   // Print the state stack on the debug stream.
@@ -1143,9 +1142,9 @@ namespace yy {
 
 } // yy
 /* Line 1135 of lalr1.cc  */
-#line 1147 "/home/dave/CognitiveSlam/src/c_fuzzy/src/FuzzyParser.tab.cpp"
+#line 1146 "/home/dave/CognitiveSlam/src/c_fuzzy/src/FuzzyParser.tab.cpp"
 /* Line 1136 of lalr1.cc  */
-#line 169 "src/parser.y"
+#line 168 "src/parser.y"
 
 
 void yy::FuzzyParser::error(const yy::FuzzyParser::location_type& l, const std::string& msg)

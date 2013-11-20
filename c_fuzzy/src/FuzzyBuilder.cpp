@@ -28,6 +28,8 @@
 #include "FuzzyOperator.h"
 #include "FuzzyBuilder.h"
 
+using namespace std;
+
 FuzzyBuilder::~FuzzyBuilder()
 {
 	if (scanner != NULL)
@@ -39,10 +41,10 @@ FuzzyBuilder::~FuzzyBuilder()
 void FuzzyBuilder::parse(const char *filename)
 {
 	assert(filename != NULL);
-	std::ifstream inputFile(filename);
+	ifstream inputFile(filename);
 	if (!inputFile.good())
 	{
-		std::perror("Error");
+		perror("Error");
 		exit(-1);
 	}
 	scanner = new FuzzyScanner(&inputFile);
@@ -52,24 +54,16 @@ void FuzzyBuilder::parse(const char *filename)
 	assert(parser != NULL);
 	if (parser->parse() == -1)
 	{
-		std::cerr << "Parse failed!!" << std::endl;
+		cerr << "Parse failed!!" << endl;
 	}
-}
-
-void FuzzyBuilder::createMap()
-{
-	fuzzyMap["tol"] = TOL;
-	fuzzyMap["tor"] = TOR;
-	fuzzyMap["tra"] = TRA;
-	fuzzyMap["tri"] = TRI;
-	fuzzyMap["int"] = INT;
-	fuzzyMap["sgt"] = SGT;
-
 }
 
 FuzzyReasoner* FuzzyBuilder::createReasoner()
 {
-	return new FuzzyReasoner(inputTable, domainTable, aggregator, ruleList);
+	reverse(ruleList->begin(), ruleList->end());
+	normalizeVariableMasks();
+	return new FuzzyReasoner(inputTable, domainTable, aggregator, ruleList,
+			variableMasks);
 }
 
 void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
@@ -96,36 +90,38 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 	return new FuzzyNot(static_cast<FuzzyOperator*>(operand));
 }
 
-Node* FuzzyBuilder::buildIs(Node* left, std::string* mfLabel)
+Node* FuzzyBuilder::buildIs(string* domain, string* mfLabel)
 {
 	//TODO assertion to check existence of all the stuff...
-	CrispData* crispData = static_cast<CrispData*>(left);
+	updateVariableMask(*domain);
+	CrispData* crispData = new CrispData(inputTable, *domain);
 	return new FuzzyIs(domainTable, crispData, *mfLabel);
 }
 
-Node* FuzzyBuilder::buildAssignment(std::string* output, std::string* label)
+Node* FuzzyBuilder::buildAssignment(string* output, string* label)
 {
 	return new FuzzyAssignment(domainTable, aggregator, *output, *label);
 }
 
 //Fuzzy domain
-void FuzzyBuilder::buildDomain(std::vector<std::string> variables)
+void FuzzyBuilder::buildDomain(vector<string> variables)
 {
-	DomainTable& map = *domainTable;
+	DomainTable& domainMap = *domainTable;
+	map<string, boost::dynamic_bitset<>*>& maskMap = *variableMasks;
 	mfTable = new MFTable();
-	std::vector<std::string>::iterator it;
+	vector<string>::iterator it;
 	for (it = variables.begin(); it != variables.end(); it++)
 	{
-		map[*it] = mfTable;
+		domainMap[*it] = mfTable;
+		maskMap[*it] = new boost::dynamic_bitset<>();
 	}
 }
 
 //Fuzzy MF
-void FuzzyBuilder::buildMF(std::string* name, std::string* shape,
-		std::vector<int>* parameters)
+void FuzzyBuilder::buildMF(string* name, string* shape, vector<int>* parameters)
 {
 	MFTable& map = *mfTable;
-	std::vector<int>& p = *parameters;
+	vector<int>& p = *parameters;
 
 	//assert that the number of parameters matches the MF shape
 	//then create the correspondent MF labeled "name"
@@ -196,9 +192,35 @@ FuzzyMF* FuzzyBuilder::buildSgt(int value)
 	return new SgtMF(value);
 }
 
-//Fuzzy crisp Data
-Node* FuzzyBuilder::buildCrispData(std::string* label)
+void FuzzyBuilder::createMap()
 {
-	return new CrispData(inputTable, *label);
+	fuzzyMap["tol"] = TOL;
+	fuzzyMap["tor"] = TOR;
+	fuzzyMap["tra"] = TRA;
+	fuzzyMap["tri"] = TRI;
+	fuzzyMap["int"] = INT;
+	fuzzyMap["sgt"] = SGT;
+
+}
+
+void FuzzyBuilder::updateVariableMask(string& label)
+{
+	size_t currentRule = ruleList->size();
+	map<string, boost::dynamic_bitset<>*>& maskMap = *variableMasks;
+	boost::dynamic_bitset<>& bitset = *maskMap[label];
+	if (currentRule >= bitset.size())
+		bitset.resize(currentRule + 1, false);
+
+	bitset[currentRule] = true;
+}
+
+void FuzzyBuilder::normalizeVariableMasks()
+{
+	map<string, boost::dynamic_bitset<>*>::iterator it;
+	for (it = variableMasks->begin(); it != variableMasks->end(); ++it)
+	{
+		it->second->resize(ruleList->size(), false);
+	}
+
 }
 
