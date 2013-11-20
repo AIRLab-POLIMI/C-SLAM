@@ -61,8 +61,8 @@ public:
 					aggregator), knowledgeBase(knowledgeBase), variableMasks(
 					variableMasks)
 	{
-		rulesMask.resize(knowledgeBase->size(), true);
-		rulesMask.set();
+		rulesMask.resize(knowledgeBase->size(), false);
+		rulesMask.reset();
 	}
 	void addRule(Node* fuzzyRule);
 	void addInput(std::string name, int value);

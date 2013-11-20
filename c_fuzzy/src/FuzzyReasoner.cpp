@@ -32,8 +32,11 @@ inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 
 void FuzzyReasoner::addInput(string name, int value)
 {
-	(*inputTable)[name] = value;
-	rulesMask &= *variableMasks->at(name);
+	if(variableMasks->count(name) != 0)
+	{
+		(*inputTable)[name] = value;
+		rulesMask |= *variableMasks->at(name);
+	}
 }
 
 map<string, double> FuzzyReasoner::run()
@@ -49,7 +52,7 @@ map<string, double> FuzzyReasoner::run()
 	map<string, DataMap> aggregatedResults = aggregator->getAggregations();
 
 	inputTable->clear();
-	rulesMask.set();
+	rulesMask.reset();
 
 	return defuzzyfier.defuzzify(aggregatedResults);
 }
