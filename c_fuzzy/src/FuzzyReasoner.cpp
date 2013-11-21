@@ -23,6 +23,8 @@
 
 #include "FuzzyReasoner.h"
 
+#include <iostream>
+
 using namespace std;
 
 inline void FuzzyReasoner::addRule(Node* fuzzyRule)
@@ -32,15 +34,19 @@ inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 
 void FuzzyReasoner::addInput(string name, int value)
 {
-	if(variableMasks->count(name) != 0)
+	if (variableMasks->count(name) != 0)
 	{
 		(*inputTable)[name] = value;
-		rulesMask |= *variableMasks->at(name);
+		inputMask.set(variableMasks->at(name).first, true);
 	}
 }
 
 map<string, double> FuzzyReasoner::run()
 {
+	//Calculates the rules to be used
+	updateRulesMask();
+
+	//Calculate rules outputs
 	size_t index = rulesMask.find_first();
 	while (index != boost::dynamic_bitset<>::npos)
 	{
@@ -49,12 +55,52 @@ map<string, double> FuzzyReasoner::run()
 		index = rulesMask.find_next(index);
 	}
 
+	//Use the aggregation operator
 	map<string, DataMap> aggregatedResults = aggregator->getAggregations();
 
+	//clean all input functions
+	cleanInputData();
+
+	//return defuzzyfied data
+	return defuzzyfier.defuzzify(aggregatedResults);
+}
+
+void FuzzyReasoner::updateRulesMask()
+{
+	boost::dynamic_bitset<> noInputMask(knowledgeBase->size());
+	noInputMask.reset();
+	for (map<string, BitData>::iterator it = variableMasks->begin();
+			it != variableMasks->end(); ++it)
+	{
+		int index = it->second.first;
+		boost::dynamic_bitset<>& currentMask = *it->second.second;
+		if (inputMask[index])
+			rulesMask |= currentMask;
+		else
+			noInputMask |= currentMask;
+	}
+
+	string b1, b2, b3, b4;
+
+	boost::to_string(rulesMask, b1);
+	boost::to_string(noInputMask, b2);
+
+
+	rulesMask &= noInputMask.flip();
+
+	boost::to_string(rulesMask, b3);
+	boost::to_string(inputMask, b4);
+
+	cout << b1 << ", " << b2 << ", " << b3 << ", inputmask: " << b4 << endl;
+
+
+}
+
+void FuzzyReasoner::cleanInputData()
+{
 	inputTable->clear();
 	rulesMask.reset();
-
-	return defuzzyfier.defuzzify(aggregatedResults);
+	inputMask.reset();
 }
 
 void FuzzyReasoner::deleteRules()
@@ -85,10 +131,10 @@ void FuzzyReasoner::deleteDomains()
 }
 void FuzzyReasoner::deleteMasks()
 {
-	for (map<string, boost::dynamic_bitset<>*>::iterator it =
-			variableMasks->begin(); it != variableMasks->end(); ++it)
+	for (map<string, BitData>::iterator it = variableMasks->begin();
+			it != variableMasks->end(); ++it)
 	{
-		delete it->second;
+		delete it->second.second;
 	}
 }
 

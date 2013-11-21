@@ -60,7 +60,6 @@ void FuzzyBuilder::parse(const char *filename)
 
 FuzzyReasoner* FuzzyBuilder::createReasoner()
 {
-	reverse(ruleList->begin(), ruleList->end());
 	normalizeVariableMasks();
 	return new FuzzyReasoner(inputTable, domainTable, aggregator, ruleList,
 			variableMasks);
@@ -107,13 +106,14 @@ Node* FuzzyBuilder::buildAssignment(string* output, string* label)
 void FuzzyBuilder::buildDomain(vector<string> variables)
 {
 	DomainTable& domainMap = *domainTable;
-	map<string, boost::dynamic_bitset<>*>& maskMap = *variableMasks;
+	map<string, BitData>& maskMap = *variableMasks;
 	mfTable = new MFTable();
 	vector<string>::iterator it;
 	for (it = variables.begin(); it != variables.end(); it++)
 	{
 		domainMap[*it] = mfTable;
-		maskMap[*it] = new boost::dynamic_bitset<>();
+		maskMap[*it] = BitData(maskMap.size(),
+				new boost::dynamic_bitset<>());
 	}
 }
 
@@ -206,8 +206,8 @@ void FuzzyBuilder::createMap()
 void FuzzyBuilder::updateVariableMask(string& label)
 {
 	size_t currentRule = ruleList->size();
-	map<string, boost::dynamic_bitset<>*>& maskMap = *variableMasks;
-	boost::dynamic_bitset<>& bitset = *maskMap[label];
+	map<string, BitData >& maskMap = *variableMasks;
+	boost::dynamic_bitset<>& bitset = *maskMap[label].second;
 	if (currentRule >= bitset.size())
 		bitset.resize(currentRule + 1, false);
 
@@ -216,10 +216,10 @@ void FuzzyBuilder::updateVariableMask(string& label)
 
 void FuzzyBuilder::normalizeVariableMasks()
 {
-	map<string, boost::dynamic_bitset<>*>::iterator it;
+	map<string, BitData >::iterator it;
 	for (it = variableMasks->begin(); it != variableMasks->end(); ++it)
 	{
-		it->second->resize(ruleList->size(), false);
+		it->second.second->resize(ruleList->size(), false);
 	}
 
 }

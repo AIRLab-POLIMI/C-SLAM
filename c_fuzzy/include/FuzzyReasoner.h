@@ -56,13 +56,16 @@ class FuzzyReasoner
 public:
 	FuzzyReasoner(std::map<std::string, int>* inputTable, DomainTable* mfTable,
 			FuzzyAggregator* aggregator, std::vector<Node*>* knowledgeBase,
-			std::map<std::string, boost::dynamic_bitset<>*>* variableMasks) :
+			std::map<std::string, std::pair<int, boost::dynamic_bitset<>*> >* variableMasks) :
 			inputTable(inputTable), domainTable(mfTable), aggregator(
 					aggregator), knowledgeBase(knowledgeBase), variableMasks(
 					variableMasks)
 	{
 		rulesMask.resize(knowledgeBase->size(), false);
+		inputMask.resize(variableMasks->size(), false);
+
 		rulesMask.reset();
+		inputMask.reset();
 	}
 	void addRule(Node* fuzzyRule);
 	void addInput(std::string name, int value);
@@ -74,15 +77,23 @@ private:
 	void deleteMF(MFTable* mfTable);
 	void deleteRules();
 	void deleteMasks();
+	void updateRulesMask();
+	void cleanInputData();
 
 private:
 	std::map<std::string, int>* inputTable;
 	DomainTable* domainTable;
 	FuzzyAggregator* aggregator;
 	std::vector<Node*>* knowledgeBase;
-	std::map<std::string, boost::dynamic_bitset<>*>* variableMasks;
+	std::map<std::string, std::pair<int, boost::dynamic_bitset<>*> >* variableMasks;
 	boost::dynamic_bitset<> rulesMask;
+	boost::dynamic_bitset<> inputMask;
 	Defuzzyfier defuzzyfier;
+
+private:
+	typedef std::pair<int, boost::dynamic_bitset<>*> BitData;
+
+
 };
 
 #endif /* FUZZYREASONER_H_ */

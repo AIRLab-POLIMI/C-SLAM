@@ -58,7 +58,7 @@ public:
 		domainTable = new DomainTable();
 		mfTable = NULL;
 		ruleList = new std::vector<Node*>();
-		variableMasks = new std::map<std::string, boost::dynamic_bitset<>* >();
+		variableMasks = new std::map<std::string, std::pair<int,boost::dynamic_bitset<>*> >();
 	}
 
 	FuzzyReasoner* createReasoner();
@@ -81,7 +81,7 @@ private:
 	DomainTable* domainTable;
 	MFTable* mfTable;
 	std::vector<Node*>* ruleList;
-	std::map<std::string, boost::dynamic_bitset<>* > *variableMasks;
+	std::map<std::string, std::pair<int,boost::dynamic_bitset<>*> >* variableMasks;
 
 public:
 
@@ -113,6 +113,9 @@ private:
 	void createMap();
 	void updateVariableMask(std::string& label);
 	void normalizeVariableMasks();
+
+private:
+	typedef std::pair<int, boost::dynamic_bitset<>*> BitData;
 };
 
 #endif /* FUZZYBUILDER_H_ */
