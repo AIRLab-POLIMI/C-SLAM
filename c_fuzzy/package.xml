@@ -10,6 +10,8 @@
 	<author>Davide Tateo</author>
 	<url>http://ros.org/wiki/c_fuzzy</url>
 	
+	<build_depend>roscpp</build_depend>
+	
 	<buildtool_depend>catkin</buildtool_depend>
 </package>
 

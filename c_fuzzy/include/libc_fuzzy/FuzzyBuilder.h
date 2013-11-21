@@ -28,17 +28,13 @@
 #include<vector>
 #include<map>
 
-#include <boost/dynamic_bitset.hpp>
-
 #include "Node.h"
 #include "FuzzyMF.h"
 #include "FuzzyRule.h"
 #include "FuzzyReasoner.h"
 #include "FuzzyScanner.h"
 #include "FuzzyParser.tab.h"
-
-
-
+#include "BitData.h"
 
 enum FuzzySets
 {
@@ -58,7 +54,7 @@ public:
 		domainTable = new DomainTable();
 		mfTable = NULL;
 		ruleList = new std::vector<Node*>();
-		variableMasks = new std::map<std::string, std::pair<int,boost::dynamic_bitset<>*> >();
+		variableMasks = new std::map<std::string, BitData>();
 	}
 
 	FuzzyReasoner* createReasoner();
@@ -81,7 +77,7 @@ private:
 	DomainTable* domainTable;
 	MFTable* mfTable;
 	std::vector<Node*>* ruleList;
-	std::map<std::string, std::pair<int,boost::dynamic_bitset<>*> >* variableMasks;
+	std::map<std::string, BitData>* variableMasks;
 
 public:
 
@@ -114,8 +110,6 @@ private:
 	void updateVariableMask(std::string& label);
 	void normalizeVariableMasks();
 
-private:
-	typedef std::pair<int, boost::dynamic_bitset<>*> BitData;
 };
 
 #endif /* FUZZYBUILDER_H_ */

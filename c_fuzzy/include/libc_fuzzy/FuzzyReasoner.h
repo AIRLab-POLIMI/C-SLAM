@@ -33,6 +33,7 @@
 #include "Node.h"
 #include "FuzzyMF.h"
 #include "FuzzyAggregator.h"
+#include "BitData.h"
 
 /**
  * The class implementing the defuzzyfier
@@ -56,7 +57,7 @@ class FuzzyReasoner
 public:
 	FuzzyReasoner(std::map<std::string, int>* inputTable, DomainTable* mfTable,
 			FuzzyAggregator* aggregator, std::vector<Node*>* knowledgeBase,
-			std::map<std::string, std::pair<int, boost::dynamic_bitset<>*> >* variableMasks) :
+			std::map<std::string, BitData>* variableMasks) :
 			inputTable(inputTable), domainTable(mfTable), aggregator(
 					aggregator), knowledgeBase(knowledgeBase), variableMasks(
 					variableMasks)
@@ -85,14 +86,10 @@ private:
 	DomainTable* domainTable;
 	FuzzyAggregator* aggregator;
 	std::vector<Node*>* knowledgeBase;
-	std::map<std::string, std::pair<int, boost::dynamic_bitset<>*> >* variableMasks;
+	std::map<std::string, BitData>* variableMasks;
 	boost::dynamic_bitset<> rulesMask;
 	boost::dynamic_bitset<> inputMask;
 	Defuzzyfier defuzzyfier;
-
-private:
-	typedef std::pair<int, boost::dynamic_bitset<>*> BitData;
-
 
 };
 

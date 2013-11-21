@@ -23,8 +23,6 @@
 
 #include "FuzzyReasoner.h"
 
-#include <iostream>
-
 using namespace std;
 
 inline void FuzzyReasoner::addRule(Node* fuzzyRule)
@@ -37,7 +35,7 @@ void FuzzyReasoner::addInput(string name, int value)
 	if (variableMasks->count(name) != 0)
 	{
 		(*inputTable)[name] = value;
-		inputMask.set(variableMasks->at(name).first, true);
+		inputMask.set(variableMasks->at(name).index, true);
 	}
 }
 
@@ -72,27 +70,15 @@ void FuzzyReasoner::updateRulesMask()
 	for (map<string, BitData>::iterator it = variableMasks->begin();
 			it != variableMasks->end(); ++it)
 	{
-		int index = it->second.first;
-		boost::dynamic_bitset<>& currentMask = *it->second.second;
+		int index = it->second.index;
+		boost::dynamic_bitset<>& currentMask = *it->second.bits;
 		if (inputMask[index])
 			rulesMask |= currentMask;
 		else
 			noInputMask |= currentMask;
 	}
 
-	string b1, b2, b3, b4;
-
-	boost::to_string(rulesMask, b1);
-	boost::to_string(noInputMask, b2);
-
-
 	rulesMask &= noInputMask.flip();
-
-	boost::to_string(rulesMask, b3);
-	boost::to_string(inputMask, b4);
-
-	cout << b1 << ", " << b2 << ", " << b3 << ", inputmask: " << b4 << endl;
-
 
 }
 
@@ -134,7 +120,7 @@ void FuzzyReasoner::deleteMasks()
 	for (map<string, BitData>::iterator it = variableMasks->begin();
 			it != variableMasks->end(); ++it)
 	{
-		delete it->second.second;
+		delete it->second.bits;
 	}
 }
 

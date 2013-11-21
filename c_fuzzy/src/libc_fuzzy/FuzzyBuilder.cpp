@@ -207,7 +207,7 @@ void FuzzyBuilder::updateVariableMask(string& label)
 {
 	size_t currentRule = ruleList->size();
 	map<string, BitData >& maskMap = *variableMasks;
-	boost::dynamic_bitset<>& bitset = *maskMap[label].second;
+	boost::dynamic_bitset<>& bitset = *maskMap[label].bits;
 	if (currentRule >= bitset.size())
 		bitset.resize(currentRule + 1, false);
 
@@ -219,7 +219,7 @@ void FuzzyBuilder::normalizeVariableMasks()
 	map<string, BitData >::iterator it;
 	for (it = variableMasks->begin(); it != variableMasks->end(); ++it)
 	{
-		it->second.second->resize(ruleList->size(), false);
+		it->second.bits->resize(ruleList->size(), false);
 	}
 
 }

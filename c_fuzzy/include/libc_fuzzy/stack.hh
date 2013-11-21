@@ -31,19 +31,19 @@
    version 2.2 of Bison.  */
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/stack.hh
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh
  ** Define the yy::stack class.
  */
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_STACK_HH_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_STACK_HH_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
 
 # include <deque>
 
 
 namespace yy {
 /* Line 34 of stack.hh  */
-#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/stack.hh"
+#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh"
   template <class T, class S = std::deque<T> >
   class stack
   {
@@ -136,6 +136,6 @@ namespace yy {
 
 } // yy
 /* Line 124 of stack.hh  */
-#line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/src/stack.hh"
+#line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh"
 
-#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_STACK_HH_INCLUDED  */
+#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED  */

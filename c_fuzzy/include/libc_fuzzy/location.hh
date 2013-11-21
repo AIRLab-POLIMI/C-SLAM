@@ -31,19 +31,19 @@
    version 2.2 of Bison.  */
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/location.hh
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/location.hh
  ** Define the yy::location class.
  */
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LOCATION_HH_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LOCATION_HH_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_LOCATION_HH_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_LOCATION_HH_INCLUDED
 
 # include "position.hh"
 
 
 namespace yy {
 /* Line 166 of location.cc  */
-#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/location.hh"
+#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/location.hh"
 
   /// Abstract a location.
   class location
@@ -176,6 +176,6 @@ namespace yy {
 
 } // yy
 /* Line 296 of location.cc  */
-#line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/location.hh"
+#line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/location.hh"
 
-#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LOCATION_HH_INCLUDED  */
+#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_LOCATION_HH_INCLUDED  */
