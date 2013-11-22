@@ -31,12 +31,18 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "fuzzy_reasoner_server");
 	ros::NodeHandle n;
 
-	ReasonerServiceHandler handler("/home/dave/prova.fuzzy");
+	if (argc > 1)
+	{
+		ReasonerServiceHandler handler(argv[1]);
 
-	ros::ServiceServer service = n.advertiseService("reasoning",
-			&ReasonerServiceHandler::reasoningCallback, &handler);
-	ROS_INFO("Reasoner setup correctly");
-	ros::spin();
-	ROS_INFO("Reasoner shut down");
+		ros::ServiceServer service = n.advertiseService("reasoning",
+				&ReasonerServiceHandler::reasoningCallback, &handler);
+		ROS_INFO("Reasoner setup correctly");
+		ros::spin();
+		ROS_INFO("Reasoner shut down");
+	}
+
+	ROS_INFO("No knowledge base specified");
+
 	return 0;
 }

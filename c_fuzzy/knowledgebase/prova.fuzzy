@@ -1,0 +1,37 @@
+/* Dichiarazione delle MF per gli input */
+FUZZIFY Input
+	Near := tol(100,200);
+	Medium := tra(100,200,300,400);
+	Far := tor(300,400);
+END_FUZZIFY
+
+
+FUZZIFY Prova
+	Near := tol(100,200);
+	Medium := tra(100,200,300,400);
+	Far := tor(300,400);
+END_FUZZIFY
+
+/* Dichiarazione delle MF per gli output */
+FUZZIFY Output1 
+	Ok :=  sgt(1);
+END_FUZZIFY
+
+FUZZIFY Output2
+	Ok :=  sgt(1);
+END_FUZZIFY
+
+FUZZIFY Output3
+	Ok :=  sgt(1);
+END_FUZZIFY
+
+FUZZIFY Output4
+	Ok :=  sgt(1);
+END_FUZZIFY
+
+/* Knowledge base */
+if (Input is Near) then (Output1 is Ok);
+if (Input is Medium)  and (Prova is Medium) then (Output2 is Ok); 
+if (Input is Far) and (Prova is Far) then (Output3 is Ok);
+if (Prova is Near) then (Output4 is Ok);
+
