@@ -31,14 +31,14 @@
    version 2.2 of Bison.  */
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h
  ** Define the yy::parser class.
  */
 
 /* C++ LALR(1) parser skeleton written by Akim Demaille.  */
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_FUZZYPARSER_TAB_H_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_FUZZYPARSER_TAB_H_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIBC_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIBC_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
 
 /* "%code requires" blocks.  */
 /* Line 33 of lalr1.cc  */
@@ -52,7 +52,7 @@
 
 
 /* Line 33 of lalr1.cc  */
-#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"
+#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h"
 
 
 #include <string>
@@ -68,7 +68,7 @@
 
 namespace yy {
 /* Line 33 of lalr1.cc  */
-#line 72 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"
+#line 72 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h"
 
   /// A Bison parser.
   class FuzzyParser
@@ -83,7 +83,7 @@ namespace yy {
 int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector<std::string>* fvars; 
 
 /* Line 33 of lalr1.cc  */
-#line 87 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"
+#line 87 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h"
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -293,8 +293,8 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector
 
 } // yy
 /* Line 33 of lalr1.cc  */
-#line 297 "/home/dave/CognitiveSlam/src/c_fuzzy/include/FuzzyParser.tab.h"
+#line 297 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h"
 
 
 
-#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_FUZZYPARSER_TAB_H_INCLUDED  */
+#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIBC_FUZZY_FUZZYPARSER_TAB_H_INCLUDED  */

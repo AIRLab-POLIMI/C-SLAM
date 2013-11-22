@@ -21,22 +21,27 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ros/ros.h>
+#ifndef REASONERSERVICEHANDLER_H_
+#define REASONERSERVICEHANDLER_H_
 
-#include "ReasonerServiceHandler.h"
+#include <vector>
 
-//main del servizio
-int main(int argc, char **argv)
+#include "FuzzyReasoner.h"
+
+#include "c_fuzzy/Reasoning.h"
+
+
+class ReasonerServiceHandler
 {
-	ros::init(argc, argv, "fuzzy_reasoner_server");
-	ros::NodeHandle n;
+public:
+	ReasonerServiceHandler(const char* knowledgeBasePath);
 
-	ReasonerServiceHandler handler("/home/dave/prova.fuzzy");
+	bool reasoningCallback(c_fuzzy::Reasoning::Request& request,
+			c_fuzzy::Reasoning::Response& response);
 
-	ros::ServiceServer service = n.advertiseService("reasoning",
-			&ReasonerServiceHandler::reasoningCallback, &handler);
-	ROS_INFO("Reasoner setup correctly");
-	ros::spin();
-	ROS_INFO("Reasoner shut down");
-	return 0;
-}
+private:
+	FuzzyReasoner* reasoner;
+
+};
+
+#endif /* REASONERSERVICEHANDLER_H_ */

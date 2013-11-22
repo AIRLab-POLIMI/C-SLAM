@@ -1,0 +1,6 @@
+#definition of the basic Reasoning service
+#The input variable for the reasoning
+InputVariable[] inputs
+---
+#The defuzzyfied output
+DefuzzyfiedOutput[] results

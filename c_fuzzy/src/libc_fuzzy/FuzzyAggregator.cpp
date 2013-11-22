@@ -78,6 +78,8 @@ map<string, DataMap> FuzzyAggregator::getAggregations()
 
 	}
 
+	aggregationMap.clear();
+
 	return aggregationsOutput;
 }
 

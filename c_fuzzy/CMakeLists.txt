@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation)
 project(c_fuzzy)
 
 # If catkin is not found, just compile the executable without ROS goodies
 if(catkin_FOUND)
-	catkin_package()
+    add_message_files(FILES
+                      DefuzzyfiedOutput.msg  
+                      InputVariable.msg  
+                      SimbolicOutput.msg)
+    add_service_files(FILES Reasoning.srv)
+    generate_messages()
+	catkin_package(CATKIN_DEPENDS message_runtime)
 	include_directories(include include/libc_fuzzy ${catkin_INCLUDE_DIRS})
 else()
 	include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/libc_fuzzy)
@@ -23,7 +29,7 @@ set(LIBC_FUZZY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/libc_fuzzy)
 
 
 #generate parser and lexer from flex and Bison sources
-bison_target(Parser ${LIBC_FUZZY_SOURCE_DIR}/parser.y ${LIBC_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/FuzzyParser.tab.h")
+bison_target(Parser ${LIBC_FUZZY_SOURCE_DIR}/parser.y ${LIBC_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/libc_fuzzy/FuzzyParser.tab.h")
 flex_target(Scanner ${LIBC_FUZZY_SOURCE_DIR}/scanner.l ${LIBC_FUZZY_SOURCE_DIR}/FuzzyScanner.cpp)
 
 #move generated files into include directory
@@ -67,7 +73,10 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #now build the ros node
 if(catkin_FOUND)
 
-add_executable(${PROJECT_NAME}_reasoner src/main.cpp)
-target_link_libraries(${PROJECT_NAME}_reasoner ${catkin_LIBRARIES})
+add_executable(${PROJECT_NAME}_reasoner 
+               src/main.cpp 
+               src/ReasonerServiceHandler.cpp)
+               
+target_link_libraries(${PROJECT_NAME}_reasoner  ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 endif()
