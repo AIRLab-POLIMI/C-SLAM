@@ -144,7 +144,6 @@ map<string, double> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
 	{
 		DataMap dataMap = i->second;
 		double value = 0, weight = 0;
-		int cardinality = dataMap.size();
 		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
 		{
 			Data data = j->second;
@@ -152,8 +151,7 @@ map<string, double> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
 			value += data.weight * data.value;
 		}
 
-		if (cardinality > 1)
-			value /= weight;
+		value /= weight;
 
 		results[i->first] = value;
 	}
