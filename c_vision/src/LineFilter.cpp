@@ -39,10 +39,10 @@ bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 void LineFilter::filter(vector<Vec4i> lines, double roll)
 {
 	const double delta_max_vertical = from_degrees(5); //5 degrees of error
-	const double delta_max_horizontal = from_degrees(10) ; //10 degrees of error
+	const double delta_max_horizontal = from_degrees(10); //10 degrees of error
 
 	const double orizontal_line = from_degrees(roll);
-	const double vertical_line = from_degrees(orizontal_line) + M_PI / 2;
+	const double vertical_line = from_degrees(orizontal_line + 90);
 
 	for (size_t i = 0; i < lines.size(); i++)
 	{
@@ -52,11 +52,13 @@ void LineFilter::filter(vector<Vec4i> lines, double roll)
 
 		double alpha_line = atan2(dy, dx);
 
-		if (shortest_angular_distance(alpha_line, orizontal_line) < delta_max_vertical)
+		if (shortest_angular_distance(alpha_line, orizontal_line)
+				< delta_max_vertical)
 		{
 			verticalLines.push_back(lines[i]);
 		}
-		else if (shortest_angular_distance(alpha_line, vertical_line) < delta_max_vertical)
+		else if (shortest_angular_distance(alpha_line, vertical_line)
+				< delta_max_vertical)
 		{
 			horizontalLines.push_back(lines[i]);
 		}
@@ -66,7 +68,6 @@ void LineFilter::filter(vector<Vec4i> lines, double roll)
 	sort(horizontalLines.begin(), horizontalLines.end(), isHighestLine);
 
 }
-
 
 bool isHighestLine(Vec4i i, Vec4i j)
 {
