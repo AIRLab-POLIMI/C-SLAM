@@ -24,6 +24,11 @@
 #include "LineFilter.h"
 
 #include <algorithm>
+#include <iostream>
+
+#include <angles/angles.h>
+
+using namespace angles;
 
 using namespace cv;
 using namespace std;
@@ -33,12 +38,11 @@ bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 
 void LineFilter::filter(vector<Vec4i> lines, double roll)
 {
-	const double delta_max_vertical = 5 * M_PI / 180; //5 degrees of error
-	const double delta_max_horizontal = 10 * M_PI / 180; //5 degrees of error
+	const double delta_max_vertical = from_degrees(5); //5 degrees of error
+	const double delta_max_horizontal = from_degrees(10) ; //10 degrees of error
 
-	const double orizontal_line1 = roll * M_PI / 180.0;
-	const double orizontal_line2 = orizontal_line1 + M_PI;
-	const double vertical_line = orizontal_line1 + M_PI / 2;
+	const double orizontal_line = from_degrees(roll);
+	const double vertical_line = from_degrees(orizontal_line) + M_PI / 2;
 
 	for (size_t i = 0; i < lines.size(); i++)
 	{
@@ -48,12 +52,11 @@ void LineFilter::filter(vector<Vec4i> lines, double roll)
 
 		double alpha_line = atan2(dy, dx);
 
-		if (sameSlope(vertical_line, alpha_line, delta_max_vertical))
+		if (shortest_angular_distance(alpha_line, orizontal_line) < delta_max_vertical)
 		{
 			verticalLines.push_back(lines[i]);
 		}
-		else if (sameSlope(orizontal_line1, alpha_line, delta_max_horizontal)
-				|| sameSlope(orizontal_line2, alpha_line, delta_max_horizontal))
+		else if (shortest_angular_distance(alpha_line, vertical_line) < delta_max_vertical)
 		{
 			horizontalLines.push_back(lines[i]);
 		}
@@ -64,13 +67,6 @@ void LineFilter::filter(vector<Vec4i> lines, double roll)
 
 }
 
-bool LineFilter::sameSlope(double alpha, double beta, double maxDelta)
-{
-	double delta = abs(abs(alpha) - abs(beta));
-
-	return delta < maxDelta;
-
-}
 
 bool isHighestLine(Vec4i i, Vec4i j)
 {
