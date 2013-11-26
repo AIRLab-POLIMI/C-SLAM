@@ -53,7 +53,7 @@ ReasonerServiceHandler::ReasonerServiceHandler(const char* knowledgeBasePath)
 bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 		Reasoning::Response& response)
 {
-	std::vector<c_fuzzy::InputVariable>::iterator i;
+	vector<c_fuzzy::InputVariable>::iterator i;
 
 	for (i = request.inputs.begin(); i != request.inputs.end(); ++i)
 	{
@@ -61,9 +61,9 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 	}
 
 
-	std::map<std::string, double> results = reasoner->run();
+	map<string, FuzzyOutput> results = reasoner->run();
 
-	std::map<std::string, double>::iterator j;
+	map<string, FuzzyOutput>::iterator j;
 
 
 
@@ -71,7 +71,8 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 	{
 		DefuzzyfiedOutput output;
 		output.name = j->first;
-		output.value = j->second;
+		output.value = j->second.value;
+		output.truth = j->second.truth;
 		response.results.push_back(output);
 	}
 

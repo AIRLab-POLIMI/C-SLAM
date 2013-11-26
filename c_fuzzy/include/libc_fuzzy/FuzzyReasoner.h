@@ -24,9 +24,9 @@
 #ifndef FUZZYREASONER_H_
 #define FUZZYREASONER_H_
 
-#include<map>
-#include<string>
-#include<vector>
+#include <map>
+#include <string>
+#include <vector>
 
 #include <boost/dynamic_bitset.hpp>
 
@@ -36,6 +36,16 @@
 #include "BitData.h"
 
 /**
+ * This struct is used to store the couple value/truth level
+ *
+ */
+struct FuzzyOutput
+{
+	double value;
+	double truth;
+};
+
+/**
  * The class implementing the defuzzyfier
  * this is intended to be an extensible defuzzifyer, but for now, implementing the centroid
  * only with singletons.
@@ -43,7 +53,7 @@
 class Defuzzyfier
 {
 public:
-	std::map<std::string, double> defuzzify(
+	std::map<std::string, FuzzyOutput> defuzzify(
 			std::map<std::string, DataMap>& aggregatedData);
 };
 
@@ -70,7 +80,7 @@ public:
 	}
 	void addRule(Node* fuzzyRule);
 	void addInput(std::string name, int value);
-	std::map<std::string, double> run();
+	std::map<std::string, FuzzyOutput> run();
 	~FuzzyReasoner();
 
 private:

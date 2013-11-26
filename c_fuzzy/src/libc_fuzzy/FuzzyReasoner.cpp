@@ -39,7 +39,7 @@ void FuzzyReasoner::addInput(string name, int value)
 	}
 }
 
-map<string, double> FuzzyReasoner::run()
+map<string, FuzzyOutput> FuzzyReasoner::run()
 {
 	//Calculates the rules to be used
 	updateRulesMask();
@@ -136,24 +136,28 @@ FuzzyReasoner::~FuzzyReasoner()
 	delete variableMasks;
 }
 
-map<string, double> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
+map<string, FuzzyOutput> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
 {
-	map<string, double> results;
+	map<string, FuzzyOutput> results;
 	for (map<string, DataMap>::iterator i = aggregatedData.begin();
 			i != aggregatedData.end(); ++i)
 	{
 		DataMap dataMap = i->second;
-		double value = 0, weight = 0;
+		double product = 0, weight = 0, value = 0;
 		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
 		{
-			Data data = j->second;
+			Data& data = j->second;
 			weight += data.weight;
-			value += data.weight * data.value;
+			value += data.value;
+			product += data.weight * data.value;
 		}
 
-		value /= weight;
+		FuzzyOutput result;
 
-		results[i->first] = value;
+		result.truth = product / value;
+		result.value = product / weight;
+
+		results[i->first] = result;
 	}
 
 	return results;

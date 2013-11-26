@@ -64,14 +64,15 @@ int main(int argc, char *argv[])
 		reasoner->addInput("Input", 189);
 	}
 
-	std::map<std::string, double> results = reasoner->run();
+	std::map<std::string, FuzzyOutput> results = reasoner->run();
 
 	std::cout << "Reasoning terminato, risultati:" << std::endl;
 
-	for (std::map<std::string, double>::iterator it = results.begin();
+	for (std::map<std::string, FuzzyOutput>::iterator it = results.begin();
 			it != results.end(); ++it)
 	{
-		std::cout << it->first << " = " << it->second << std::endl;
+		std::cout << it->first << " = " << it->second.value << "truth value = "
+				<< it->second.truth << std::endl;
 	}
 
 	delete reasoner;
