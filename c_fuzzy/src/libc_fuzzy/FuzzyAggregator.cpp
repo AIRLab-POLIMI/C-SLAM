@@ -26,10 +26,12 @@
 
 using namespace std;
 
-
 void FuzzyAggregator::addValue(string output, string mfLabel, double weight,
 		double value)
 {
+	if (weight == 0)
+		return;
+
 	if (aggregationMap.count(output) == 0)
 	{
 		DataMap dataMap = createDataMap(mfLabel, value, weight);
@@ -51,6 +53,21 @@ void FuzzyAggregator::addValue(string output, string mfLabel, double weight,
 	}
 }
 
+map<string, DataMap> FuzzyAggregator::getAggregations()
+{
+	map<string, DataMap> aggregationsOutput;
+	for (map<string, DataMap>::iterator it = aggregationMap.begin();
+			it != aggregationMap.end(); ++it)
+	{
+		aggregationsOutput[it->first] = getAggregation(it->second);
+
+	}
+
+	aggregationMap.clear();
+
+	return aggregationsOutput;
+}
+
 Data FuzzyAggregator::createData(double value, double weight)
 {
 	Data data;
@@ -66,21 +83,6 @@ DataMap FuzzyAggregator::createDataMap(string mfLabel, double value,
 	DataMap dataMap;
 	dataMap[mfLabel] = createData(value, weight);
 	return dataMap;
-}
-
-map<string, DataMap> FuzzyAggregator::getAggregations()
-{
-	map<string, DataMap> aggregationsOutput;
-	for (map<string, DataMap>::iterator it = aggregationMap.begin();
-			it != aggregationMap.end(); ++it)
-	{
-		aggregationsOutput[it->first] = getAggregation(it->second);
-
-	}
-
-	aggregationMap.clear();
-
-	return aggregationsOutput;
 }
 
 DataMap FuzzyAggregator::getAggregation(DataMap outputs)

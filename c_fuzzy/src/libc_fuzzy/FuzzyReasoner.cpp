@@ -25,6 +25,42 @@
 
 using namespace std;
 
+map<string, FuzzyOutput> Defuzzyfier::defuzzify(
+		map<string, DataMap>& aggregatedData)
+{
+	map<string, FuzzyOutput> results;
+	for (map<string, DataMap>::iterator i = aggregatedData.begin();
+			i != aggregatedData.end(); ++i)
+	{
+		DataMap dataMap = i->second;
+		double product = 0, weight = 0, value = 0;
+		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
+		{
+			Data& data = j->second;
+			weight += data.weight;
+			value += data.value;
+			product += data.weight * data.value;
+		}
+
+		FuzzyOutput result;
+
+		if (aggregatedData.size() > 1)
+		{
+			result.truth = product / value;
+			result.value = product / weight;
+		}
+		else
+		{
+			result.truth = weight;
+			result.value = value;
+		}
+
+		results[i->first] = result;
+	}
+
+	return results;
+
+}
 inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 {
 	knowledgeBase->push_back(fuzzyRule);
@@ -61,6 +97,18 @@ map<string, FuzzyOutput> FuzzyReasoner::run()
 
 	//return defuzzyfied data
 	return defuzzyfier.defuzzify(aggregatedResults);
+}
+
+FuzzyReasoner::~FuzzyReasoner()
+{
+	delete inputTable;
+	deleteDomains();
+	delete domainTable;
+	delete aggregator;
+	deleteRules();
+	delete knowledgeBase;
+	deleteMasks();
+	delete variableMasks;
 }
 
 void FuzzyReasoner::updateRulesMask()
@@ -124,42 +172,3 @@ void FuzzyReasoner::deleteMasks()
 	}
 }
 
-FuzzyReasoner::~FuzzyReasoner()
-{
-	delete inputTable;
-	deleteDomains();
-	delete domainTable;
-	delete aggregator;
-	deleteRules();
-	delete knowledgeBase;
-	deleteMasks();
-	delete variableMasks;
-}
-
-map<string, FuzzyOutput> Defuzzyfier::defuzzify(map<string, DataMap>& aggregatedData)
-{
-	map<string, FuzzyOutput> results;
-	for (map<string, DataMap>::iterator i = aggregatedData.begin();
-			i != aggregatedData.end(); ++i)
-	{
-		DataMap dataMap = i->second;
-		double product = 0, weight = 0, value = 0;
-		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
-		{
-			Data& data = j->second;
-			weight += data.weight;
-			value += data.value;
-			product += data.weight * data.value;
-		}
-
-		FuzzyOutput result;
-
-		result.truth = product / value;
-		result.value = product / weight;
-
-		results[i->first] = result;
-	}
-
-	return results;
-
-}
