@@ -37,37 +37,40 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 			Vec4i v1 = verticalLines[i];
 			Vec4i v2 = verticalLines[i + 1];
 			//find possible poles
-			findPoles(v1, v2);
-			for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
+			if (!findPoles(v1, v2))
 			{
-				Vec4i h1 = horizontalLines[j];
-				for (size_t k = j + 1; k < horizontalLines.size(); k++)
+				//else find possible squares
+				for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
 				{
-					vector<Point> rectangle;
-					vector<double> a;
-					vector<double> b;
-
-					a.resize(4);
-					b.resize(4);
-
-					Vec4i h2 = horizontalLines[k];
-					Point x, y, z, w;
-
-					x = findInterceptions(h1, v1, a[0], b[0]);
-					y = findInterceptions(h1, v2, a[1], b[1]);
-					z = findInterceptions(h2, v2, a[2], b[2]);
-					w = findInterceptions(h2, v1, a[3], b[3]);
-
-					if (isQuadrilateral(a, b))
+					Vec4i h1 = horizontalLines[j];
+					for (size_t k = j + 1; k < horizontalLines.size(); k++)
 					{
-						rectangle.push_back(x);
-						rectangle.push_back(y);
-						rectangle.push_back(z);
-						rectangle.push_back(w);
+						vector<Point> rectangle;
+						vector<double> a;
+						vector<double> b;
 
-						rectangles.push_back(rectangle);
+						a.resize(4);
+						b.resize(4);
+
+						Vec4i h2 = horizontalLines[k];
+						Point x, y, z, w;
+
+						x = findInterceptions(h1, v1, a[0], b[0]);
+						y = findInterceptions(h1, v2, a[1], b[1]);
+						z = findInterceptions(h2, v2, a[2], b[2]);
+						w = findInterceptions(h2, v1, a[3], b[3]);
+
+						if (isQuadrilateral(a, b))
+						{
+							rectangle.push_back(x);
+							rectangle.push_back(y);
+							rectangle.push_back(z);
+							rectangle.push_back(w);
+
+							rectangles.push_back(rectangle);
+						}
+
 					}
-
 				}
 			}
 
@@ -103,7 +106,7 @@ Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2, double& a,
 
 }
 
-void HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
+bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 {
 	int x1, x2, x3, x4;
 	int y1, y2, y3, y4;
@@ -114,8 +117,8 @@ void HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 	getPointsCoordinates(l2, x3, y3, x4, y4);
 
 	//calculate the average dx and dy
-	dx = abs(x1 + x2 - x3 - x4) / 2;
-	dy = abs((y1 - y2) + (y3 - y4)) / 2;
+	dx = max(abs(x1 - x3), abs(x2 - x4));
+	dy = max(abs(y1 - y2), abs(y3 - y4));
 
 	if (dy / dx > polesFormFactor)
 	{
@@ -125,7 +128,10 @@ void HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 		pole.push_back(Point(x4, y4));
 		pole.push_back(Point(x3, y3));
 		poles.push_back(pole);
+		return true;
 	}
+
+	return false;
 
 }
 
