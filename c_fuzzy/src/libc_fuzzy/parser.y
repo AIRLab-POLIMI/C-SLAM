@@ -1,7 +1,7 @@
 %skeleton "lalr1.cc"
 %debug
 %defines
-%define parser_class_name "FuzzyParser"
+%define parser_class_name { FuzzyParser }
  
 %code requires
 {

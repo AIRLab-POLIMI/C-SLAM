@@ -1,34 +1,34 @@
-/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
+// A Bison parser, made by GNU Bison 3.0.2.
 
-/* Stack handling for Bison parsers in C++
-   
-      Copyright (C) 2002-2013 Free Software Foundation, Inc.
-   
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-   
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+// Stack handling for Bison parsers in C++
 
-/* As a special exception, you may create a larger work that contains
-   part or all of the Bison parser skeleton and distribute that work
-   under terms of your choice, so long as that work isn't itself a
-   parser generator using the skeleton or a modified version thereof
-   as a parser skeleton.  Alternatively, if you modify or redistribute
-   the parser skeleton itself, you may (at your option) remove this
-   special exception, which will cause the skeleton and the resulting
-   Bison output files to be licensed under the GNU General Public
-   License without this special exception.
-   
-   This special exception was added by the Free Software Foundation in
-   version 2.2 of Bison.  */
+// Copyright (C) 2002-2013 Free Software Foundation, Inc.
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// As a special exception, you may create a larger work that contains
+// part or all of the Bison parser skeleton and distribute that work
+// under terms of your choice, so long as that work isn't itself a
+// parser generator using the skeleton or a modified version thereof
+// as a parser skeleton.  Alternatively, if you modify or redistribute
+// the parser skeleton itself, you may (at your option) remove this
+// special exception, which will cause the skeleton and the resulting
+// Bison output files to be licensed under the GNU General Public
+// License without this special exception.
+
+// This special exception was added by the Free Software Foundation in
+// version 2.2 of Bison.
 
 /**
  ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh
@@ -38,13 +38,12 @@
 #ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
 # define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
 
-# include <deque>
+# include <vector>
 
 
 namespace yy {
-/* Line 34 of stack.hh  */
-#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh"
-  template <class T, class S = std::deque<T> >
+#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh" // stack.hh:133
+  template <class T, class S = std::vector<T> >
   class stack
   {
   public:
@@ -52,33 +51,39 @@ namespace yy {
     typedef typename S::reverse_iterator iterator;
     typedef typename S::const_reverse_iterator const_iterator;
 
-    stack () : seq_ ()
+    stack ()
+      : seq_ ()
     {
     }
 
-    stack (unsigned int n) : seq_ (n)
+    stack (unsigned int n)
+      : seq_ (n)
     {
     }
 
     inline
     T&
-    operator [] (unsigned int i)
+    operator[] (unsigned int i)
     {
-      return seq_[i];
+      return seq_[seq_.size () - 1 - i];
     }
 
     inline
     const T&
-    operator [] (unsigned int i) const
+    operator[] (unsigned int i) const
     {
-      return seq_[i];
+      return seq_[seq_.size () - 1 - i];
     }
 
+    /// Steal the contents of \a t.
+    ///
+    /// Close to move-semantics.
     inline
     void
-    push (const T& t)
+    push (T& t)
     {
-      seq_.push_front (t);
+      seq_.push_back (T());
+      operator[](0).move (t);
     }
 
     inline
@@ -86,7 +91,7 @@ namespace yy {
     pop (unsigned int n = 1)
     {
       for (; n; --n)
-        seq_.pop_front ();
+        seq_.pop_back ();
     }
 
     void
@@ -96,18 +101,30 @@ namespace yy {
     }
 
     inline
-    unsigned int
-    height () const
+    typename S::size_type
+    size () const
     {
       return seq_.size ();
     }
 
-    inline const_iterator begin () const { return seq_.rbegin (); }
-    inline const_iterator end () const { return seq_.rend (); }
+    inline
+    const_iterator
+    begin () const
+    {
+      return seq_.rbegin ();
+    }
+
+    inline
+    const_iterator
+    end () const
+    {
+      return seq_.rend ();
+    }
 
   private:
     stack (const stack&);
     stack& operator= (const stack&);
+    /// The wrapped container.
     S seq_;
   };
 
@@ -134,8 +151,8 @@ namespace yy {
     unsigned int range_;
   };
 
-} // yy
-/* Line 124 of stack.hh  */
-#line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh"
 
-#endif /* !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED  */
+} // yy
+#line 157 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh" // stack.hh:133
+
+#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
