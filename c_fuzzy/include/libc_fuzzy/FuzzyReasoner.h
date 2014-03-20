@@ -65,10 +65,9 @@ public:
 class FuzzyReasoner
 {
 public:
-	FuzzyReasoner(std::map<std::string, int>* inputTable, DomainTable* mfTable,
+	FuzzyReasoner(DomainTable* mfTable,
 			FuzzyAggregator* aggregator, std::vector<Node*>* knowledgeBase,
-			std::map<std::string, BitData>* variableMasks) :
-			inputTable(inputTable), domainTable(mfTable), aggregator(
+			std::map<std::string, BitData>* variableMasks) : domainTable(mfTable), aggregator(
 					aggregator), knowledgeBase(knowledgeBase), variableMasks(
 					variableMasks)
 	{
@@ -80,7 +79,7 @@ public:
 	}
 	void addRule(Node* fuzzyRule);
 	void addInput(std::string name, int value);
-	std::map<std::string, FuzzyOutput> run();
+	std::map<std::string, FuzzyOutput> run(InputTable inputs);
 	~FuzzyReasoner();
 
 private:
@@ -92,7 +91,6 @@ private:
 	void cleanInputData();
 
 private:
-	std::map<std::string, int>* inputTable;
 	DomainTable* domainTable;
 	FuzzyAggregator* aggregator;
 	std::vector<Node*>* knowledgeBase;

@@ -29,6 +29,11 @@
 #include <stdexcept>
 
 /**
+ * Base class for input
+ */
+typedef std::map<std::string, int> InputTable;
+
+/**
  * Base abstract class Node
  * Used to organize computation in trees
  *
@@ -36,14 +41,14 @@
 class Node
 {
 public:
-	virtual double evaluate()
+	virtual double evaluate(InputTable inputs)
 	{
 		return throwUnimplementedException();
 	}
 
-	virtual inline int evaluateInt()
+	virtual inline int evaluateInt(InputTable inputs)
 	{
-		return (int) evaluate();
+		return (int) evaluate(inputs);
 	}
 
 	virtual inline double evaluate(int value)

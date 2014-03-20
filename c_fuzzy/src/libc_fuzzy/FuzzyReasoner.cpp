@@ -66,16 +66,7 @@ inline void FuzzyReasoner::addRule(Node* fuzzyRule)
 	knowledgeBase->push_back(fuzzyRule);
 }
 
-void FuzzyReasoner::addInput(string name, int value)
-{
-	if (variableMasks->count(name) != 0)
-	{
-		(*inputTable)[name] = value;
-		inputMask.set(variableMasks->at(name).index, true);
-	}
-}
-
-map<string, FuzzyOutput> FuzzyReasoner::run()
+map<string, FuzzyOutput> FuzzyReasoner::run(InputTable inputs)
 {
 	//Calculates the rules to be used
 	updateRulesMask();
@@ -85,7 +76,7 @@ map<string, FuzzyOutput> FuzzyReasoner::run()
 	while (index != boost::dynamic_bitset<>::npos)
 	{
 		Node* rule = knowledgeBase->at(index);
-		rule->evaluate();
+		rule->evaluate(inputs);
 		index = rulesMask.find_next(index);
 	}
 
@@ -101,7 +92,6 @@ map<string, FuzzyOutput> FuzzyReasoner::run()
 
 FuzzyReasoner::~FuzzyReasoner()
 {
-	delete inputTable;
 	deleteDomains();
 	delete domainTable;
 	delete aggregator;
@@ -132,7 +122,6 @@ void FuzzyReasoner::updateRulesMask()
 
 void FuzzyReasoner::cleanInputData()
 {
-	inputTable->clear();
 	rulesMask.reset();
 	inputMask.reset();
 }

@@ -24,9 +24,9 @@
 #include "FuzzyRule.h"
 #include <iostream>
 
-double FuzzyRule::evaluate()
+double FuzzyRule::evaluate(InputTable inputs)
 {
-	double weight = antecedent->evaluate();
+	double weight = antecedent->evaluate(inputs);
 	conseguent->evaluate(weight);
 	return weight;
 }

@@ -54,14 +54,15 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 		Reasoning::Response& response)
 {
 	vector<c_fuzzy::InputVariable>::iterator i;
+	InputTable inputs;
 
 	for (i = request.inputs.begin(); i != request.inputs.end(); ++i)
 	{
-		reasoner->addInput(i->name, i->value);
+		inputs[i->name] = i->value;
 	}
 
 
-	map<string, FuzzyOutput> results = reasoner->run();
+	map<string, FuzzyOutput> results = reasoner->run(inputs);
 
 	map<string, FuzzyOutput>::iterator j;
 

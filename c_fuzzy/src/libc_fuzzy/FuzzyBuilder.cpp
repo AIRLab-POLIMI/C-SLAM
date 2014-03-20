@@ -61,7 +61,7 @@ void FuzzyBuilder::parse(const char *filename)
 FuzzyReasoner* FuzzyBuilder::createReasoner()
 {
 	normalizeVariableMasks();
-	return new FuzzyReasoner(inputTable, domainTable, aggregator, ruleList,
+	return new FuzzyReasoner(domainTable, aggregator, ruleList,
 			variableMasks);
 }
 
@@ -93,8 +93,7 @@ Node* FuzzyBuilder::buildIs(string* domain, string* mfLabel)
 {
 	//TODO assertion to check existence of all the stuff...
 	updateVariableMask(*domain);
-	CrispData* crispData = new CrispData(inputTable, *domain);
-	return new FuzzyIs(domainTable, crispData, *mfLabel);
+	return new FuzzyIs(domainTable, *domain, *mfLabel);
 }
 
 Node* FuzzyBuilder::buildAssignment(string* output, string* label)

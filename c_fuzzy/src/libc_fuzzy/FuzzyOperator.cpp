@@ -25,23 +25,23 @@
 
 
 
-double FuzzyAnd::evaluate()
+double FuzzyAnd::evaluate(InputTable inputs)
 {
-	double a = leftOperand->evaluate();
-	double b = rightOperand->evaluate();
+	double a = leftOperand->evaluate(inputs);
+	double b = rightOperand->evaluate(inputs);
 	return (a < b) ? a : b;
 }
 
-double FuzzyOr::evaluate()
+double FuzzyOr::evaluate(InputTable inputs)
 {
-	double a = leftOperand->evaluate();
-	double b = rightOperand->evaluate();
+	double a = leftOperand->evaluate(inputs);
+	double b = rightOperand->evaluate(inputs);
 	return (a > b) ? a : b;
 }
 
-double FuzzyNot::evaluate()
+double FuzzyNot::evaluate(InputTable inputs)
 {
-	return (1 - operand->evaluate());
+	return (1 - operand->evaluate(inputs));
 }
 
 FuzzyNot::~FuzzyNot()
@@ -60,18 +60,14 @@ double FuzzyAssignment::evaluate(double value)
 }
 
 
-double FuzzyIs::evaluate()
+double FuzzyIs::evaluate(InputTable inputs)
 {
-	MFTable& mfTable = *lookUpTable[crispData->getLabel()];
+	MFTable& mfTable = *lookUpTable[label];
 	Node* mFunction = mfTable[mfLabel];
-	int crispValue = crispData->evaluateInt();
+	int crispValue = inputs[label];
 	return mFunction->evaluate(crispValue);
 }
 
-FuzzyIs::~FuzzyIs()
-{
-	delete crispData;
-}
 
 BinaryFuzzyOperator::~BinaryFuzzyOperator()
 {

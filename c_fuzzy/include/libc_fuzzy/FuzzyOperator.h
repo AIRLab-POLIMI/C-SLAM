@@ -26,7 +26,6 @@
 
 #include "Node.h"
 #include "FuzzyMF.h"
-#include "CrispData.h"
 #include "FuzzyAggregator.h"
 
 
@@ -74,7 +73,7 @@ public:
 			BinaryFuzzyOperator(left, right)
 	{
 	}
-	double evaluate();
+	double evaluate(InputTable inputs);
 };
 
 /**
@@ -89,7 +88,7 @@ public:
 			BinaryFuzzyOperator(left, right)
 	{
 	}
-	double evaluate();
+	double evaluate(InputTable inputs);
 };
 
 /**
@@ -104,7 +103,7 @@ public:
 			operand(operand)
 	{
 	}
-	double evaluate();
+	double evaluate(InputTable inputs);
 	~FuzzyNot();
 
 private:
@@ -119,15 +118,14 @@ private:
 class FuzzyIs: public FuzzyOperator
 {
 public:
-	FuzzyIs(DomainTable* lookUpTable, CrispData* crispData, std::string mfLabel) :
-			lookUpTable(*lookUpTable), crispData(crispData), mfLabel(mfLabel)
+	FuzzyIs(DomainTable* lookUpTable, std::string label, std::string mfLabel) :
+			lookUpTable(*lookUpTable), label(label), mfLabel(mfLabel)
 	{
 	}
-	double evaluate();
-	~FuzzyIs();
+	double evaluate(InputTable inputs);
 
 private:
-	CrispData* crispData;
+	std::string label;
 	DomainTable& lookUpTable;
 	std::string mfLabel;
 };

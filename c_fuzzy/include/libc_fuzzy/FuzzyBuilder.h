@@ -49,7 +49,6 @@ public:
 			parser(NULL), scanner(NULL)
 	{
 		createMap();
-		inputTable = new std::map<std::string, int>();
 		aggregator = new FuzzyAggregator();
 		domainTable = new DomainTable();
 		mfTable = NULL;
@@ -72,7 +71,6 @@ private:
 	std::map<std::string, FuzzySets> fuzzyMap;
 
 	//Data needed to get FuzzyReasoner working
-	std::map<std::string, int>* inputTable;
 	FuzzyAggregator* aggregator;
 	DomainTable* domainTable;
 	MFTable* mfTable;
