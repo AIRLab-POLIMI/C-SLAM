@@ -36,7 +36,7 @@ map<string, FuzzyOutput> Defuzzyfier::defuzzify(
 		double product = 0, weight = 0, value = 0;
 		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
 		{
-			Data& data = j->second;
+			FuzzyData& data = j->second;
 			weight += data.weight;
 			value += data.value;
 			product += data.weight * data.value;

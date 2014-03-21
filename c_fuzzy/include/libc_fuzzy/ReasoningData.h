@@ -21,8 +21,8 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FUZZYAGGREGATOR_H_
-#define FUZZYAGGREGATOR_H_
+#ifndef REASONINGDATA_H_
+#define REASONINGDATA_H_
 
 #include <map>
 #include <string>
@@ -30,14 +30,14 @@
 /**
  * Helper struct for passing data about fuzzy labels
  */
-struct Data
+struct FuzzyData
 {
 	double weight;
 	double value;
 	int cardinality;
 };
 
-typedef std::map<std::string, Data> DataMap;
+typedef std::map<std::string, FuzzyData> DataMap;
 
 /**
  * Fuzzy aggregation operator
@@ -54,11 +54,27 @@ public:
 private:
 	DataMap getAggregation(DataMap outputs);
 	DataMap createDataMap(std::string mfLabel, double value, double weight);
-	Data createData(double value, double weight);
+	FuzzyData createData(double value, double weight);
 
 private:
 	std::map<std::string, DataMap> aggregationMap;
 
 };
 
-#endif /* FUZZYAGGREGATOR_H_ */
+/**
+ * Input map type for cololecting all the inputs
+ */
+typedef std::map<std::string, int> InputTable;
+
+/**
+ * Reasoning data struct
+ */
+struct ReasoningData
+{
+	InputTable& inputs;
+	FuzzyAggregator& aggregator;
+	double value1;
+	int value2;
+};
+
+#endif /* REASONINGDATA_H_ */

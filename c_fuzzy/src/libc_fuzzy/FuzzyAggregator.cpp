@@ -46,7 +46,7 @@ void FuzzyAggregator::addValue(string output, string mfLabel, double weight,
 		}
 		else
 		{
-			Data& data = aggregationMap[output][mfLabel];
+			FuzzyData& data = aggregationMap[output][mfLabel];
 			data.weight += weight;
 			data.cardinality++;
 		}
@@ -68,9 +68,9 @@ map<string, DataMap> FuzzyAggregator::getAggregations()
 	return aggregationsOutput;
 }
 
-Data FuzzyAggregator::createData(double value, double weight)
+FuzzyData FuzzyAggregator::createData(double value, double weight)
 {
-	Data data;
+	FuzzyData data;
 	data.value = value;
 	data.weight = weight;
 	data.cardinality = 1;
@@ -90,7 +90,7 @@ DataMap FuzzyAggregator::getAggregation(DataMap outputs)
 	DataMap outputMap;
 	for (DataMap::iterator it = outputs.begin(); it != outputs.end(); ++it)
 	{
-		Data output;
+		FuzzyData output;
 
 		output.cardinality = it->second.cardinality;
 		output.value = it->second.value;

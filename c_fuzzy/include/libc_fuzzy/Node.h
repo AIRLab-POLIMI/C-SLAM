@@ -28,10 +28,7 @@
 #include <map>
 #include <stdexcept>
 
-/**
- * Base class for input
- */
-typedef std::map<std::string, int> InputTable;
+#include "ReasoningData.h"
 
 /**
  * Base abstract class Node
@@ -41,24 +38,14 @@ typedef std::map<std::string, int> InputTable;
 class Node
 {
 public:
-	virtual double evaluate(InputTable inputs)
+	virtual double evaluate(ReasoningData reasoningData)
 	{
 		return throwUnimplementedException();
 	}
 
-	virtual inline int evaluateInt(InputTable inputs)
+	virtual inline int evaluateInt(ReasoningData reasoningData)
 	{
-		return (int) evaluate(inputs);
-	}
-
-	virtual inline double evaluate(int value)
-	{
-		return throwUnimplementedException();
-	}
-
-	virtual inline double evaluate(double value)
-	{
-		return throwUnimplementedException();
+		return (int) evaluate(reasoningData);
 	}
 
 	virtual ~Node()
