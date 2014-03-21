@@ -30,7 +30,7 @@ void FuzzyKnowledgeBase::addRule(Node* fuzzyRule)
 	knowledgeBase->push_back(fuzzyRule);
 }
 
-unsigned long FuzzyKnowledgeBase::size()
+size_t FuzzyKnowledgeBase::size()
 {
 	return knowledgeBase->size();
 }

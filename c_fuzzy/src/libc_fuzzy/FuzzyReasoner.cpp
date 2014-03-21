@@ -65,6 +65,11 @@ map<string, FuzzyOutput> Defuzzyfier::defuzzify(
 void FuzzyReasoner::addInput(string name, int value)
 {
 	inputs[name] = value;
+	if (variableMasks.count(name) != 0)
+	{
+		inputs[name] = value;
+		inputMask.set(variableMasks[name].index, true);
+	}
 }
 
 map<string, FuzzyOutput> FuzzyReasoner::run()
@@ -92,7 +97,6 @@ map<string, FuzzyOutput> FuzzyReasoner::run()
 	//return defuzzyfied data
 	return defuzzyfier.defuzzify(aggregatedResults);
 }
-
 
 void FuzzyReasoner::updateRulesMask()
 {

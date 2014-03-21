@@ -27,7 +27,7 @@ public:
 					knowledgeBase)
 	{
 	}
-	unsigned long size();
+	size_t size();
 	void addRule(Node* fuzzyRule);
 	std::map<std::string, BitData>& getVariableMasks();
 	~FuzzyKnowledgeBase();
