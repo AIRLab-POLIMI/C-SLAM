@@ -38,9 +38,10 @@ public:
 
 	bool reasoningCallback(c_fuzzy::Reasoning::Request& request,
 			c_fuzzy::Reasoning::Response& response);
+	~ReasonerServiceHandler();
 
 private:
-	FuzzyReasoner* reasoner;
+	FuzzyKnowledgeBase* knowledgeBase;
 
 };
 

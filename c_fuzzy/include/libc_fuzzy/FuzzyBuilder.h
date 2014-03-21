@@ -24,14 +24,14 @@
 #ifndef FUZZYBUILDER_H_
 #define FUZZYBUILDER_H_
 
-#include<string>
-#include<vector>
-#include<map>
+#include <string>
+#include <vector>
+#include <map>
 
 #include "Node.h"
 #include "FuzzyMF.h"
 #include "FuzzyRule.h"
-#include "FuzzyReasoner.h"
+#include "FuzzyKnowledgeBase.h"
 #include "FuzzyScanner.h"
 #include "FuzzyParser.tab.h"
 #include "BitData.h"
@@ -49,14 +49,13 @@ public:
 			parser(NULL), scanner(NULL)
 	{
 		createMap();
-		aggregator = new FuzzyAggregator();
 		domainTable = new DomainTable();
 		mfTable = NULL;
 		ruleList = new std::vector<Node*>();
 		variableMasks = new std::map<std::string, BitData>();
 	}
 
-	FuzzyReasoner* createReasoner();
+	FuzzyKnowledgeBase* createKnowledgeBase();
 
 	void parse(const char *filename);
 
@@ -71,7 +70,6 @@ private:
 	std::map<std::string, FuzzySets> fuzzyMap;
 
 	//Data needed to get FuzzyReasoner working
-	FuzzyAggregator* aggregator;
 	DomainTable* domainTable;
 	MFTable* mfTable;
 	std::vector<Node*>* ruleList;

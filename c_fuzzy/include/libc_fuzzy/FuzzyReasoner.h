@@ -30,10 +30,9 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include "Node.h"
-#include "FuzzyMF.h"
+#include "FuzzyKnowledgeBase.h"
 #include "FuzzyAggregator.h"
-#include "BitData.h"
+
 
 /**
  * This struct is used to store the couple value/truth level
@@ -65,39 +64,31 @@ public:
 class FuzzyReasoner
 {
 public:
-	FuzzyReasoner(DomainTable* mfTable,
-			FuzzyAggregator* aggregator, std::vector<Node*>* knowledgeBase,
-			std::map<std::string, BitData>* variableMasks) : domainTable(mfTable), aggregator(
-					aggregator), knowledgeBase(knowledgeBase), variableMasks(
-					variableMasks)
+	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
+			knowledgeBase(knowledgeBase), variableMasks(
+					knowledgeBase.getVariableMasks())
 	{
-		rulesMask.resize(knowledgeBase->size(), false);
-		inputMask.resize(variableMasks->size(), false);
+		rulesMask.resize(knowledgeBase.size(), false);
+		inputMask.resize(variableMasks.size(), false);
 
 		rulesMask.reset();
 		inputMask.reset();
 	}
-	void addRule(Node* fuzzyRule);
 	void addInput(std::string name, int value);
-	std::map<std::string, FuzzyOutput> run(InputTable inputs);
-	~FuzzyReasoner();
+	std::map<std::string, FuzzyOutput> run();
 
 private:
-	void deleteDomains();
-	void deleteMF(MFTable* mfTable);
-	void deleteRules();
-	void deleteMasks();
 	void updateRulesMask();
 	void cleanInputData();
 
 private:
-	DomainTable* domainTable;
-	FuzzyAggregator* aggregator;
-	std::vector<Node*>* knowledgeBase;
-	std::map<std::string, BitData>* variableMasks;
+	FuzzyKnowledgeBase& knowledgeBase;
+	FuzzyAggregator aggregator;
+	Defuzzyfier defuzzyfier;
+	InputTable inputs;
+	std::map<std::string, BitData>& variableMasks;
 	boost::dynamic_bitset<> rulesMask;
 	boost::dynamic_bitset<> inputMask;
-	Defuzzyfier defuzzyfier;
 
 };
 

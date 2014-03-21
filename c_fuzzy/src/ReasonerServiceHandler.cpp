@@ -47,22 +47,22 @@ ReasonerServiceHandler::ReasonerServiceHandler(const char* knowledgeBasePath)
 
 	builder.parse(knowledgeBasePath);
 
-	reasoner = builder.createReasoner();
+	knowledgeBase = builder.createKnowledgeBase();
 }
 
 bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 		Reasoning::Response& response)
 {
+	FuzzyReasoner reasoner(*knowledgeBase);
 	vector<c_fuzzy::InputVariable>::iterator i;
-	InputTable inputs;
 
 	for (i = request.inputs.begin(); i != request.inputs.end(); ++i)
 	{
-		inputs[i->name] = i->value;
+		reasoner.addInput(i->name, i->value);
 	}
 
 
-	map<string, FuzzyOutput> results = reasoner->run(inputs);
+	map<string, FuzzyOutput> results = reasoner.run();
 
 	map<string, FuzzyOutput>::iterator j;
 
@@ -78,4 +78,9 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 	}
 
 	return true;
+}
+
+ReasonerServiceHandler::~ReasonerServiceHandler()
+{
+	delete knowledgeBase;
 }

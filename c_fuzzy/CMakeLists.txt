@@ -46,7 +46,8 @@ add_flex_bison_dependency(Scanner Parser)
 #build the library
 add_library(${PROJECT_NAME} STATIC
 			${LIBC_FUZZY_SOURCE_DIR}/FuzzyAggregator.cpp  
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyBuilder.cpp  
+			${LIBC_FUZZY_SOURCE_DIR}/FuzzyBuilder.cpp 
+			${LIBC_FUZZY_SOURCE_DIR}/FuzzyKnowledgeBase.cpp 
 			${LIBC_FUZZY_SOURCE_DIR}/FuzzyMF.cpp  
 			${LIBC_FUZZY_SOURCE_DIR}/FuzzyOperator.cpp  
 			${LIBC_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp  

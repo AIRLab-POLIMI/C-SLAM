@@ -28,7 +28,6 @@
 #include "FuzzyMF.h"
 #include "FuzzyAggregator.h"
 
-
 /**
  * Abstract class for a generic fuzzy operator
  *
@@ -138,17 +137,15 @@ private:
 class FuzzyAssignment: public FuzzyOperator
 {
 public:
-	FuzzyAssignment(DomainTable* lookUpTable, FuzzyAggregator* aggregator,
-			std::string name, std::string mfLabel) :
-			lookUpTable(*lookUpTable), aggregator(*aggregator), mfLabel(
-					mfLabel), output(name)
+	FuzzyAssignment(DomainTable* lookUpTable, std::string name,
+			std::string mfLabel) :
+			lookUpTable(*lookUpTable), mfLabel(mfLabel), output(name)
 	{
 	}
 	double evaluate(double value);
 
 private:
 	DomainTable& lookUpTable;
-	FuzzyAggregator& aggregator;
 	std::string mfLabel;
 	std::string output;
 };

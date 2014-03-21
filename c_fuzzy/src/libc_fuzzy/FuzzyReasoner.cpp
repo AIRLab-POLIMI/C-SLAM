@@ -61,12 +61,13 @@ map<string, FuzzyOutput> Defuzzyfier::defuzzify(
 	return results;
 
 }
-inline void FuzzyReasoner::addRule(Node* fuzzyRule)
+
+void FuzzyReasoner::addInput(string name, int value)
 {
-	knowledgeBase->push_back(fuzzyRule);
+	inputs[name] = value;
 }
 
-map<string, FuzzyOutput> FuzzyReasoner::run(InputTable inputs)
+map<string, FuzzyOutput> FuzzyReasoner::run()
 {
 	//Calculates the rules to be used
 	updateRulesMask();
@@ -75,13 +76,13 @@ map<string, FuzzyOutput> FuzzyReasoner::run(InputTable inputs)
 	size_t index = rulesMask.find_first();
 	while (index != boost::dynamic_bitset<>::npos)
 	{
-		Node* rule = knowledgeBase->at(index);
-		rule->evaluate(inputs);
+		Node& rule = knowledgeBase[index];
+		rule.evaluate(inputs);
 		index = rulesMask.find_next(index);
 	}
 
 	//Use the aggregation operator
-	map<string, DataMap> aggregatedResults = aggregator->getAggregations();
+	map<string, DataMap> aggregatedResults = aggregator.getAggregations();
 
 	//clean all input functions
 	cleanInputData();
@@ -90,23 +91,13 @@ map<string, FuzzyOutput> FuzzyReasoner::run(InputTable inputs)
 	return defuzzyfier.defuzzify(aggregatedResults);
 }
 
-FuzzyReasoner::~FuzzyReasoner()
-{
-	deleteDomains();
-	delete domainTable;
-	delete aggregator;
-	deleteRules();
-	delete knowledgeBase;
-	deleteMasks();
-	delete variableMasks;
-}
 
 void FuzzyReasoner::updateRulesMask()
 {
-	boost::dynamic_bitset<> noInputMask(knowledgeBase->size());
+	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
-	for (map<string, BitData>::iterator it = variableMasks->begin();
-			it != variableMasks->end(); ++it)
+	for (map<string, BitData>::iterator it = variableMasks.begin();
+			it != variableMasks.end(); ++it)
 	{
 		int index = it->second.index;
 		boost::dynamic_bitset<>& currentMask = *it->second.bits;
@@ -124,40 +115,5 @@ void FuzzyReasoner::cleanInputData()
 {
 	rulesMask.reset();
 	inputMask.reset();
-}
-
-void FuzzyReasoner::deleteRules()
-{
-	for (vector<Node*>::iterator it = knowledgeBase->begin();
-			it != knowledgeBase->end(); ++it)
-	{
-		delete *it;
-	}
-}
-
-void FuzzyReasoner::deleteMF(MFTable* mfTable)
-{
-	for (MFTable::iterator it = mfTable->begin(); it != mfTable->end(); ++it)
-	{
-		delete it->second;
-	}
-}
-
-void FuzzyReasoner::deleteDomains()
-{
-	for (DomainTable::iterator it = domainTable->begin();
-			it != domainTable->end(); ++it)
-	{
-		deleteMF(it->second);
-		delete it->second;
-	}
-}
-void FuzzyReasoner::deleteMasks()
-{
-	for (map<string, BitData>::iterator it = variableMasks->begin();
-			it != variableMasks->end(); ++it)
-	{
-		delete it->second.bits;
-	}
 }
 

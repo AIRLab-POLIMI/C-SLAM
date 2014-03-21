@@ -58,11 +58,10 @@ void FuzzyBuilder::parse(const char *filename)
 	}
 }
 
-FuzzyReasoner* FuzzyBuilder::createReasoner()
+FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 {
 	normalizeVariableMasks();
-	return new FuzzyReasoner(domainTable, aggregator, ruleList,
-			variableMasks);
+	return new FuzzyKnowledgeBase(domainTable, variableMasks, ruleList);
 }
 
 void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
@@ -98,7 +97,7 @@ Node* FuzzyBuilder::buildIs(string* domain, string* mfLabel)
 
 Node* FuzzyBuilder::buildAssignment(string* output, string* label)
 {
-	return new FuzzyAssignment(domainTable, aggregator, *output, *label);
+	return new FuzzyAssignment(domainTable, *output, *label);
 }
 
 //Fuzzy domain
@@ -111,8 +110,7 @@ void FuzzyBuilder::buildDomain(vector<string> variables)
 	for (it = variables.begin(); it != variables.end(); it++)
 	{
 		domainMap[*it] = mfTable;
-		maskMap[*it] = BitData(maskMap.size(),
-				new boost::dynamic_bitset<>());
+		maskMap[*it] = BitData(maskMap.size(), new boost::dynamic_bitset<>());
 	}
 }
 
@@ -126,37 +124,37 @@ void FuzzyBuilder::buildMF(string* name, string* shape, vector<int>* parameters)
 	//then create the correspondent MF labeled "name"
 	switch (fuzzyMap[*shape])
 	{
-		case TOL:
-			assert(p.size() == 2);
-			assert(p[1] < p[0]);
-			map[*name] = buildTol(p[1], p[0]);
-			break;
-		case TOR:
-			assert(p.size() == 2);
-			assert(p[1] < p[0]);
-			map[*name] = buildTor(p[1], p[0]);
-			break;
-		case TRA:
-			assert(p.size() == 4);
-			assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
-			map[*name] = buildTra(p[3], p[2], p[1], p[0]);
-			break;
-		case TRI:
-			assert(p.size() == 3);
-			assert(p[2] < p[1] && p[1] < p[0]);
-			map[*name] = buildTri(p[2], p[1], p[0]);
-			break;
-		case INT:
-			assert(p.size() == 2);
-			assert(p[1] < p[0]);
-			map[*name] = buildInt(p[1], p[0]);
-			break;
-		case SGT:
-			assert(p.size() == 1);
-			map[*name] = buildSgt(p[0]);
-			break;
-		default:
-			break;
+	case TOL:
+		assert(p.size() == 2);
+		assert(p[1] < p[0]);
+		map[*name] = buildTol(p[1], p[0]);
+		break;
+	case TOR:
+		assert(p.size() == 2);
+		assert(p[1] < p[0]);
+		map[*name] = buildTor(p[1], p[0]);
+		break;
+	case TRA:
+		assert(p.size() == 4);
+		assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
+		map[*name] = buildTra(p[3], p[2], p[1], p[0]);
+		break;
+	case TRI:
+		assert(p.size() == 3);
+		assert(p[2] < p[1] && p[1] < p[0]);
+		map[*name] = buildTri(p[2], p[1], p[0]);
+		break;
+	case INT:
+		assert(p.size() == 2);
+		assert(p[1] < p[0]);
+		map[*name] = buildInt(p[1], p[0]);
+		break;
+	case SGT:
+		assert(p.size() == 1);
+		map[*name] = buildSgt(p[0]);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -205,7 +203,7 @@ void FuzzyBuilder::createMap()
 void FuzzyBuilder::updateVariableMask(string& label)
 {
 	size_t currentRule = ruleList->size();
-	map<string, BitData >& maskMap = *variableMasks;
+	map<string, BitData>& maskMap = *variableMasks;
 	boost::dynamic_bitset<>& bitset = *maskMap[label].bits;
 	if (currentRule >= bitset.size())
 		bitset.resize(currentRule + 1, false);
@@ -215,7 +213,7 @@ void FuzzyBuilder::updateVariableMask(string& label)
 
 void FuzzyBuilder::normalizeVariableMasks()
 {
-	map<string, BitData >::iterator it;
+	map<string, BitData>::iterator it;
 	for (it = variableMasks->begin(); it != variableMasks->end(); ++it)
 	{
 		it->second.bits->resize(ruleList->size(), false);

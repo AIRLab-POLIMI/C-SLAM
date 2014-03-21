@@ -55,7 +55,7 @@ double FuzzyAssignment::evaluate(double value)
 	MFTable& mfTable = *lookUpTable[output];
 	FuzzyMF* mf = mfTable[mfLabel];
 	double result = mf->defuzzify(value);
-	aggregator.addValue(output, mfLabel, value, result);
+	//aggregator.addValue(output, mfLabel, value, result); FIXME
 	return result;
 }
 

@@ -22,6 +22,7 @@
  */
 
 #include "FuzzyBuilder.h"
+#include "FuzzyKnowledgeBase.h"
 #include "FuzzyReasoner.h"
 #include <map>
 
@@ -31,7 +32,8 @@ int main(int argc, char *argv[])
 
 	builder.parse(argv[1]);
 
-	FuzzyReasoner* reasoner = builder.createReasoner();
+	FuzzyKnowledgeBase* knowledgebase = builder.createKnowledgeBase();
+	FuzzyReasoner reasoner(*knowledgebase);
 
 	if (argc == 2)
 	{
@@ -48,7 +50,7 @@ int main(int argc, char *argv[])
 			std::cin >> value;
 			//value = 150;
 
-			reasoner->addInput(name, value);
+			reasoner.addInput(name, value);
 
 			do
 			{
@@ -61,10 +63,10 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		reasoner->addInput("Input", 189);
+		reasoner.addInput("Input", 189);
 	}
 
-	std::map<std::string, FuzzyOutput> results = reasoner->run();
+	std::map<std::string, FuzzyOutput> results = reasoner.run();
 
 	std::cout << "Reasoning terminato, risultati:" << std::endl;
 
@@ -75,5 +77,5 @@ int main(int argc, char *argv[])
 				<< it->second.truth << std::endl;
 	}
 
-	delete reasoner;
+	delete knowledgebase;
 }
