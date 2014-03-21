@@ -31,7 +31,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include "FuzzyKnowledgeBase.h"
-#include "FuzzyAggregator.h"
+#include "ReasoningData.h"
 
 
 /**

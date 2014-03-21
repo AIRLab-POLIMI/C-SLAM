@@ -21,7 +21,7 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FuzzyAggregator.h"
+#include "ReasoningData.h"
 #include <iostream>
 
 using namespace std;

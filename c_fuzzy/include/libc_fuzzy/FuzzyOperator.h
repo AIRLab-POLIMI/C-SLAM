@@ -26,7 +26,6 @@
 
 #include "Node.h"
 #include "FuzzyMF.h"
-#include "FuzzyAggregator.h"
 
 /**
  * Abstract class for a generic fuzzy operator
@@ -72,7 +71,7 @@ public:
 			BinaryFuzzyOperator(left, right)
 	{
 	}
-	double evaluate(InputTable inputs);
+	double evaluate(ReasoningData reasoningData);
 };
 
 /**
@@ -87,7 +86,7 @@ public:
 			BinaryFuzzyOperator(left, right)
 	{
 	}
-	double evaluate(InputTable inputs);
+	double evaluate(ReasoningData reasoningData);
 };
 
 /**
@@ -102,7 +101,7 @@ public:
 			operand(operand)
 	{
 	}
-	double evaluate(InputTable inputs);
+	double evaluate(ReasoningData reasoningData);
 	~FuzzyNot();
 
 private:
@@ -121,7 +120,7 @@ public:
 			lookUpTable(*lookUpTable), label(label), mfLabel(mfLabel)
 	{
 	}
-	double evaluate(InputTable inputs);
+	double evaluate(ReasoningData reasoningData);
 
 private:
 	std::string label;
@@ -142,7 +141,7 @@ public:
 			lookUpTable(*lookUpTable), mfLabel(mfLabel), output(name)
 	{
 	}
-	double evaluate(double value);
+	double evaluate(ReasoningData reasoningData);
 
 private:
 	DomainTable& lookUpTable;

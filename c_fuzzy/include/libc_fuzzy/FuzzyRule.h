@@ -33,7 +33,7 @@ public:
 			antecedent(antecedent), conseguent(conseguent)
 	{
 	}
-	double evaluate(InputTable inputs);
+	double evaluate(ReasoningData reasoningData);
 	~FuzzyRule();
 
 private:

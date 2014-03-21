@@ -23,8 +23,9 @@
 
 #include "FuzzyMF.h"
 
-double TolMF::evaluate(int value)
+double TolMF::evaluate(ReasoningData reasoningData)
 {
+	int value = reasoningData.inputValue;
 	if (value <= top)
 		return FUZZY_MAX_V;
 	else if (value >= bottom)
@@ -38,8 +39,9 @@ double TolMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
-double TorMF::evaluate(int value)
+double TorMF::evaluate(ReasoningData reasoningData)
 {
+	int value = reasoningData.inputValue;
 	if (value >= top)
 		return FUZZY_MAX_V;
 	else if (value <= bottom)
@@ -53,8 +55,9 @@ double TorMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
-double TriMF::evaluate(int value)
+double TriMF::evaluate(ReasoningData reasoningData)
 {
+	int value = reasoningData.inputValue;
 	if (value <= left || value >= right)
 		return FUZZY_MIN_V;
 	else if (value < center)
@@ -70,8 +73,9 @@ double TriMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
-double TraMF::evaluate(int value)
+double TraMF::evaluate(ReasoningData reasoningData)
 {
+	int value = reasoningData.inputValue;
 	if (value <= bottomLeft || value >= bottomRight)
 		return FUZZY_MIN_V;
 	else if (value > bottomLeft && value < topLeft)
@@ -87,8 +91,9 @@ double TraMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
-double IntMF::evaluate(int value)
+double IntMF::evaluate(ReasoningData reasoningData)
 {
+	int value = reasoningData.inputValue;
 	if (value >= left && value <= right)
 		return FUZZY_MAX_V;
 	else
@@ -100,9 +105,9 @@ double IntMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
-double SgtMF::evaluate(int value)
+double SgtMF::evaluate(ReasoningData reasoningData)
 {
-	if (value == value)
+	if (value == reasoningData.inputValue)
 		return FUZZY_MAX_V;
 	else
 		return FUZZY_MIN_V;

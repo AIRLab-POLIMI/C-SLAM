@@ -25,23 +25,23 @@
 
 
 
-double FuzzyAnd::evaluate(InputTable inputs)
+double FuzzyAnd::evaluate(ReasoningData reasoningData)
 {
-	double a = leftOperand->evaluate(inputs);
-	double b = rightOperand->evaluate(inputs);
+	double a = leftOperand->evaluate(reasoningData);
+	double b = rightOperand->evaluate(reasoningData);
 	return (a < b) ? a : b;
 }
 
-double FuzzyOr::evaluate(InputTable inputs)
+double FuzzyOr::evaluate(ReasoningData reasoningData)
 {
-	double a = leftOperand->evaluate(inputs);
-	double b = rightOperand->evaluate(inputs);
+	double a = leftOperand->evaluate(reasoningData);
+	double b = rightOperand->evaluate(reasoningData);
 	return (a > b) ? a : b;
 }
 
-double FuzzyNot::evaluate(InputTable inputs)
+double FuzzyNot::evaluate(ReasoningData reasoningData)
 {
-	return (1 - operand->evaluate(inputs));
+	return (1 - operand->evaluate(reasoningData));
 }
 
 FuzzyNot::~FuzzyNot()
@@ -50,22 +50,24 @@ FuzzyNot::~FuzzyNot()
 }
 
 
-double FuzzyAssignment::evaluate(double value)
+double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 {
+	double truthValue = reasoningData.truthValue;
 	MFTable& mfTable = *lookUpTable[output];
 	FuzzyMF* mf = mfTable[mfLabel];
-	double result = mf->defuzzify(value);
-	//aggregator.addValue(output, mfLabel, value, result); FIXME
+	double result = mf->defuzzify(truthValue);
+	reasoningData.aggregator.addValue(output, mfLabel, truthValue, result);
 	return result;
 }
 
 
-double FuzzyIs::evaluate(InputTable inputs)
+double FuzzyIs::evaluate(ReasoningData reasoningData)
 {
 	MFTable& mfTable = *lookUpTable[label];
 	Node* mFunction = mfTable[mfLabel];
-	int crispValue = inputs[label];
-	return mFunction->evaluate(crispValue);
+	int crispValue = reasoningData.inputs[label];
+	reasoningData.inputValue = crispValue;
+	return mFunction->evaluate(reasoningData);
 }
 
 

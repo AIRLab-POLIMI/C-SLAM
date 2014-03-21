@@ -69,6 +69,8 @@ void FuzzyReasoner::addInput(string name, int value)
 
 map<string, FuzzyOutput> FuzzyReasoner::run()
 {
+	ReasoningData reasoningData(inputs, aggregator);
+
 	//Calculates the rules to be used
 	updateRulesMask();
 
@@ -77,7 +79,7 @@ map<string, FuzzyOutput> FuzzyReasoner::run()
 	while (index != boost::dynamic_bitset<>::npos)
 	{
 		Node& rule = knowledgeBase[index];
-		rule.evaluate(inputs);
+		rule.evaluate(reasoningData);
 		index = rulesMask.find_next(index);
 	}
 

@@ -24,11 +24,11 @@
 #include "FuzzyRule.h"
 #include <iostream>
 
-double FuzzyRule::evaluate(InputTable inputs)
+double FuzzyRule::evaluate(ReasoningData reasoningData)
 {
-	double weight = antecedent->evaluate(inputs);
-	conseguent->evaluate(weight);
-	return weight;
+	reasoningData.truthValue = antecedent->evaluate(reasoningData);
+	conseguent->evaluate(reasoningData);
+	return reasoningData.truthValue;
 }
 
 FuzzyRule::~FuzzyRule()

@@ -71,10 +71,16 @@ typedef std::map<std::string, int> InputTable;
  */
 struct ReasoningData
 {
+	ReasoningData(InputTable& inputs, FuzzyAggregator& aggregator) :
+			inputs(inputs), aggregator(aggregator)
+	{
+		truthValue = 0;
+		inputValue = 0;
+	}
 	InputTable& inputs;
 	FuzzyAggregator& aggregator;
-	double value1;
-	int value2;
+	double truthValue;
+	int inputValue;
 };
 
 #endif /* REASONINGDATA_H_ */
