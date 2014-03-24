@@ -27,7 +27,6 @@ CAPITAL [A-Z]
 LETTER [a-z]|{CAPITAL}
 BLANK [ \t]
 NEWLINE \n\r|\n
-FUZZYLABEL tol|tor|tri|tra|int|sgt
 SIGN [-+]
 
 %%
@@ -46,7 +45,14 @@ SIGN [-+]
 {BLANK} { }
 {NEWLINE} { this->newLine(); }
 
-
+ /* keywords and symbols */
+"class"|"CLASS" { return token::CLASS; }
+"end_class"|"END_CLASS" { return token::END_CLASS; }
+"is"|"IS" { return token::IS; }
+"match"|"MATCH" { return token::MATCH; }
+"at"|"AT" { return token::AT; }
+"," { return token::COMMA; }
+ 
  /* identificators */
 {CAPITAL}({LETTER}|{DIGIT})* { yylval->str = new std::string(yytext); return token::ID; }
 -?{DIGIT}+ { yylval->integer = atoi(yytext); return token::PARAMETER; }
