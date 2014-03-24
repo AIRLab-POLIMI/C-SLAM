@@ -31,18 +31,18 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/location.hh
- ** Define the yy::location class.
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/location.hh
+ ** Define the tc::location class.
  */
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_LOCATION_HH_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_LOCATION_HH_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_LOCATION_HH_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_LOCATION_HH_INCLUDED
 
 # include "position.hh"
 
-
-namespace yy {
-#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/location.hh" // location.cc:291
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // location.cc:291
+namespace tc {
+#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/location.hh" // location.cc:291
   /// Abstract a location.
   class location
   {
@@ -181,7 +181,7 @@ namespace yy {
     return ostr;
   }
 
-
-} // yy
-#line 187 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/location.hh" // location.cc:291
-#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_LOCATION_HH_INCLUDED
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // location.cc:291
+} // tc
+#line 187 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/location.hh" // location.cc:291
+#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_LOCATION_HH_INCLUDED

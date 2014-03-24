@@ -12,12 +12,10 @@ if(catkin_FOUND)
     add_service_files(FILES Reasoning.srv)
     generate_messages()
 	catkin_package(CATKIN_DEPENDS message_runtime)
-	include_directories(include include/libc_fuzzy ${catkin_INCLUDE_DIRS})
+	include_directories(include include/lib_fuzzy include/lib_tree_classifier ${catkin_INCLUDE_DIRS})
 else()
-	include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/libc_fuzzy)
+	include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/lib_fuzzy ${PROJECT_SOURCE_DIR}/include/lib_tree_classifier)
 endif()
-
-include_directories(include ${catkin_INCLUDE_DIRS})
 
 
 #search for Bison and Flex packages
@@ -25,50 +23,87 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 #set the folder of c_fuzzy_lib
-set(LIBC_FUZZY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/libc_fuzzy)
+set(LIB_FUZZY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_fuzzy)
+set(LIB_TREE_CLASSIFIER_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_tree_classifier)
 
 
-#generate parser and lexer from flex and Bison sources
-bison_target(Parser ${LIBC_FUZZY_SOURCE_DIR}/parser.y ${LIBC_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/libc_fuzzy/FuzzyParser.tab.h")
-flex_target(Scanner ${LIBC_FUZZY_SOURCE_DIR}/scanner.l ${LIBC_FUZZY_SOURCE_DIR}/FuzzyScanner.cpp)
+#generate parsers and lexers from flex and Bison sources
+bison_target(FuzzyParser 
+             ${LIB_FUZZY_SOURCE_DIR}/parser.y 
+             ${LIB_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp 
+             COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/lib_fuzzy/FuzzyParser.tab.h")
+flex_target(FuzzyScanner 
+            ${LIB_FUZZY_SOURCE_DIR}/scanner.l 
+            ${LIB_FUZZY_SOURCE_DIR}/FuzzyScanner.cpp)
+
+bison_target(TreeClassifierParser 
+             ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/parser.y 
+             ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierParser.tab.cpp 
+             COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/lib_tree_classifier/TreeClassifierParser.tab.h")
+flex_target(TreeClassifierScanner 
+            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/scanner.l 
+            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierScanner.cpp)
 
 #move generated files into include directory
-add_custom_target(Headers
-		COMMAND ${CMAKE_COMMAND} -E copy ${LIBC_FUZZY_SOURCE_DIR}/stack.hh ${PROJECT_SOURCE_DIR}/include/libc_fuzzy/stack.hh
-		COMMAND ${CMAKE_COMMAND} -E copy ${LIBC_FUZZY_SOURCE_DIR}/position.hh ${PROJECT_SOURCE_DIR}/include/libc_fuzzy/position.hh
-		COMMAND ${CMAKE_COMMAND} -E copy ${LIBC_FUZZY_SOURCE_DIR}/location.hh ${PROJECT_SOURCE_DIR}/include/libc_fuzzy/location.hh
-		DEPENDS ${BISON_Parser_OUTPUTS})
+add_custom_target(HeadersFuzzy
+		COMMAND ${CMAKE_COMMAND} -E copy ${LIB_FUZZY_SOURCE_DIR}/stack.hh 
+		                                 ${PROJECT_SOURCE_DIR}/include/lib_fuzzy/stack.hh
+		COMMAND ${CMAKE_COMMAND} -E copy ${LIB_FUZZY_SOURCE_DIR}/position.hh 
+		                                 ${PROJECT_SOURCE_DIR}/include/lib_fuzzy/position.hh
+		COMMAND ${CMAKE_COMMAND} -E copy ${LIB_FUZZY_SOURCE_DIR}/location.hh 
+                                         ${PROJECT_SOURCE_DIR}/include/lib_fuzzy/location.hh
+		DEPENDS ${BISON_FuzzyParser_OUTPUTS})
+		
+		
+add_custom_target(HeadersTreeClassifier
+		COMMAND ${CMAKE_COMMAND} -E copy ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/stack.hh ${PROJECT_SOURCE_DIR}/include/lib_tree_classifier/stack.hh
+		COMMAND ${CMAKE_COMMAND} -E copy ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/position.hh ${PROJECT_SOURCE_DIR}/include/lib_tree_classifier/position.hh
+		COMMAND ${CMAKE_COMMAND} -E copy ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/location.hh ${PROJECT_SOURCE_DIR}/include/lib_tree_classifier/location.hh
+		DEPENDS ${BISON_TreeClassifierParser_OUTPUTS})
 
 #add dependencies between parser and scanner (.l e .y)
-add_flex_bison_dependency(Scanner Parser)
+add_flex_bison_dependency(FuzzyScanner FuzzyParser)
+add_flex_bison_dependency(TreeClassifierScanner TreeClassifierParser)
 
 
-#build the library
-add_library(${PROJECT_NAME} STATIC 
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyBuilder.cpp 
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyKnowledgeBase.cpp 
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyMF.cpp  
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyOperator.cpp  
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp  
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyReasoner.cpp  
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyRule.cpp  
-			${LIBC_FUZZY_SOURCE_DIR}/FuzzyScanner.cpp
-			${LIBC_FUZZY_SOURCE_DIR}/ReasoningData.cpp 
-			${FLEX_Scanner_OUTPUTS}
-			${BISON_Parser_OUTPUTS})
+#build the libraries
+add_library(fuzzy STATIC 
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyBuilder.cpp 
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyKnowledgeBase.cpp 
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyMF.cpp  
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyOperator.cpp
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyReasoner.cpp  
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyRule.cpp
+			${LIB_FUZZY_SOURCE_DIR}/ReasoningData.cpp 
+			${FLEX_FuzzyScanner_OUTPUTS}
+			${BISON_FuzzyParser_OUTPUTS})
+			
+add_library(tree_classifier STATIC 
+			${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierBuilder.cpp 
+			${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierScanner.cpp
+			${FLEX_TreeClassifierScanner_OUTPUTS}
+			${BISON_TreeClassifierParser_OUTPUTS})
 
 #remember to move the headers into include!
-add_dependencies(${PROJECT_NAME} Headers)
+add_dependencies(fuzzy HeadersFuzzy)
+add_dependencies(fuzzy HeadersTreeClassifier)
 
 #build a test application
 add_executable(prova src/test.cpp)
 
-target_link_libraries(prova ${PROJECT_NAME})
+target_link_libraries(prova fuzzy)
 
 #clean all remaining headers
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E echo "cleaning *.hh files autogenerated in src"
-		COMMAND ${CMAKE_COMMAND} -E remove ${PROJECT_SOURCE_DIR}/src/libc_fuzzy/stack.hh ${PROJECT_SOURCE_DIR}/src/libc_fuzzy/position.hh ${PROJECT_SOURCE_DIR}/src/libc_fuzzy/location.hh)
+add_custom_command(TARGET fuzzy POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E echo "cleaning *.hh files autogenerated in src/lib_fuzzy"
+		COMMAND ${CMAKE_COMMAND} -E remove ${LIB_FUZZY_SOURCE_DIR}/stack.hh 
+		                                   ${LIB_FUZZY_SOURCE_DIR}/position.hh 
+		                                   ${LIB_FUZZY_SOURCE_DIR}/location.hh)
+add_custom_command(TARGET tree_classifier POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E echo "cleaning *.hh files autogenerated in src/lib_tree_classifier"		                                   
+		COMMAND ${CMAKE_COMMAND} -E remove ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/stack.hh 
+		                                   ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/position.hh 
+		                                   ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/location.hh)
 		
 		
 #now build the ros node
@@ -78,6 +113,6 @@ add_executable(${PROJECT_NAME}_reasoner
                src/main.cpp 
                src/ReasonerServiceHandler.cpp)
                
-target_link_libraries(${PROJECT_NAME}_reasoner  ${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_reasoner fuzzy ${catkin_LIBRARIES})
 
 endif()

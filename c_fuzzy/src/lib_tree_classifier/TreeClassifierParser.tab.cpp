@@ -33,7 +33,7 @@
 
 // First part of user declarations.
 
-#line 37 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:399
+#line 37 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:399
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -43,23 +43,23 @@
 #  endif
 # endif
 
-#include "FuzzyParser.tab.h"
+#include "TreeClassifierParser.tab.h"
 
 // User implementation prologue.
 
-#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:407
+#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:407
 // Unqualified %code blocks.
-#line 25 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:408
+#line 25 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:408
 
 	#include<iostream>
 	#include<cstdlib>
 	#include<fstream>
 	
-	#include "FuzzyBuilder.h"
+	#include "TreeClassifierBuilder.h"
 	
-	static int yylex(yy::FuzzyParser::semantic_type *yylval, yy::FuzzyParser::location_type* l, FuzzyScanner& scanner, FuzzyBuilder& builder);
+	static int yylex(tc::TreeClassifierParser::semantic_type *yylval, tc::TreeClassifierParser::location_type* l, TreeClassifierScanner& scanner, TreeClassifierBuilder& builder);
 
-#line 63 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:408
+#line 63 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:408
 
 
 #ifndef YY_
@@ -143,9 +143,9 @@
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-
-namespace yy {
-#line 149 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:474
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:474
+namespace tc {
+#line 149 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:474
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -153,7 +153,7 @@ namespace yy {
      apostrophe, a comma, or backslash (other than backslash-backslash).
      YYSTR is taken from yytname.  */
   std::string
-   FuzzyParser ::yytnamerr_ (const char *yystr)
+   TreeClassifierParser ::yytnamerr_ (const char *yystr)
   {
     if (*yystr == '"')
       {
@@ -186,7 +186,7 @@ namespace yy {
 
 
   /// Build a parser object.
-   FuzzyParser :: FuzzyParser  (FuzzyScanner  &scanner_yyarg, FuzzyBuilder  &builder_yyarg)
+   TreeClassifierParser :: TreeClassifierParser  (TreeClassifierScanner  &scanner_yyarg, TreeClassifierBuilder  &builder_yyarg)
     :
 #if YYDEBUG
       yydebug_ (false),
@@ -196,7 +196,7 @@ namespace yy {
       builder (builder_yyarg)
   {}
 
-   FuzzyParser ::~ FuzzyParser  ()
+   TreeClassifierParser ::~ TreeClassifierParser  ()
   {}
 
 
@@ -205,7 +205,7 @@ namespace yy {
   `---------------*/
 
   inline
-   FuzzyParser ::syntax_error::syntax_error (const location_type& l, const std::string& m)
+   TreeClassifierParser ::syntax_error::syntax_error (const location_type& l, const std::string& m)
     : std::runtime_error (m)
     , location (l)
   {}
@@ -213,13 +213,13 @@ namespace yy {
   // basic_symbol.
   template <typename Base>
   inline
-   FuzzyParser ::basic_symbol<Base>::basic_symbol ()
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol ()
     : value ()
   {}
 
   template <typename Base>
   inline
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (const basic_symbol& other)
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (const basic_symbol& other)
     : Base (other)
     , value ()
     , location (other.location)
@@ -230,7 +230,7 @@ namespace yy {
 
   template <typename Base>
   inline
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const semantic_type& v, const location_type& l)
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const semantic_type& v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -240,7 +240,7 @@ namespace yy {
   /// Constructor for valueless symbols.
   template <typename Base>
   inline
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const location_type& l)
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const location_type& l)
     : Base (t)
     , value ()
     , location (l)
@@ -248,14 +248,14 @@ namespace yy {
 
   template <typename Base>
   inline
-   FuzzyParser ::basic_symbol<Base>::~basic_symbol ()
+   TreeClassifierParser ::basic_symbol<Base>::~basic_symbol ()
   {
   }
 
   template <typename Base>
   inline
   void
-   FuzzyParser ::basic_symbol<Base>::move (basic_symbol& s)
+   TreeClassifierParser ::basic_symbol<Base>::move (basic_symbol& s)
   {
     super_type::move(s);
     value = s.value;
@@ -264,23 +264,23 @@ namespace yy {
 
   // by_type.
   inline
-   FuzzyParser ::by_type::by_type ()
+   TreeClassifierParser ::by_type::by_type ()
      : type (empty)
   {}
 
   inline
-   FuzzyParser ::by_type::by_type (const by_type& other)
+   TreeClassifierParser ::by_type::by_type (const by_type& other)
     : type (other.type)
   {}
 
   inline
-   FuzzyParser ::by_type::by_type (token_type t)
+   TreeClassifierParser ::by_type::by_type (token_type t)
     : type (yytranslate_ (t))
   {}
 
   inline
   void
-   FuzzyParser ::by_type::move (by_type& that)
+   TreeClassifierParser ::by_type::move (by_type& that)
   {
     type = that.type;
     that.type = empty;
@@ -288,7 +288,7 @@ namespace yy {
 
   inline
   int
-   FuzzyParser ::by_type::type_get () const
+   TreeClassifierParser ::by_type::type_get () const
   {
     return type;
   }
@@ -296,42 +296,42 @@ namespace yy {
 
   // by_state.
   inline
-   FuzzyParser ::by_state::by_state ()
+   TreeClassifierParser ::by_state::by_state ()
     : state (empty)
   {}
 
   inline
-   FuzzyParser ::by_state::by_state (const by_state& other)
+   TreeClassifierParser ::by_state::by_state (const by_state& other)
     : state (other.state)
   {}
 
   inline
   void
-   FuzzyParser ::by_state::move (by_state& that)
+   TreeClassifierParser ::by_state::move (by_state& that)
   {
     state = that.state;
     that.state = empty;
   }
 
   inline
-   FuzzyParser ::by_state::by_state (state_type s)
+   TreeClassifierParser ::by_state::by_state (state_type s)
     : state (s)
   {}
 
   inline
-   FuzzyParser ::symbol_number_type
-   FuzzyParser ::by_state::type_get () const
+   TreeClassifierParser ::symbol_number_type
+   TreeClassifierParser ::by_state::type_get () const
   {
     return state == empty ? 0 : yystos_[state];
   }
 
   inline
-   FuzzyParser ::stack_symbol_type::stack_symbol_type ()
+   TreeClassifierParser ::stack_symbol_type::stack_symbol_type ()
   {}
 
 
   inline
-   FuzzyParser ::stack_symbol_type::stack_symbol_type (state_type s, symbol_type& that)
+   TreeClassifierParser ::stack_symbol_type::stack_symbol_type (state_type s, symbol_type& that)
     : super_type (s, that.location)
   {
     value = that.value;
@@ -340,8 +340,8 @@ namespace yy {
   }
 
   inline
-   FuzzyParser ::stack_symbol_type&
-   FuzzyParser ::stack_symbol_type::operator= (const stack_symbol_type& that)
+   TreeClassifierParser ::stack_symbol_type&
+   TreeClassifierParser ::stack_symbol_type::operator= (const stack_symbol_type& that)
   {
     state = that.state;
     value = that.value;
@@ -353,7 +353,7 @@ namespace yy {
   template <typename Base>
   inline
   void
-   FuzzyParser ::yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const
+   TreeClassifierParser ::yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const
   {
     if (yymsg)
       YY_SYMBOL_PRINT (yymsg, yysym);
@@ -365,7 +365,7 @@ namespace yy {
 #if YYDEBUG
   template <typename Base>
   void
-   FuzzyParser ::yy_print_ (std::ostream& yyo,
+   TreeClassifierParser ::yy_print_ (std::ostream& yyo,
                                      const basic_symbol<Base>& yysym) const
   {
     std::ostream& yyoutput = yyo;
@@ -381,7 +381,7 @@ namespace yy {
 
   inline
   void
-   FuzzyParser ::yypush_ (const char* m, state_type s, symbol_type& sym)
+   TreeClassifierParser ::yypush_ (const char* m, state_type s, symbol_type& sym)
   {
     stack_symbol_type t (s, sym);
     yypush_ (m, t);
@@ -389,7 +389,7 @@ namespace yy {
 
   inline
   void
-   FuzzyParser ::yypush_ (const char* m, stack_symbol_type& s)
+   TreeClassifierParser ::yypush_ (const char* m, stack_symbol_type& s)
   {
     if (m)
       YY_SYMBOL_PRINT (m, s);
@@ -398,40 +398,40 @@ namespace yy {
 
   inline
   void
-   FuzzyParser ::yypop_ (unsigned int n)
+   TreeClassifierParser ::yypop_ (unsigned int n)
   {
     yystack_.pop (n);
   }
 
 #if YYDEBUG
   std::ostream&
-   FuzzyParser ::debug_stream () const
+   TreeClassifierParser ::debug_stream () const
   {
     return *yycdebug_;
   }
 
   void
-   FuzzyParser ::set_debug_stream (std::ostream& o)
+   TreeClassifierParser ::set_debug_stream (std::ostream& o)
   {
     yycdebug_ = &o;
   }
 
 
-   FuzzyParser ::debug_level_type
-   FuzzyParser ::debug_level () const
+   TreeClassifierParser ::debug_level_type
+   TreeClassifierParser ::debug_level () const
   {
     return yydebug_;
   }
 
   void
-   FuzzyParser ::set_debug_level (debug_level_type l)
+   TreeClassifierParser ::set_debug_level (debug_level_type l)
   {
     yydebug_ = l;
   }
 #endif // YYDEBUG
 
-  inline  FuzzyParser ::state_type
-   FuzzyParser ::yy_lr_goto_state_ (state_type yystate, int yysym)
+  inline  TreeClassifierParser ::state_type
+   TreeClassifierParser ::yy_lr_goto_state_ (state_type yystate, int yysym)
   {
     int yyr = yypgoto_[yysym - yyntokens_] + yystate;
     if (0 <= yyr && yyr <= yylast_ && yycheck_[yyr] == yystate)
@@ -441,19 +441,19 @@ namespace yy {
   }
 
   inline bool
-   FuzzyParser ::yy_pact_value_is_default_ (int yyvalue)
+   TreeClassifierParser ::yy_pact_value_is_default_ (int yyvalue)
   {
     return yyvalue == yypact_ninf_;
   }
 
   inline bool
-   FuzzyParser ::yy_table_value_is_error_ (int yyvalue)
+   TreeClassifierParser ::yy_table_value_is_error_ (int yyvalue)
   {
     return yyvalue == yytable_ninf_;
   }
 
   int
-   FuzzyParser ::parse ()
+   TreeClassifierParser ::parse ()
   {
     /// Whether yyla contains a lookahead.
     bool yyempty = true;
@@ -592,150 +592,8 @@ namespace yy {
         {
           switch (yyn)
             {
-  case 3:
-#line 72 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    { builder.buildDomain(*(yystack_[0].value.fvars)); delete (yystack_[0].value.fvars); }
-#line 599 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
 
-  case 6:
-#line 77 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.fvars) = new std::vector<std::string>;
-				(yylhs.value.fvars)->push_back(*(yystack_[0].value.str));
-				delete (yystack_[0].value.str);
-			}
-#line 609 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 7:
-#line 83 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.fvars) = (yystack_[0].value.fvars);
-				(yylhs.value.fvars)->push_back(*(yystack_[2].value.str));
-				delete (yystack_[2].value.str);
-			}
-#line 619 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 8:
-#line 91 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				builder.buildMF((yystack_[4].value.str), (yystack_[2].value.str), (yystack_[1].value.fshape));
-				delete (yystack_[4].value.str);
-				delete (yystack_[2].value.str);
-				delete (yystack_[1].value.fshape);
-			}
-#line 630 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 9:
-#line 98 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				builder.buildMF((yystack_[5].value.str), (yystack_[3].value.str), (yystack_[2].value.fshape));
-				delete (yystack_[5].value.str);
-				delete (yystack_[3].value.str);
-				delete (yystack_[2].value.fshape);
-			}
-#line 641 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 10:
-#line 107 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.fshape) = (yystack_[1].value.fshape);
-			}
-#line 649 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 11:
-#line 113 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    { 
-				(yylhs.value.fshape) = new std::vector<int>;
-				(yylhs.value.fshape)->push_back((yystack_[0].value.integer));
-			}
-#line 658 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 12:
-#line 118 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    { 
-				(yylhs.value.fshape) = (yystack_[0].value.fshape);
-				(yylhs.value.fshape)->push_back((yystack_[2].value.integer));
-			}
-#line 667 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 15:
-#line 130 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				builder.buildRule((yystack_[2].value.node), (yystack_[1].value.node));
-			}
-#line 675 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 16:
-#line 136 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = (yystack_[0].value.node);
-			}
-#line 683 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 17:
-#line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = (yystack_[1].value.node);
-			}
-#line 691 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 18:
-#line 144 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = builder.buildNot((yystack_[0].value.node));
-			}
-#line 699 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 19:
-#line 148 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = builder.buildOr((yystack_[2].value.node), (yystack_[0].value.node));
-			}
-#line 707 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 20:
-#line 152 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = builder.buildAnd((yystack_[2].value.node),(yystack_[0].value.node));
-			}
-#line 715 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 21:
-#line 158 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = builder.buildIs((yystack_[3].value.str), (yystack_[1].value.str));
-				delete (yystack_[3].value.str);
-				delete (yystack_[1].value.str);
-			}
-#line 725 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 22:
-#line 166 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:847
-    {
-				(yylhs.value.node) = builder.buildAssignment((yystack_[3].value.str), (yystack_[1].value.str));
-				delete (yystack_[3].value.str);
-				delete (yystack_[1].value.str);
-			}
-#line 735 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-
-#line 739 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+#line 597 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
             default:
               break;
             }
@@ -889,14 +747,14 @@ namespace yy {
   }
 
   void
-   FuzzyParser ::error (const syntax_error& yyexc)
+   TreeClassifierParser ::error (const syntax_error& yyexc)
   {
     error (yyexc.location, yyexc.what());
   }
 
   // Generate an error message.
   std::string
-   FuzzyParser ::yysyntax_error_ (state_type yystate, symbol_number_type yytoken) const
+   TreeClassifierParser ::yysyntax_error_ (state_type yystate, symbol_number_type yytoken) const
   {
     std::string yyres;
     // Number of reported tokens (one for the "unexpected", one per
@@ -990,91 +848,62 @@ namespace yy {
   }
 
 
-  const signed char  FuzzyParser ::yypact_ninf_ = -13;
+  const signed char  TreeClassifierParser ::yypact_ninf_ = -4;
 
-  const signed char  FuzzyParser ::yytable_ninf_ = -1;
+  const signed char  TreeClassifierParser ::yytable_ninf_ = -1;
 
   const signed char
-   FuzzyParser ::yypact_[] =
+   TreeClassifierParser ::yypact_[] =
   {
-      -8,    13,    17,     6,     3,   -13,   -13,     7,   -13,     6,
-      13,    18,     7,    -1,    -2,   -13,   -13,   -13,     5,     8,
-     -13,    12,     4,     7,     7,    16,    21,     9,    -8,    24,
-     -13,   -13,    23,    26,   -13,    22,   -13,    25,    20,    14,
-      29,   -13,    32,    27,    28,    18,    30,    14,   -13,   -13,
-     -13,   -13
+      -3,    -4,     1,    -4
   };
 
   const unsigned char
-   FuzzyParser ::yydefact_[] =
+   TreeClassifierParser ::yydefact_[] =
   {
-       5,     0,     0,    14,     6,     3,     1,     0,     2,    14,
-       0,     0,     0,     0,     0,    16,    13,     7,     0,     0,
-      18,     0,     0,     0,     0,     0,     0,     0,     5,     0,
-      17,    19,    20,     0,    15,     0,     4,     0,     0,     0,
-       0,    21,     0,    11,     0,     8,     0,     0,    10,     9,
-      22,    12
+       0,     2,     0,     1
   };
 
   const signed char
-   FuzzyParser ::yypgoto_[] =
+   TreeClassifierParser ::yypgoto_[] =
   {
-     -13,   -13,    10,   -13,    31,    -9,   -13,    -7,    33,   -13,
-     -12,   -13,   -13
+      -4,    -4
   };
 
   const signed char
-   FuzzyParser ::yydefgoto_[] =
+   TreeClassifierParser ::yydefgoto_[] =
   {
-      -1,     2,     3,    11,     5,    19,    40,    44,     8,     9,
-      14,    15,    26
+      -1,     2
   };
 
   const unsigned char
-   FuzzyParser ::yytable_[] =
+   TreeClassifierParser ::yytable_[] =
   {
-      20,    22,    21,    23,    24,     1,    12,    13,    25,    23,
-      24,    31,    32,    30,    12,    13,     4,     6,     7,    10,
-      27,    18,    28,    29,    33,    34,    35,    37,    23,    38,
-      39,    42,    43,    45,    41,    46,    49,    48,    36,    50,
-      51,    17,    16,    47
+       1,     3
   };
 
   const unsigned char
-   FuzzyParser ::yycheck_[] =
+   TreeClassifierParser ::yycheck_[] =
   {
-      12,    13,     3,     5,     6,    13,     7,     8,    10,     5,
-       6,    23,    24,     9,     7,     8,     3,     0,    12,    16,
-      15,     3,    14,    11,     8,     4,    17,     3,     5,     3,
-       8,    11,    18,     4,     9,     3,    45,     9,    28,     9,
-      47,    10,     9,    16
+       3,     0
   };
 
   const unsigned char
-   FuzzyParser ::yystos_[] =
+   TreeClassifierParser ::yystos_[] =
   {
-       0,    13,    20,    21,     3,    23,     0,    12,    27,    28,
-      16,    22,     7,     8,    29,    30,    27,    23,     3,    24,
-      29,     3,    29,     5,     6,    10,    31,    15,    14,    11,
-       9,    29,    29,     8,     4,    17,    21,     3,     3,     8,
-      25,     9,    11,    18,    26,     4,     3,    16,     9,    24,
-       9,    26
+       0,     3,    20,     0
   };
 
   const unsigned char
-   FuzzyParser ::yyr1_[] =
+   TreeClassifierParser ::yyr1_[] =
   {
-       0,    19,    20,    22,    21,    21,    23,    23,    24,    24,
-      25,    26,    26,    27,    27,    28,    29,    29,    29,    29,
-      29,    30,    31
+       0,    19,    20
   };
 
   const unsigned char
-   FuzzyParser ::yyr2_[] =
+   TreeClassifierParser ::yyr2_[] =
   {
-       0,     2,     2,     0,     6,     0,     1,     3,     5,     6,
-       3,     1,     3,     2,     0,     4,     1,     3,     2,     3,
-       3,     5,     6
+       0,     2,     1
   };
 
 
@@ -1082,28 +911,24 @@ namespace yy {
   // YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
   // First, the terminals, then, starting at \a yyntokens_, nonterminals.
   const char*
-  const  FuzzyParser ::yytname_[] =
+  const  TreeClassifierParser ::yytname_[] =
   {
   "$end", "error", "$undefined", "ID", "END_RULE", "OP_OR", "OP_AND",
   "OP_NOT", "OPEN_B", "CLOSE_B", "THEN", "IS", "IF", "FUZZIFY",
   "END_FUZZIFY", "LIKE", "COMMA", "F_LABEL", "PARAMETER", "$accept",
-  "fuzzyFile", "fuzzySet", "$@1", "fuzzyId", "fuzzyTerm", "shape",
-  "parametersList", "ruleSet", "rule", "wellFormedFormula",
-  "fuzzyComparison", "fuzzyAssignment", YY_NULLPTR
+  "test", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
-   FuzzyParser ::yyrline_[] =
+   TreeClassifierParser ::yyrline_[] =
   {
-       0,    69,    69,    72,    72,    73,    76,    82,    90,    97,
-     106,   112,   117,   124,   125,   129,   135,   139,   143,   147,
-     151,   157,   165
+       0,    63,    63
   };
 
   // Print the state stack on the debug stream.
   void
-   FuzzyParser ::yystack_print_ ()
+   TreeClassifierParser ::yystack_print_ ()
   {
     *yycdebug_ << "Stack now";
     for (stack_type::const_iterator
@@ -1116,7 +941,7 @@ namespace yy {
 
   // Report on the debug stream that the rule \a yyrule is going to be reduced.
   void
-   FuzzyParser ::yy_reduce_print_ (int yyrule)
+   TreeClassifierParser ::yy_reduce_print_ (int yyrule)
   {
     unsigned int yylno = yyrline_[yyrule];
     int yynrhs = yyr2_[yyrule];
@@ -1132,8 +957,8 @@ namespace yy {
 
   // Symbol number corresponding to token number t.
   inline
-   FuzzyParser ::token_number_type
-   FuzzyParser ::yytranslate_ (int t)
+   TreeClassifierParser ::token_number_type
+   TreeClassifierParser ::yytranslate_ (int t)
   {
     static
     const token_number_type
@@ -1179,13 +1004,13 @@ namespace yy {
       return undef_token_;
   }
 
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:1155
+} // tc
+#line 1010 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:1155
+#line 65 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:1156
 
-} // yy
-#line 1185 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:1155
-#line 172 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:1156
 
-
-void yy::FuzzyParser::error(const yy::FuzzyParser::location_type& l, const std::string& msg)
+void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_type& l, const std::string& msg)
 {
     std::cerr << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
     exit(-1);
@@ -1193,7 +1018,7 @@ void yy::FuzzyParser::error(const yy::FuzzyParser::location_type& l, const std::
 
 /* include for access to scanner.yylex */
 #include "FuzzyScanner.h"
-static int yylex(yy::FuzzyParser::semantic_type *yylval, yy::FuzzyParser::location_type* l, FuzzyScanner& scanner, FuzzyBuilder& builder)
+static int yylex(tc::TreeClassifierParser::semantic_type *yylval, tc::TreeClassifierParser::location_type* l, TreeClassifierScanner& scanner, TreeClassifierBuilder& builder)
 {
 	l->step();
 	return(scanner.yylex(yylval));

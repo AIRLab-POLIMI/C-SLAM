@@ -31,18 +31,18 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh
- ** Define the yy::stack class.
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/stack.hh
+ ** Define the tc::stack class.
  */
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_STACK_HH_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_STACK_HH_INCLUDED
 
 # include <vector>
 
-
-namespace yy {
-#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh" // stack.hh:133
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // stack.hh:133
+namespace tc {
+#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/stack.hh" // stack.hh:133
   template <class T, class S = std::vector<T> >
   class stack
   {
@@ -151,8 +151,8 @@ namespace yy {
     unsigned int range_;
   };
 
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // stack.hh:133
+} // tc
+#line 157 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/stack.hh" // stack.hh:133
 
-} // yy
-#line 157 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/stack.hh" // stack.hh:133
-
-#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_STACK_HH_INCLUDED
+#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_STACK_HH_INCLUDED

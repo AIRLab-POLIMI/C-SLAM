@@ -1,6 +1,6 @@
-#line 2 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyScanner.cpp"
+#line 2 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.cpp"
 
-#line 4 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyScanner.cpp"
+#line 4 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -599,8 +599,8 @@ static yyconst flex_int16_t yy_rule_linenum[26] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
-#line 2 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 1 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
+#line 2 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 	#include<iostream>
 	#include<string>
 	#include "FuzzyScanner.h"
@@ -613,7 +613,7 @@ static yyconst flex_int16_t yy_rule_linenum[26] =
 	
 	using namespace std;
 
-#line 617 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyScanner.cpp"
+#line 617 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.cpp"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -776,11 +776,11 @@ YY_DECL
 	register int yy_act;
     
 /* %% [7.0] user's declarations go here */
-#line 33 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 33 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 
 
  /* C++ stle nested comment eater */
-#line 784 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyScanner.cpp"
+#line 784 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -905,7 +905,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 36 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 36 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { saveLastState(YY_START); BEGIN(COMMENT); }
 	YY_BREAK
 
@@ -913,138 +913,138 @@ YY_RULE_SETUP
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 39 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 39 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 40 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 40 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 41 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 41 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { saveLastState(YY_START); BEGIN(COMMENT); }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 42 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 42 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 43 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 43 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { BEGIN(getLastState()); }
 	YY_BREAK
 
 /* blank and new line */
 case 7:
 YY_RULE_SETUP
-#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { this->newLine(); }
 	YY_BREAK
 /* keywords and symbols */
 case 9:
 YY_RULE_SETUP
-#line 50 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 50 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::FUZZIFY; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::END_FUZZIFY; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::OP_AND; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 53 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 53 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::OP_OR; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 54 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 54 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::OP_NOT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::THEN; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::IS; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 57 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 57 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::IF; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 58 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 58 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::OPEN_B; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 59 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 59 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::CLOSE_B; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 60 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 60 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::END_RULE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 61 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 61 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::LIKE; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 62 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 62 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { return token::COMMA; }
 	YY_BREAK
 /* identificators */
 case 22:
 YY_RULE_SETUP
-#line 65 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 65 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { yylval->str = new std::string(yytext); return token::ID; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 66 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 66 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { yylval->integer = atoi(yytext); return token::PARAMETER; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 67 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 67 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { yylval->str = new std::string(yytext); return token::F_LABEL; }
 	YY_BREAK
 /* unknown tokens */
 case 25:
 YY_RULE_SETUP
-#line 70 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 70 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 { cerr << "Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; return UNKNOWN; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 71 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 71 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1048 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/FuzzyScanner.cpp"
+#line 1048 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -2101,4 +2101,4 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 71 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/scanner.l"
+#line 71 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/scanner.l"

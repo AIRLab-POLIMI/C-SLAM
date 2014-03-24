@@ -31,24 +31,23 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h
- ** Define the yy::parser class.
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h
+ ** Define the tc::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIBC_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIBC_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 7 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:372
+#line 8 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
 
 	#include<vector>
 	#include<map>
-	#include "Node.h"
-	class FuzzyBuilder;
-	class FuzzyScanner;
+	class TreeClassifierBuilder;
+	class TreeClassifierScanner;
 
-#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -117,26 +116,26 @@
 # define YYDEBUG 1
 #endif
 
-
-namespace yy {
-#line 123 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+namespace tc {
+#line 122 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 
 
 
   /// A Bison parser.
-  class  FuzzyParser 
+  class  TreeClassifierParser 
   {
   public:
 #ifndef YYSTYPE
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/parser.y" // lalr1.cc:372
-int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector<std::string>* fvars; 
+    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+ std::string* str; int integer; 
 
-#line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 139 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -264,8 +263,8 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector
 
 
     /// Build a parser object.
-     FuzzyParser  (FuzzyScanner  &scanner_yyarg, FuzzyBuilder  &builder_yyarg);
-    virtual ~ FuzzyParser  ();
+     TreeClassifierParser  (TreeClassifierScanner  &scanner_yyarg, TreeClassifierBuilder  &builder_yyarg);
+    virtual ~ TreeClassifierParser  ();
 
     /// Parse.
     /// \returns  0 iff parsing succeeded.
@@ -295,8 +294,8 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector
 
   private:
     /// This class is not copyable.
-     FuzzyParser  (const  FuzzyParser &);
-     FuzzyParser & operator= (const  FuzzyParser &);
+     TreeClassifierParser  (const  TreeClassifierParser &);
+     TreeClassifierParser & operator= (const  TreeClassifierParser &);
 
     /// State numbers.
     typedef int state_type;
@@ -462,10 +461,10 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector
     enum
     {
       yyeof_ = 0,
-      yylast_ = 43,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
+      yylast_ = 1,     ///< Last index in yytable_.
+      yynnts_ = 2,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 6, ///< Termination state number.
+      yyfinal_ = 3, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 19  ///< Number of tokens.
@@ -473,16 +472,16 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector
 
 
     // User arguments.
-    FuzzyScanner  &scanner;
-    FuzzyBuilder  &builder;
+    TreeClassifierScanner  &scanner;
+    TreeClassifierBuilder  &builder;
   };
 
 
-
-} // yy
-#line 484 "/home/dave/CognitiveSlam/src/c_fuzzy/include/libc_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
-
-
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+} // tc
+#line 483 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
-#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIBC_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
+
+
+#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED

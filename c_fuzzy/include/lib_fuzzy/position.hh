@@ -31,12 +31,12 @@
 // version 2.2 of Bison.
 
 /**
- ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/position.hh
+ ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/position.hh
  ** Define the yy::position class.
  */
 
-#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_POSITION_HH_INCLUDED
-# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_POSITION_HH_INCLUDED
+#ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_POSITION_HH_INCLUDED
+# define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_POSITION_HH_INCLUDED
 
 # include <algorithm> // std::max
 # include <iostream>
@@ -52,7 +52,7 @@
 
 
 namespace yy {
-#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/position.hh" // location.cc:291
+#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/position.hh" // location.cc:291
   /// Abstract a position.
   class position
   {
@@ -176,5 +176,5 @@ namespace yy {
 
 
 } // yy
-#line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/libc_fuzzy/position.hh" // location.cc:291
-#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIBC_FUZZY_POSITION_HH_INCLUDED
+#line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/position.hh" // location.cc:291
+#endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_POSITION_HH_INCLUDED
