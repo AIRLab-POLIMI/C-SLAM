@@ -40,7 +40,7 @@
 
 # include "position.hh"
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // location.cc:291
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // location.cc:291
 namespace tc {
 #line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/location.hh" // location.cc:291
   /// Abstract a location.
@@ -181,7 +181,7 @@ namespace tc {
     return ostr;
   }
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // location.cc:291
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // location.cc:291
 } // tc
 #line 187 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/location.hh" // location.cc:291
 #endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_LOCATION_HH_INCLUDED

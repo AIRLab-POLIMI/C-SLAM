@@ -49,7 +49,7 @@
 
 #line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:407
 // Unqualified %code blocks.
-#line 25 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:408
+#line 25 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:408
 
 	#include<iostream>
 	#include<cstdlib>
@@ -143,7 +143,7 @@
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:474
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:474
 namespace tc {
 #line 149 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:474
 
@@ -848,62 +848,62 @@ namespace tc {
   }
 
 
-  const signed char  TreeClassifierParser ::yypact_ninf_ = -4;
+  const signed char  TreeClassifierParser ::yypact_ninf_ = -1;
 
   const signed char  TreeClassifierParser ::yytable_ninf_ = -1;
 
   const signed char
    TreeClassifierParser ::yypact_[] =
   {
-      -3,    -4,     1,    -4
+      -1,     0,    -1
   };
 
   const unsigned char
    TreeClassifierParser ::yydefact_[] =
   {
-       0,     2,     0,     1
+       2,     0,     1
   };
 
   const signed char
    TreeClassifierParser ::yypgoto_[] =
   {
-      -4,    -4
+      -1,    -1
   };
 
   const signed char
    TreeClassifierParser ::yydefgoto_[] =
   {
-      -1,     2
+      -1,     1
   };
 
   const unsigned char
    TreeClassifierParser ::yytable_[] =
   {
-       1,     3
+       2
   };
 
   const unsigned char
    TreeClassifierParser ::yycheck_[] =
   {
-       3,     0
+       0
   };
 
   const unsigned char
    TreeClassifierParser ::yystos_[] =
   {
-       0,     3,    20,     0
+       0,    23,     0
   };
 
   const unsigned char
    TreeClassifierParser ::yyr1_[] =
   {
-       0,    19,    20
+       0,    22,    23
   };
 
   const unsigned char
    TreeClassifierParser ::yyr2_[] =
   {
-       0,     2,     1
+       0,     2,     0
   };
 
 
@@ -913,17 +913,17 @@ namespace tc {
   const char*
   const  TreeClassifierParser ::yytname_[] =
   {
-  "$end", "error", "$undefined", "ID", "END_RULE", "OP_OR", "OP_AND",
-  "OP_NOT", "OPEN_B", "CLOSE_B", "THEN", "IS", "IF", "FUZZIFY",
-  "END_FUZZIFY", "LIKE", "COMMA", "F_LABEL", "PARAMETER", "$accept",
-  "test", YY_NULLPTR
+  "$end", "error", "$undefined", "ID", "IS", "MATCH", "BETWEEN", "CLASS",
+  "VARIABLES", "END_VARIABLES", "CONSTANTS", "END_CONSTANTS", "END_CLASS",
+  "EXTENDS", "IMPORTANT", "PERIOD", "SEMICOLON", "COMMA", "LPAR", "RPAR",
+  "EQUAL", "NUMBER", "$accept", "fuzzyClassifiers", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
    TreeClassifierParser ::yyrline_[] =
   {
-       0,    63,    63
+       0,    62,    63
   };
 
   // Print the state stack on the debug stream.
@@ -991,9 +991,9 @@ namespace tc {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18
+      15,    16,    17,    18,    19,    20,    21
     };
-    const unsigned int user_token_number_max_ = 273;
+    const unsigned int user_token_number_max_ = 276;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -1004,10 +1004,10 @@ namespace tc {
       return undef_token_;
   }
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:1155
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:1155
 } // tc
 #line 1010 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:1155
-#line 65 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:1156
+#line 113 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:1156
 
 
 void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_type& l, const std::string& msg)

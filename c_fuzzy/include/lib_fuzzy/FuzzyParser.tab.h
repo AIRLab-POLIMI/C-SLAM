@@ -40,7 +40,7 @@
 #ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
 # define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_FUZZY_FUZZYPARSER_TAB_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 7 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/parser.y" // lalr1.cc:372
+#line 7 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
 
 	#include<vector>
 	#include<map>
@@ -133,7 +133,7 @@ namespace yy {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/parser.y" // lalr1.cc:372
+    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
 int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector<std::string>* fvars; 
 
 #line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372

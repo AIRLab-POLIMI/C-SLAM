@@ -50,13 +50,23 @@ SIGN [-+]
 "end_class"|"END_CLASS" { return token::END_CLASS; }
 "is"|"IS" { return token::IS; }
 "match"|"MATCH" { return token::MATCH; }
-"at"|"AT" { return token::AT; }
+"variables"|"VARIABLES"  { return token::VARIABLES; }
+"end_variables"|"END_VARIABLES"  { return token::VARIABLES; }
+"constants"|"CONSTANTS"  { return token::CONSTANTS; }
+"end_costants"|"END_CONSTANTS"  { return token::END_CONSTANTS; }
+"important"|"IMPORTANT" { return token::IMPORTANT; }
+"exteds"|"EXTENDS" { return token::EXTENDS; }
+"=" { return token::EQUAL; }
 "," { return token::COMMA; }
+"." { return token::PERIOD; }
+";" { return token::SEMICOLON; }
+"(" { return token::LPAR; }
+")" { return token::RPAR; }
+
  
  /* identificators */
 {CAPITAL}({LETTER}|{DIGIT})* { yylval->str = new std::string(yytext); return token::ID; }
--?{DIGIT}+ { yylval->integer = atoi(yytext); return token::PARAMETER; }
-{FUZZYLABEL} { yylval->str = new std::string(yytext); return token::F_LABEL; }
+{SIGN}?{DIGIT}+ { yylval->integer = atoi(yytext); return token::NUMBER; }
 
  /* unknown tokens */
 . { cerr << "Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; return UNKNOWN; }

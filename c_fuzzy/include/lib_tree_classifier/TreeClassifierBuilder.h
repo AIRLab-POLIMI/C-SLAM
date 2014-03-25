@@ -25,13 +25,10 @@
 #define FUZZYBUILDER_H_
 
 #include <string>
-#include <vector>
-#include <map>
 
+#include "FuzzyClass.h"
 #include "TreeClassifierScanner.h"
 #include "TreeClassifierParser.tab.h"
-
-
 
 class TreeClassifierBuilder
 {
@@ -49,10 +46,20 @@ public:
 
 	virtual ~TreeClassifierBuilder();
 
+public:
+	VariableList* buildVariableList(VariableList* list, std::string variable);
+	ConstantList* buildCostantList(ConstantList* list, std::string variable,
+			int value);
+	void buildClass(std::string name, std::string superClassName,
+			VariableList* variables, ConstantList* constants, bool important);
+
 private:
 	//Data needed to get Builder working
 	tc::TreeClassifierParser* parser;
 	TreeClassifierScanner* scanner;
+
+	//Data needed to track created classes
+	std::map<std::string, FuzzyClass*> classList;
 
 };
 

@@ -50,7 +50,7 @@
 #  endif
 # endif
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // location.cc:291
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // location.cc:291
 namespace tc {
 #line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/position.hh" // location.cc:291
   /// Abstract a position.
@@ -174,7 +174,7 @@ namespace tc {
     return ostr << pos.line << '.' << pos.column;
   }
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // location.cc:291
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // location.cc:291
 } // tc
 #line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/position.hh" // location.cc:291
 #endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_TREE_CLASSIFIER_POSITION_HH_INCLUDED

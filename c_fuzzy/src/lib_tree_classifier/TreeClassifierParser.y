@@ -35,33 +35,81 @@
 %union { std::string* str; int integer; }
 
 %token<str> ID
-%token END_RULE
-%token OP_OR
-%token OP_AND
-%token OP_NOT
-%token OPEN_B
-%token CLOSE_B
-%token THEN
 %token IS
-%token IF
+%token MATCH
+%token BETWEEN
 
-%token FUZZIFY
-%token END_FUZZIFY
+%token CLASS
+%token VARIABLES
+%token END_VARIABLES
+%token CONSTANTS
+%token END_CONSTANTS
+%token END_CLASS
+%token EXTENDS
+%token IMPORTANT
 
-%token LIKE
+%token PERIOD
+%token SEMICOLON
 %token COMMA
-%token <str> F_LABEL
-%token <integer> PARAMETER
+%token LPAR
+%token RPAR
+%token EQUAL
 
-
-%left OP_AND
-%left OP_OR
-%right OP_NOT
+%token <integer> NUMBER
 
 %%
 
-test: ID;
+fuzzyClassifiers	: fuzzyClass fuzzyClassifiers
+			|
+			;
 
+fuzzyClass		: CLASS ID fuzzySuperclass importantFlag fuzzyClassElements fuzzyAttributes END_CLASS
+			;
+
+fuzzySuperclass		: EXTENDS ID 
+			|
+			;
+
+importantFlag		: IMPORTANT
+			|
+			;
+
+fuzzyClassElements	: constants variables
+			| variables constants
+			| constants
+			| variables
+			|
+			;
+
+constants		: CONSTANTS constantList END_CONSTANTS
+			;
+			
+constantList		: ID EQUAL NUMBER SEMICOLON constantList
+			|
+			;
+
+variables		: VARIABLES variableList END_VARIABLES
+			;
+
+variableList		: ID SEMICOLON variableList
+			|
+			;
+
+fuzzyAttributes		: fuzzyAttribute fuzzyAttributes
+			| fuzzyRelation fuzzyAttributes
+			;
+
+fuzzyAttribute		: ID IS ID SEMICOLON
+			;
+
+fuzzyRelation		: ID PERIOD ID MATCH ID SEMICOLON
+			| ID PERIOD ID fuzzyConstraint BETWEEN LPAR ID COMMA ID RPAR SEMICOLON
+			;
+
+
+fuzzyConstraint		: IS ID
+			| 
+			;
 %%
 
 void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_type& l, const std::string& msg)

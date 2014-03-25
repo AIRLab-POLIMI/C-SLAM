@@ -40,7 +40,7 @@
 #ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED
 # define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 8 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+#line 8 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 
 	#include<vector>
 	#include<map>
@@ -116,7 +116,7 @@
 # define YYDEBUG 1
 #endif
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 namespace tc {
 #line 122 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
@@ -132,7 +132,7 @@ namespace tc {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
  std::string* str; int integer; 
 
 #line 139 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
@@ -156,21 +156,24 @@ namespace tc {
       enum yytokentype
       {
         ID = 258,
-        END_RULE = 259,
-        OP_OR = 260,
-        OP_AND = 261,
-        OP_NOT = 262,
-        OPEN_B = 263,
-        CLOSE_B = 264,
-        THEN = 265,
-        IS = 266,
-        IF = 267,
-        FUZZIFY = 268,
-        END_FUZZIFY = 269,
-        LIKE = 270,
-        COMMA = 271,
-        F_LABEL = 272,
-        PARAMETER = 273
+        IS = 259,
+        MATCH = 260,
+        BETWEEN = 261,
+        CLASS = 262,
+        VARIABLES = 263,
+        END_VARIABLES = 264,
+        CONSTANTS = 265,
+        END_CONSTANTS = 266,
+        END_CLASS = 267,
+        EXTENDS = 268,
+        IMPORTANT = 269,
+        PERIOD = 270,
+        SEMICOLON = 271,
+        COMMA = 272,
+        LPAR = 273,
+        RPAR = 274,
+        EQUAL = 275,
+        NUMBER = 276
       };
     };
 
@@ -461,13 +464,13 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 1,     ///< Last index in yytable_.
+      yylast_ = 0,     ///< Last index in yytable_.
       yynnts_ = 2,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 3, ///< Termination state number.
+      yyfinal_ = 2, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 19  ///< Number of tokens.
+      yyntokens_ = 22  ///< Number of tokens.
     };
 
 
@@ -477,9 +480,9 @@ namespace tc {
   };
 
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // lalr1.cc:372
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 } // tc
-#line 483 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 486 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 

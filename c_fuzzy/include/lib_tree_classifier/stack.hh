@@ -40,7 +40,7 @@
 
 # include <vector>
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // stack.hh:133
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // stack.hh:133
 namespace tc {
 #line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/stack.hh" // stack.hh:133
   template <class T, class S = std::vector<T> >
@@ -151,7 +151,7 @@ namespace tc {
     unsigned int range_;
   };
 
-#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/parser.y" // stack.hh:133
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // stack.hh:133
 } // tc
 #line 157 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/stack.hh" // stack.hh:133
 

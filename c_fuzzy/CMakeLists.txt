@@ -29,19 +29,19 @@ set(LIB_TREE_CLASSIFIER_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_tree_classifier
 
 #generate parsers and lexers from flex and Bison sources
 bison_target(FuzzyParser 
-             ${LIB_FUZZY_SOURCE_DIR}/parser.y 
+             ${LIB_FUZZY_SOURCE_DIR}/FuzzyParser.y 
              ${LIB_FUZZY_SOURCE_DIR}/FuzzyParser.tab.cpp 
              COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/lib_fuzzy/FuzzyParser.tab.h")
 flex_target(FuzzyScanner 
-            ${LIB_FUZZY_SOURCE_DIR}/scanner.l 
+            ${LIB_FUZZY_SOURCE_DIR}/FuzzyScanner.l 
             ${LIB_FUZZY_SOURCE_DIR}/FuzzyScanner.cpp)
 
 bison_target(TreeClassifierParser 
-             ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/parser.y 
+             ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierParser.y 
              ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierParser.tab.cpp 
              COMPILE_FLAGS --defines="${PROJECT_SOURCE_DIR}/include/lib_tree_classifier/TreeClassifierParser.tab.h")
 flex_target(TreeClassifierScanner 
-            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/scanner.l 
+            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierScanner.l 
             ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierScanner.cpp)
 
 #move generated files into include directory
