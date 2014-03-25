@@ -42,8 +42,8 @@
 // //                    "%code requires" blocks.
 #line 8 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 
-	#include<vector>
-	#include<map>
+	#include <string>
+	#include "FuzzyClass.h" 
 	class TreeClassifierBuilder;
 	class TreeClassifierScanner;
 
@@ -133,7 +133,7 @@ namespace tc {
     union semantic_type
     {
     #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
- std::string* str; int integer; 
+ std::string* str; int integer; bool boolean; VariableList* vlist; ConstantList* clist; std::pair<VariableList*, ConstantList*>* elists;  
 
 #line 139 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
     };
@@ -349,7 +349,7 @@ namespace tc {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -464,10 +464,10 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 0,     ///< Last index in yytable_.
-      yynnts_ = 2,  ///< Number of nonterminal symbols.
+      yylast_ = 61,     ///< Last index in yytable_.
+      yynnts_ = 14,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 2, ///< Termination state number.
+      yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 22  ///< Number of tokens.
