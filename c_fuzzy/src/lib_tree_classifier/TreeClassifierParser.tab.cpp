@@ -737,7 +737,7 @@ namespace tc {
   case 20:
 #line 181 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				(yylhs.value.flist) = builder.buildFeaturesList((yystack_[0].value.flist), (yystack_[1].value.vstr));
+				(yylhs.value.flist) = builder.buildFeaturesList((yystack_[0].value.flist), *(yystack_[1].value.vstr));
 				free((yystack_[1].value.vstr));
 				
 			}
@@ -747,7 +747,7 @@ namespace tc {
   case 21:
 #line 187 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				(yylhs.value.flist) = builder.buildFeaturesList((yystack_[0].value.flist), (yystack_[1].value.vstr));
+				(yylhs.value.flist) = builder.buildFeaturesList((yystack_[0].value.flist), *(yystack_[1].value.vstr));
 				free((yystack_[1].value.vstr));
 			}
 #line 754 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847

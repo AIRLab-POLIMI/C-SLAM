@@ -46,12 +46,24 @@ public:
 
 	virtual ~TreeClassifierBuilder();
 
+private:
+	template<class ListType>
+	inline ListType* eventuallyInitialize(ListType* list)
+	{
+		if (list == NULL)
+			return new ListType();
+		else
+			return list;
+	}
+
 public:
 	VariableList* buildVariableList(VariableList* list, std::string variable);
 	ConstantList* buildCostantList(ConstantList* list, std::string variable,
 				int value);
 	FuzzyFeatureList* buildFeaturesList(FuzzyFeatureList* list,
-				std::vector<std::string>* labelList);
+				std::vector<std::string>& labelList);
+	FuzzyFeature* buildFeature(std::string variable, std::string fuzzyLabel);
+	FuzzyFeature* buildFeature(std::vector<std::string>& labelList);
 	void buildClass(std::string name, std::string superClassName,
 				VariableList* variables, ConstantList* constants,
 				FuzzyFeatureList* featureList, bool important);

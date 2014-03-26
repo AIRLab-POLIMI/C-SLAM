@@ -179,13 +179,13 @@ variableList		: ID SEMICOLON variableList
 
 fuzzyFeatures		: fuzzySimpleFeature fuzzyFeatures
 			{
-				$$ = builder.buildFeaturesList($2, $1);
+				$$ = builder.buildFeaturesList($2, *$1);
 				free($1);
 				
 			}
 			| fuzzyRelation fuzzyFeatures
 			{
-				$$ = builder.buildFeaturesList($2, $1);
+				$$ = builder.buildFeaturesList($2, *$1);
 				free($1);
 			}
 			| /* empty */
