@@ -24,11 +24,14 @@
 #include <cctype>
 #include <fstream>
 #include <cassert>
+#include <stdexcept>
 
 #include "FuzzyOperator.h"
 #include "FuzzyBuilder.h"
 
 using namespace std;
+
+//TODO eliminare assertion e lanciare eccezioni...
 
 FuzzyBuilder::~FuzzyBuilder()
 {
@@ -44,8 +47,7 @@ void FuzzyBuilder::parse(const char *filename)
 	ifstream inputFile(filename);
 	if (!inputFile.good())
 	{
-		perror("Error");
-		exit(-1);
+		throw runtime_error("Bad file to parse");
 	}
 	scanner = new FuzzyScanner(&inputFile);
 	/* check to see if its initialized */
@@ -54,7 +56,7 @@ void FuzzyBuilder::parse(const char *filename)
 	assert(parser != NULL);
 	if (parser->parse() == -1)
 	{
-		cerr << "Parse failed!!" << endl;
+		throw runtime_error("Parse Failed");
 	}
 }
 

@@ -5,7 +5,6 @@ FUZZIFY Input
 	Far := tor(300,400);
 END_FUZZIFY
 
-
 FUZZIFY Prova
 	Near := tol(100,200);
 	Medium := tra(100,200,300,400);

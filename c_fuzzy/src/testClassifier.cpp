@@ -2,7 +2,7 @@
  * c_fuzzy,
  *
  *
- * Copyright (C) 2013 Davide Tateo
+ * Copyright (C) 2014 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_fuzzy.
@@ -21,37 +21,25 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ros/ros.h>
+#include <map>
 #include <stdexcept>
 
-#include "ReasonerServiceHandler.h"
+#include "TreeClassifierBuilder.h"
 
-//main del servizio
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	ros::init(argc, argv, "fuzzy_reasoner_server");
-	ros::NodeHandle n;
 
-	if (argc > 1)
+	try
 	{
-		try
-		{
-			ReasonerServiceHandler handler(argv[1]);
+		TreeClassifierBuilder builder;
 
-			ros::ServiceServer service = n.advertiseService("reasoning",
-						&ReasonerServiceHandler::reasoningCallback, &handler);
-			ROS_INFO("Reasoner setup correctly");
-			ros::spin();
-			ROS_INFO("Reasoner shut down");
-		}
-		catch (std::runtime_error& e)
-		{
-			ROS_INFO(e.what());
-			ROS_INFO("Check the knowledge base file");
-		}
+		builder.parse(argv[1]);
+		std::cout << "parsing done" << std::endl;
 	}
-	else
-		ROS_INFO("No knowledge base specified");
+	catch(const std::runtime_error& e)
+	{
+		std::cout << e.what() << std::endl;
+		std::cout << "Check the input file an try again" << std::endl;
+	}
 
-	return 0;
 }

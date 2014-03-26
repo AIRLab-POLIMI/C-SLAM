@@ -37,7 +37,6 @@ public:
 	TreeClassifierBuilder() :
 				parser(NULL), scanner(NULL)
 	{
-
 	}
 
 	void parse(const char *filename);

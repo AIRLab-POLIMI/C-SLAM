@@ -1,5 +1,6 @@
 %{
-	#include <iostream>
+	#include <sstream>
+	#include <stdexcept>
 	#include <string>
 	#include "TreeClassifierScanner.h"
 	
@@ -69,4 +70,4 @@ SIGN [-+]
 {SIGN}?{DIGIT}+ { yylval->integer = atoi(yytext); return token::NUMBER; }
 
  /* unknown tokens */
-. { cerr << "Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; return UNKNOWN; }
+. { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; throw std::runtime_error(ss.str()); }

@@ -23,11 +23,26 @@
 
 #include <cctype>
 #include <fstream>
-#include <cassert>
+#include <stdexcept>
 
 #include "TreeClassifierBuilder.h"
 
 using namespace std;
+
+void TreeClassifierBuilder::parse(const char *filename)
+{
+	ifstream inputFile(filename);
+	if (!inputFile.good())
+	{
+		throw runtime_error("Bad file to parse");
+	}
+	scanner = new TreeClassifierScanner(&inputFile);
+	parser = new tc::TreeClassifierParser((*scanner), (*this));
+	if (parser->parse() == -1)
+	{
+		throw runtime_error("Parse Failed");
+	}
+}
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
 			string variable)
@@ -93,7 +108,7 @@ FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 	list = eventuallyInitialize(list);
 
 	if (list->size() == 2)
-		feature = buildFeature(labelList[1], labelList[2]);
+		feature = buildFeature(labelList[0], labelList[1]);
 	else
 		feature = buildFeature(labelList);
 
@@ -110,4 +125,12 @@ void TreeClassifierBuilder::buildClass(string name, string superClassName,
 	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
 				constants, featureList, important);
 	classList[name] = fuzzyClass;
+}
+
+TreeClassifierBuilder::~TreeClassifierBuilder()
+{
+	if (scanner != NULL)
+		delete (scanner);
+	if (parser != NULL)
+		delete (parser);
 }

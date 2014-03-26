@@ -6,6 +6,9 @@
  
 %code requires
 {
+	#include <sstream>
+	#include <stdexcept>
+
 	#include <string>
 	#include <vector>
 	#include "FuzzyClass.h" 
@@ -24,7 +27,6 @@
  
 %code
 {
-	#include<iostream>
 	#include<cstdlib>
 	#include<fstream>
 	
@@ -248,8 +250,9 @@ fuzzyConstraint		: IS ID
 
 void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_type& l, const std::string& msg)
 {
-    std::cerr << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
-    exit(-1);
+	std::stringstream ss;
+	ss << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
+	throw std::runtime_error(ss.str());
 }
 
 /* include for access to scanner.yylex */

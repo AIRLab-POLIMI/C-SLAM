@@ -1,6 +1,7 @@
 %{
-	#include<iostream>
-	#include<string>
+	#include <sstream>
+	#include <stdexcept>
+	#include <string>
 	#include "FuzzyScanner.h"
 	
 	#define YY_USER_ACTION this->count(yyleng);
@@ -67,4 +68,4 @@ SIGN [-+]
 {FUZZYLABEL} { yylval->str = new std::string(yytext); return token::F_LABEL; }
 
  /* unknown tokens */
-. { cerr << "Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; return UNKNOWN; }
+. { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; throw std::runtime_error(ss.str()); }

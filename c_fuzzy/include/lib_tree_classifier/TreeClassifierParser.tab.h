@@ -42,13 +42,16 @@
 // //                    "%code requires" blocks.
 #line 8 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 
+	#include <sstream>
+	#include <stdexcept>
+
 	#include <string>
 	#include <vector>
 	#include "FuzzyClass.h" 
 	class TreeClassifierBuilder;
 	class TreeClassifierScanner;
 
-#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -119,7 +122,7 @@
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 namespace tc {
-#line 123 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 126 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 
@@ -133,7 +136,7 @@ namespace tc {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 37 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
+    #line 39 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
  
 	std::string* str; 
 	std::vector<std::string>* vstr; 
@@ -143,7 +146,7 @@ namespace tc {
 	std::pair<VariableList*, ConstantList*>* elists;
 	FuzzyFeatureList* flist;
 
-#line 147 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 150 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -490,7 +493,7 @@ namespace tc {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 } // tc
-#line 494 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 497 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 

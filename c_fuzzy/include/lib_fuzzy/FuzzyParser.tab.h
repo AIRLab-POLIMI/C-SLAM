@@ -42,13 +42,16 @@
 // //                    "%code requires" blocks.
 #line 7 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
 
-	#include<vector>
-	#include<map>
+	#include <sstream>
+	#include <stdexcept>
+
+	#include <vector>
+	#include <map>
 	#include "Node.h"
 	class FuzzyBuilder;
 	class FuzzyScanner;
 
-#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -119,7 +122,7 @@
 
 
 namespace yy {
-#line 123 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 126 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
 
 
 
@@ -133,10 +136,10 @@ namespace yy {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 35 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
+    #line 37 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
 int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector<std::string>* fvars; 
 
-#line 140 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 143 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -480,7 +483,7 @@ int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector
 
 
 } // yy
-#line 484 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 487 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
 
 
 

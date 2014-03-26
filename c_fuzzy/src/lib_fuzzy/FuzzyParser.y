@@ -5,8 +5,11 @@
  
 %code requires
 {
-	#include<vector>
-	#include<map>
+	#include <sstream>
+	#include <stdexcept>
+
+	#include <vector>
+	#include <map>
 	#include "Node.h"
 	class FuzzyBuilder;
 	class FuzzyScanner;
@@ -23,9 +26,8 @@
  
 %code
 {
-	#include<iostream>
-	#include<cstdlib>
-	#include<fstream>
+	#include <cstdlib>
+	#include <fstream>
 	
 	#include "FuzzyBuilder.h"
 	
@@ -173,8 +175,9 @@ fuzzyAssignment		: THEN OPEN_B ID IS ID CLOSE_B
 
 void yy::FuzzyParser::error(const yy::FuzzyParser::location_type& l, const std::string& msg)
 {
-    std::cerr << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
-    exit(-1);
+	std::stringstream ss;
+	ss << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
+	throw std::runtime_error(ss.str());
 }
 
 /* include for access to scanner.yylex */

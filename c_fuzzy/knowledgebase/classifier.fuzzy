@@ -1,0 +1,7 @@
+/* Test classifier */
+
+CLASS Rectagle
+
+FormFactor is Narrow;
+
+END_CLASS

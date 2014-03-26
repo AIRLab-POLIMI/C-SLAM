@@ -88,10 +88,12 @@ add_library(tree_classifier STATIC
 add_dependencies(fuzzy HeadersFuzzy)
 add_dependencies(fuzzy HeadersTreeClassifier)
 
-#build a test application
+#build test applications
 add_executable(prova src/test.cpp)
+add_executable(test_classifier src/testClassifier.cpp)
 
 target_link_libraries(prova fuzzy)
+target_link_libraries(test_classifier tree_classifier)
 
 #clean all remaining headers
 add_custom_command(TARGET fuzzy POST_BUILD
