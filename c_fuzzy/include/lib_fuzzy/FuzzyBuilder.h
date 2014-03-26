@@ -46,7 +46,7 @@ class FuzzyBuilder
 
 public:
 	FuzzyBuilder() :
-			parser(NULL), scanner(NULL)
+				parser(NULL), scanner(NULL)
 	{
 		createMap();
 		domainTable = new DomainTable();
@@ -92,11 +92,11 @@ public:
 
 	//Functions to build fuzzy MF
 	void buildMF(std::string* name, std::string* shape,
-			std::vector<int>* parameters);
+				std::vector<int>* parameters);
 	FuzzyMF* buildTor(int bottom, int top);
 	FuzzyMF* buildTol(int top, int bottom);
 	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
-			int bottomRight);
+				int bottomRight);
 	FuzzyMF* buildTri(int left, int center, int right);
 	FuzzyMF* buildInt(int left, int right);
 	FuzzyMF* buildSgt(int value);

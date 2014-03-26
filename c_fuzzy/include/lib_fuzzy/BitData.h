@@ -29,11 +29,11 @@
 struct BitData
 {
 	BitData() :
-			index(0), bits(NULL)
+				index(0), bits(NULL)
 	{
 	}
 	BitData(int index, boost::dynamic_bitset<>* bits) :
-			index(index), bits(bits)
+				index(index), bits(bits)
 	{
 	}
 	int index;

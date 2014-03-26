@@ -24,7 +24,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "FeatureDetector.h"
 
-std::vector<cv::KeyPoint>  FeatureDetector::detect(cv::Mat& input)
+std::vector<cv::KeyPoint> FeatureDetector::detect(cv::Mat& input)
 {
 	std::vector<cv::KeyPoint> keyPoints;
 

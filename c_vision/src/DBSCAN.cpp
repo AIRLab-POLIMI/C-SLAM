@@ -55,7 +55,6 @@ void ObjectCluster::updateBoundingBox(KeyPoint point)
 	if (keyPoints.size() > 0)
 	{
 
-
 		start.y = (start.y < y) ? start.y : y;
 		start.x = (start.x < x) ? start.x : x;
 
@@ -105,11 +104,12 @@ vector<ObjectCluster> DBSCAN::detect(vector<KeyPoint> &keypoints)
 					{
 						visited.insert(neighbor[j]);
 						vector<int> newNeighbors = listNeighbors(keypoints,
-								keypoints[neighbor[j]]);
+									keypoints[neighbor[j]]);
 						if (newNeighbors.size() >= minPoints)
 						{
 							neighbor.insert(neighbor.end(),
-									newNeighbors.begin(), newNeighbors.end());
+										newNeighbors.begin(),
+										newNeighbors.end());
 						}
 					}
 
@@ -131,7 +131,7 @@ vector<ObjectCluster> DBSCAN::detect(vector<KeyPoint> &keypoints)
 }
 
 vector<int> DBSCAN::listNeighbors(vector<KeyPoint> &keypoints,
-		KeyPoint& keypoint)
+			KeyPoint& keypoint)
 {
 	float dist;
 	vector<int> neighbors;

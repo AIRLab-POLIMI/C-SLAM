@@ -26,11 +26,11 @@
 using namespace std;
 
 map<string, FuzzyOutput> Defuzzyfier::defuzzify(
-		map<string, DataMap>& aggregatedData)
+			map<string, DataMap>& aggregatedData)
 {
 	map<string, FuzzyOutput> results;
 	for (map<string, DataMap>::iterator i = aggregatedData.begin();
-			i != aggregatedData.end(); ++i)
+				i != aggregatedData.end(); ++i)
 	{
 		DataMap dataMap = i->second;
 		double product = 0, weight = 0, value = 0;
@@ -103,7 +103,7 @@ void FuzzyReasoner::updateRulesMask()
 	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
 	for (map<string, BitData>::iterator it = variableMasks.begin();
-			it != variableMasks.end(); ++it)
+				it != variableMasks.end(); ++it)
 	{
 		int index = it->second.index;
 		boost::dynamic_bitset<>& currentMask = *it->second.bits;

@@ -53,12 +53,12 @@ void LineFilter::filter(vector<Vec4i> lines, double roll)
 		double alpha_line = atan2(dy, dx);
 
 		if (shortest_angular_distance(alpha_line, orizontal_line)
-				< delta_max_vertical)
+					< delta_max_vertical)
 		{
 			verticalLines.push_back(lines[i]);
 		}
 		else if (shortest_angular_distance(alpha_line, vertical_line)
-				< delta_max_vertical)
+					< delta_max_vertical)
 		{
 			horizontalLines.push_back(lines[i]);
 		}

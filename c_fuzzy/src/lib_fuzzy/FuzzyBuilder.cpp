@@ -74,13 +74,13 @@ void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
 Node* FuzzyBuilder::buildAnd(Node* left, Node* right)
 {
 	return new FuzzyAnd(static_cast<FuzzyOperator*>(left),
-			static_cast<FuzzyOperator*>(right));
+				static_cast<FuzzyOperator*>(right));
 }
 
 Node* FuzzyBuilder::buildOr(Node* left, Node* right)
 {
 	return new FuzzyOr(static_cast<FuzzyOperator*>(left),
-			static_cast<FuzzyOperator*>(right));
+				static_cast<FuzzyOperator*>(right));
 }
 
 Node* FuzzyBuilder::buildNot(Node* operand)
@@ -124,37 +124,37 @@ void FuzzyBuilder::buildMF(string* name, string* shape, vector<int>* parameters)
 	//then create the correspondent MF labeled "name"
 	switch (fuzzyMap[*shape])
 	{
-	case TOL:
-		assert(p.size() == 2);
-		assert(p[1] < p[0]);
-		map[*name] = buildTol(p[1], p[0]);
-		break;
-	case TOR:
-		assert(p.size() == 2);
-		assert(p[1] < p[0]);
-		map[*name] = buildTor(p[1], p[0]);
-		break;
-	case TRA:
-		assert(p.size() == 4);
-		assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
-		map[*name] = buildTra(p[3], p[2], p[1], p[0]);
-		break;
-	case TRI:
-		assert(p.size() == 3);
-		assert(p[2] < p[1] && p[1] < p[0]);
-		map[*name] = buildTri(p[2], p[1], p[0]);
-		break;
-	case INT:
-		assert(p.size() == 2);
-		assert(p[1] < p[0]);
-		map[*name] = buildInt(p[1], p[0]);
-		break;
-	case SGT:
-		assert(p.size() == 1);
-		map[*name] = buildSgt(p[0]);
-		break;
-	default:
-		break;
+		case TOL:
+			assert(p.size() == 2);
+			assert(p[1] < p[0]);
+			map[*name] = buildTol(p[1], p[0]);
+			break;
+		case TOR:
+			assert(p.size() == 2);
+			assert(p[1] < p[0]);
+			map[*name] = buildTor(p[1], p[0]);
+			break;
+		case TRA:
+			assert(p.size() == 4);
+			assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
+			map[*name] = buildTra(p[3], p[2], p[1], p[0]);
+			break;
+		case TRI:
+			assert(p.size() == 3);
+			assert(p[2] < p[1] && p[1] < p[0]);
+			map[*name] = buildTri(p[2], p[1], p[0]);
+			break;
+		case INT:
+			assert(p.size() == 2);
+			assert(p[1] < p[0]);
+			map[*name] = buildInt(p[1], p[0]);
+			break;
+		case SGT:
+			assert(p.size() == 1);
+			map[*name] = buildSgt(p[0]);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -169,7 +169,7 @@ FuzzyMF* FuzzyBuilder::buildTol(int top, int bottom)
 }
 
 FuzzyMF* FuzzyBuilder::buildTra(int bottomLeft, int topLeft, int topRight,
-		int bottomRight)
+			int bottomRight)
 {
 	return new TraMF(bottomLeft, topLeft, topRight, bottomRight);
 }

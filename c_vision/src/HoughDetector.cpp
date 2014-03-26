@@ -34,13 +34,11 @@ vector<Vec4i> HoughDetector::detect(Mat& input)
 	Mat canny, eroded;
 
 	double high_thres = cv::threshold(input, canny, 0, 255,
-			CV_THRESH_BINARY + CV_THRESH_OTSU);
+				CV_THRESH_BINARY + CV_THRESH_OTSU);
 	double low_thres = high_thres * 0.75;
 
 	erode(input, eroded, Mat());
 	Canny(eroded, canny, low_thres, high_thres, apertureSize);
-
-
 
 	vector<Vec4i> lines;
 

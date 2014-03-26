@@ -35,7 +35,7 @@ class TreeClassifierBuilder
 
 public:
 	TreeClassifierBuilder() :
-			parser(NULL), scanner(NULL)
+				parser(NULL), scanner(NULL)
 	{
 
 	}
@@ -49,9 +49,12 @@ public:
 public:
 	VariableList* buildVariableList(VariableList* list, std::string variable);
 	ConstantList* buildCostantList(ConstantList* list, std::string variable,
-			int value);
+				int value);
+	FuzzyFeatureList* buildFeaturesList(FuzzyFeatureList* list,
+				std::vector<std::string>* labelList);
 	void buildClass(std::string name, std::string superClassName,
-			VariableList* variables, ConstantList* constants, bool important);
+				VariableList* variables, ConstantList* constants,
+				FuzzyFeatureList* featureList, bool important);
 
 private:
 	//Data needed to get Builder working

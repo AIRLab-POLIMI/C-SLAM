@@ -70,7 +70,7 @@ void ImageView::drawAxis(cv::Mat& input)
 }
 
 void ImageView::displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
-		std::vector<ObjectCluster>& clusters, cv::Mat& frame)
+			std::vector<ObjectCluster>& clusters, cv::Mat& frame)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
@@ -100,42 +100,42 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 }
 
 void ImageView::displayRectanglesResults(vector<vector<Point> >& rectangles,
-		Mat& frame)
+			Mat& frame)
 {
 	drawContours(frame, rectangles, -1, Scalar(0, 255, 0));
 }
 
 void ImageView::displayPoleResults(std::vector<std::vector<cv::Point> >& poles,
-		cv::Mat& frame)
+			cv::Mat& frame)
 {
 	drawContours(frame, poles, -1, Scalar(255, 255, 0));
 }
 
 void ImageView::createTrackBars(void* featureObject, void* clusterObjetc,
-		void* lineObject)
+			void* lineObject)
 {
 	//controls for corners
 	cv::createTrackbar("threshold", viewName, NULL, 300, thresholdCorner,
-			featureObject);
+				featureObject);
 	cv::setTrackbarPos("threshold", viewName, cornerP.threshold);
 
 	//control for clustering
 	cv::createTrackbar("minPoints", viewName, NULL, 20, minPointsCluster,
-			clusterObjetc);
+				clusterObjetc);
 	cv::setTrackbarPos("minPoints", viewName, clusterP.minPoints);
 	cv::createTrackbar("distance", viewName, NULL, 100, maxDistanceCluster,
-			clusterObjetc);
+				clusterObjetc);
 	cv::setTrackbarPos("distance", viewName, clusterP.maxDistance);
 
 	//controls for line
 	cv::createTrackbar("pThreshold", viewName, NULL, 150, thresholdHoughP,
-			lineObject);
+				lineObject);
 	cv::setTrackbarPos("pThreshold", viewName, houghP.threshold);
 	cv::createTrackbar("minLineLenght", viewName, NULL, 150,
-			minLineLengthHoughP, lineObject);
+				minLineLengthHoughP, lineObject);
 	cv::setTrackbarPos("minLineLenght", viewName, houghP.minLineLenght);
 	cv::createTrackbar("maxLineGap", viewName, NULL, 50, maxLineGapHoughP,
-			lineObject);
+				lineObject);
 	cv::setTrackbarPos("maxLineGap", viewName, houghP.maxLineGap);
 
 }

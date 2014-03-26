@@ -43,7 +43,7 @@ map<string, BitData>& FuzzyKnowledgeBase::getVariableMasks()
 void FuzzyKnowledgeBase::deleteRules()
 {
 	for (vector<Node*>::iterator it = knowledgeBase->begin();
-			it != knowledgeBase->end(); ++it)
+				it != knowledgeBase->end(); ++it)
 	{
 		delete *it;
 	}
@@ -52,7 +52,7 @@ void FuzzyKnowledgeBase::deleteRules()
 void FuzzyKnowledgeBase::deleteMasks()
 {
 	for (map<string, BitData>::iterator it = variableMasks->begin();
-			it != variableMasks->end(); ++it)
+				it != variableMasks->end(); ++it)
 	{
 		delete it->second.bits;
 	}
@@ -69,7 +69,7 @@ void FuzzyKnowledgeBase::deleteMF(MFTable* mfTable)
 void FuzzyKnowledgeBase::deleteDomains()
 {
 	for (DomainTable::iterator it = domainTable->begin();
-			it != domainTable->end(); ++it)
+				it != domainTable->end(); ++it)
 	{
 		deleteMF(it->second);
 		delete it->second;

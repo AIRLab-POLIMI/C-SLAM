@@ -49,7 +49,7 @@ class BinaryFuzzyOperator: public FuzzyOperator
 {
 public:
 	BinaryFuzzyOperator(Node* leftOperand, Node* rightOperand) :
-			leftOperand(leftOperand), rightOperand(rightOperand)
+				leftOperand(leftOperand), rightOperand(rightOperand)
 	{
 	}
 	virtual ~BinaryFuzzyOperator();
@@ -68,7 +68,7 @@ class FuzzyAnd: public BinaryFuzzyOperator
 {
 public:
 	FuzzyAnd(FuzzyOperator* left, FuzzyOperator* right) :
-			BinaryFuzzyOperator(left, right)
+				BinaryFuzzyOperator(left, right)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
@@ -83,7 +83,7 @@ class FuzzyOr: public BinaryFuzzyOperator
 {
 public:
 	FuzzyOr(FuzzyOperator* left, FuzzyOperator* right) :
-			BinaryFuzzyOperator(left, right)
+				BinaryFuzzyOperator(left, right)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
@@ -98,7 +98,7 @@ class FuzzyNot: public FuzzyOperator
 {
 public:
 	FuzzyNot(FuzzyOperator* operand) :
-			operand(operand)
+				operand(operand)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
@@ -117,7 +117,7 @@ class FuzzyIs: public FuzzyOperator
 {
 public:
 	FuzzyIs(DomainTable* lookUpTable, std::string label, std::string mfLabel) :
-			lookUpTable(*lookUpTable), label(label), mfLabel(mfLabel)
+				lookUpTable(*lookUpTable), label(label), mfLabel(mfLabel)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
@@ -137,8 +137,8 @@ class FuzzyAssignment: public FuzzyOperator
 {
 public:
 	FuzzyAssignment(DomainTable* lookUpTable, std::string name,
-			std::string mfLabel) :
-			lookUpTable(*lookUpTable), mfLabel(mfLabel), output(name)
+				std::string mfLabel) :
+				lookUpTable(*lookUpTable), mfLabel(mfLabel), output(name)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);

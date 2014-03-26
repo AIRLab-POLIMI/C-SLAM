@@ -30,14 +30,13 @@
 
 #include "c_fuzzy/Reasoning.h"
 
-
 class ReasonerServiceHandler
 {
 public:
 	ReasonerServiceHandler(const char* knowledgeBasePath);
 
 	bool reasoningCallback(c_fuzzy::Reasoning::Request& request,
-			c_fuzzy::Reasoning::Response& response);
+				c_fuzzy::Reasoning::Response& response);
 	~ReasonerServiceHandler();
 
 private:

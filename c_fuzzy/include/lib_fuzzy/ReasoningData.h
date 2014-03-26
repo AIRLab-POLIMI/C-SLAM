@@ -48,7 +48,7 @@ class FuzzyAggregator
 {
 public:
 	void addValue(std::string output, std::string mfLabel, double weight,
-			double value);
+				double value);
 	std::map<std::string, DataMap> getAggregations();
 
 private:
@@ -72,7 +72,7 @@ typedef std::map<std::string, int> InputTable;
 struct ReasoningData
 {
 	ReasoningData(InputTable& inputs, FuzzyAggregator& aggregator) :
-			inputs(inputs), aggregator(aggregator)
+				inputs(inputs), aggregator(aggregator)
 	{
 		truthValue = 0;
 		inputValue = 0;

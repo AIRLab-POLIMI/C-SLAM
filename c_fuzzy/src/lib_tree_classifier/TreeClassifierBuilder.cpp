@@ -29,10 +29,18 @@
 
 using namespace std;
 
-VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list, std::string variable)
+VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
+			string variable)
 {
-	std::pair<VariableList::iterator,bool> ret = list->insert(variable);
-	if(!ret.second)
+
+	if (list == NULL)
+	{
+		list = new VariableList();
+	}
+
+	pair<VariableList::iterator, bool> ret = list->insert(variable);
+
+	if (!ret.second)
 	{
 		//TODO error redeclaration of variable
 	}
@@ -40,17 +48,17 @@ VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list, std::
 	return list;
 }
 
-ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list, std::string variable,
-		int value)
+ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
+			string variable, int value)
 {
-	if(list->count(variable) != 0)
-	{
-		//TODO error redeclaration of constant
-	}
-
-	if(list == NULL)
+	if (list == NULL)
 	{
 		list = new ConstantList();
+	}
+
+	if (list->count(variable) != 0)
+	{
+		//TODO error redeclaration of constant
 	}
 
 	list->at(variable) = value;
@@ -58,10 +66,19 @@ ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list, std::s
 	return list;
 }
 
-void TreeClassifierBuilder::buildClass(std::string name, std::string superClassName,
-		VariableList* variables, ConstantList* constants, bool important)
+FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
+			FuzzyFeatureList* list, vector<string>* labelList)
+{
+
+	return list;
+}
+
+void TreeClassifierBuilder::buildClass(string name, string superClassName,
+			VariableList* variables, ConstantList* constants,
+			FuzzyFeatureList* featureList, bool important)
 {
 	FuzzyClass& superClass = *classList[superClassName];
-	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables, constants, important);
+	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
+				constants, featureList, important);
 	classList[name] = fuzzyClass;
 }

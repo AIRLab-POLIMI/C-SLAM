@@ -24,7 +24,6 @@
 #ifndef TREECLASSIFIERSCANNER_H_
 #define TREECLASSIFIERSCANNER_H_
 
-
 #if !defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
@@ -38,7 +37,10 @@ class TreeClassifierScanner: public yyFlexLexer
 {
 public:
 
-	TreeClassifierScanner(std::istream* in): yyFlexLexer(in), yylval(NULL), column(0), line(1){}
+	TreeClassifierScanner(std::istream* in) :
+				yyFlexLexer(in), yylval(NULL), column(0), line(1)
+	{
+	}
 
 	int yylex(tc::TreeClassifierParser::semantic_type* lval)
 	{

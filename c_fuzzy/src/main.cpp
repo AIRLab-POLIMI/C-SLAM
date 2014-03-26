@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 		ReasonerServiceHandler handler(argv[1]);
 
 		ros::ServiceServer service = n.advertiseService("reasoning",
-				&ReasonerServiceHandler::reasoningCallback, &handler);
+					&ReasonerServiceHandler::reasoningCallback, &handler);
 		ROS_INFO("Reasoner setup correctly");
 		ros::spin();
 		ROS_INFO("Reasoner shut down");

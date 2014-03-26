@@ -32,13 +32,11 @@ void maxDistanceCluster(int maxDistance, void* data);
 ///Cluster min points
 void minPointsCluster(int minPoints, void* data);
 
-
 ///HoughLineP threshold trackbar callback
 void thresholdHoughP(int value, void* data);
 ///HoughLineP minimum line length
 void minLineLengthHoughP(int value, void* data);
 ///HoughLineP max line gap trackbar callback
 void maxLineGapHoughP(int value, void* data);
-
 
 #endif /* CALLBACKS_H_ */

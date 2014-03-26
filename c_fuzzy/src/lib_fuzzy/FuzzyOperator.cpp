@@ -23,8 +23,6 @@
 
 #include "FuzzyOperator.h"
 
-
-
 double FuzzyAnd::evaluate(ReasoningData reasoningData)
 {
 	double a = leftOperand->evaluate(reasoningData);
@@ -49,7 +47,6 @@ FuzzyNot::~FuzzyNot()
 	delete operand;
 }
 
-
 double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 {
 	double truthValue = reasoningData.truthValue;
@@ -60,7 +57,6 @@ double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 	return result;
 }
 
-
 double FuzzyIs::evaluate(ReasoningData reasoningData)
 {
 	MFTable& mfTable = *lookUpTable[label];
@@ -70,11 +66,9 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	return mFunction->evaluate(reasoningData);
 }
 
-
 BinaryFuzzyOperator::~BinaryFuzzyOperator()
 {
 	delete leftOperand;
 	delete rightOperand;
 }
-
 

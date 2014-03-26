@@ -62,7 +62,7 @@ class TolMF: public FuzzyMF
 {
 public:
 	TolMF(int top, int bottom) :
-			top(top), bottom(bottom)
+				top(top), bottom(bottom)
 	{
 	}
 	virtual double evaluate(ReasoningData reasoningData);
@@ -82,7 +82,7 @@ class TorMF: public FuzzyMF
 
 public:
 	TorMF(int bottom, int top) :
-			top(top), bottom(bottom)
+				top(top), bottom(bottom)
 	{
 	}
 	virtual double evaluate(ReasoningData reasoningData);
@@ -103,7 +103,7 @@ class TriMF: public FuzzyMF
 
 public:
 	TriMF(int left, int center, int right) :
-			left(left), right(right), center(center)
+				left(left), right(right), center(center)
 	{
 	}
 	virtual double evaluate(ReasoningData reasoningData);
@@ -123,8 +123,8 @@ class TraMF: public FuzzyMF
 
 public:
 	TraMF(int bottomLeft, int topLeft, int topRight, int bottomRight) :
-			bottomLeft(bottomLeft), topLeft(topLeft), topRight(topRight), bottomRight(
-					bottomRight)
+				bottomLeft(bottomLeft), topLeft(topLeft), topRight(topRight),
+				bottomRight(bottomRight)
 	{
 	}
 	virtual double evaluate(ReasoningData reasoningData);
@@ -145,7 +145,7 @@ class IntMF: public FuzzyMF
 
 public:
 	IntMF(int left, int right) :
-			left(left), right(right)
+				left(left), right(right)
 	{
 	}
 	virtual double evaluate(ReasoningData reasoningData);
@@ -165,7 +165,7 @@ class SgtMF: public FuzzyMF
 {
 public:
 	SgtMF(int value) :
-			value(value)
+				value(value)
 	{
 	}
 	virtual double evaluate(ReasoningData reasoningData);

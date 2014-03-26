@@ -35,8 +35,8 @@ class ImageView
 {
 public:
 	ImageView(std::string viewName, void* featureObject, void* clusterObjetc,
-			void* lineObject) :
-			viewName(viewName)
+				void* lineObject) :
+				viewName(viewName)
 	{
 		cv::namedWindow(viewName);
 		createTrackBars(featureObject, clusterObjetc, lineObject);
@@ -87,13 +87,16 @@ public:
 private:
 	void drawAxis(cv::Mat& input);
 	void displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
-			std::vector<ObjectCluster>& clusters, cv::Mat& frame);
+				std::vector<ObjectCluster>& clusters, cv::Mat& frame);
 	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
-	void displayRectanglesResults(std::vector<std::vector<cv::Point> >& rectangles, cv::Mat& frame);
-	void displayPoleResults(std::vector<std::vector<cv::Point> >& poles, cv::Mat& frame);
+	void displayRectanglesResults(
+				std::vector<std::vector<cv::Point> >& rectangles,
+				cv::Mat& frame);
+	void displayPoleResults(std::vector<std::vector<cv::Point> >& poles,
+				cv::Mat& frame);
 
 	void createTrackBars(void* featureObject, void* clusterObjetc,
-			void* lineObject);
+				void* lineObject);
 
 private:
 	std::string viewName;

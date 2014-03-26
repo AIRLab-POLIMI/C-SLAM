@@ -29,7 +29,7 @@ using namespace cv;
 using namespace std;
 
 void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
-		std::vector<cv::Vec4i> horizontalLines)
+			std::vector<cv::Vec4i> horizontalLines)
 {
 	if (!verticalLines.empty() && !horizontalLines.empty())
 		for (size_t i = 0; i + 1 < verticalLines.size(); i++)
@@ -79,7 +79,7 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 }
 
 Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2, double& a,
-		double& b)
+			double& b)
 {
 	int x1, x2, x3, x4;
 	int y1, y2, y3, y4;
@@ -89,13 +89,13 @@ Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2, double& a,
 
 	double an = -(x2 * (y4 - y3) + x3 * (y2 - y4) + x4 * (y3 - y2));
 	double ad = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
-			+ x3 * (y1 - y2));
+				+ x3 * (y1 - y2));
 
 	a = an / ad;
 
 	double bn = (x1 * (y4 - y2) + x2 * (y1 - y4) + x4 * (y2 - y1));
 	double bd = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
-			+ x3 * (y1 - y2));
+				+ x3 * (y1 - y2));
 
 	b = bn / bd;
 
@@ -136,7 +136,7 @@ bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 }
 
 inline void HighLevelDetector::getPointsCoordinates(cv::Vec4i l, int& x1,
-		int& y1, int& x2, int& y2)
+			int& y1, int& x2, int& y2)
 {
 	x1 = l[0];
 	y1 = l[1];

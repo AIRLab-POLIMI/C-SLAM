@@ -33,7 +33,6 @@
 #include "FuzzyKnowledgeBase.h"
 #include "ReasoningData.h"
 
-
 /**
  * This struct is used to store the couple value/truth level
  *
@@ -53,7 +52,7 @@ class Defuzzyfier
 {
 public:
 	std::map<std::string, FuzzyOutput> defuzzify(
-			std::map<std::string, DataMap>& aggregatedData);
+				std::map<std::string, DataMap>& aggregatedData);
 };
 
 /**
@@ -65,8 +64,8 @@ class FuzzyReasoner
 {
 public:
 	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
-			knowledgeBase(knowledgeBase), variableMasks(
-					knowledgeBase.getVariableMasks())
+				knowledgeBase(knowledgeBase),
+				variableMasks(knowledgeBase.getVariableMasks())
 	{
 		rulesMask.resize(knowledgeBase.size(), false);
 		inputMask.resize(variableMasks.size(), false);

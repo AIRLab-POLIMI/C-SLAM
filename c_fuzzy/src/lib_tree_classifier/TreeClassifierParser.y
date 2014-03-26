@@ -7,6 +7,7 @@
 %code requires
 {
 	#include <string>
+	#include <vector>
 	#include "FuzzyClass.h" 
 	class TreeClassifierBuilder;
 	class TreeClassifierScanner;
@@ -32,7 +33,16 @@
 	static int yylex(tc::TreeClassifierParser::semantic_type *yylval, tc::TreeClassifierParser::location_type* l, TreeClassifierScanner& scanner, TreeClassifierBuilder& builder);
 }
 
-%union { std::string* str; int integer; bool boolean; VariableList* vlist; ConstantList* clist; std::pair<VariableList*, ConstantList*>* elists;  }
+%union 
+{ 
+	std::string* str; 
+	std::vector<std::string>* vstr; 
+	int integer; bool boolean;
+	VariableList* vlist; 
+	ConstantList* clist; 
+	std::pair<VariableList*, ConstantList*>* elists;
+	FuzzyFeatureList* flist;
+}
 
 %token <str> ID
 %token IS
@@ -59,10 +69,12 @@
 
 %type <boolean> importantFlag
 %type <str> fuzzySuperclass fuzzyConstraint
+%type <vstr> fuzzySimpleFeature fuzzyRelation
 %type <vlist> variables variableList
 %type <clist> constants 
 %type <clist> constantList
 %type <elists> fuzzyClassElements
+%type <flist> fuzzyFeatures
  
 
 %%
@@ -71,9 +83,9 @@ fuzzyClassifiers	: fuzzyClass fuzzyClassifiers
 			| fuzzyClass
 			;
 
-fuzzyClass		: CLASS ID fuzzySuperclass importantFlag fuzzyClassElements fuzzyAttributes END_CLASS
+fuzzyClass		: CLASS ID fuzzySuperclass importantFlag fuzzyClassElements fuzzyFeatures END_CLASS
 			{
-				builder.buildClass(*$2, *$3, $5->first, $5->second, $4);
+				builder.buildClass(*$2, *$3, $5->first, $5->second, $6, $4);
 				free($2);
 				free($3);
 			}
@@ -85,7 +97,7 @@ fuzzySuperclass		: EXTENDS ID
 			}
 			| /* empty */
 			{
-				$$ = NULL;
+				$$ = new std::string("");
 			}
 			;
 
@@ -165,16 +177,61 @@ variableList		: ID SEMICOLON variableList
 			}
 			;
 
-fuzzyAttributes		: fuzzyAttribute fuzzyAttributes
-			| fuzzyRelation fuzzyAttributes
+fuzzyFeatures		: fuzzySimpleFeature fuzzyFeatures
+			{
+				$$ = builder.buildFeaturesList($2, $1);
+				free($1);
+				
+			}
+			| fuzzyRelation fuzzyFeatures
+			{
+				$$ = builder.buildFeaturesList($2, $1);
+				free($1);
+			}
 			| /* empty */
+			{
+				$$ = NULL;
+			}
 			;
 
-fuzzyAttribute		: ID IS ID SEMICOLON
+fuzzySimpleFeature	: ID IS ID SEMICOLON
+			{
+				$$ = new std::vector<std::string>();
+				$$->push_back(*$1);
+				$$->push_back(*$3);
+				delete $1;
+				delete $3;
+			}
 			;
 
 fuzzyRelation		: ID PERIOD ID MATCH ID SEMICOLON
+			{
+				$$ = new std::vector<std::string>();
+				$$->push_back(*$1);
+				$$->push_back(*$3);
+				$$->push_back(*$5);
+				delete $1;
+				delete $3;
+				delete $5;
+			}
 			| ID PERIOD ID fuzzyConstraint BETWEEN LPAR ID COMMA ID RPAR SEMICOLON
+			{
+				$$ = new std::vector<std::string>();
+				$$->push_back(*$1);
+				$$->push_back(*$3);
+				$$->push_back(*$7);
+				$$->push_back(*$9);
+				delete $1;
+				delete $3;
+				delete $7;
+				delete $9;
+
+				if($4 != NULL)
+				{
+					$$->push_back(*$4);
+					delete $4;
+				}
+			}
 			;
 
 

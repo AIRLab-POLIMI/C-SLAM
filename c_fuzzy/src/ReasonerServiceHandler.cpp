@@ -32,14 +32,10 @@
 #include "c_fuzzy/InputVariable.h"
 #include "c_fuzzy/DefuzzyfiedOutput.h"
 
-
 #include <iostream>
-
 
 using namespace std;
 using namespace c_fuzzy;
-
-
 
 ReasonerServiceHandler::ReasonerServiceHandler(const char* knowledgeBasePath)
 {
@@ -51,7 +47,7 @@ ReasonerServiceHandler::ReasonerServiceHandler(const char* knowledgeBasePath)
 }
 
 bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
-		Reasoning::Response& response)
+			Reasoning::Response& response)
 {
 	FuzzyReasoner reasoner(*knowledgeBase);
 	vector<c_fuzzy::InputVariable>::iterator i;
@@ -61,12 +57,9 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 		reasoner.addInput(i->name, i->value);
 	}
 
-
 	map<string, FuzzyOutput> results = reasoner.run();
 
 	map<string, FuzzyOutput>::iterator j;
-
-
 
 	for (j = results.begin(); j != results.end(); ++j)
 	{

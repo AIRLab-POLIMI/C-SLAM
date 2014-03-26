@@ -31,7 +31,7 @@ class FeatureDetector
 {
 public:
 	FeatureDetector(int threshold) :
-			threshold(threshold)
+				threshold(threshold)
 	{
 	}
 

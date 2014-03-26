@@ -16,15 +16,14 @@
 #include "BitData.h"
 #include "FuzzyMF.h"
 
-
 class FuzzyKnowledgeBase
 {
 public:
 	FuzzyKnowledgeBase(DomainTable* mfTable,
-			std::map<std::string, BitData>* variableMasks,
-			std::vector<Node*>* knowledgeBase) :
-			domainTable(mfTable), variableMasks(variableMasks), knowledgeBase(
-					knowledgeBase)
+				std::map<std::string, BitData>* variableMasks,
+				std::vector<Node*>* knowledgeBase) :
+				domainTable(mfTable), variableMasks(variableMasks),
+				knowledgeBase(knowledgeBase)
 	{
 	}
 	size_t size();

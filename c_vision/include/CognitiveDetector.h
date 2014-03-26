@@ -38,13 +38,16 @@ class CognitiveDetector
 {
 public:
 	CognitiveDetector() :
-			featureDetector(cornerP.threshold), clusterDetector(
-					clusterP.maxDistance, clusterP.minPoints), lineDetector(
-					cannyP.apertureSize, houghP.rho, houghP.teta,
-					houghP.threshold, houghP.minLineLenght, houghP.maxLineGap), pitch(
-					0), roll(0), yaw(0), viewer("Detected Image",
-					(void*) &featureDetector, (void*) &clusterDetector,
-					(void*) &lineDetector)
+				featureDetector(cornerP.threshold),
+				clusterDetector(clusterP.maxDistance, clusterP.minPoints),
+				lineDetector(cannyP.apertureSize, houghP.rho, houghP.teta,
+							houghP.threshold, houghP.minLineLenght,
+							houghP.maxLineGap),
+				pitch(0),
+				roll(0),
+				yaw(0),
+				viewer("Detected Image", (void*) &featureDetector,
+							(void*) &clusterDetector, (void*) &lineDetector)
 	{
 	}
 
@@ -67,8 +70,8 @@ public:
 
 private:
 	std::vector<std::vector<cv::Point> > detectRectangles(
-			std::vector<cv::Vec4i> verticalLines,
-			std::vector<cv::Vec4i> horizontalLines);
+				std::vector<cv::Vec4i> verticalLines,
+				std::vector<cv::Vec4i> horizontalLines);
 	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
 	cv::Mat preprocessing(cv::Mat& input);
 

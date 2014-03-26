@@ -26,6 +26,9 @@
 
 #include <map>
 #include <set>
+#include <vector>
+
+#include "FuzzyFeatures.h"
 
 typedef std::set<std::string> VariableList;
 typedef std::map<std::string, int> ConstantList;
@@ -34,19 +37,26 @@ class FuzzyClass
 {
 public:
 	FuzzyClass(std::string name, FuzzyClass superClass, VariableList* variables,
-			ConstantList* constants, bool important) :
-			name(name), superClass(superClass), variables(variables), constants(constants), important(
-					important)
+				ConstantList* constants, FuzzyFeatureList* features,
+				bool important) :
+				name(name), superClass(superClass), variables(variables),
+				constants(constants), features(features), important(important)
 	{
 	}
 
-
+	~FuzzyClass()
+	{
+		delete variables;
+		delete constants;
+		delete features;
+	}
 
 private:
 	std::string name;
 	FuzzyClass& superClass;
 	VariableList* variables;
 	ConstantList* constants;
+	FuzzyFeatureList* features;
 	bool important;
 };
 

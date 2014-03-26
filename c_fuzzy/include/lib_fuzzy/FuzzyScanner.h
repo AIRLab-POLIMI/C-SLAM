@@ -24,7 +24,6 @@
 #ifndef FUZZYSCANNER_H_
 #define FUZZYSCANNER_H_
 
-
 #if !defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
@@ -38,7 +37,10 @@ class FuzzyScanner: public yyFlexLexer
 {
 public:
 
-	FuzzyScanner(std::istream* in): yyFlexLexer(in), yylval(NULL), column(0), line(1){}
+	FuzzyScanner(std::istream* in) :
+				yyFlexLexer(in), yylval(NULL), column(0), line(1)
+	{
+	}
 
 	int yylex(yy::FuzzyParser::semantic_type* lval)
 	{

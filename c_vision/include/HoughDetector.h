@@ -30,10 +30,10 @@ class HoughDetector
 {
 public:
 	HoughDetector(int apertureSize, int rho, double theta, int threshold,
-			int minLineLenght, int maxLineGap) :
-			apertureSize(apertureSize), rho(rho), theta(theta), threshold(
-					threshold), minLineLength(minLineLenght), maxLineGap(
-					maxLineGap)
+				int minLineLenght, int maxLineGap) :
+				apertureSize(apertureSize), rho(rho), theta(theta),
+				threshold(threshold), minLineLength(minLineLenght),
+				maxLineGap(maxLineGap)
 	{
 	}
 

@@ -71,10 +71,10 @@ int main(int argc, char *argv[])
 	std::cout << "Reasoning terminato, risultati:" << std::endl;
 
 	for (std::map<std::string, FuzzyOutput>::iterator it = results.begin();
-			it != results.end(); ++it)
+				it != results.end(); ++it)
 	{
 		std::cout << it->first << " = " << it->second.value << "truth value = "
-				<< it->second.truth << std::endl;
+					<< it->second.truth << std::endl;
 	}
 
 	delete knowledgebase;

@@ -36,12 +36,12 @@ class Dispatcher
 {
 public:
 	Dispatcher(ros::NodeHandle& n) :
-			it(n), rotX(0), rotY(0), rotZ(0)
+				it(n), rotX(0), rotY(0), rotZ(0)
 	{
 		navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
-				&Dispatcher::handleNavdata, this);
+					&Dispatcher::handleNavdata, this);
 		imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
-				&Dispatcher::handleImage, this);
+					&Dispatcher::handleImage, this);
 	}
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
@@ -52,7 +52,6 @@ private:
 	image_transport::Subscriber imageSubscriber;
 
 	double rotX, rotY, rotZ;
-
 
 	CognitiveDetector detector;
 

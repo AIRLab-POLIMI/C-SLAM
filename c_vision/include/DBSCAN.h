@@ -27,7 +27,6 @@
 #include <vector>
 #include <opencv2/features2d/features2d.hpp>
 
-
 class ObjectCluster
 {
 public:
@@ -75,7 +74,7 @@ class DBSCAN
 {
 public:
 	DBSCAN(double eps, int minPts) :
-			maxDistance(eps), minPoints(minPts)
+				maxDistance(eps), minPoints(minPts)
 	{
 	}
 	std::vector<ObjectCluster> detect(std::vector<cv::KeyPoint> &keypoints);
@@ -102,7 +101,7 @@ public:
 
 private:
 	std::vector<int> listNeighbors(std::vector<cv::KeyPoint> &keypoints,
-			cv::KeyPoint &keypoint);
+				cv::KeyPoint &keypoint);
 
 private:
 	double maxDistance;

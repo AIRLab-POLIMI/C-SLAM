@@ -27,7 +27,7 @@
 using namespace std;
 
 void FuzzyAggregator::addValue(string output, string mfLabel, double weight,
-		double value)
+			double value)
 {
 	if (weight == 0)
 		return;
@@ -57,7 +57,7 @@ map<string, DataMap> FuzzyAggregator::getAggregations()
 {
 	map<string, DataMap> aggregationsOutput;
 	for (map<string, DataMap>::iterator it = aggregationMap.begin();
-			it != aggregationMap.end(); ++it)
+				it != aggregationMap.end(); ++it)
 	{
 		aggregationsOutput[it->first] = getAggregation(it->second);
 
@@ -78,7 +78,7 @@ FuzzyData FuzzyAggregator::createData(double value, double weight)
 }
 
 DataMap FuzzyAggregator::createDataMap(string mfLabel, double value,
-		double weight)
+			double weight)
 {
 	DataMap dataMap;
 	dataMap[mfLabel] = createData(value, weight);
