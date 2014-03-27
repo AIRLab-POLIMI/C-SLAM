@@ -16,18 +16,18 @@ CLASS Door extends Rectangle IMPORTANT
 	END_CONSTANTS
 	
 	FormFactor is Narrow;
-	Handle.X is Lateral between(Xmin, Xmax); 
-	Handle.Y is Centered between(Ymin, Ymax);
+	Handle.x is Lateral between(Xmin, Xmax); 
+	Handle.y is Centered between(Ymin, Ymax);
 
 END_CLASS
 
-/*CLASS ConcentricCircle
+CLASS ConcentricCircle
 	VARIABLES
-		X;
-		Y;
+		x;
+		y;
 	END_VARIABLES
 	
-	ConcentricCircle.X match X;
-	ConcentricCircle.Y match Y;	
+	ConcentricCircle.x match x is Good;
+	ConcentricCircle.y match y is Perfect;	
 
-END_CLASS*/
+END_CLASS

@@ -25,10 +25,12 @@
 
 DIGIT [0-9]
 CAPITAL [A-Z]
-LETTER [a-z]|{CAPITAL}
+LOWERCASE [a-z]
+LETTER {LOWERCASE}|{CAPITAL}
 BLANK [ \t]
 NEWLINE \n\r|\n
 SIGN [-+]
+UNDERSCORE [_]
 
 %%
 
@@ -67,7 +69,8 @@ SIGN [-+]
 
  
  /* identificators */
-{CAPITAL}({LETTER}|{DIGIT})* { yylval->str = new std::string(yytext); return token::ID; }
+{CAPITAL}({LETTER}|{DIGIT}|{UNDERSCORE})* { yylval->str = new std::string(yytext); return token::ID; }
+{LOWERCASE}({LETTER}|{DIGIT}|{UNDERSCORE})* { yylval->str = new std::string(yytext); return token::VAR_ID; }
 {SIGN}?{DIGIT}+ { yylval->integer = atoi(yytext); return token::NUMBER; }
 
  /* unknown tokens */

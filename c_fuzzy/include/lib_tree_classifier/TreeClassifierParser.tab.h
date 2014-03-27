@@ -169,24 +169,25 @@ namespace tc {
       enum yytokentype
       {
         ID = 258,
-        IS = 259,
-        MATCH = 260,
-        BETWEEN = 261,
-        CLASS = 262,
-        VARIABLES = 263,
-        END_VARIABLES = 264,
-        CONSTANTS = 265,
-        END_CONSTANTS = 266,
-        END_CLASS = 267,
-        EXTENDS = 268,
-        IMPORTANT = 269,
-        PERIOD = 270,
-        SEMICOLON = 271,
-        COMMA = 272,
-        LPAR = 273,
-        RPAR = 274,
-        EQUAL = 275,
-        NUMBER = 276
+        VAR_ID = 259,
+        IS = 260,
+        MATCH = 261,
+        BETWEEN = 262,
+        CLASS = 263,
+        VARIABLES = 264,
+        END_VARIABLES = 265,
+        CONSTANTS = 266,
+        END_CONSTANTS = 267,
+        END_CLASS = 268,
+        EXTENDS = 269,
+        IMPORTANT = 270,
+        PERIOD = 271,
+        SEMICOLON = 272,
+        COMMA = 273,
+        LPAR = 274,
+        RPAR = 275,
+        EQUAL = 276,
+        NUMBER = 277
       };
     };
 
@@ -477,13 +478,13 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 67,     ///< Last index in yytable_.
-      yynnts_ = 16,  ///< Number of nonterminal symbols.
+      yylast_ = 63,     ///< Last index in yytable_.
+      yynnts_ = 17,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 22  ///< Number of tokens.
+      yyntokens_ = 23  ///< Number of tokens.
     };
 
 
@@ -495,7 +496,7 @@ namespace tc {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 } // tc
-#line 499 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 500 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 

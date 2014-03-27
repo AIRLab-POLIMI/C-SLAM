@@ -48,7 +48,7 @@
 	FuzzyFeatureData* fdata;
 }
 
-%token <str> ID
+%token <str> ID VAR_ID
 %token IS
 %token MATCH
 %token BETWEEN
@@ -72,6 +72,7 @@
 %token <integer> NUMBER
 
 %type <boolean> importantFlag
+%type <str> var
 %type <str> fuzzySuperclass fuzzyConstraint
 %type <fdata> fuzzyFeature;
 %type <vstr> fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation
@@ -154,7 +155,7 @@ constants		: CONSTANTS constantList END_CONSTANTS
 			}
 			;
 			
-constantList		: ID EQUAL NUMBER SEMICOLON constantList
+constantList		: var EQUAL NUMBER SEMICOLON constantList
 			{
 				$$ = builder.buildCostantList($5, *$1, $3);
 				free($1);
@@ -171,7 +172,7 @@ variables		: VARIABLES variableList END_VARIABLES
 			}
 			;
 
-variableList		: ID SEMICOLON variableList
+variableList		: var SEMICOLON variableList
 			{
 				$$ = builder.buildVariableList($3, *$1);
 				free($1);
@@ -181,6 +182,7 @@ variableList		: ID SEMICOLON variableList
 				$$ = NULL;
 			}
 			;
+
 
 fuzzyFeatures		: fuzzyFeature fuzzyFeatures
 			{
@@ -217,7 +219,7 @@ fuzzyFeature		: fuzzySimpleFeature
 			}
 			;
 
-fuzzySimpleFeature	: ID IS ID SEMICOLON
+fuzzySimpleFeature	: var IS ID SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -227,7 +229,7 @@ fuzzySimpleFeature	: ID IS ID SEMICOLON
 			}
 			;
 
-fuzzySimpleRelation	: ID PERIOD ID MATCH ID fuzzyConstraint SEMICOLON
+fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyConstraint SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -239,7 +241,7 @@ fuzzySimpleRelation	: ID PERIOD ID MATCH ID fuzzyConstraint SEMICOLON
 			}
 			;
 
-fuzzyComplexRelation	: ID PERIOD ID fuzzyConstraint BETWEEN LPAR ID COMMA ID RPAR SEMICOLON
+fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint BETWEEN LPAR var COMMA var RPAR SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -269,6 +271,18 @@ fuzzyConstraint		: IS ID
 				$$ = NULL;
 			}
 			;
+
+
+var			: ID
+			{
+				$$ = $1;
+			}
+			| VAR_ID
+			{
+				$$ = $1;
+			}
+			;
+
 %%
 
 void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_type& l, const std::string& msg)
