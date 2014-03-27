@@ -31,7 +31,7 @@
 #include "FuzzyFeatures.h"
 
 typedef std::set<std::string> VariableList;
-typedef std::map<std::string, int> ConstantList;
+typedef std::map<std::string, std::string> ConstantList;
 typedef std::pair<VariableList*, ConstantList*> ElementsList;
 
 enum FeatureType

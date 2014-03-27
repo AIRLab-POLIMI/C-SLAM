@@ -61,7 +61,7 @@ VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
 }
 
 ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
-			string variable, int value)
+			string variable, std::string value)
 {
 	list = eventuallyInitialize(list);
 

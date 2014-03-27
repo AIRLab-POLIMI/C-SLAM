@@ -53,7 +53,8 @@ UNDERSCORE [_]
 "end_class"|"END_CLASS" { return token::END_CLASS; }
 "is"|"IS" { return token::IS; }
 "match"|"MATCH" { return token::MATCH; }
-"between"|"BETWEEN" { return token::BETWEEN; }
+"on"|"ON" { return token::ON; }
+"degree"|"DEGREE" { return token::DEGREE; }
 "variables"|"VARIABLES"  { return token::VARIABLES; }
 "end_variables"|"END_VARIABLES"  { return token::END_VARIABLES; }
 "constants"|"CONSTANTS"  { return token::CONSTANTS; }
@@ -71,7 +72,6 @@ UNDERSCORE [_]
  /* identificators */
 {CAPITAL}({LETTER}|{DIGIT}|{UNDERSCORE})* { yylval->str = new std::string(yytext); return token::ID; }
 {LOWERCASE}({LETTER}|{DIGIT}|{UNDERSCORE})* { yylval->str = new std::string(yytext); return token::VAR_ID; }
-{SIGN}?{DIGIT}+ { yylval->integer = atoi(yytext); return token::NUMBER; }
 
  /* unknown tokens */
 . { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; throw std::runtime_error(ss.str()); }

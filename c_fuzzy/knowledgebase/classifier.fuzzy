@@ -12,12 +12,12 @@ END_CLASS
 CLASS Door extends Rectangle IMPORTANT
 	
 	CONSTANTS
-		Height = 220;
+		Height = High;
 	END_CONSTANTS
 	
 	FormFactor is Narrow;
-	Handle.x is Lateral between(Xmin, Xmax); 
-	Handle.y is Centered between(Ymin, Ymax);
+	Handle.x is Lateral on(Xmin, Xmax); 
+	Handle.y is Centered on(Ymin, Ymax);
 
 END_CLASS
 
@@ -27,7 +27,7 @@ CLASS ConcentricCircle
 		y;
 	END_VARIABLES
 	
-	ConcentricCircle.x match x is Good;
-	ConcentricCircle.y match y is Perfect;	
+	ConcentricCircle.x match x degree Good;
+	ConcentricCircle.y match y degree Perfect;	
 
 END_CLASS

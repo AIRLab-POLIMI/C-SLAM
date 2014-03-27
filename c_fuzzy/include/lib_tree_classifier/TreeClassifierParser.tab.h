@@ -172,22 +172,22 @@ namespace tc {
         VAR_ID = 259,
         IS = 260,
         MATCH = 261,
-        BETWEEN = 262,
-        CLASS = 263,
-        VARIABLES = 264,
-        END_VARIABLES = 265,
-        CONSTANTS = 266,
-        END_CONSTANTS = 267,
-        END_CLASS = 268,
-        EXTENDS = 269,
-        IMPORTANT = 270,
-        PERIOD = 271,
-        SEMICOLON = 272,
-        COMMA = 273,
-        LPAR = 274,
-        RPAR = 275,
-        EQUAL = 276,
-        NUMBER = 277
+        ON = 262,
+        DEGREE = 263,
+        CLASS = 264,
+        VARIABLES = 265,
+        END_VARIABLES = 266,
+        CONSTANTS = 267,
+        END_CONSTANTS = 268,
+        END_CLASS = 269,
+        EXTENDS = 270,
+        IMPORTANT = 271,
+        PERIOD = 272,
+        SEMICOLON = 273,
+        COMMA = 274,
+        LPAR = 275,
+        RPAR = 276,
+        EQUAL = 277
       };
     };
 
@@ -478,8 +478,8 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 63,     ///< Last index in yytable_.
-      yynnts_ = 17,  ///< Number of nonterminal symbols.
+      yylast_ = 70,     ///< Last index in yytable_.
+      yynnts_ = 18,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,

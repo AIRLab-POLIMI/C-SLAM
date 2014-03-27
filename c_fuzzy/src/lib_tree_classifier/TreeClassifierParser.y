@@ -51,7 +51,8 @@
 %token <str> ID VAR_ID
 %token IS
 %token MATCH
-%token BETWEEN
+%token ON
+%token DEGREE
 
 %token CLASS
 %token VARIABLES
@@ -69,11 +70,9 @@
 %token RPAR
 %token EQUAL
 
-%token <integer> NUMBER
-
 %type <boolean> importantFlag
 %type <str> var
-%type <str> fuzzySuperclass fuzzyConstraint
+%type <str> fuzzySuperclass fuzzyConstraint fuzzyDegree
 %type <fdata> fuzzyFeature;
 %type <vstr> fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation
 %type <vlist> variables variableList
@@ -155,10 +154,11 @@ constants		: CONSTANTS constantList END_CONSTANTS
 			}
 			;
 			
-constantList		: var EQUAL NUMBER SEMICOLON constantList
+constantList		: var EQUAL ID SEMICOLON constantList
 			{
-				$$ = builder.buildCostantList($5, *$1, $3);
+				$$ = builder.buildCostantList($5, *$1, *$3);
 				free($1);
+				free($3);
 			}
 			| /* empty */
 			{
@@ -188,7 +188,6 @@ fuzzyFeatures		: fuzzyFeature fuzzyFeatures
 			{
 				$$ = builder.buildFeaturesList($2, $1->first, $1->second);
 				free($1);
-				
 			}
 			| /* empty */
 			{
@@ -229,7 +228,7 @@ fuzzySimpleFeature	: var IS ID SEMICOLON
 			}
 			;
 
-fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyConstraint SEMICOLON
+fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -241,7 +240,7 @@ fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyConstraint SEMICOLON
 			}
 			;
 
-fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint BETWEEN LPAR var COMMA var RPAR SEMICOLON
+fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -263,6 +262,16 @@ fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint BETWEEN LPAR var COMMA var 
 
 
 fuzzyConstraint		: IS ID
+			{
+				$$ = $2;
+			}
+			| /* empty */
+			{
+				$$ = NULL;
+			}
+			;
+			
+fuzzyDegree		: DEGREE ID
 			{
 				$$ = $2;
 			}
