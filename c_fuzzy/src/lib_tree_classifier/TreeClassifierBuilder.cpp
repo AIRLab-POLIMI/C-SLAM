@@ -77,13 +77,33 @@ ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
 	return list;
 }
 
-FuzzyFeature* TreeClassifierBuilder::buildFeature(string variable,
+FuzzyFeature* TreeClassifierBuilder::buildSimpleFeature(string variable,
 			string fuzzyLabel)
 {
 	return new FuzzySimpleFeature(variable, fuzzyLabel);
 }
 
-FuzzyFeature* TreeClassifierBuilder::buildFeature(vector<string>& labelList)
+FuzzyFeature* TreeClassifierBuilder::buildSimpleRelation(
+			vector<string>& labelList)
+{
+	string className = labelList[0];
+	string member = labelList[1];
+	string matchingVar = labelList[2];
+
+	if (labelList.size() == 3)
+	{
+		return new FuzzySimpleRelation(className, member, matchingVar);
+	}
+	else
+	{
+		string fuzzyLabel = labelList[3];
+		return new FuzzySimpleRelation(className, member, matchingVar,
+					fuzzyLabel);
+	}
+}
+
+FuzzyFeature* TreeClassifierBuilder::buildComplexRelation(
+			vector<string>& labelList)
 {
 	string className = labelList[0];
 	string member = labelList[1];
@@ -92,27 +112,40 @@ FuzzyFeature* TreeClassifierBuilder::buildFeature(vector<string>& labelList)
 
 	if (labelList.size() == 4)
 	{
-		return new FuzzyRelation(className, member, variable1, variable2);
+		return new FuzzyComplexRelation(className, member, variable1, variable2);
 	}
 	else
 	{
 		string fuzzyLabel = labelList[4];
-		return new FuzzyRelation(className, member, variable1, variable2,
+		return new FuzzyComplexRelation(className, member, variable1, variable2,
 					fuzzyLabel);
 	}
 }
 
 FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
-			FuzzyFeatureList* list, vector<string>& labelList)
+			FuzzyFeatureList* list, vector<string>& labelList, FeatureType type)
 {
 	FuzzyFeature* feature;
 
 	list = eventuallyInitialize(list);
 
-	if (labelList.size() == 2)
-		feature = buildFeature(labelList[0], labelList[1]);
-	else
-		feature = buildFeature(labelList);
+	switch (type)
+	{
+		case SIM_F:
+			feature = buildSimpleFeature(labelList[0], labelList[1]);
+			break;
+
+		case SIM_R:
+			feature = buildSimpleRelation(labelList);
+			break;
+
+		case COM_R:
+			feature = buildComplexRelation(labelList);
+			break;
+
+		default:
+			return list;
+	}
 
 	list->push_back(feature);
 

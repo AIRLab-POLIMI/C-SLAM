@@ -48,10 +48,11 @@
 	#include <string>
 	#include <vector>
 	#include "FuzzyClass.h" 
+
 	class TreeClassifierBuilder;
 	class TreeClassifierScanner;
 
-#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -122,7 +123,7 @@
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 namespace tc {
-#line 126 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 127 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 
@@ -136,17 +137,18 @@ namespace tc {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 39 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
+    #line 40 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
  
 	std::string* str; 
 	std::vector<std::string>* vstr; 
 	int integer; bool boolean;
 	VariableList* vlist; 
 	ConstantList* clist; 
-	std::pair<VariableList*, ConstantList*>* elists;
+	ElementsList* elists;
 	FuzzyFeatureList* flist;
+	FuzzyFeatureData* fdata;
 
-#line 150 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 152 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -381,7 +383,7 @@ namespace tc {
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short int yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -475,8 +477,8 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 61,     ///< Last index in yytable_.
-      yynnts_ = 14,  ///< Number of nonterminal symbols.
+      yylast_ = 67,     ///< Last index in yytable_.
+      yynnts_ = 16,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
@@ -493,7 +495,7 @@ namespace tc {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 } // tc
-#line 497 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 499 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 

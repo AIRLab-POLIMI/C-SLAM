@@ -1,13 +1,15 @@
 /* Test classifier */
 
-CLASS Rectagle
-
+CLASS Rectangle
 	VARIABLES
 		Xmin;
 		Xmax;
 		Ymin;
 		Ymax;
 	END_VARIABLES
+END_CLASS
+
+CLASS Door extends Rectangle IMPORTANT
 	
 	CONSTANTS
 		Height = 220;
@@ -18,3 +20,14 @@ CLASS Rectagle
 	Handle.Y is Centered between(Ymin, Ymax);
 
 END_CLASS
+
+/*CLASS ConcentricCircle
+	VARIABLES
+		X;
+		Y;
+	END_VARIABLES
+	
+	ConcentricCircle.X match X;
+	ConcentricCircle.Y match Y;	
+
+END_CLASS*/

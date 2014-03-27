@@ -57,7 +57,7 @@ SIGN [-+]
 "constants"|"CONSTANTS"  { return token::CONSTANTS; }
 "end_constants"|"END_CONSTANTS"  { return token::END_CONSTANTS; }
 "important"|"IMPORTANT" { return token::IMPORTANT; }
-"exteds"|"EXTENDS" { return token::EXTENDS; }
+"extends"|"EXTENDS" { return token::EXTENDS; }
 "=" { return token::EQUAL; }
 "," { return token::COMMA; }
 "." { return token::PERIOD; }

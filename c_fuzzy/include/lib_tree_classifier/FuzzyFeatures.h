@@ -31,17 +31,44 @@ private:
 class FuzzyRelation: public FuzzyFeature
 {
 public:
-	FuzzyRelation(std::string className, std::string member,
-				std::string variable1, std::string variable2,
-				std::string fuzzyLabel = "") :
-				className(className), member(member), variable1(variable1),
-				variable2(variable2), fuzzyLabel(fuzzyLabel)
+	FuzzyRelation(std::string className, std::string member) :
+				className(className), member(member)
 	{
 	}
 
 private:
 	std::string className;
 	std::string member;
+
+};
+
+class FuzzySimpleRelation: public FuzzyRelation
+{
+public:
+	FuzzySimpleRelation(std::string className, std::string member,
+				std::string matchingVar, std::string fuzzyLabel = "") :
+				FuzzyRelation(className, member), matchingVar(matchingVar),
+				fuzzyLabel(fuzzyLabel)
+	{
+	}
+
+private:
+	std::string matchingVar;
+	std::string fuzzyLabel;
+};
+
+class FuzzyComplexRelation: public FuzzyRelation
+{
+public:
+	FuzzyComplexRelation(std::string className, std::string member,
+				std::string variable1, std::string variable2,
+				std::string fuzzyLabel = "") :
+				FuzzyRelation(className, member), variable1(variable1),
+				variable2(variable2), fuzzyLabel(fuzzyLabel)
+	{
+	}
+
+private:
 	std::string variable1;
 	std::string variable2;
 	std::string fuzzyLabel;

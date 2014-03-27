@@ -12,6 +12,7 @@
 	#include <string>
 	#include <vector>
 	#include "FuzzyClass.h" 
+
 	class TreeClassifierBuilder;
 	class TreeClassifierScanner;
 }
@@ -29,7 +30,7 @@
 {
 	#include<cstdlib>
 	#include<fstream>
-	
+
 	#include "TreeClassifierBuilder.h"
 	
 	static int yylex(tc::TreeClassifierParser::semantic_type *yylval, tc::TreeClassifierParser::location_type* l, TreeClassifierScanner& scanner, TreeClassifierBuilder& builder);
@@ -42,8 +43,9 @@
 	int integer; bool boolean;
 	VariableList* vlist; 
 	ConstantList* clist; 
-	std::pair<VariableList*, ConstantList*>* elists;
+	ElementsList* elists;
 	FuzzyFeatureList* flist;
+	FuzzyFeatureData* fdata;
 }
 
 %token <str> ID
@@ -71,7 +73,8 @@
 
 %type <boolean> importantFlag
 %type <str> fuzzySuperclass fuzzyConstraint
-%type <vstr> fuzzySimpleFeature fuzzyRelation
+%type <fdata> fuzzyFeature;
+%type <vstr> fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation
 %type <vlist> variables variableList
 %type <clist> constants 
 %type <clist> constantList
@@ -179,20 +182,38 @@ variableList		: ID SEMICOLON variableList
 			}
 			;
 
-fuzzyFeatures		: fuzzySimpleFeature fuzzyFeatures
+fuzzyFeatures		: fuzzyFeature fuzzyFeatures
 			{
-				$$ = builder.buildFeaturesList($2, *$1);
+				$$ = builder.buildFeaturesList($2, $1->first, $1->second);
 				free($1);
 				
-			}
-			| fuzzyRelation fuzzyFeatures
-			{
-				$$ = builder.buildFeaturesList($2, *$1);
-				free($1);
 			}
 			| /* empty */
 			{
 				$$ = NULL;
+			}
+			;
+
+fuzzyFeature		: fuzzySimpleFeature
+			{
+				$$ = new FuzzyFeatureData();
+				$$->first = *$1;
+				$$->second = SIM_F;
+				delete $1;
+			}
+			| fuzzySimpleRelation
+			{
+				$$ = new FuzzyFeatureData();
+				$$->first = *$1;
+				$$->second = SIM_R;
+				delete $1;
+			}
+			| fuzzyComplexRelation
+			{
+				$$ = new FuzzyFeatureData();
+				$$->first = *$1;
+				$$->second = COM_R;
+				delete $1;
 			}
 			;
 
@@ -206,7 +227,7 @@ fuzzySimpleFeature	: ID IS ID SEMICOLON
 			}
 			;
 
-fuzzyRelation		: ID PERIOD ID MATCH ID SEMICOLON
+fuzzySimpleRelation	: ID PERIOD ID MATCH ID fuzzyConstraint SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -216,7 +237,9 @@ fuzzyRelation		: ID PERIOD ID MATCH ID SEMICOLON
 				delete $3;
 				delete $5;
 			}
-			| ID PERIOD ID fuzzyConstraint BETWEEN LPAR ID COMMA ID RPAR SEMICOLON
+			;
+
+fuzzyComplexRelation	: ID PERIOD ID fuzzyConstraint BETWEEN LPAR ID COMMA ID RPAR SEMICOLON
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);

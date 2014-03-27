@@ -60,9 +60,11 @@ public:
 	ConstantList* buildCostantList(ConstantList* list, std::string variable,
 				int value);
 	FuzzyFeatureList* buildFeaturesList(FuzzyFeatureList* list,
-				std::vector<std::string>& labelList);
-	FuzzyFeature* buildFeature(std::string variable, std::string fuzzyLabel);
-	FuzzyFeature* buildFeature(std::vector<std::string>& labelList);
+				std::vector<std::string>& labelList, FeatureType type);
+	FuzzyFeature* buildSimpleFeature(std::string variable,
+				std::string fuzzyLabel);
+	FuzzyFeature* buildSimpleRelation(std::vector<std::string>& labelList);
+	FuzzyFeature* buildComplexRelation(std::vector<std::string>& labelList);
 	void buildClass(std::string name, std::string superClassName,
 				VariableList* variables, ConstantList* constants,
 				FuzzyFeatureList* featureList, bool important);
