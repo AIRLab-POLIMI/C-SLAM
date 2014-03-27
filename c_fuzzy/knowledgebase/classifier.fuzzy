@@ -12,7 +12,7 @@ END_CLASS
 CLASS Door extends Rectangle IMPORTANT
 	
 	CONSTANTS
-		Height = High;
+		height = High;
 	END_CONSTANTS
 	
 	FormFactor is Narrow;
