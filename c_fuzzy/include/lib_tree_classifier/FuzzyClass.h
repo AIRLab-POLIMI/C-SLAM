@@ -36,7 +36,7 @@ typedef std::map<std::string, int> ConstantList;
 class FuzzyClass
 {
 public:
-	FuzzyClass(std::string name, FuzzyClass superClass, VariableList* variables,
+	FuzzyClass(std::string name, FuzzyClass* superClass, VariableList* variables,
 				ConstantList* constants, FuzzyFeatureList* features,
 				bool important) :
 				name(name), superClass(superClass), variables(variables),
@@ -53,7 +53,7 @@ public:
 
 private:
 	std::string name;
-	FuzzyClass& superClass;
+	FuzzyClass* superClass;
 	VariableList* variables;
 	ConstantList* constants;
 	FuzzyFeatureList* features;

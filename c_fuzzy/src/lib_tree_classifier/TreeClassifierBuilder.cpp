@@ -107,7 +107,7 @@ FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 
 	list = eventuallyInitialize(list);
 
-	if (list->size() == 2)
+	if (labelList.size() == 2)
 		feature = buildFeature(labelList[0], labelList[1]);
 	else
 		feature = buildFeature(labelList);
@@ -121,7 +121,7 @@ void TreeClassifierBuilder::buildClass(string name, string superClassName,
 			VariableList* variables, ConstantList* constants,
 			FuzzyFeatureList* featureList, bool important)
 {
-	FuzzyClass& superClass = *classList[superClassName];
+	FuzzyClass* superClass = classList[superClassName];
 	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
 				constants, featureList, important);
 	classList[name] = fuzzyClass;
