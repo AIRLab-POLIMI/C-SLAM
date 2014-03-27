@@ -51,10 +51,11 @@ SIGN [-+]
 "end_class"|"END_CLASS" { return token::END_CLASS; }
 "is"|"IS" { return token::IS; }
 "match"|"MATCH" { return token::MATCH; }
+"between"|"BETWEEN" { return token::BETWEEN; }
 "variables"|"VARIABLES"  { return token::VARIABLES; }
-"end_variables"|"END_VARIABLES"  { return token::VARIABLES; }
+"end_variables"|"END_VARIABLES"  { return token::END_VARIABLES; }
 "constants"|"CONSTANTS"  { return token::CONSTANTS; }
-"end_costants"|"END_CONSTANTS"  { return token::END_CONSTANTS; }
+"end_constants"|"END_CONSTANTS"  { return token::END_CONSTANTS; }
 "important"|"IMPORTANT" { return token::IMPORTANT; }
 "exteds"|"EXTENDS" { return token::EXTENDS; }
 "=" { return token::EQUAL; }

@@ -70,7 +70,9 @@ ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
 		//TODO error redeclaration of constant
 	}
 
-	list->at(variable) = value;
+	ConstantList& listRef = *list;
+
+	listRef[variable] = value;
 
 	return list;
 }

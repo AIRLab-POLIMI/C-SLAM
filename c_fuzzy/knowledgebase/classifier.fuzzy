@@ -2,6 +2,19 @@
 
 CLASS Rectagle
 
-FormFactor is Narrow;
+	VARIABLES
+		Xmin;
+		Xmax;
+		Ymin;
+		Ymax;
+	END_VARIABLES
+	
+	CONSTANTS
+		Height = 220;
+	END_CONSTANTS
+	
+	FormFactor is Narrow;
+	Handle.X is Lateral between(Xmin, Xmax); 
+	Handle.Y is Centered between(Ymin, Ymax);
 
 END_CLASS
