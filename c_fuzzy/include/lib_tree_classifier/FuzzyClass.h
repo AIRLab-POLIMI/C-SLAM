@@ -34,12 +34,6 @@ typedef std::set<std::string> VariableList;
 typedef std::map<std::string, std::string> ConstantList;
 typedef std::pair<VariableList*, ConstantList*> ElementsList;
 
-enum FeatureType
-{
-	SIM_F, SIM_R, COM_R
-};
-
-typedef std::pair<std::vector<std::string>, FeatureType> FuzzyFeatureData;
 
 class FuzzyClass
 {
@@ -50,6 +44,21 @@ public:
 				name(name), superClass(superClass), variables(variables),
 				constants(constants), features(features), important(important)
 	{
+	}
+
+	inline FuzzyFeatureList* getfeatureList()
+	{
+		return features;
+	}
+
+	inline std::string getName()
+	{
+		return name;
+	}
+
+	inline bool containsVar(std::string var)
+	{
+		return variables->count(var) == 1;
 	}
 
 	~FuzzyClass()

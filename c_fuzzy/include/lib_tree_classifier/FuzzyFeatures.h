@@ -9,9 +9,25 @@
 #define FUZZYFEATURES_H_
 
 #include <string>
+#include <vector>
+
+enum FeatureType
+{
+	SIM_F, SIM_R, COM_R
+};
+
+typedef std::pair<std::vector<std::string>, FeatureType> FuzzyFeatureData;
 
 class FuzzyFeature
 {
+public:
+	virtual FeatureType getFeatureType() = 0;
+
+	virtual std::vector<std::string> getVariables() = 0;
+
+	virtual ~FuzzyFeature()
+	{
+	}
 
 };
 
@@ -21,6 +37,18 @@ public:
 	FuzzySimpleFeature(std::string variable, std::string fuzzyLabel) :
 				variable(variable), fuzzyLabel(fuzzyLabel)
 	{
+	}
+
+	virtual FeatureType getFeatureType()
+	{
+		return SIM_F;
+	}
+
+	virtual std::vector<std::string> getVariables()
+	{
+		std::vector<std::string> list;
+		list.push_back(variable);
+		return list;
 	}
 
 private:
@@ -35,6 +63,8 @@ public:
 				className(className), member(member)
 	{
 	}
+
+	virtual FeatureType getFeatureType() = 0;
 
 private:
 	std::string className;
@@ -52,6 +82,18 @@ public:
 	{
 	}
 
+	virtual FeatureType getFeatureType()
+	{
+		return SIM_R;
+	}
+
+	virtual std::vector<std::string> getVariables()
+	{
+		std::vector<std::string> list;
+		list.push_back(matchingVar);
+		return list;
+	}
+
 private:
 	std::string matchingVar;
 	std::string fuzzyLabel;
@@ -66,6 +108,19 @@ public:
 				FuzzyRelation(className, member), variable1(variable1),
 				variable2(variable2), fuzzyLabel(fuzzyLabel)
 	{
+	}
+
+	virtual FeatureType getFeatureType()
+	{
+		return COM_R;
+	}
+
+	virtual std::vector<std::string> getVariables()
+	{
+		std::vector<std::string> list;
+		list.push_back(variable1);
+		list.push_back(variable2);
+		return list;
 	}
 
 private:

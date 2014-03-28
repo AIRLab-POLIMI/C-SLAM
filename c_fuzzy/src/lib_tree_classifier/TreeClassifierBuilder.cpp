@@ -24,6 +24,7 @@
 #include <cctype>
 #include <fstream>
 #include <stdexcept>
+#include <sstream>
 
 #include "TreeClassifierBuilder.h"
 
@@ -42,6 +43,8 @@ void TreeClassifierBuilder::parse(const char *filename)
 	{
 		throw runtime_error("Parse Failed");
 	}
+
+	checkConsistency();
 }
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
@@ -54,25 +57,29 @@ VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
 
 	if (!ret.second)
 	{
-		//TODO error redeclaration of variable
+		stringstream ss;
+		ss << "Error: redeclaration of variable " << variable;
+		throw runtime_error(ss.str());
 	}
 
 	return list;
 }
 
 ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
-			string variable, std::string value)
+			string constant, std::string value)
 {
 	list = eventuallyInitialize(list);
 
-	if (list->count(variable) != 0)
+	if (list->count(constant) != 0)
 	{
-		//TODO error redeclaration of constant
+		stringstream ss;
+		ss << "Error: redeclaration of constant " << constant;
+		throw runtime_error(ss.str());
 	}
 
 	ConstantList& listRef = *list;
 
-	listRef[variable] = value;
+	listRef[constant] = value;
 
 	return list;
 }
@@ -157,9 +164,79 @@ void TreeClassifierBuilder::buildClass(string name, string superClassName,
 			FuzzyFeatureList* featureList, bool important)
 {
 	FuzzyClass* superClass = classList[superClassName];
+
+	checkSuperClass(name, superClassName, superClass);
 	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
 				constants, featureList, important);
 	classList[name] = fuzzyClass;
+}
+
+/* Consistency checks */
+void TreeClassifierBuilder::checkSuperClass(const string& name,
+			const string& superClassName, FuzzyClass* superClass)
+{
+	if (superClass == NULL && superClassName.compare("") != 0)
+	{
+		stringstream ss;
+		ss << "Error: class " << name << " extends a non declared class "
+					<< superClassName;
+		throw runtime_error(ss.str());
+
+	}
+}
+
+void TreeClassifierBuilder::checkConsistency()
+{
+	ClassList::iterator it;
+
+	for (it = classList.begin(); it != classList.end(); ++it)
+	{
+		string name = it->first;
+		FuzzyClass* fuzzyClass = it->second;
+		checkFeatureList(*fuzzyClass);
+	}
+}
+
+void TreeClassifierBuilder::checkFeatureList(FuzzyClass& fuzzyClass)
+{
+	FuzzyFeatureList* featuresPointer = fuzzyClass.getfeatureList();
+
+	if (featuresPointer != NULL)
+	{
+		FuzzyFeatureList::iterator it;
+		FuzzyFeatureList& features = *featuresPointer;
+		for (it = features.begin(); it != features.end(); ++it)
+		{
+			FuzzyFeature& feature = **it;
+			switch (feature.getFeatureType())
+			{
+				case SIM_F:
+					checkVariable(fuzzyClass, feature.getVariables()[0]);
+					break;
+
+				case SIM_R:
+					checkVariable(fuzzyClass, feature.getVariables()[0]);
+					break;
+
+				case COM_R:
+					checkVariable(fuzzyClass, feature.getVariables()[0]);
+					checkVariable(fuzzyClass, feature.getVariables()[1]);
+					break;
+			}
+		}
+	}
+}
+
+void TreeClassifierBuilder::checkVariable(FuzzyClass& fuzzyClass,
+			string variable)
+{
+	if (!fuzzyClass.containsVar(variable))
+	{
+		stringstream ss;
+		ss << "Error: rule in class " << fuzzyClass.getName()
+					<< " references non existing variable " << variable;
+		throw runtime_error(ss.str());
+	}
 }
 
 TreeClassifierBuilder::~TreeClassifierBuilder()

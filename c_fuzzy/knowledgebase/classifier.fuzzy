@@ -21,6 +21,7 @@ CLASS Door extends Rectangle IMPORTANT
 
 END_CLASS
 
+
 CLASS ConcentricCircle
 	VARIABLES
 		x;
