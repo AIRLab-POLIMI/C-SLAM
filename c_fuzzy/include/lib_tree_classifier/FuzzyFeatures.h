@@ -25,6 +25,10 @@ public:
 
 	virtual std::vector<std::string> getVariables() = 0;
 
+	virtual std::string getRelationObject() = 0;
+
+	virtual std::string getRelationVariable() = 0;
+
 	virtual ~FuzzyFeature()
 	{
 	}
@@ -35,7 +39,7 @@ class FuzzySimpleFeature: public FuzzyFeature
 {
 public:
 	FuzzySimpleFeature(std::string variable, std::string fuzzyLabel) :
-				variable(variable), fuzzyLabel(fuzzyLabel)
+			variable(variable), fuzzyLabel(fuzzyLabel)
 	{
 	}
 
@@ -51,6 +55,16 @@ public:
 		return list;
 	}
 
+	virtual std::string getRelationObject()
+	{
+		return "";
+	}
+
+	virtual std::string getRelationVariable()
+	{
+		return "";
+	}
+
 private:
 	std::string variable;
 	std::string fuzzyLabel;
@@ -60,11 +74,21 @@ class FuzzyRelation: public FuzzyFeature
 {
 public:
 	FuzzyRelation(std::string className, std::string member) :
-				className(className), member(member)
+			className(className), member(member)
 	{
 	}
 
 	virtual FeatureType getFeatureType() = 0;
+
+	virtual std::string getRelationObject()
+	{
+		return className;
+	}
+
+	virtual std::string getRelationVariable()
+	{
+		return member;
+	}
 
 private:
 	std::string className;
@@ -76,9 +100,9 @@ class FuzzySimpleRelation: public FuzzyRelation
 {
 public:
 	FuzzySimpleRelation(std::string className, std::string member,
-				std::string matchingVar, std::string fuzzyLabel = "") :
-				FuzzyRelation(className, member), matchingVar(matchingVar),
-				fuzzyLabel(fuzzyLabel)
+			std::string matchingVar, std::string fuzzyLabel = "") :
+			FuzzyRelation(className, member), matchingVar(matchingVar), fuzzyLabel(
+					fuzzyLabel)
 	{
 	}
 
@@ -103,10 +127,10 @@ class FuzzyComplexRelation: public FuzzyRelation
 {
 public:
 	FuzzyComplexRelation(std::string className, std::string member,
-				std::string variable1, std::string variable2,
-				std::string fuzzyLabel = "") :
-				FuzzyRelation(className, member), variable1(variable1),
-				variable2(variable2), fuzzyLabel(fuzzyLabel)
+			std::string variable1, std::string variable2,
+			std::string fuzzyLabel = "") :
+			FuzzyRelation(className, member), variable1(variable1), variable2(
+					variable2), fuzzyLabel(fuzzyLabel)
 	{
 	}
 

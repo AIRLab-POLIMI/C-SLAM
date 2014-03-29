@@ -37,7 +37,7 @@ class TreeClassifierBuilder
 
 public:
 	TreeClassifierBuilder() :
-				parser(NULL), scanner(NULL)
+			parser(NULL), scanner(NULL)
 	{
 	}
 
@@ -60,24 +60,24 @@ private:
 public:
 	VariableList* buildVariableList(VariableList* list, std::string variable);
 	ConstantList* buildCostantList(ConstantList* list, std::string constant,
-				std::string value);
+			std::string value);
 	FuzzyFeatureList* buildFeaturesList(FuzzyFeatureList* list,
-				std::vector<std::string>& labelList, FeatureType type);
+			std::vector<std::string>& labelList, FeatureType type);
 	FuzzyFeature* buildSimpleFeature(std::string variable,
-				std::string fuzzyLabel);
+			std::string fuzzyLabel);
 	FuzzyFeature* buildSimpleRelation(std::vector<std::string>& labelList);
 	FuzzyFeature* buildComplexRelation(std::vector<std::string>& labelList);
 	void buildClass(std::string name, std::string superClassName,
-				VariableList* variables, ConstantList* constants,
-				FuzzyFeatureList* featureList, bool important);
+			VariableList* variables, ConstantList* constants,
+			FuzzyFeatureList* featureList, bool important);
 
 private:
 	void checkConsistency();
 	void checkSuperClass(const std::string& name,
-				const std::string& superClassName, FuzzyClass* superClass);
+			const std::string& superClassName, FuzzyClass* superClass);
 	void checkFeatureList(FuzzyClass& fuzzyClass);
-	void checkVariable(FuzzyClass& fuzzyClass,
-				std::string variable);
+	void checkVariable(FuzzyClass& fuzzyClass, std::string variable);
+	void checkRelation(FuzzyClass& fuzzyClass, FuzzyFeature& relation);
 
 private:
 	//Data needed to get Builder working

@@ -59,7 +59,6 @@ public:
 
 	inline bool containsVar(std::string var)
 	{
-		std::cerr << "name " << name << std::endl;
 		return (variables->count(var) == 1)
 				|| (superClass && superClass->containsVar(var));
 	}
