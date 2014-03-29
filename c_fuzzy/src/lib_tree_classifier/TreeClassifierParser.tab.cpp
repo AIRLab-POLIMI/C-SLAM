@@ -657,7 +657,7 @@ namespace tc {
 #line 132 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				(yylhs.value.elists) = new std::pair<VariableList*, ConstantList*>();
-				(yylhs.value.elists)->first = NULL;
+				(yylhs.value.elists)->first = new VariableList();
 				(yylhs.value.elists)->second = (yystack_[0].value.clist);
 			}
 #line 664 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
@@ -668,7 +668,7 @@ namespace tc {
     {
 				(yylhs.value.elists) = new std::pair<VariableList*, ConstantList*>();
 				(yylhs.value.elists)->first = (yystack_[0].value.vlist);
-				(yylhs.value.elists)->second = NULL;
+				(yylhs.value.elists)->second = new ConstantList();
 			}
 #line 674 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;

@@ -30,19 +30,20 @@
 
 #include "FuzzyFeatures.h"
 
+#include <iostream>
+
 typedef std::set<std::string> VariableList;
 typedef std::map<std::string, std::string> ConstantList;
 typedef std::pair<VariableList*, ConstantList*> ElementsList;
 
-
 class FuzzyClass
 {
 public:
-	FuzzyClass(std::string name, FuzzyClass* superClass, VariableList* variables,
-				ConstantList* constants, FuzzyFeatureList* features,
-				bool important) :
-				name(name), superClass(superClass), variables(variables),
-				constants(constants), features(features), important(important)
+	FuzzyClass(std::string name, FuzzyClass* superClass,
+			VariableList* variables, ConstantList* constants,
+			FuzzyFeatureList* features, bool important) :
+			name(name), superClass(superClass), variables(variables), constants(
+					constants), features(features), important(important)
 	{
 	}
 
@@ -58,7 +59,9 @@ public:
 
 	inline bool containsVar(std::string var)
 	{
-		return variables->count(var) == 1;
+		std::cerr << "name " << name << std::endl;
+		return (variables->count(var) == 1)
+				|| (superClass && superClass->containsVar(var));
 	}
 
 	~FuzzyClass()

@@ -131,14 +131,14 @@ fuzzyClassElements	: constants variables
 			| constants
 			{
 				$$ = new std::pair<VariableList*, ConstantList*>();
-				$$->first = NULL;
+				$$->first = new VariableList();
 				$$->second = $1;
 			}
 			| variables
 			{
 				$$ = new std::pair<VariableList*, ConstantList*>();
 				$$->first = $1;
-				$$->second = NULL;
+				$$->second = new ConstantList();
 			}
 			| /* empty */
 			{

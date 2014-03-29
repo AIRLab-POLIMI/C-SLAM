@@ -21,7 +21,6 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cctype>
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
@@ -163,7 +162,7 @@ void TreeClassifierBuilder::buildClass(string name, string superClassName,
 			VariableList* variables, ConstantList* constants,
 			FuzzyFeatureList* featureList, bool important)
 {
-	FuzzyClass* superClass = classList[superClassName];
+	FuzzyClass* superClass = classList.find(superClassName)->second;
 
 	checkSuperClass(name, superClassName, superClass);
 	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
