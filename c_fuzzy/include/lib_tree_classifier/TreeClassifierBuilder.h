@@ -67,6 +67,7 @@ public:
 			std::string fuzzyLabel);
 	FuzzyFeature* buildSimpleRelation(std::vector<std::string>& labelList);
 	FuzzyFeature* buildComplexRelation(std::vector<std::string>& labelList);
+	FuzzyFeature* buildInverseRelation(std::vector<std::string>& labelList);
 	void buildClass(std::string name, std::string superClassName,
 			VariableList* variables, ConstantList* constants,
 			FuzzyFeatureList* featureList, bool important);
@@ -78,6 +79,8 @@ private:
 	void checkFeatureList(FuzzyClass& fuzzyClass);
 	void checkVariable(FuzzyClass& fuzzyClass, std::string variable);
 	void checkRelation(FuzzyClass& fuzzyClass, FuzzyFeature& relation);
+	void checkRelationVar(std::string relatedVariable, FuzzyClass& relatedClass,
+			FuzzyClass& fuzzyClass);
 
 private:
 	//Data needed to get Builder working

@@ -13,7 +13,7 @@
 
 enum FeatureType
 {
-	SIM_F, SIM_R, COM_R
+	SIM_F, SIM_R, COM_R, INV_R
 };
 
 typedef std::pair<std::vector<std::string>, FeatureType> FuzzyFeatureData;
@@ -150,6 +150,36 @@ public:
 private:
 	std::string variable1;
 	std::string variable2;
+	std::string fuzzyLabel;
+};
+
+class FuzzyInverseRelation: public FuzzyRelation
+{
+public:
+	FuzzyInverseRelation(std::string className, std::string variable,
+			std::string member1, std::string member2,
+			std::string fuzzyLabel = "") :
+			FuzzyRelation(className, variable), member1(member1), member2(
+					member2), fuzzyLabel(fuzzyLabel)
+	{
+	}
+
+	virtual FeatureType getFeatureType()
+	{
+		return INV_R;
+	}
+
+	virtual std::vector<std::string> getVariables()
+	{
+		std::vector<std::string> list;
+		list.push_back(member1);
+		list.push_back(member2);
+		return list;
+	}
+
+private:
+	std::string member1;
+	std::string member2;
 	std::string fuzzyLabel;
 };
 

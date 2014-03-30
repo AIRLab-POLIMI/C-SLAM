@@ -74,7 +74,7 @@
 %type <str> var
 %type <str> fuzzySuperclass fuzzyConstraint fuzzyDegree
 %type <fdata> fuzzyFeature;
-%type <vstr> fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation
+%type <vstr> fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation fuzzyInverseRelation
 %type <vlist> variables variableList
 %type <clist> constants 
 %type <clist> constantList
@@ -184,9 +184,9 @@ variableList		: var SEMICOLON variableList
 			;
 
 
-fuzzyFeatures		: fuzzyFeature fuzzyFeatures
+fuzzyFeatures		: fuzzyFeature SEMICOLON fuzzyFeatures
 			{
-				$$ = builder.buildFeaturesList($2, $1->first, $1->second);
+				$$ = builder.buildFeaturesList($3, $1->first, $1->second);
 				free($1);
 			}
 			| /* empty */
@@ -216,9 +216,16 @@ fuzzyFeature		: fuzzySimpleFeature
 				$$->second = COM_R;
 				delete $1;
 			}
+			| fuzzyInverseRelation
+			{
+				$$ = new FuzzyFeatureData();
+				$$->first = *$1;
+				$$->second = INV_R;
+				delete $1;
+			}
 			;
 
-fuzzySimpleFeature	: var IS ID SEMICOLON
+fuzzySimpleFeature	: var IS ID
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -228,7 +235,7 @@ fuzzySimpleFeature	: var IS ID SEMICOLON
 			}
 			;
 
-fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree SEMICOLON
+fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -240,7 +247,7 @@ fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree SEMICOLON
 			}
 			;
 
-fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR SEMICOLON
+fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR
 			{
 				$$ = new std::vector<std::string>();
 				$$->push_back(*$1);
@@ -256,6 +263,26 @@ fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR 
 				{
 					$$->push_back(*$4);
 					delete $4;
+				}
+			}
+			;
+			
+fuzzyInverseRelation	: var fuzzyConstraint ON ID LPAR var COMMA var RPAR
+			{
+				$$ = new std::vector<std::string>();
+				$$->push_back(*$1);
+				$$->push_back(*$4);
+				$$->push_back(*$6);
+				$$->push_back(*$8);
+				delete $1;
+				delete $4;
+				delete $6;
+				delete $8;
+
+				if($2 != NULL)
+				{
+					$$->push_back(*$2);
+					delete $2;
 				}
 			}
 			;

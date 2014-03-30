@@ -128,6 +128,26 @@ FuzzyFeature* TreeClassifierBuilder::buildComplexRelation(
 	}
 }
 
+FuzzyFeature* TreeClassifierBuilder::buildInverseRelation(
+		vector<string>& labelList)
+{
+	string variable = labelList[0];
+	string className = labelList[1];
+	string member1 = labelList[2];
+	string member2 = labelList[3];
+
+	if (labelList.size() == 4)
+	{
+		return new FuzzyInverseRelation(className, variable, member1, member2);
+	}
+	else
+	{
+		string fuzzyLabel = labelList[4];
+		return new FuzzyInverseRelation(className, variable, member1, member2,
+				fuzzyLabel);
+	}
+}
+
 FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 		FuzzyFeatureList* list, vector<string>& labelList, FeatureType type)
 {
@@ -147,6 +167,10 @@ FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 
 		case COM_R:
 			feature = buildComplexRelation(labelList);
+			break;
+
+		case INV_R:
+			feature = buildInverseRelation(labelList);
 			break;
 
 		default:
@@ -229,6 +253,11 @@ void TreeClassifierBuilder::checkFeatureList(FuzzyClass& fuzzyClass)
 					checkVariable(fuzzyClass, feature.getVariables()[1]);
 					checkRelation(fuzzyClass, feature);
 					break;
+
+				case INV_R:
+					checkVariable(fuzzyClass, feature.getRelationVariable());
+					checkRelation(fuzzyClass, feature);
+					break;
 			}
 		}
 	}
@@ -242,6 +271,18 @@ void TreeClassifierBuilder::checkVariable(FuzzyClass& fuzzyClass,
 		stringstream ss;
 		ss << "Error: rule in class " << fuzzyClass.getName()
 				<< " references non existing variable " << variable;
+		throw runtime_error(ss.str());
+	}
+}
+
+void TreeClassifierBuilder::checkRelationVar(string relatedVariable,
+		FuzzyClass& relatedClass, FuzzyClass& fuzzyClass)
+{
+	if (!relatedClass.containsVar(relatedVariable))
+	{
+		stringstream ss;
+		ss << "Error: relation in class " << fuzzyClass.getName()
+				<< " references non existing variable " << relatedVariable;
 		throw runtime_error(ss.str());
 	}
 }
@@ -260,14 +301,19 @@ void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
 	}
 
 	FuzzyClass& relatedClass = *classList[object];
-	string relatedVariable = relation.getRelationVariable();
 
-	if (!relatedClass.containsVar(relatedVariable))
+	if (relation.getFeatureType() == INV_R)
 	{
-		stringstream ss;
-		ss << "Error: relation in class " << fuzzyClass.getName()
-				<< " references non existing variable " << relatedVariable;
-		throw runtime_error(ss.str());
+		vector<string> relatedVariables = relation.getVariables();
+
+		checkRelationVar(relatedVariables[0], relatedClass, fuzzyClass);
+		checkRelationVar(relatedVariables[1], relatedClass, fuzzyClass);
+	}
+	else
+	{
+		string relatedVariable = relation.getRelationVariable();
+
+		checkRelationVar(relatedVariable, relatedClass, fuzzyClass);
 	}
 }
 

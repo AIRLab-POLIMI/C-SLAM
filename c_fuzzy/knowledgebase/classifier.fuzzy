@@ -27,6 +27,9 @@ CLASS Handle
 		x;
 		y;
 	END_VARIABLES
+	
+	x is Lateral on Door(Xmin, Xmax);
+	y is Centered on Door(Ymin, Ymax);
 
 END_CLASS
 

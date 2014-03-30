@@ -361,7 +361,7 @@ namespace tc {
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
   // number is the opposite.  If YYTABLE_NINF, syntax error.
-  static const unsigned char yytable_[];
+  static const signed char yytable_[];
 
   static const signed char yycheck_[];
 
@@ -478,8 +478,8 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 70,     ///< Last index in yytable_.
-      yynnts_ = 18,  ///< Number of nonterminal symbols.
+      yylast_ = 69,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
