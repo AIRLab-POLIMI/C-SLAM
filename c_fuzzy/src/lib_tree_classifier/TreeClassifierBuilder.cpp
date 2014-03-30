@@ -37,7 +37,9 @@ void TreeClassifierBuilder::parse(const char *filename)
 		throw runtime_error("Bad file to parse");
 	}
 
+	scanner = new tc::TreeClassifierScanner(&inputFile);
 	parser = new tc::TreeClassifierParser((*this));
+
 	if (parser->parse() == -1)
 	{
 		throw runtime_error("Parse Failed");
@@ -321,4 +323,7 @@ TreeClassifierBuilder::~TreeClassifierBuilder()
 {
 	if (parser != NULL)
 		delete (parser);
+
+	if (scanner != NULL)
+			delete (scanner);
 }

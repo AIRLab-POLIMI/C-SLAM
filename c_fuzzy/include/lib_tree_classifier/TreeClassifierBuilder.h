@@ -85,6 +85,7 @@ private:
 private:
 	//Data needed to get Builder working
 	tc::TreeClassifierParser* parser;
+	tc::TreeClassifierScanner* scanner;
 
 	//Data needed to track created classes
 	ClassList classList;

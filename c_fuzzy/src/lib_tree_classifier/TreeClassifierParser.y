@@ -18,7 +18,6 @@
 	class TreeClassifierBuilder;
 }
  
-%lex-param   { TreeClassifierBuilder  &builder  }
 %parse-param { TreeClassifierBuilder  &builder  }
 
 %error-verbose
@@ -30,6 +29,9 @@
 	#include<fstream>
 
 	#include "TreeClassifierBuilder.h"
+	
+	#undef yylex
+	#define yylex driver.lexer->lex
 	
 }
 
