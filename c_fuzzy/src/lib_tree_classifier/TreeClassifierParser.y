@@ -3,6 +3,8 @@
 %defines
 %define parser_class_name { TreeClassifierParser }
 %define api.namespace {tc}
+%define api.token.constructor
+%define api.value.type variant
  
 %code requires
 {
@@ -14,11 +16,7 @@
 	#include "FuzzyClass.h" 
 
 	class TreeClassifierBuilder;
-	class TreeClassifierScanner;
 }
- 
-%lex-param   { TreeClassifierScanner  &scanner  }
-%parse-param { TreeClassifierScanner  &scanner  }
  
 %lex-param   { TreeClassifierBuilder  &builder  }
 %parse-param { TreeClassifierBuilder  &builder  }
@@ -33,22 +31,11 @@
 
 	#include "TreeClassifierBuilder.h"
 	
-	static int yylex(tc::TreeClassifierParser::semantic_type *yylval, tc::TreeClassifierParser::location_type* l, TreeClassifierScanner& scanner, TreeClassifierBuilder& builder);
 }
 
-%union 
-{ 
-	std::string* str; 
-	std::vector<std::string>* vstr; 
-	int integer; bool boolean;
-	VariableList* vlist; 
-	ConstantList* clist; 
-	ElementsList* elists;
-	FuzzyFeatureList* flist;
-	FuzzyFeatureData* fdata;
-}
+%token END
 
-%token <str> ID VAR_ID
+%token <std::string> ID VAR_ID
 %token IS
 %token MATCH
 %token ON
@@ -70,16 +57,15 @@
 %token RPAR
 %token EQUAL
 
-%type <boolean> importantFlag
-%type <str> var
-%type <str> fuzzySuperclass fuzzyConstraint fuzzyDegree
-%type <fdata> fuzzyFeature;
-%type <vstr> fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation fuzzyInverseRelation
-%type <vlist> variables variableList
-%type <clist> constants 
-%type <clist> constantList
-%type <elists> fuzzyClassElements
-%type <flist> fuzzyFeatures
+%type <bool> importantFlag
+%type <std::string> var
+%type <std::string> fuzzySuperclass fuzzyConstraint fuzzyDegree
+%type <FuzzyFeatureData> fuzzyFeature;
+%type <std::vector<std::string> > fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation fuzzyInverseRelation
+%type <VariableList*> variables variableList
+%type <ConstantList*> constants constantList
+%type <ElementsList> fuzzyClassElements
+%type <FuzzyFeatureList*> fuzzyFeatures
  
 
 %%
@@ -90,9 +76,7 @@ fuzzyClassifiers	: fuzzyClass fuzzyClassifiers
 
 fuzzyClass		: CLASS ID fuzzySuperclass importantFlag fuzzyClassElements fuzzyFeatures END_CLASS
 			{
-				builder.buildClass(*$2, *$3, $5->first, $5->second, $6, $4);
-				free($2);
-				free($3);
+				builder.buildClass($2, $3, $5.first, $5.second, $6, $4);
 			}
 			;
 
@@ -102,7 +86,7 @@ fuzzySuperclass		: EXTENDS ID
 			}
 			| /* empty */
 			{
-				$$ = new std::string("");
+				$$ = "";
 			}
 			;
 
@@ -118,33 +102,28 @@ importantFlag		: IMPORTANT
 
 fuzzyClassElements	: constants variables
 			{
-				$$ = new std::pair<VariableList*, ConstantList*>();
-				$$->first = $2;
-				$$->second = $1;
+				$$.first = $2;
+				$$.second = $1;
 			}
 			| variables constants
 			{
-				$$ = new std::pair<VariableList*, ConstantList*>();
-				$$->first = $1;
-				$$->second = $2;
+				$$.first = $1;
+				$$.second = $2;
 			}
 			| constants
 			{
-				$$ = new std::pair<VariableList*, ConstantList*>();
-				$$->first = NULL;
-				$$->second = $1;
+				$$.first = NULL;
+				$$.second = $1;
 			}
 			| variables
 			{
-				$$ = new std::pair<VariableList*, ConstantList*>();
-				$$->first = $1;
-				$$->second = NULL;
+				$$.first = $1;
+				$$.second = NULL;
 			}
 			| /* empty */
 			{
-				$$ = new std::pair<VariableList*, ConstantList*>();
-				$$->first = NULL;
-				$$->second = NULL;
+				$$.first = NULL;
+				$$.second = NULL;
 			}
 			;
 
@@ -156,9 +135,8 @@ constants		: CONSTANTS constantList END_CONSTANTS
 			
 constantList		: var EQUAL ID SEMICOLON constantList
 			{
-				$$ = builder.buildCostantList($5, *$1, *$3);
-				free($1);
-				free($3);
+				$$ = builder.buildCostantList($5, $1, $3);
+
 			}
 			| /* empty */
 			{
@@ -174,8 +152,7 @@ variables		: VARIABLES variableList END_VARIABLES
 
 variableList		: var SEMICOLON variableList
 			{
-				$$ = builder.buildVariableList($3, *$1);
-				free($1);
+				$$ = builder.buildVariableList($3, $1);
 			}
 			| /* empty */
 			{
@@ -186,8 +163,7 @@ variableList		: var SEMICOLON variableList
 
 fuzzyFeatures		: fuzzyFeature SEMICOLON fuzzyFeatures
 			{
-				$$ = builder.buildFeaturesList($3, $1->first, $1->second);
-				free($1);
+				$$ = builder.buildFeaturesList($3, $1.first, $1.second);
 			}
 			| /* empty */
 			{
@@ -197,92 +173,67 @@ fuzzyFeatures		: fuzzyFeature SEMICOLON fuzzyFeatures
 
 fuzzyFeature		: fuzzySimpleFeature
 			{
-				$$ = new FuzzyFeatureData();
-				$$->first = *$1;
-				$$->second = SIM_F;
-				delete $1;
+				$$.first = $1;
+				$$.second = SIM_F;
 			}
 			| fuzzySimpleRelation
 			{
-				$$ = new FuzzyFeatureData();
-				$$->first = *$1;
-				$$->second = SIM_R;
-				delete $1;
+				$$.first = $1;
+				$$.second = SIM_R;
 			}
 			| fuzzyComplexRelation
 			{
-				$$ = new FuzzyFeatureData();
-				$$->first = *$1;
-				$$->second = COM_R;
-				delete $1;
+				$$.first = $1;
+				$$.second = COM_R;
 			}
 			| fuzzyInverseRelation
 			{
-				$$ = new FuzzyFeatureData();
-				$$->first = *$1;
-				$$->second = INV_R;
-				delete $1;
+				$$.first = $1;
+				$$.second = INV_R;
 			}
 			;
 
 fuzzySimpleFeature	: var IS ID
 			{
-				$$ = new std::vector<std::string>();
-				$$->push_back(*$1);
-				$$->push_back(*$3);
-				delete $1;
-				delete $3;
+				$$.push_back($1);
+				$$.push_back($3);
 			}
 			;
 
 fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree
 			{
-				$$ = new std::vector<std::string>();
-				$$->push_back(*$1);
-				$$->push_back(*$3);
-				$$->push_back(*$5);
-				delete $1;
-				delete $3;
-				delete $5;
+				$$.push_back($1);
+				$$.push_back($3);
+				$$.push_back($5);
 			}
 			;
 
 fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR
 			{
-				$$ = new std::vector<std::string>();
-				$$->push_back(*$1);
-				$$->push_back(*$3);
-				$$->push_back(*$7);
-				$$->push_back(*$9);
-				delete $1;
-				delete $3;
-				delete $7;
-				delete $9;
+				$$.push_back($1);
+				$$.push_back($3);
+				$$.push_back($7);
+				$$.push_back($9);
 
-				if($4 != NULL)
+
+				if(!$4.empty())
 				{
-					$$->push_back(*$4);
-					delete $4;
+					$$.push_back($4);
 				}
 			}
 			;
 			
 fuzzyInverseRelation	: var fuzzyConstraint ON ID LPAR var COMMA var RPAR
 			{
-				$$ = new std::vector<std::string>();
-				$$->push_back(*$1);
-				$$->push_back(*$4);
-				$$->push_back(*$6);
-				$$->push_back(*$8);
-				delete $1;
-				delete $4;
-				delete $6;
-				delete $8;
+				$$.push_back($1);
+				$$.push_back($4);
+				$$.push_back($6);
+				$$.push_back($8);
 
-				if($2 != NULL)
+
+				if(!$2.empty())
 				{
-					$$->push_back(*$2);
-					delete $2;
+					$$.push_back($2);
 				}
 			}
 			;
@@ -294,7 +245,7 @@ fuzzyConstraint		: IS ID
 			}
 			| /* empty */
 			{
-				$$ = NULL;
+				$$ = "";
 			}
 			;
 			
@@ -304,7 +255,7 @@ fuzzyDegree		: DEGREE ID
 			}
 			| /* empty */
 			{
-				$$ = NULL;
+				$$ = "";
 			}
 			;
 
@@ -326,13 +277,5 @@ void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_ty
 	std::stringstream ss;
 	ss << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
 	throw std::runtime_error(ss.str());
-}
-
-/* include for access to scanner.yylex */
-#include "FuzzyScanner.h"
-static int yylex(tc::TreeClassifierParser::semantic_type *yylval, tc::TreeClassifierParser::location_type* l, TreeClassifierScanner& scanner, TreeClassifierBuilder& builder)
-{
-	l->step();
-	return(scanner.yylex(yylval));
 }
 

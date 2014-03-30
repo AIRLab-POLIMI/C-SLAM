@@ -36,8 +36,8 @@ void TreeClassifierBuilder::parse(const char *filename)
 	{
 		throw runtime_error("Bad file to parse");
 	}
-	scanner = new TreeClassifierScanner(&inputFile);
-	parser = new tc::TreeClassifierParser((*scanner), (*this));
+
+	parser = new tc::TreeClassifierParser((*this));
 	if (parser->parse() == -1)
 	{
 		throw runtime_error("Parse Failed");
@@ -319,8 +319,6 @@ void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
 
 TreeClassifierBuilder::~TreeClassifierBuilder()
 {
-	if (scanner != NULL)
-		delete (scanner);
 	if (parser != NULL)
 		delete (parser);
 }

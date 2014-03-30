@@ -40,7 +40,7 @@
 #ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED
 # define YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_INCLUDE_LIB_TREE_CLASSIFIER_TREECLASSIFIERPARSER_TAB_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 8 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
+#line 10 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 
 	#include <sstream>
 	#include <stdexcept>
@@ -50,9 +50,8 @@
 	#include "FuzzyClass.h" 
 
 	class TreeClassifierBuilder;
-	class TreeClassifierScanner;
 
-#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -61,6 +60,11 @@
 # include <string>
 # include "stack.hh"
 # include "location.hh"
+
+#ifndef YYASSERT
+# include <cassert>
+# define YYASSERT assert
+#endif
 
 
 #ifndef YY_ATTRIBUTE
@@ -123,10 +127,143 @@
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 namespace tc {
-#line 127 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 131 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 
+  /// A char[S] buffer to store and retrieve objects.
+  ///
+  /// Sort of a variant, but does not keep track of the nature
+  /// of the stored data, since that knowledge is available
+  /// via the current state.
+  template <size_t S>
+  struct variant
+  {
+    /// Type of *this.
+    typedef variant<S> self_type;
+
+    /// Empty construction.
+    variant ()
+    {}
+
+    /// Construct and fill.
+    template <typename T>
+    variant (const T& t)
+    {
+      YYASSERT (sizeof (T) <= S);
+      new (yyas_<T> ()) T (t);
+    }
+
+    /// Destruction, allowed only if empty.
+    ~variant ()
+    {}
+
+    /// Instantiate an empty \a T in here.
+    template <typename T>
+    T&
+    build ()
+    {
+      return *new (yyas_<T> ()) T;
+    }
+
+    /// Instantiate a \a T in here from \a t.
+    template <typename T>
+    T&
+    build (const T& t)
+    {
+      return *new (yyas_<T> ()) T (t);
+    }
+
+    /// Accessor to a built \a T.
+    template <typename T>
+    T&
+    as ()
+    {
+      return *yyas_<T> ();
+    }
+
+    /// Const accessor to a built \a T (for %printer).
+    template <typename T>
+    const T&
+    as () const
+    {
+      return *yyas_<T> ();
+    }
+
+    /// Swap the content with \a other, of same type.
+    ///
+    /// Both variants must be built beforehand, because swapping the actual
+    /// data requires reading it (with as()), and this is not possible on
+    /// unconstructed variants: it would require some dynamic testing, which
+    /// should not be the variant's responsability.
+    /// Swapping between built and (possibly) non-built is done with
+    /// variant::move ().
+    template <typename T>
+    void
+    swap (self_type& other)
+    {
+      std::swap (as<T> (), other.as<T> ());
+    }
+
+    /// Move the content of \a other to this.
+    ///
+    /// Destroys \a other.
+    template <typename T>
+    void
+    move (self_type& other)
+    {
+      build<T> ();
+      swap<T> (other);
+      other.destroy<T> ();
+    }
+
+    /// Copy the content of \a other to this.
+    template <typename T>
+    void
+    copy (const self_type& other)
+    {
+      build<T> (other.as<T> ());
+    }
+
+    /// Destroy the stored \a T.
+    template <typename T>
+    void
+    destroy ()
+    {
+      as<T> ().~T ();
+    }
+
+  private:
+    /// Prohibit blind copies.
+    self_type& operator=(const self_type&);
+    variant (const self_type&);
+
+    /// Accessor to raw memory as \a T.
+    template <typename T>
+    T*
+    yyas_ ()
+    {
+      void *yyp = yybuffer_.yyraw;
+      return static_cast<T*> (yyp);
+     }
+
+    /// Const accessor to raw memory as \a T.
+    template <typename T>
+    const T*
+    yyas_ () const
+    {
+      const void *yyp = yybuffer_.yyraw;
+      return static_cast<const T*> (yyp);
+     }
+
+    union
+    {
+      /// Strongest alignment constraints.
+      long double yyalign_me;
+      /// A buffer large enough to store any of the semantic values.
+      char yyraw[S];
+    } yybuffer_;
+  };
 
 
   /// A Bison parser.
@@ -134,22 +271,46 @@ namespace tc {
   {
   public:
 #ifndef YYSTYPE
-    /// Symbol semantic values.
-    union semantic_type
+    /// An auxiliary type to compute the largest semantic type.
+    union union_type
     {
-    #line 40 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
- 
-	std::string* str; 
-	std::vector<std::string>* vstr; 
-	int integer; bool boolean;
-	VariableList* vlist; 
-	ConstantList* clist; 
-	ElementsList* elists;
-	FuzzyFeatureList* flist;
-	FuzzyFeatureData* fdata;
+      // constants
+      // constantList
+      char dummy1[sizeof(ConstantList*)];
 
-#line 152 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
-    };
+      // fuzzyClassElements
+      char dummy2[sizeof(ElementsList)];
+
+      // fuzzyFeature
+      char dummy3[sizeof(FuzzyFeatureData)];
+
+      // fuzzyFeatures
+      char dummy4[sizeof(FuzzyFeatureList*)];
+
+      // variables
+      // variableList
+      char dummy5[sizeof(VariableList*)];
+
+      // importantFlag
+      char dummy6[sizeof(bool)];
+
+      // ID
+      // VAR_ID
+      // fuzzySuperclass
+      // fuzzyConstraint
+      // fuzzyDegree
+      // var
+      char dummy7[sizeof(std::string)];
+
+      // fuzzySimpleFeature
+      // fuzzySimpleRelation
+      // fuzzyComplexRelation
+      // fuzzyInverseRelation
+      char dummy8[sizeof(std::vector<std::string> )];
+};
+
+    /// Symbol semantic values.
+    typedef variant<sizeof(union_type)> semantic_type;
 #else
     typedef YYSTYPE semantic_type;
 #endif
@@ -168,26 +329,27 @@ namespace tc {
     {
       enum yytokentype
       {
-        ID = 258,
-        VAR_ID = 259,
-        IS = 260,
-        MATCH = 261,
-        ON = 262,
-        DEGREE = 263,
-        CLASS = 264,
-        VARIABLES = 265,
-        END_VARIABLES = 266,
-        CONSTANTS = 267,
-        END_CONSTANTS = 268,
-        END_CLASS = 269,
-        EXTENDS = 270,
-        IMPORTANT = 271,
-        PERIOD = 272,
-        SEMICOLON = 273,
-        COMMA = 274,
-        LPAR = 275,
-        RPAR = 276,
-        EQUAL = 277
+        END = 258,
+        ID = 259,
+        VAR_ID = 260,
+        IS = 261,
+        MATCH = 262,
+        ON = 263,
+        DEGREE = 264,
+        CLASS = 265,
+        VARIABLES = 266,
+        END_VARIABLES = 267,
+        CONSTANTS = 268,
+        END_CONSTANTS = 269,
+        END_CLASS = 270,
+        EXTENDS = 271,
+        IMPORTANT = 272,
+        PERIOD = 273,
+        SEMICOLON = 274,
+        COMMA = 275,
+        LPAR = 276,
+        RPAR = 277,
+        EQUAL = 278
       };
     };
 
@@ -218,9 +380,26 @@ namespace tc {
       /// Copy constructor.
       basic_symbol (const basic_symbol& other);
 
-      /// Constructor for valueless symbols.
-      basic_symbol (typename Base::kind_type t,
-                    const location_type& l);
+      /// Constructor for valueless symbols, and symbols from each type.
+
+  basic_symbol (typename Base::kind_type t, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const ConstantList* v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const ElementsList v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const FuzzyFeatureData v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const FuzzyFeatureList* v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const VariableList* v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::vector<std::string>  v, const location_type& l);
+
 
       /// Constructor for symbols with semantic value.
       basic_symbol (typename Base::kind_type t,
@@ -278,9 +457,94 @@ namespace tc {
     /// "External" symbols: returned by the scanner.
     typedef basic_symbol<by_type> symbol_type;
 
+    // Symbol constructors declarations.
+    static inline
+    symbol_type
+    make_END (const location_type& l);
+
+    static inline
+    symbol_type
+    make_ID (const std::string& v, const location_type& l);
+
+    static inline
+    symbol_type
+    make_VAR_ID (const std::string& v, const location_type& l);
+
+    static inline
+    symbol_type
+    make_IS (const location_type& l);
+
+    static inline
+    symbol_type
+    make_MATCH (const location_type& l);
+
+    static inline
+    symbol_type
+    make_ON (const location_type& l);
+
+    static inline
+    symbol_type
+    make_DEGREE (const location_type& l);
+
+    static inline
+    symbol_type
+    make_CLASS (const location_type& l);
+
+    static inline
+    symbol_type
+    make_VARIABLES (const location_type& l);
+
+    static inline
+    symbol_type
+    make_END_VARIABLES (const location_type& l);
+
+    static inline
+    symbol_type
+    make_CONSTANTS (const location_type& l);
+
+    static inline
+    symbol_type
+    make_END_CONSTANTS (const location_type& l);
+
+    static inline
+    symbol_type
+    make_END_CLASS (const location_type& l);
+
+    static inline
+    symbol_type
+    make_EXTENDS (const location_type& l);
+
+    static inline
+    symbol_type
+    make_IMPORTANT (const location_type& l);
+
+    static inline
+    symbol_type
+    make_PERIOD (const location_type& l);
+
+    static inline
+    symbol_type
+    make_SEMICOLON (const location_type& l);
+
+    static inline
+    symbol_type
+    make_COMMA (const location_type& l);
+
+    static inline
+    symbol_type
+    make_LPAR (const location_type& l);
+
+    static inline
+    symbol_type
+    make_RPAR (const location_type& l);
+
+    static inline
+    symbol_type
+    make_EQUAL (const location_type& l);
+
 
     /// Build a parser object.
-     TreeClassifierParser  (TreeClassifierScanner  &scanner_yyarg, TreeClassifierBuilder  &builder_yyarg);
+     TreeClassifierParser  (TreeClassifierBuilder  &builder_yyarg);
     virtual ~ TreeClassifierParser  ();
 
     /// Parse.
@@ -340,7 +604,7 @@ namespace tc {
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token number \a t to a symbol number.
-    static token_number_type yytranslate_ (int t);
+    static token_number_type yytranslate_ (token_type t);
 
     // Tables.
   // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
@@ -478,25 +742,562 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 69,     ///< Last index in yytable_.
+      yylast_ = 68,     ///< Last index in yytable_.
       yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 23  ///< Number of tokens.
+      yyntokens_ = 24  ///< Number of tokens.
     };
 
 
     // User arguments.
-    TreeClassifierScanner  &scanner;
     TreeClassifierBuilder  &builder;
   };
+
+  // Symbol number corresponding to token number t.
+  inline
+   TreeClassifierParser ::token_number_type
+   TreeClassifierParser ::yytranslate_ (token_type t)
+  {
+    static
+    const token_number_type
+    translate_table[] =
+    {
+     0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23
+    };
+    const unsigned int user_token_number_max_ = 278;
+    const token_number_type undef_token_ = 2;
+
+    if (static_cast<int>(t) <= yyeof_)
+      return yyeof_;
+    else if (static_cast<unsigned int> (t) <= user_token_number_max_)
+      return translate_table[t];
+    else
+      return undef_token_;
+  }
+
+  inline
+   TreeClassifierParser ::syntax_error::syntax_error (const location_type& l, const std::string& m)
+    : std::runtime_error (m)
+    , location (l)
+  {}
+
+  // basic_symbol.
+  template <typename Base>
+  inline
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol ()
+    : value ()
+  {}
+
+  template <typename Base>
+  inline
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (const basic_symbol& other)
+    : Base (other)
+    , value ()
+    , location (other.location)
+  {
+      switch (other.type_get ())
+    {
+      case 30: // constants
+      case 31: // constantList
+        value.copy< ConstantList* > (other.value);
+        break;
+
+      case 29: // fuzzyClassElements
+        value.copy< ElementsList > (other.value);
+        break;
+
+      case 35: // fuzzyFeature
+        value.copy< FuzzyFeatureData > (other.value);
+        break;
+
+      case 34: // fuzzyFeatures
+        value.copy< FuzzyFeatureList* > (other.value);
+        break;
+
+      case 32: // variables
+      case 33: // variableList
+        value.copy< VariableList* > (other.value);
+        break;
+
+      case 28: // importantFlag
+        value.copy< bool > (other.value);
+        break;
+
+      case 4: // ID
+      case 5: // VAR_ID
+      case 27: // fuzzySuperclass
+      case 40: // fuzzyConstraint
+      case 41: // fuzzyDegree
+      case 42: // var
+        value.copy< std::string > (other.value);
+        break;
+
+      case 36: // fuzzySimpleFeature
+      case 37: // fuzzySimpleRelation
+      case 38: // fuzzyComplexRelation
+      case 39: // fuzzyInverseRelation
+        value.copy< std::vector<std::string>  > (other.value);
+        break;
+
+      default:
+        break;
+    }
+
+  }
+
+
+  template <typename Base>
+  inline
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const semantic_type& v, const location_type& l)
+    : Base (t)
+    , value ()
+    , location (l)
+  {
+    (void) v;
+      switch (this->type_get ())
+    {
+      case 30: // constants
+      case 31: // constantList
+        value.copy< ConstantList* > (v);
+        break;
+
+      case 29: // fuzzyClassElements
+        value.copy< ElementsList > (v);
+        break;
+
+      case 35: // fuzzyFeature
+        value.copy< FuzzyFeatureData > (v);
+        break;
+
+      case 34: // fuzzyFeatures
+        value.copy< FuzzyFeatureList* > (v);
+        break;
+
+      case 32: // variables
+      case 33: // variableList
+        value.copy< VariableList* > (v);
+        break;
+
+      case 28: // importantFlag
+        value.copy< bool > (v);
+        break;
+
+      case 4: // ID
+      case 5: // VAR_ID
+      case 27: // fuzzySuperclass
+      case 40: // fuzzyConstraint
+      case 41: // fuzzyDegree
+      case 42: // var
+        value.copy< std::string > (v);
+        break;
+
+      case 36: // fuzzySimpleFeature
+      case 37: // fuzzySimpleRelation
+      case 38: // fuzzyComplexRelation
+      case 39: // fuzzyInverseRelation
+        value.copy< std::vector<std::string>  > (v);
+        break;
+
+      default:
+        break;
+    }
+}
+
+
+  // Implementation of basic_symbol constructor for each type.
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const location_type& l)
+    : Base (t)
+    , value ()
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ConstantList* v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const ElementsList v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const FuzzyFeatureData v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const FuzzyFeatureList* v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const VariableList* v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const bool v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::vector<std::string>  v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+
+  template <typename Base>
+  inline
+   TreeClassifierParser ::basic_symbol<Base>::~basic_symbol ()
+  {
+    // User destructor.
+    symbol_number_type yytype = this->type_get ();
+    switch (yytype)
+    {
+   default:
+      break;
+    }
+
+    // Type destructor.
+    switch (yytype)
+    {
+      case 30: // constants
+      case 31: // constantList
+        value.template destroy< ConstantList* > ();
+        break;
+
+      case 29: // fuzzyClassElements
+        value.template destroy< ElementsList > ();
+        break;
+
+      case 35: // fuzzyFeature
+        value.template destroy< FuzzyFeatureData > ();
+        break;
+
+      case 34: // fuzzyFeatures
+        value.template destroy< FuzzyFeatureList* > ();
+        break;
+
+      case 32: // variables
+      case 33: // variableList
+        value.template destroy< VariableList* > ();
+        break;
+
+      case 28: // importantFlag
+        value.template destroy< bool > ();
+        break;
+
+      case 4: // ID
+      case 5: // VAR_ID
+      case 27: // fuzzySuperclass
+      case 40: // fuzzyConstraint
+      case 41: // fuzzyDegree
+      case 42: // var
+        value.template destroy< std::string > ();
+        break;
+
+      case 36: // fuzzySimpleFeature
+      case 37: // fuzzySimpleRelation
+      case 38: // fuzzyComplexRelation
+      case 39: // fuzzyInverseRelation
+        value.template destroy< std::vector<std::string>  > ();
+        break;
+
+      default:
+        break;
+    }
+
+  }
+
+  template <typename Base>
+  inline
+  void
+   TreeClassifierParser ::basic_symbol<Base>::move (basic_symbol& s)
+  {
+    super_type::move(s);
+      switch (this->type_get ())
+    {
+      case 30: // constants
+      case 31: // constantList
+        value.move< ConstantList* > (s.value);
+        break;
+
+      case 29: // fuzzyClassElements
+        value.move< ElementsList > (s.value);
+        break;
+
+      case 35: // fuzzyFeature
+        value.move< FuzzyFeatureData > (s.value);
+        break;
+
+      case 34: // fuzzyFeatures
+        value.move< FuzzyFeatureList* > (s.value);
+        break;
+
+      case 32: // variables
+      case 33: // variableList
+        value.move< VariableList* > (s.value);
+        break;
+
+      case 28: // importantFlag
+        value.move< bool > (s.value);
+        break;
+
+      case 4: // ID
+      case 5: // VAR_ID
+      case 27: // fuzzySuperclass
+      case 40: // fuzzyConstraint
+      case 41: // fuzzyDegree
+      case 42: // var
+        value.move< std::string > (s.value);
+        break;
+
+      case 36: // fuzzySimpleFeature
+      case 37: // fuzzySimpleRelation
+      case 38: // fuzzyComplexRelation
+      case 39: // fuzzyInverseRelation
+        value.move< std::vector<std::string>  > (s.value);
+        break;
+
+      default:
+        break;
+    }
+
+    location = s.location;
+  }
+
+  // by_type.
+  inline
+   TreeClassifierParser ::by_type::by_type ()
+     : type (empty)
+  {}
+
+  inline
+   TreeClassifierParser ::by_type::by_type (const by_type& other)
+    : type (other.type)
+  {}
+
+  inline
+   TreeClassifierParser ::by_type::by_type (token_type t)
+    : type (yytranslate_ (t))
+  {}
+
+  inline
+  void
+   TreeClassifierParser ::by_type::move (by_type& that)
+  {
+    type = that.type;
+    that.type = empty;
+  }
+
+  inline
+  int
+   TreeClassifierParser ::by_type::type_get () const
+  {
+    return type;
+  }
+
+  inline
+   TreeClassifierParser ::token_type
+   TreeClassifierParser ::by_type::token () const
+  {
+    // YYTOKNUM[NUM] -- (External) token number corresponding to the
+    // (internal) symbol number NUM (which must be that of a token).  */
+    static
+    const unsigned short int
+    yytoken_number_[] =
+    {
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278
+    };
+    return static_cast<token_type> (yytoken_number_[type]);
+  }
+  // Implementation of make_symbol for each symbol type.
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_END (const location_type& l)
+  {
+    return symbol_type (token::END, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_ID (const std::string& v, const location_type& l)
+  {
+    return symbol_type (token::ID, v, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_VAR_ID (const std::string& v, const location_type& l)
+  {
+    return symbol_type (token::VAR_ID, v, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_IS (const location_type& l)
+  {
+    return symbol_type (token::IS, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_MATCH (const location_type& l)
+  {
+    return symbol_type (token::MATCH, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_ON (const location_type& l)
+  {
+    return symbol_type (token::ON, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_DEGREE (const location_type& l)
+  {
+    return symbol_type (token::DEGREE, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_CLASS (const location_type& l)
+  {
+    return symbol_type (token::CLASS, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_VARIABLES (const location_type& l)
+  {
+    return symbol_type (token::VARIABLES, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_END_VARIABLES (const location_type& l)
+  {
+    return symbol_type (token::END_VARIABLES, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_CONSTANTS (const location_type& l)
+  {
+    return symbol_type (token::CONSTANTS, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_END_CONSTANTS (const location_type& l)
+  {
+    return symbol_type (token::END_CONSTANTS, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_END_CLASS (const location_type& l)
+  {
+    return symbol_type (token::END_CLASS, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_EXTENDS (const location_type& l)
+  {
+    return symbol_type (token::EXTENDS, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_IMPORTANT (const location_type& l)
+  {
+    return symbol_type (token::IMPORTANT, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_PERIOD (const location_type& l)
+  {
+    return symbol_type (token::PERIOD, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_SEMICOLON (const location_type& l)
+  {
+    return symbol_type (token::SEMICOLON, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_COMMA (const location_type& l)
+  {
+    return symbol_type (token::COMMA, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_LPAR (const location_type& l)
+  {
+    return symbol_type (token::LPAR, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_RPAR (const location_type& l)
+  {
+    return symbol_type (token::RPAR, l);
+  }
+
+   TreeClassifierParser ::symbol_type
+   TreeClassifierParser ::make_EQUAL (const location_type& l)
+  {
+    return symbol_type (token::EQUAL, l);
+  }
 
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 } // tc
-#line 500 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 1301 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 
