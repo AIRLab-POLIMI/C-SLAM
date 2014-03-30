@@ -57,7 +57,7 @@
 	#include "TreeClassifierBuilder.h"
 	
 	#undef yylex
-	#define yylex driver.lexer->lex
+	#define yylex builder.scanner->lex
 	
 
 #line 64 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:408

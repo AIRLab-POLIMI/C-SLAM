@@ -31,7 +31,7 @@
 	#include "TreeClassifierBuilder.h"
 	
 	#undef yylex
-	#define yylex driver.lexer->lex
+	#define yylex builder.scanner->lex
 	
 }
 

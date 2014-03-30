@@ -380,6 +380,7 @@ void tcfree (void *  );
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
 /* %% [1.0] yytext/yyin/yyout/yy_state_type/yylineno etc. def's & init go here */
+/* Begin user sect3 */
 #define YY_SKIP_YYWRAP
 
 #define FLEX_DEBUG
@@ -591,9 +592,9 @@ static yyconst flex_int16_t yy_chk[248] =
 
 static yyconst flex_int16_t yy_rule_linenum[24] =
     {   0,
-       46,   47,   50,   51,   52,   53,   54,   55,   56,   57,
-       58,   59,   60,   61,   62,   63,   64,   65,   66,   67,
-       71,   72,   75
+       43,   44,   47,   48,   49,   50,   51,   52,   53,   54,
+       55,   56,   57,   58,   59,   60,   61,   62,   63,   64,
+       68,   69,   72
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -608,12 +609,9 @@ static yyconst flex_int16_t yy_rule_linenum[24] =
 	#include <sstream>
 	#include <stdexcept>
 	#include <string>
-	#include "TreeClassifierScanner.h"
-	#include "TreeClassifierParser.tab.h"
 	
-	#if !defined(yyFlexLexerOnce)
-	#include <FlexLexer.h>
-	#endif
+	#include "TreeClassifierParser.tab.h"
+	#include "TreeClassifierScanner.h"
 	
 	#undef yywrap
 	#define yywrap() 1
@@ -623,10 +621,10 @@ static yyconst flex_int16_t yy_rule_linenum[24] =
 	static tc::location loc;
 #define YY_NO_INPUT 1
 
-#line 36 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 33 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 	// Code run each time a pattern is matched.
 	#define YY_USER_ACTION  loc.columns (yyleng);
-#line 630 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp"
+#line 628 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -789,7 +787,7 @@ YY_DECL
 	register int yy_act;
     
 /* %% [7.0] user's declarations go here */
-#line 39 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 36 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 
 
 	// Code run each time yylex is called.
@@ -797,7 +795,7 @@ YY_DECL
 
 
  /* blank and new line */
-#line 801 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp"
+#line 799 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -908,135 +906,135 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 43 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { loc.step (); }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 44 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { loc.lines(yyleng); loc.step(); }
 	YY_BREAK
 /* keywords and symbols */
 case 3:
 YY_RULE_SETUP
-#line 50 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 47 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_CLASS(loc); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 48 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_END_CLASS(loc); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 49 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_IS(loc); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 53 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 50 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_MATCH(loc); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 54 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 51 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_ON(loc); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 52 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_DEGREE(loc); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 53 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_VARIABLES(loc); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 57 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 54 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_END_VARIABLES(loc); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 58 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_CONSTANTS(loc); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 59 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_END_CONSTANTS(loc); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 60 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 57 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_IMPORTANT(loc); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 61 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 58 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_EXTENDS(loc); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 62 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 59 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_EQUAL(loc); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 63 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 60 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_COMMA(loc); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 64 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 61 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_PERIOD(loc); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 65 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 62 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_SEMICOLON(loc); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 66 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 63 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_LPAR(loc); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 67 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 64 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_RPAR(loc); }
 	YY_BREAK
 /* identificators */
 case 21:
 YY_RULE_SETUP
-#line 71 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 68 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_ID(yytext, loc); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 72 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 69 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_VAR_ID(yytext, loc); }
 	YY_BREAK
 /* unknown tokens */
 case 23:
 YY_RULE_SETUP
-#line 75 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 72 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at " << loc << endl; throw std::runtime_error(ss.str()); }
 	YY_BREAK
 /* End of file */
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
-#line 78 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 75 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 { return tc::TreeClassifierParser::make_END(loc); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 80 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 77 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
 ECHO;
 	YY_BREAK
-#line 1040 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp"
+#line 1038 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2083,4 +2081,13 @@ void tcfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 80 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+#line 77 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
+
+
+
+int tcFlexLexer::yylex()
+{
+	return 0;
+}
+
+

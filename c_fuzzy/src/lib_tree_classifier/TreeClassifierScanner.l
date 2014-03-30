@@ -2,12 +2,9 @@
 	#include <sstream>
 	#include <stdexcept>
 	#include <string>
-	#include "TreeClassifierScanner.h"
-	#include "TreeClassifierParser.tab.h"
 	
-	#if !defined(yyFlexLexerOnce)
-	#include <FlexLexer.h>
-	#endif
+	#include "TreeClassifierParser.tab.h"
+	#include "TreeClassifierScanner.h"
 	
 	#undef yywrap
 	#define yywrap() 1
@@ -76,4 +73,11 @@ UNDERSCORE [_]
 
  /* End of file */
 <<EOF>> { return tc::TreeClassifierParser::make_END(loc); }
+
+%%
+
+int tcFlexLexer::yylex()
+{
+	return 0;
+}
 

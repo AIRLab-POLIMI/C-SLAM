@@ -27,9 +27,7 @@
 #include "TreeClassifierParser.tab.h"
 
 #undef YY_DECL
-#define YY_DECL tc::TreeClassifierParser::symbol_type lex(TreeClassifierBuilder& builder)
-
-YY_DECL;
+#define YY_DECL tc::TreeClassifierParser::symbol_type tc::TreeClassifierScanner::lex()
 
 #ifndef __FLEX_LEXER_H
 #define yyFlexLexer tcFlexLexer
@@ -52,19 +50,9 @@ public:
 	{
 	}
 
-	virtual tc::TreeClassifierParser::symbol_type lex(TreeClassifierBuilder& builder);
+	tc::TreeClassifierParser::symbol_type lex();
 };
 
-}
-
-#ifdef yylex
-#undef yylex
-#endif
-
-int tcFlexLexer::yylex()
-{
-	std::cerr << "in ExampleFlexLexer::yylex() !" << std::endl;
-	return 0;
 }
 
 #endif /* TREECLASSIFIERSCANNER_H_ */

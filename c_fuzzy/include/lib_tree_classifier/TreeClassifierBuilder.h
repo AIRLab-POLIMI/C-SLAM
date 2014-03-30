@@ -82,7 +82,7 @@ private:
 	void checkRelationVar(std::string relatedVariable, FuzzyClass& relatedClass,
 			FuzzyClass& fuzzyClass);
 
-private:
+public:
 	//Data needed to get Builder working
 	tc::TreeClassifierParser* parser;
 	tc::TreeClassifierScanner* scanner;
