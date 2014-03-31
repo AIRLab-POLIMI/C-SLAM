@@ -50,8 +50,12 @@
 	#include "FuzzyClass.h" 
 
 	class TreeClassifierBuilder;
+	namespace tc
+	{
+		class TreeClassifierScanner;
+	}
 
-#line 55 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 59 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -127,7 +131,7 @@
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 namespace tc {
-#line 131 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 135 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 
@@ -329,27 +333,27 @@ namespace tc {
     {
       enum yytokentype
       {
-        END = 258,
-        ID = 259,
-        VAR_ID = 260,
-        IS = 261,
-        MATCH = 262,
-        ON = 263,
-        DEGREE = 264,
-        CLASS = 265,
-        VARIABLES = 266,
-        END_VARIABLES = 267,
-        CONSTANTS = 268,
-        END_CONSTANTS = 269,
-        END_CLASS = 270,
-        EXTENDS = 271,
-        IMPORTANT = 272,
-        PERIOD = 273,
-        SEMICOLON = 274,
-        COMMA = 275,
-        LPAR = 276,
-        RPAR = 277,
-        EQUAL = 278
+        END = 0,
+        ID = 258,
+        VAR_ID = 259,
+        IS = 260,
+        MATCH = 261,
+        ON = 262,
+        DEGREE = 263,
+        CLASS = 264,
+        VARIABLES = 265,
+        END_VARIABLES = 266,
+        CONSTANTS = 267,
+        END_CONSTANTS = 268,
+        END_CLASS = 269,
+        EXTENDS = 270,
+        IMPORTANT = 271,
+        PERIOD = 272,
+        SEMICOLON = 273,
+        COMMA = 274,
+        LPAR = 275,
+        RPAR = 276,
+        EQUAL = 277
       };
     };
 
@@ -544,7 +548,7 @@ namespace tc {
 
 
     /// Build a parser object.
-     TreeClassifierParser  (TreeClassifierBuilder  &builder_yyarg);
+     TreeClassifierParser  (TreeClassifierBuilder  &builder_yyarg, tc::TreeClassifierScanner  &scanner_yyarg);
     virtual ~ TreeClassifierParser  ();
 
     /// Parse.
@@ -742,18 +746,19 @@ namespace tc {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 68,     ///< Last index in yytable_.
+      yylast_ = 69,     ///< Last index in yytable_.
       yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 24  ///< Number of tokens.
+      yyntokens_ = 23  ///< Number of tokens.
     };
 
 
     // User arguments.
     TreeClassifierBuilder  &builder;
+    tc::TreeClassifierScanner  &scanner;
   };
 
   // Symbol number corresponding to token number t.
@@ -792,9 +797,9 @@ namespace tc {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23
+      15,    16,    17,    18,    19,    20,    21,    22
     };
-    const unsigned int user_token_number_max_ = 278;
+    const unsigned int user_token_number_max_ = 277;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -827,45 +832,45 @@ namespace tc {
   {
       switch (other.type_get ())
     {
-      case 30: // constants
-      case 31: // constantList
+      case 29: // constants
+      case 30: // constantList
         value.copy< ConstantList* > (other.value);
         break;
 
-      case 29: // fuzzyClassElements
+      case 28: // fuzzyClassElements
         value.copy< ElementsList > (other.value);
         break;
 
-      case 35: // fuzzyFeature
+      case 34: // fuzzyFeature
         value.copy< FuzzyFeatureData > (other.value);
         break;
 
-      case 34: // fuzzyFeatures
+      case 33: // fuzzyFeatures
         value.copy< FuzzyFeatureList* > (other.value);
         break;
 
-      case 32: // variables
-      case 33: // variableList
+      case 31: // variables
+      case 32: // variableList
         value.copy< VariableList* > (other.value);
         break;
 
-      case 28: // importantFlag
+      case 27: // importantFlag
         value.copy< bool > (other.value);
         break;
 
-      case 4: // ID
-      case 5: // VAR_ID
-      case 27: // fuzzySuperclass
-      case 40: // fuzzyConstraint
-      case 41: // fuzzyDegree
-      case 42: // var
+      case 3: // ID
+      case 4: // VAR_ID
+      case 26: // fuzzySuperclass
+      case 39: // fuzzyConstraint
+      case 40: // fuzzyDegree
+      case 41: // var
         value.copy< std::string > (other.value);
         break;
 
-      case 36: // fuzzySimpleFeature
-      case 37: // fuzzySimpleRelation
-      case 38: // fuzzyComplexRelation
-      case 39: // fuzzyInverseRelation
+      case 35: // fuzzySimpleFeature
+      case 36: // fuzzySimpleRelation
+      case 37: // fuzzyComplexRelation
+      case 38: // fuzzyInverseRelation
         value.copy< std::vector<std::string>  > (other.value);
         break;
 
@@ -886,45 +891,45 @@ namespace tc {
     (void) v;
       switch (this->type_get ())
     {
-      case 30: // constants
-      case 31: // constantList
+      case 29: // constants
+      case 30: // constantList
         value.copy< ConstantList* > (v);
         break;
 
-      case 29: // fuzzyClassElements
+      case 28: // fuzzyClassElements
         value.copy< ElementsList > (v);
         break;
 
-      case 35: // fuzzyFeature
+      case 34: // fuzzyFeature
         value.copy< FuzzyFeatureData > (v);
         break;
 
-      case 34: // fuzzyFeatures
+      case 33: // fuzzyFeatures
         value.copy< FuzzyFeatureList* > (v);
         break;
 
-      case 32: // variables
-      case 33: // variableList
+      case 31: // variables
+      case 32: // variableList
         value.copy< VariableList* > (v);
         break;
 
-      case 28: // importantFlag
+      case 27: // importantFlag
         value.copy< bool > (v);
         break;
 
-      case 4: // ID
-      case 5: // VAR_ID
-      case 27: // fuzzySuperclass
-      case 40: // fuzzyConstraint
-      case 41: // fuzzyDegree
-      case 42: // var
+      case 3: // ID
+      case 4: // VAR_ID
+      case 26: // fuzzySuperclass
+      case 39: // fuzzyConstraint
+      case 40: // fuzzyDegree
+      case 41: // var
         value.copy< std::string > (v);
         break;
 
-      case 36: // fuzzySimpleFeature
-      case 37: // fuzzySimpleRelation
-      case 38: // fuzzyComplexRelation
-      case 39: // fuzzyInverseRelation
+      case 35: // fuzzySimpleFeature
+      case 36: // fuzzySimpleRelation
+      case 37: // fuzzyComplexRelation
+      case 38: // fuzzyInverseRelation
         value.copy< std::vector<std::string>  > (v);
         break;
 
@@ -1015,45 +1020,45 @@ namespace tc {
     // Type destructor.
     switch (yytype)
     {
-      case 30: // constants
-      case 31: // constantList
+      case 29: // constants
+      case 30: // constantList
         value.template destroy< ConstantList* > ();
         break;
 
-      case 29: // fuzzyClassElements
+      case 28: // fuzzyClassElements
         value.template destroy< ElementsList > ();
         break;
 
-      case 35: // fuzzyFeature
+      case 34: // fuzzyFeature
         value.template destroy< FuzzyFeatureData > ();
         break;
 
-      case 34: // fuzzyFeatures
+      case 33: // fuzzyFeatures
         value.template destroy< FuzzyFeatureList* > ();
         break;
 
-      case 32: // variables
-      case 33: // variableList
+      case 31: // variables
+      case 32: // variableList
         value.template destroy< VariableList* > ();
         break;
 
-      case 28: // importantFlag
+      case 27: // importantFlag
         value.template destroy< bool > ();
         break;
 
-      case 4: // ID
-      case 5: // VAR_ID
-      case 27: // fuzzySuperclass
-      case 40: // fuzzyConstraint
-      case 41: // fuzzyDegree
-      case 42: // var
+      case 3: // ID
+      case 4: // VAR_ID
+      case 26: // fuzzySuperclass
+      case 39: // fuzzyConstraint
+      case 40: // fuzzyDegree
+      case 41: // var
         value.template destroy< std::string > ();
         break;
 
-      case 36: // fuzzySimpleFeature
-      case 37: // fuzzySimpleRelation
-      case 38: // fuzzyComplexRelation
-      case 39: // fuzzyInverseRelation
+      case 35: // fuzzySimpleFeature
+      case 36: // fuzzySimpleRelation
+      case 37: // fuzzyComplexRelation
+      case 38: // fuzzyInverseRelation
         value.template destroy< std::vector<std::string>  > ();
         break;
 
@@ -1071,45 +1076,45 @@ namespace tc {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 30: // constants
-      case 31: // constantList
+      case 29: // constants
+      case 30: // constantList
         value.move< ConstantList* > (s.value);
         break;
 
-      case 29: // fuzzyClassElements
+      case 28: // fuzzyClassElements
         value.move< ElementsList > (s.value);
         break;
 
-      case 35: // fuzzyFeature
+      case 34: // fuzzyFeature
         value.move< FuzzyFeatureData > (s.value);
         break;
 
-      case 34: // fuzzyFeatures
+      case 33: // fuzzyFeatures
         value.move< FuzzyFeatureList* > (s.value);
         break;
 
-      case 32: // variables
-      case 33: // variableList
+      case 31: // variables
+      case 32: // variableList
         value.move< VariableList* > (s.value);
         break;
 
-      case 28: // importantFlag
+      case 27: // importantFlag
         value.move< bool > (s.value);
         break;
 
-      case 4: // ID
-      case 5: // VAR_ID
-      case 27: // fuzzySuperclass
-      case 40: // fuzzyConstraint
-      case 41: // fuzzyDegree
-      case 42: // var
+      case 3: // ID
+      case 4: // VAR_ID
+      case 26: // fuzzySuperclass
+      case 39: // fuzzyConstraint
+      case 40: // fuzzyDegree
+      case 41: // var
         value.move< std::string > (s.value);
         break;
 
-      case 36: // fuzzySimpleFeature
-      case 37: // fuzzySimpleRelation
-      case 38: // fuzzyComplexRelation
-      case 39: // fuzzyInverseRelation
+      case 35: // fuzzySimpleFeature
+      case 36: // fuzzySimpleRelation
+      case 37: // fuzzyComplexRelation
+      case 38: // fuzzyInverseRelation
         value.move< std::vector<std::string>  > (s.value);
         break;
 
@@ -1163,7 +1168,7 @@ namespace tc {
     {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278
+     275,   276,   277
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1297,7 +1302,7 @@ namespace tc {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:372
 } // tc
-#line 1301 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
+#line 1306 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h" // lalr1.cc:372
 
 
 

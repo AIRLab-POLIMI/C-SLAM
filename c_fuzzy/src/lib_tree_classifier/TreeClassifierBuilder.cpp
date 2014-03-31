@@ -38,7 +38,7 @@ void TreeClassifierBuilder::parse(const char *filename)
 	}
 
 	scanner = new tc::TreeClassifierScanner(&inputFile);
-	parser = new tc::TreeClassifierParser((*this));
+	parser = new tc::TreeClassifierParser(*this, *scanner);
 
 	if (parser->parse() == -1)
 	{

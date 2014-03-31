@@ -10,8 +10,6 @@
 	#define yywrap() 1
 	
 	using namespace std;
-	
-	static tc::location loc;
 %}
 
 
@@ -38,6 +36,16 @@ UNDERSCORE [_]
 	// Code run each time yylex is called.
 	loc.step ();
 %}
+
+ /* C++ stle nested comment eater */
+"/*" { yy_push_state(YY_START); BEGIN(COMMENT); }
+<COMMENT>
+{
+	{NEWLINE} { loc.lines(yyleng); loc.step(); }
+	"/*" { yy_push_state(COMMENT); BEGIN(COMMENT); }
+	"*/" { BEGIN(yy_top_state()); yy_pop_state(); }
+	. {}
+}
 
  /* blank and new line */
 {BLANK} { loc.step (); }

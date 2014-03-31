@@ -2,24 +2,19 @@
 	#include <sstream>
 	#include <stdexcept>
 	#include <string>
+	
+	#include "FuzzyParser.tab.h"
 	#include "FuzzyScanner.h"
 	
-	#define YY_USER_ACTION this->count(yyleng);
-	
-	#define UNKNOWN -1
-	
-	typedef yy::FuzzyParser::token token;
+	#undef yywrap
+	#define yywrap() 1
 	
 	using namespace std;
 %}
 
 
-%option yylineno
-%option debug 
-%option nodefault 
-%option yyclass="FuzzyScanner" 
-%option noyywrap 
-%option c++
+%option noyywrap nounput batch debug noinput c++
+%option prefix="fz"
 
 %x COMMENT
 
@@ -31,41 +26,57 @@ NEWLINE \n\r|\n
 FUZZYLABEL tol|tor|tri|tra|int|sgt
 SIGN [-+]
 
+%{
+	// Code run each time a pattern is matched.
+	#define YY_USER_ACTION  loc.columns (yyleng);
+%}
 %%
+%{
+	// Code run each time yylex is called.
+	loc.step ();
+%}
+
 
  /* C++ stle nested comment eater */
-"/*" { saveLastState(YY_START); BEGIN(COMMENT); }
+"/*" { yy_push_state(YY_START); BEGIN(COMMENT); }
 <COMMENT>
 {
-	[^/*]*
-	"/"+[^*/]*
-	"/*" { saveLastState(YY_START); BEGIN(COMMENT); }
-	"*"+[^*/]*
-	"*"+"/" { BEGIN(getLastState()); }
+	{NEWLINE} { loc.lines(yyleng); loc.step(); }
+	"/*" { yy_push_state(COMMENT); BEGIN(COMMENT); }
+	"*/" { BEGIN(yy_top_state()); yy_pop_state(); }
+	. {}
 }
+
  /* blank and new line */
 {BLANK} { }
 {NEWLINE} { this->newLine(); }
 
  /* keywords and symbols */
-"fuzzify"|"FUZZIFY" { return token::FUZZIFY; }
-"end_fuzzify"|"END_FUZZIFY" { return token::END_FUZZIFY; }
-"and"|"AND" { return token::OP_AND; }
-"or"|"OR" { return token::OP_OR; }
-"~"|"not"|"NOT" { return token::OP_NOT; }
-"then"|"THEN" { return token::THEN; }
-"is"|"IS" { return token::IS; }
-"if"|"IF" { return token::IF; }
-"(" { return token::OPEN_B; }
-")" { return token::CLOSE_B; }
-";" { return token::END_RULE; }
-":=" { return token::LIKE; }
-"," { return token::COMMA; }
+"fuzzify"|"FUZZIFY" { return fz::Fuzzyparser::make_FUZZIFY(loc); }
+"end_fuzzify"|"END_FUZZIFY" { return fz::Fuzzyparser::make_END_FUZZIFY(loc); }
+"and"|"AND" { return fz::Fuzzyparser::make_OP_AND(loc); }
+"or"|"OR" { return fz::Fuzzyparser::make_OP_OR(loc); }
+"~"|"not"|"NOT" { return fz::Fuzzyparser::make_OP_NOT(loc); }
+"then"|"THEN" { return fz::Fuzzyparser::make_THEN(loc); }
+"is"|"IS" { return fz::Fuzzyparser::make_IS(loc); }
+"if"|"IF" { return fz::Fuzzyparser::make_IF(loc); }
+"(" { return fz::Fuzzyparser::make_OPEN_B(loc); }
+")" { return fz::Fuzzyparser::make_CLOSE_B(loc); }
+";" { return fz::Fuzzyparser::make_END_RULE(loc); }
+":=" { return fz::Fuzzyparser::make_LIKE(loc); }
+"," { return fz::Fuzzyparser::make_COMMA(loc); }
 
  /* identificators */
-{CAPITAL}({LETTER}|{DIGIT})* { yylval->str = new std::string(yytext); return token::ID; }
--?{DIGIT}+ { yylval->integer = atoi(yytext); return token::PARAMETER; }
-{FUZZYLABEL} { yylval->str = new std::string(yytext); return token::F_LABEL; }
+{CAPITAL}({LETTER}|{DIGIT})* { return fz::Fuzzyparser::make_ID(yytext, loc); }
+-?{DIGIT}+ { return fz::Fuzzyparser::make_PARAMETER(atoi(yytext), loc); }
+{FUZZYLABEL} { return fz::Fuzzyparser::make_F_LABEL(yytext, loc); }
 
  /* unknown tokens */
 . { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; throw std::runtime_error(ss.str()); }
+
+%%
+
+int tcFlexLexer::yylex()
+{
+	return 0;
+}

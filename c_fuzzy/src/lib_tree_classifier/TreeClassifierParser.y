@@ -16,9 +16,14 @@
 	#include "FuzzyClass.h" 
 
 	class TreeClassifierBuilder;
+	namespace tc
+	{
+		class TreeClassifierScanner;
+	}
 }
  
 %parse-param { TreeClassifierBuilder  &builder  }
+%parse-param { tc::TreeClassifierScanner  &scanner  }
 
 %error-verbose
 %locations
@@ -31,11 +36,11 @@
 	#include "TreeClassifierBuilder.h"
 	
 	#undef yylex
-	#define yylex builder.scanner->lex
+	#define yylex scanner.lex
 	
 }
 
-%token END
+%token END 0
 
 %token <std::string> ID VAR_ID
 %token IS

@@ -37,7 +37,7 @@ class TreeClassifierBuilder
 
 public:
 	TreeClassifierBuilder() :
-			parser(NULL)
+			parser(NULL), scanner(NULL)
 	{
 	}
 

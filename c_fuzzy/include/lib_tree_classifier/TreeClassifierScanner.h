@@ -51,6 +51,8 @@ public:
 	}
 
 	tc::TreeClassifierParser::symbol_type lex();
+
+	tc::location loc;
 };
 
 }
