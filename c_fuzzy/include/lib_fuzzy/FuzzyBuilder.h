@@ -32,9 +32,10 @@
 #include "FuzzyMF.h"
 #include "FuzzyRule.h"
 #include "FuzzyKnowledgeBase.h"
-#include "FuzzyScanner.h"
-#include "FuzzyParser.tab.h"
 #include "BitData.h"
+
+#include "FuzzyParser.tab.h"
+#include "FuzzyScanner.h"
 
 enum FuzzySets
 {
@@ -65,8 +66,8 @@ public:
 
 private:
 	//Data needed to get Builder working
-	yy::FuzzyParser* parser;
-	FuzzyScanner* scanner;
+	fz::FuzzyParser* parser;
+	fz::FuzzyScanner* scanner;
 	std::map<std::string, FuzzySets> fuzzyMap;
 
 	//Data needed to get FuzzyReasoner working
@@ -84,15 +85,15 @@ public:
 	Node* buildAnd(Node* left, Node* right);
 	Node* buildOr(Node* left, Node* right);
 	Node* buildNot(Node* operand);
-	Node* buildAssignment(std::string* output, std::string* label);
-	Node* buildIs(std::string* domain, std::string* mfLabel);
+	Node* buildAssignment(std::string output, std::string label);
+	Node* buildIs(std::string domain, std::string mfLabel);
 
 	//Function to build a fuzzy Domain
 	void buildDomain(std::vector<std::string> variables);
 
 	//Functions to build fuzzy MF
-	void buildMF(std::string* name, std::string* shape,
-				std::vector<int>* parameters);
+	void buildMF(std::string name, std::string shape,
+				std::vector<int>& parameters);
 	FuzzyMF* buildTor(int bottom, int top);
 	FuzzyMF* buildTol(int top, int bottom);
 	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,

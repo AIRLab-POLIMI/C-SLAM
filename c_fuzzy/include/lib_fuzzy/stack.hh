@@ -32,7 +32,7 @@
 
 /**
  ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/stack.hh
- ** Define the yy::stack class.
+ ** Define the fz::stack class.
  */
 
 #ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_STACK_HH_INCLUDED
@@ -40,8 +40,8 @@
 
 # include <vector>
 
-
-namespace yy {
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // stack.hh:133
+namespace fz {
 #line 46 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/stack.hh" // stack.hh:133
   template <class T, class S = std::vector<T> >
   class stack
@@ -151,8 +151,8 @@ namespace yy {
     unsigned int range_;
   };
 
-
-} // yy
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // stack.hh:133
+} // fz
 #line 157 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/stack.hh" // stack.hh:133
 
 #endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_STACK_HH_INCLUDED

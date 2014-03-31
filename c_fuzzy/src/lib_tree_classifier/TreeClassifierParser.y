@@ -30,7 +30,6 @@
  
 %code
 {
-	#include<cstdlib>
 	#include<fstream>
 
 	#include "TreeClassifierBuilder.h"

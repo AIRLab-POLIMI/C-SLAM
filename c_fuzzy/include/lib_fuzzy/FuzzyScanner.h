@@ -24,71 +24,37 @@
 #ifndef FUZZYSCANNER_H_
 #define FUZZYSCANNER_H_
 
-#if !defined(yyFlexLexerOnce)
-#include <FlexLexer.h>
-#endif
-
-#undef  YY_DECL
-#define YY_DECL int  FuzzyScanner::yylex()
-
 #include "FuzzyParser.tab.h"
 
-class FuzzyScanner: public yyFlexLexer
+#undef YY_DECL
+#define YY_DECL fz::FuzzyParser::symbol_type fz::FuzzyScanner::lex()
+
+#ifndef __FLEX_LEXER_H
+#define yyFlexLexer fzFlexLexer
+#include "FlexLexer.h"
+#undef yyFlexLexer
+#endif
+
+namespace fz
+{
+
+class FuzzyScanner: public fzFlexLexer
 {
 public:
-
 	FuzzyScanner(std::istream* in) :
-				yyFlexLexer(in), yylval(NULL), column(0), line(1)
+			fzFlexLexer(in)
 	{
 	}
 
-	int yylex(yy::FuzzyParser::semantic_type* lval)
+	virtual ~FuzzyScanner()
 	{
-		yylval = lval;
-		return (yylex());
 	}
 
-	inline void count(int lenght)
-	{
-		column += lenght;
-	}
+	fz::FuzzyParser::symbol_type lex();
 
-	inline void newLine()
-	{
-		column = 0;
-		line++;
-	}
-
-	inline int getColumn()
-	{
-		return column;
-	}
-
-	inline int getLine()
-	{
-		return line;
-	}
-
-	inline void saveLastState(int state)
-	{
-		caller.push_back(state);
-	}
-
-	inline int getLastState()
-	{
-		int lastState = caller.back();
-		caller.pop_back();
-		return lastState;
-	}
-
-private:
-	/* hide this one from public view */
-	int yylex();
-	/* yyval ptr */
-	yy::FuzzyParser::semantic_type *yylval;
-	int column, line;
-	/*comment eater stack*/
-	std::vector<int> caller;
+	fz::location loc;
 };
+
+}
 
 #endif /* FUZZYSCANNER_H_ */

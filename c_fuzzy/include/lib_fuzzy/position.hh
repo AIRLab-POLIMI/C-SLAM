@@ -32,7 +32,7 @@
 
 /**
  ** \file /home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/position.hh
- ** Define the yy::position class.
+ ** Define the fz::position class.
  */
 
 #ifndef YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_POSITION_HH_INCLUDED
@@ -50,8 +50,8 @@
 #  endif
 # endif
 
-
-namespace yy {
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // location.cc:291
+namespace fz {
 #line 56 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/position.hh" // location.cc:291
   /// Abstract a position.
   class position
@@ -174,7 +174,7 @@ namespace yy {
     return ostr << pos.line << '.' << pos.column;
   }
 
-
-} // yy
+#line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // location.cc:291
+} // fz
 #line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/position.hh" // location.cc:291
 #endif // !YY_YY_HOME_DAVE_COGNITIVESLAM_SRC_C_FUZZY_SRC_LIB_FUZZY_POSITION_HH_INCLUDED

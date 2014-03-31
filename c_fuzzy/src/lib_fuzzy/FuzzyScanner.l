@@ -48,35 +48,38 @@ SIGN [-+]
 }
 
  /* blank and new line */
-{BLANK} { }
-{NEWLINE} { this->newLine(); }
+{BLANK} { loc.step (); }
+{NEWLINE} { loc.lines(yyleng); loc.step(); }
 
  /* keywords and symbols */
-"fuzzify"|"FUZZIFY" { return fz::Fuzzyparser::make_FUZZIFY(loc); }
-"end_fuzzify"|"END_FUZZIFY" { return fz::Fuzzyparser::make_END_FUZZIFY(loc); }
-"and"|"AND" { return fz::Fuzzyparser::make_OP_AND(loc); }
-"or"|"OR" { return fz::Fuzzyparser::make_OP_OR(loc); }
-"~"|"not"|"NOT" { return fz::Fuzzyparser::make_OP_NOT(loc); }
-"then"|"THEN" { return fz::Fuzzyparser::make_THEN(loc); }
-"is"|"IS" { return fz::Fuzzyparser::make_IS(loc); }
-"if"|"IF" { return fz::Fuzzyparser::make_IF(loc); }
-"(" { return fz::Fuzzyparser::make_OPEN_B(loc); }
-")" { return fz::Fuzzyparser::make_CLOSE_B(loc); }
-";" { return fz::Fuzzyparser::make_END_RULE(loc); }
-":=" { return fz::Fuzzyparser::make_LIKE(loc); }
-"," { return fz::Fuzzyparser::make_COMMA(loc); }
+"fuzzify"|"FUZZIFY" { return fz::FuzzyParser::make_FUZZIFY(loc); }
+"end_fuzzify"|"END_FUZZIFY" { return fz::FuzzyParser::make_END_FUZZIFY(loc); }
+"and"|"AND" { return fz::FuzzyParser::make_OP_AND(loc); }
+"or"|"OR" { return fz::FuzzyParser::make_OP_OR(loc); }
+"~"|"not"|"NOT" { return fz::FuzzyParser::make_OP_NOT(loc); }
+"then"|"THEN" { return fz::FuzzyParser::make_THEN(loc); }
+"is"|"IS" { return fz::FuzzyParser::make_IS(loc); }
+"if"|"IF" { return fz::FuzzyParser::make_IF(loc); }
+"(" { return fz::FuzzyParser::make_OPEN_B(loc); }
+")" { return fz::FuzzyParser::make_CLOSE_B(loc); }
+";" { return fz::FuzzyParser::make_END_RULE(loc); }
+":=" { return fz::FuzzyParser::make_LIKE(loc); }
+"," { return fz::FuzzyParser::make_COMMA(loc); }
 
  /* identificators */
-{CAPITAL}({LETTER}|{DIGIT})* { return fz::Fuzzyparser::make_ID(yytext, loc); }
--?{DIGIT}+ { return fz::Fuzzyparser::make_PARAMETER(atoi(yytext), loc); }
-{FUZZYLABEL} { return fz::Fuzzyparser::make_F_LABEL(yytext, loc); }
+{CAPITAL}({LETTER}|{DIGIT})* { return fz::FuzzyParser::make_ID(yytext, loc); }
+-?{DIGIT}+ { return fz::FuzzyParser::make_PARAMETER(atoi(yytext), loc); }
+{FUZZYLABEL} { return fz::FuzzyParser::make_F_LABEL(yytext, loc); }
 
  /* unknown tokens */
-. { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at line " << this->getLine() << ", column " << this->getColumn() << endl; throw std::runtime_error(ss.str()); }
+. { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at " << loc << endl; throw std::runtime_error(ss.str()); }
+
+ /* End of file */
+<<EOF>> { return fz::FuzzyParser::make_END(loc); }
 
 %%
 
-int tcFlexLexer::yylex()
+int fzFlexLexer::yylex()
 {
 	return 0;
 }

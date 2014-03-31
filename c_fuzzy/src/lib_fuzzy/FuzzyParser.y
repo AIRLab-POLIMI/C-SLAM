@@ -2,6 +2,9 @@
 %debug
 %defines
 %define parser_class_name { FuzzyParser }
+%define api.namespace {fz}
+%define api.token.constructor
+%define api.value.type variant
  
 %code requires
 {
@@ -11,32 +14,35 @@
 	#include <vector>
 	#include <map>
 	#include "Node.h"
+	
 	class FuzzyBuilder;
-	class FuzzyScanner;
+	
+	namespace fz
+	{
+		class FuzzyScanner;
+	}
 }
- 
-%lex-param   { FuzzyScanner  &scanner  }
-%parse-param { FuzzyScanner  &scanner  }
- 
-%lex-param   { FuzzyBuilder  &builder  }
+
 %parse-param { FuzzyBuilder  &builder  }
+%parse-param { fz::FuzzyScanner  &scanner  }
+
 
 %error-verbose
 %locations
  
 %code
 {
-	#include <cstdlib>
 	#include <fstream>
 	
 	#include "FuzzyBuilder.h"
 	
-	static int yylex(yy::FuzzyParser::semantic_type *yylval, yy::FuzzyParser::location_type* l, FuzzyScanner& scanner, FuzzyBuilder& builder);
+	#undef yylex
+	#define yylex scanner.lex
 }
 
-%union {int integer; std::string* str; Node* node; std::vector<int>* fshape; std::vector<std::string>* fvars; }
+%token END 0
 
-%token<str> ID
+%token <std::string> ID
 %token END_RULE
 %token OP_OR
 %token OP_AND
@@ -52,15 +58,15 @@
 
 %token LIKE
 %token COMMA
-%token <str> F_LABEL
-%token <integer> PARAMETER
+%token <std::string> F_LABEL
+%token <int> PARAMETER
 
-%type <node> wellFormedFormula
-%type <node> fuzzyComparison
-%type <node> fuzzyAssignment
-%type <fshape> shape
-%type <fshape> parametersList
-%type <fvars> fuzzyId
+%type <Node*> wellFormedFormula
+%type <Node*> fuzzyComparison
+%type <Node*> fuzzyAssignment
+%type <std::vector<int>> shape
+%type <std::vector<int>> parametersList
+%type <std::vector<std::string> > fuzzyId
 
 %left OP_AND
 %left OP_OR
@@ -71,37 +77,28 @@
 fuzzyFile		: fuzzySet ruleSet 
 			;
 
-fuzzySet		: FUZZIFY fuzzyId { builder.buildDomain(*$2); delete $2; } fuzzyTerm END_FUZZIFY fuzzySet
+fuzzySet		: FUZZIFY fuzzyId { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY fuzzySet
 			| /* Empty */
 			;
 
 fuzzyId			: ID 
 			{
-				$$ = new std::vector<std::string>;
-				$$->push_back(*$1);
-				delete $1;
+				$$.push_back($1);
 			}
 			| ID COMMA fuzzyId
 			{
 				$$ = $3;
-				$$->push_back(*$1);
-				delete $1;
+				$$.push_back($1);
 			}
 			;
 
 fuzzyTerm		: ID LIKE F_LABEL shape END_RULE
 			{
 				builder.buildMF($1, $3, $4);
-				delete $1;
-				delete $3;
-				delete $4;
 			}
 			| ID LIKE F_LABEL shape END_RULE fuzzyTerm 
 			{
 				builder.buildMF($1, $3, $4);
-				delete $1;
-				delete $3;
-				delete $4;
 			}
 			;
 
@@ -113,13 +110,12 @@ shape			: OPEN_B parametersList CLOSE_B
 
 parametersList		: PARAMETER 
 			{ 
-				$$ = new std::vector<int>;
-				$$->push_back($1);
+				$$.push_back($1);
 			}
 			| PARAMETER COMMA parametersList 
 			{ 
 				$$ = $3;
-				$$->push_back($1);
+				$$.push_back($1);
 			}
 			;
 
@@ -159,32 +155,20 @@ wellFormedFormula	: fuzzyComparison
 fuzzyComparison		: OPEN_B ID IS ID CLOSE_B 
 			{
 				$$ = builder.buildIs($2, $4);
-				delete $2;
-				delete $4;
 			}
 			;
 			
 fuzzyAssignment		: THEN OPEN_B ID IS ID CLOSE_B 
 			{
 				$$ = builder.buildAssignment($3, $5);
-				delete $3;
-				delete $5;
 			}
 			;
 %%
 
-void yy::FuzzyParser::error(const yy::FuzzyParser::location_type& l, const std::string& msg)
+void fz::FuzzyParser::error(const fz::FuzzyParser::location_type& l, const std::string& msg)
 {
 	std::stringstream ss;
 	ss << "Error: " << msg << ", between " << l.begin << " and " << l.end << std::endl;
 	throw std::runtime_error(ss.str());
-}
-
-/* include for access to scanner.yylex */
-#include "FuzzyScanner.h"
-static int yylex(yy::FuzzyParser::semantic_type *yylval, yy::FuzzyParser::location_type* l, FuzzyScanner& scanner, FuzzyBuilder& builder)
-{
-	l->step();
-	return(scanner.yylex(yylval));
 }
 
