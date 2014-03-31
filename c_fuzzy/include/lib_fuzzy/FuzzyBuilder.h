@@ -47,7 +47,7 @@ class FuzzyBuilder
 
 public:
 	FuzzyBuilder() :
-				parser(NULL), scanner(NULL)
+			parser(NULL), scanner(NULL)
 	{
 		createMap();
 		domainTable = new DomainTable();
@@ -63,18 +63,6 @@ public:
 	std::ostream& print(std::ostream &stream);
 
 	virtual ~FuzzyBuilder();
-
-private:
-	//Data needed to get Builder working
-	fz::FuzzyParser* parser;
-	fz::FuzzyScanner* scanner;
-	std::map<std::string, FuzzySets> fuzzyMap;
-
-	//Data needed to get FuzzyReasoner working
-	DomainTable* domainTable;
-	MFTable* mfTable;
-	std::vector<Node*>* ruleList;
-	std::map<std::string, BitData>* variableMasks;
 
 public:
 
@@ -93,11 +81,11 @@ public:
 
 	//Functions to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
-				std::vector<int>& parameters);
+			std::vector<int>& parameters);
 	FuzzyMF* buildTor(int bottom, int top);
 	FuzzyMF* buildTol(int top, int bottom);
 	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
-				int bottomRight);
+			int bottomRight);
 	FuzzyMF* buildTri(int left, int center, int right);
 	FuzzyMF* buildInt(int left, int right);
 	FuzzyMF* buildSgt(int value);
@@ -106,6 +94,22 @@ private:
 	void createMap();
 	void updateVariableMask(std::string& label);
 	void normalizeVariableMasks();
+	void checkParameters(std::string name, std::vector<int>& parameters,
+			FuzzySets fuzzySetType);
+	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
+			size_t parametersSize);
+
+private:
+	//Data needed to get Builder working
+	fz::FuzzyParser* parser;
+	fz::FuzzyScanner* scanner;
+	std::map<std::string, FuzzySets> fuzzyMap;
+
+	//Data needed to get FuzzyReasoner working
+	DomainTable* domainTable;
+	MFTable* mfTable;
+	std::vector<Node*>* ruleList;
+	std::map<std::string, BitData>* variableMasks;
 
 };
 

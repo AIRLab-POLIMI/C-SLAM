@@ -23,15 +23,13 @@
 
 #include <cctype>
 #include <fstream>
-#include <cassert>
+#include <sstream>
 #include <stdexcept>
 
 #include "FuzzyOperator.h"
 #include "FuzzyBuilder.h"
 
 using namespace std;
-
-//TODO eliminare assertion e lanciare eccezioni...
 
 FuzzyBuilder::~FuzzyBuilder()
 {
@@ -73,13 +71,13 @@ void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
 Node* FuzzyBuilder::buildAnd(Node* left, Node* right)
 {
 	return new FuzzyAnd(static_cast<FuzzyOperator*>(left),
-				static_cast<FuzzyOperator*>(right));
+			static_cast<FuzzyOperator*>(right));
 }
 
 Node* FuzzyBuilder::buildOr(Node* left, Node* right)
 {
 	return new FuzzyOr(static_cast<FuzzyOperator*>(left),
-				static_cast<FuzzyOperator*>(right));
+			static_cast<FuzzyOperator*>(right));
 }
 
 Node* FuzzyBuilder::buildNot(Node* operand)
@@ -89,7 +87,6 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 
 Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
 {
-	//TODO assertion to check existence of all the stuff...
 	updateVariableMask(domain);
 	return new FuzzyIs(domainTable, domain, mfLabel);
 }
@@ -114,42 +111,37 @@ void FuzzyBuilder::buildDomain(vector<string> variables)
 }
 
 //Fuzzy MF
-void FuzzyBuilder::buildMF(string name, string shape, vector<int>& p)
+void FuzzyBuilder::buildMF(string name, string shape, vector<int>& parameter)
 {
 	MFTable& map = *mfTable;
+	FuzzySets fuzzySetType = fuzzyMap[shape];
 
-	//assert that the number of parameters matches the MF shape
-	//then create the correspondent MF labeled "name"
-	switch (fuzzyMap[shape])
+	switch (fuzzySetType)
 	{
 		case TOL:
-			assert(p.size() == 2);
-			assert(p[1] < p[0]);
-			map[name] = buildTol(p[1], p[0]);
+			checkParameters(name, parameter, fuzzySetType);
+			map[name] = buildTol(parameter[1], parameter[0]);
 			break;
 		case TOR:
-			assert(p.size() == 2);
-			assert(p[1] < p[0]);
-			map[name] = buildTor(p[1], p[0]);
+			checkParameters(name, parameter, fuzzySetType);
+			map[name] = buildTor(parameter[1], parameter[0]);
 			break;
 		case TRA:
-			assert(p.size() == 4);
-			assert(p[3] < p[2] && p[2] < p[1] && p[1] < p[0]);
-			map[name] = buildTra(p[3], p[2], p[1], p[0]);
+			checkParameters(name, parameter, fuzzySetType);
+			map[name] = buildTra(parameter[3], parameter[2], parameter[1],
+					parameter[0]);
 			break;
 		case TRI:
-			assert(p.size() == 3);
-			assert(p[2] < p[1] && p[1] < p[0]);
-			map[name] = buildTri(p[2], p[1], p[0]);
+			checkParameters(name, parameter, fuzzySetType);
+			map[name] = buildTri(parameter[2], parameter[1], parameter[0]);
 			break;
 		case INT:
-			assert(p.size() == 2);
-			assert(p[1] < p[0]);
-			map[name] = buildInt(p[1], p[0]);
+			checkParameters(name, parameter, fuzzySetType);
+			map[name] = buildInt(parameter[1], parameter[0]);
 			break;
 		case SGT:
-			assert(p.size() == 1);
-			map[name] = buildSgt(p[0]);
+			checkParameters(name, parameter, fuzzySetType);
+			map[name] = buildSgt(parameter[0]);
 			break;
 		default:
 			break;
@@ -167,7 +159,7 @@ FuzzyMF* FuzzyBuilder::buildTol(int top, int bottom)
 }
 
 FuzzyMF* FuzzyBuilder::buildTra(int bottomLeft, int topLeft, int topRight,
-			int bottomRight)
+		int bottomRight)
 {
 	return new TraMF(bottomLeft, topLeft, topRight, bottomRight);
 }
@@ -217,5 +209,57 @@ void FuzzyBuilder::normalizeVariableMasks()
 		it->second.bits->resize(ruleList->size(), false);
 	}
 
+}
+
+void FuzzyBuilder::chekParametersNumber(string name, FuzzySets fuzzySetType,
+		size_t parametersSize)
+{
+	bool error = false;
+
+	switch (fuzzySetType)
+	{
+		case SGT:
+			if (parametersSize != 1)
+				error = true;
+			break;
+		case TOL:
+		case TOR:
+		case INT:
+			if (parametersSize != 2)
+				error = true;
+			break;
+		case TRI:
+			if (parametersSize != 3)
+				error = true;
+			break;
+		case TRA:
+			if (parametersSize != 4)
+				error = true;
+			break;
+	}
+
+	if (error)
+	{
+		stringstream ss;
+		ss << "The parameters number is wrong for label " << name;
+		throw runtime_error(ss.str());
+	}
+}
+
+void FuzzyBuilder::checkParameters(string name, vector<int>& parameters,
+		FuzzySets fuzzySetType)
+{
+	size_t parametersSize = parameters.size();
+	chekParametersNumber(name, fuzzySetType, parametersSize);
+
+	for (size_t i = 1; i < parametersSize; i++)
+	{
+		if (parameters[i] > parameters[i - 1])
+		{
+			stringstream ss;
+			ss << "The parameters ordering is wrong for label " << name;
+			throw runtime_error(ss.str());
+		}
+	}
 }
 
