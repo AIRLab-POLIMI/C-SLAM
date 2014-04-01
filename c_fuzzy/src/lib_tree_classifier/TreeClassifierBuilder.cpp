@@ -328,4 +328,7 @@ TreeClassifierBuilder::~TreeClassifierBuilder()
 
 	if (scanner != NULL)
 		delete (scanner);
+
+	//FIXME levami
+	delete classifier;
 }

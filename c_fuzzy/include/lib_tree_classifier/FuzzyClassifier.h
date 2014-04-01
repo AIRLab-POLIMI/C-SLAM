@@ -29,6 +29,8 @@
 #include "DependencyGraph.h"
 #include "FuzzyClass.h"
 
+#include <fstream>
+
 typedef std::map<std::string, FuzzyClass*> ClassList;
 
 class FuzzyClassifier
@@ -40,6 +42,13 @@ public:
 	bool contains(std::string name);
 	ClassList::iterator begin();
 	ClassList::iterator end();
+	//FIXME levami di mezzo!
+	~FuzzyClassifier()
+	{
+		std::ofstream os;
+		os.open("/home/dave/prova.dot");
+		dGraph.drawGraph(os);
+	}
 
 private:
 	ClassList classList;

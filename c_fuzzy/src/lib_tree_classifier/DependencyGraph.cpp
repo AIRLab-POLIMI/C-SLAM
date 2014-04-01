@@ -23,12 +23,14 @@
 
 #include "DependencyGraph.h"
 
+#include <boost/graph/graphviz.hpp>
+
 using namespace std;
 using namespace boost;
 
 void DependencyGraph::addClass(FuzzyClass* fuzzyClass)
 {
-	size_t id = graph.m_edges.size();
+	size_t id = graph.m_vertices.size();
 	string name = fuzzyClass->getName();
 	indexes[name] = id;
 
@@ -49,10 +51,7 @@ void DependencyGraph::addDependency(FuzzyClass* fuzzyClass,
 	string className = fuzzyClass->getName();
 	string dependencyName = dependency->getName();
 
-	size_t classId = indexes[className];
-	size_t dependencyId = indexes[dependencyName];
-
-	add_edge(classId, dependencyId, graph);
+	addDependency(className, dependencyName);
 }
 
 void DependencyGraph::addDependency(string fuzzyClass, string dependency)
@@ -62,4 +61,9 @@ void DependencyGraph::addDependency(string fuzzyClass, string dependency)
 	size_t dependencyId = indexes[dependency];
 
 	add_edge(classId, dependencyId, graph);
+}
+
+void DependencyGraph::drawGraph(std::ostream& out)
+{
+	write_graphviz(out, graph);
 }

@@ -26,6 +26,7 @@
 
 #include <string>
 #include <map>
+#include <fstream>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
@@ -42,6 +43,7 @@ public:
 	void addClass(FuzzyClass* fuzzyClass);
 	void addDependency(FuzzyClass* fuzzyClass, FuzzyClass* dependency);
 	void addDependency(std::string fuzzyClass, std::string dependency);
+	void drawGraph(std::ostream& out);
 
 private:
 	Graph graph;
