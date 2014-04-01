@@ -27,10 +27,9 @@
 #include <string>
 
 #include "FuzzyClass.h"
+#include "FuzzyClassifier.h"
 #include "TreeClassifierParser.tab.h"
 #include "TreeClassifierScanner.h"
-
-typedef std::map<std::string, FuzzyClass*> ClassList;
 
 class TreeClassifierBuilder
 {
@@ -39,6 +38,7 @@ public:
 	TreeClassifierBuilder() :
 			parser(NULL), scanner(NULL)
 	{
+		classifier = new FuzzyClassifier();
 	}
 
 	void parse(const char *filename);
@@ -88,7 +88,7 @@ public:
 	tc::TreeClassifierScanner* scanner;
 
 	//Data needed to track created classes
-	ClassList classList;
+	FuzzyClassifier* classifier;
 
 };
 

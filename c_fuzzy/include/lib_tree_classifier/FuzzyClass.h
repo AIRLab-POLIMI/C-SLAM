@@ -57,6 +57,11 @@ public:
 		return name;
 	}
 
+	inline FuzzyClass* getSuperClass()
+	{
+		return superClass;
+	}
+
 	inline bool containsVar(std::string var)
 	{
 		return (variables->count(var) == 1)
