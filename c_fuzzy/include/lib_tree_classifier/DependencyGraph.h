@@ -41,6 +41,7 @@ private:
 public:
 	void addClass(FuzzyClass* fuzzyClass);
 	void addDependency(FuzzyClass* fuzzyClass, FuzzyClass* dependency);
+	void addDependency(std::string fuzzyClass, std::string dependency);
 
 private:
 	Graph graph;

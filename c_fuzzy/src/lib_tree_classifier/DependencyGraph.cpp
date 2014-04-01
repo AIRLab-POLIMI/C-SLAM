@@ -36,7 +36,7 @@ void DependencyGraph::addClass(FuzzyClass* fuzzyClass)
 
 	FuzzyClass* superClass = fuzzyClass->getSuperClass();
 
-	if(superClass != NULL)
+	if (superClass != NULL)
 	{
 		addDependency(fuzzyClass, superClass);
 	}
@@ -48,8 +48,18 @@ void DependencyGraph::addDependency(FuzzyClass* fuzzyClass,
 {
 	string className = fuzzyClass->getName();
 	string dependencyName = dependency->getName();
+
 	size_t classId = indexes[className];
 	size_t dependencyId = indexes[dependencyName];
+
+	add_edge(classId, dependencyId, graph);
+}
+
+void DependencyGraph::addDependency(string fuzzyClass, string dependency)
+{
+
+	size_t classId = indexes[fuzzyClass];
+	size_t dependencyId = indexes[dependency];
 
 	add_edge(classId, dependencyId, graph);
 }

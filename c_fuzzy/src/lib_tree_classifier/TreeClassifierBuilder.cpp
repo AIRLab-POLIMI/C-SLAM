@@ -46,6 +46,7 @@ void TreeClassifierBuilder::parse(const char *filename)
 	}
 
 	checkConsistency();
+	//prova
 }
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
@@ -316,6 +317,8 @@ void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
 
 		checkRelationVar(relatedVariable, relatedClass, fuzzyClass);
 	}
+
+	classifier->addDependency(fuzzyClass.getName(), object);
 }
 
 TreeClassifierBuilder::~TreeClassifierBuilder()

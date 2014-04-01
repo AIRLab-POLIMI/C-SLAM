@@ -36,6 +36,7 @@ class FuzzyClassifier
 public:
 	FuzzyClass* getClass(std::string);
 	void addClass(FuzzyClass* fuzzyClass);
+	void addDependency(std::string fuzzyClass, std::string dependency);
 	bool contains(std::string name);
 	ClassList::iterator begin();
 	ClassList::iterator end();
@@ -44,6 +45,5 @@ private:
 	ClassList classList;
 	DependencyGraph dGraph;
 };
-
 
 #endif /* FUZZYCLASSIFIER_H_ */

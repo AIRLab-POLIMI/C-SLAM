@@ -23,7 +23,9 @@
 
 #include "FuzzyClassifier.h"
 
-FuzzyClass* FuzzyClassifier::getClass(std::string name)
+using namespace std;
+
+FuzzyClass* FuzzyClassifier::getClass(string name)
 {
 	if (classList.count(name) == 1)
 		return classList[name];
@@ -38,7 +40,12 @@ void FuzzyClassifier::addClass(FuzzyClass* fuzzyClass)
 	dGraph.addClass(fuzzyClass);
 }
 
-bool FuzzyClassifier::contains(std::string name)
+void FuzzyClassifier::addDependency(std::string fuzzyClass, std::string dependency)
+{
+	dGraph.addDependency(fuzzyClass, dependency);
+}
+
+bool FuzzyClassifier::contains(string name)
 {
 	return classList.count(name) == 1;
 }
