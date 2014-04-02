@@ -24,13 +24,14 @@
 #include "DependencyGraph.h"
 
 #include <boost/graph/graphviz.hpp>
+#include <boost/foreach.hpp>
 
 using namespace std;
 using namespace boost;
 
 void DependencyGraph::addClass(FuzzyClass* fuzzyClass)
 {
-	size_t id = graph.m_vertices.size();
+	size_t id = num_vertices(graph);
 	string name = fuzzyClass->getName();
 	indexes[name] = id;
 	names.push_back(name);
@@ -70,4 +71,28 @@ void DependencyGraph::drawGraph(std::ostream& out)
 	string* name = &names[0];
 
 	write_graphviz(out, graph, make_label_writer(name));
+}
+
+ReasoningGraph* DependencyGraph::buildReasoningGraph()
+{
+	vector<size_t> components(num_vertices(graph));
+	size_t num = strong_components(graph,
+				make_iterator_property_map(components.begin(),
+							get(vertex_index, graph)));
+
+	ReasoningGraph* reasoningGraph = new ReasoningGraph(num);
+
+	BOOST_FOREACH(size_t i, vertices(graph))
+	{
+		BOOST_FOREACH(size_t j, adjacent_vertices(i, graph))
+		{
+			size_t ci = components[i];
+			size_t cj = components[j];
+			if (ci != cj)
+				reasoningGraph->addEdge(ci, cj);
+		}
+	}
+
+	return reasoningGraph;
+
 }

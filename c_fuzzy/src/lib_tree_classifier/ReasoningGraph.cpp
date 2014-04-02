@@ -1,5 +1,6 @@
 /*
  * c_fuzzy,
+
  *
  *
  * Copyright (C) 2014 Davide Tateo
@@ -21,35 +22,27 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FUZZYCLASSIFIER_H_
-#define FUZZYCLASSIFIER_H_
+#include "ReasoningGraph.h"
 
-#include <string>
+#include <boost/graph/graphviz.hpp>
+#include <boost/graph/topological_sort.hpp>
 
-#include "DependencyGraph.h"
-#include "FuzzyClass.h"
+using namespace std;
+using namespace boost;
 
-typedef std::map<std::string, FuzzyClass*> ClassList;
-
-class FuzzyClassifier
+void ReasoningGraph::addEdge(size_t i, size_t j)
 {
-public:
-	FuzzyClass* getClass(std::string);
-	void addClass(FuzzyClass* fuzzyClass);
-	void addDependency(std::string fuzzyClass, std::string dependency);
-	bool contains(std::string name);
-	void buildReasoningGraph();
-	ClassList::iterator begin();
-	ClassList::iterator end();
+	add_edge(i, j, graph);
+}
 
-public:
-	void drawDependencyGraph(std::string path);
-	void drawReasoningGraph(std::string path);
+void ReasoningGraph::drawGraph(ostream& out)
+{
+	write_graphviz(out, graph);
+}
 
-private:
-	ClassList classList;
-	DependencyGraph dGraph;
-	ReasoningGraph* rGraph;
-};
-
-#endif /* FUZZYCLASSIFIER_H_ */
+//TODO completare
+void ReasoningGraph::getReasonigIterator()
+{
+	vector<size_t> order;
+	topological_sort(graph, back_inserter(order));
+}

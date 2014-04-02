@@ -42,7 +42,8 @@ void FuzzyClassifier::addClass(FuzzyClass* fuzzyClass)
 	dGraph.addClass(fuzzyClass);
 }
 
-void FuzzyClassifier::addDependency(std::string fuzzyClass, std::string dependency)
+void FuzzyClassifier::addDependency(std::string fuzzyClass,
+			std::string dependency)
 {
 	dGraph.addDependency(fuzzyClass, dependency);
 }
@@ -62,9 +63,25 @@ ClassList::iterator FuzzyClassifier::end()
 	return classList.end();
 }
 
-void  FuzzyClassifier::drawDependencyGraph(string path)
+void FuzzyClassifier::buildReasoningGraph()
+{
+	rGraph = dGraph.buildReasoningGraph();
+}
+
+void FuzzyClassifier::drawDependencyGraph(string path)
 {
 	ofstream out;
 	out.open(path.c_str());
 	dGraph.drawGraph(out);
+}
+
+void FuzzyClassifier::drawReasoningGraph(string path)
+{
+	if (rGraph != NULL)
+	{
+		ofstream out;
+		out.open(path.c_str());
+		rGraph->drawGraph(out);
+	}
+
 }

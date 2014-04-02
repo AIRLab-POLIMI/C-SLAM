@@ -21,39 +21,31 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEPENDENCYGRAPH_H_
-#define DEPENDENCYGRAPH_H_
+#ifndef REASONINGGRAPH_H_
+#define REASONINGGRAPH_H_
 
-#include <string>
-#include <map>
-#include <fstream>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/strong_components.hpp>
 
-#include "FuzzyClass.h"
-#include "ReasoningGraph.h"
-
-class DependencyGraph
+class ReasoningGraph
 {
-
 private:
-	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS,
-				FuzzyClass*> Graph;
-	typedef std::map<std::string, size_t> IndexMap;
-	typedef std::vector<std::string> NameList;
+	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS> Graph;
 
 public:
-	void addClass(FuzzyClass* fuzzyClass);
-	void addDependency(FuzzyClass* fuzzyClass, FuzzyClass* dependency);
-	void addDependency(std::string fuzzyClass, std::string dependency);
-	ReasoningGraph* buildReasoningGraph();
+	ReasoningGraph(size_t n) :
+				graph(n)
+	{
+	}
+
+	void addEdge(size_t i, size_t j);
+	void getReasonigIterator();
+
+public:
 	void drawGraph(std::ostream& out);
 
 private:
 	Graph graph;
-	IndexMap indexes;
-	NameList names;
 };
 
-#endif /* DEPENDENCYGRAPH_H_ */
+#endif /* REASONINGGRAPH_H_ */

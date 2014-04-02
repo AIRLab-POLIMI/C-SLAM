@@ -48,7 +48,9 @@ void TreeClassifierBuilder::parse(const char *filename)
 	checkConsistency();
 
 	//FIXME levami
+	classifier->buildReasoningGraph();
 	classifier->drawDependencyGraph("/home/dave/classifier.dot");
+	classifier->drawReasoningGraph("/home/dave/reasoning.dot");
 }
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
