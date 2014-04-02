@@ -46,7 +46,9 @@ void TreeClassifierBuilder::parse(const char *filename)
 	}
 
 	checkConsistency();
-	//prova
+
+	//FIXME levami
+	classifier->drawDependencyGraph("/home/dave/classifier.dot");
 }
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
@@ -328,7 +330,4 @@ TreeClassifierBuilder::~TreeClassifierBuilder()
 
 	if (scanner != NULL)
 		delete (scanner);
-
-	//FIXME levami
-	delete classifier;
 }

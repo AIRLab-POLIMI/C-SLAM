@@ -35,9 +35,10 @@
 class DependencyGraph
 {
 private:
-	typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
+	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS,
 				FuzzyClass*> Graph;
 	typedef std::map<std::string, size_t> IndexMap;
+	typedef std::vector<std::string> NameList;
 
 public:
 	void addClass(FuzzyClass* fuzzyClass);
@@ -45,9 +46,11 @@ public:
 	void addDependency(std::string fuzzyClass, std::string dependency);
 	void drawGraph(std::ostream& out);
 
+
 private:
 	Graph graph;
 	IndexMap indexes;
+	NameList names;
 };
 
 #endif /* DEPENDENCYGRAPH_H_ */

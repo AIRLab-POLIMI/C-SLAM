@@ -23,6 +23,8 @@
 
 #include "FuzzyClassifier.h"
 
+#include <fstream>
+
 using namespace std;
 
 FuzzyClass* FuzzyClassifier::getClass(string name)
@@ -58,4 +60,11 @@ ClassList::iterator FuzzyClassifier::begin()
 ClassList::iterator FuzzyClassifier::end()
 {
 	return classList.end();
+}
+
+void  FuzzyClassifier::drawDependencyGraph(string path)
+{
+	ofstream out;
+	out.open(path.c_str());
+	dGraph.drawGraph(out);
 }

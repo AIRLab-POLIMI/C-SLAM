@@ -33,6 +33,7 @@ void DependencyGraph::addClass(FuzzyClass* fuzzyClass)
 	size_t id = graph.m_vertices.size();
 	string name = fuzzyClass->getName();
 	indexes[name] = id;
+	names.push_back(name);
 
 	add_vertex(graph);
 
@@ -65,5 +66,8 @@ void DependencyGraph::addDependency(string fuzzyClass, string dependency)
 
 void DependencyGraph::drawGraph(std::ostream& out)
 {
-	write_graphviz(out, graph);
+	//Ugly, but works...
+	string* name = &names[0];
+
+	write_graphviz(out, graph, make_label_writer(name));
 }
