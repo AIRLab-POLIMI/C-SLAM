@@ -40,9 +40,7 @@ void ReasoningGraph::drawGraph(ostream& out)
 	write_graphviz(out, graph);
 }
 
-//TODO completare
-void ReasoningGraph::getReasonigIterator()
+void ReasoningGraph::getReasonigOrder(vector<size_t>& order)
 {
-	vector<size_t> order;
 	topological_sort(graph, back_inserter(order));
 }

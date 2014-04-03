@@ -42,8 +42,7 @@ public:
 	}
 
 	void parse(const char *filename);
-
-	std::ostream& print(std::ostream &stream);
+	FuzzyClassifier* buildFuzzyClassifier();
 
 	virtual ~TreeClassifierBuilder();
 
@@ -82,7 +81,7 @@ private:
 	void checkRelationVar(std::string relatedVariable, FuzzyClass& relatedClass,
 			FuzzyClass& fuzzyClass);
 
-public:
+private:
 	//Data needed to get Builder working
 	tc::TreeClassifierParser* parser;
 	tc::TreeClassifierScanner* scanner;

@@ -45,12 +45,15 @@ void TreeClassifierBuilder::parse(const char *filename)
 		throw runtime_error("Parse Failed");
 	}
 
+}
+
+FuzzyClassifier* TreeClassifierBuilder::buildFuzzyClassifier()
+{
 	checkConsistency();
 
-	//FIXME levami
-	classifier->buildReasoningGraph();
-	classifier->drawDependencyGraph("/home/dave/classifier.dot");
-	classifier->drawReasoningGraph("/home/dave/reasoning.dot");
+	classifier->setupClassifier();
+
+	return classifier;
 }
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,

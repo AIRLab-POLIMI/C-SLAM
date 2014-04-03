@@ -63,7 +63,7 @@ ClassList::iterator FuzzyClassifier::end()
 	return classList.end();
 }
 
-void FuzzyClassifier::buildReasoningGraph()
+void FuzzyClassifier::setupClassifier()
 {
 	rGraph = dGraph.buildReasoningGraph();
 }

@@ -30,8 +30,6 @@
 
 #include "FuzzyFeatures.h"
 
-#include <iostream>
-
 typedef std::set<std::string> VariableList;
 typedef std::map<std::string, std::string> ConstantList;
 typedef std::pair<VariableList*, ConstantList*> ElementsList;

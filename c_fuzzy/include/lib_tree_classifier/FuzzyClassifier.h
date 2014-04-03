@@ -38,7 +38,7 @@ public:
 	void addClass(FuzzyClass* fuzzyClass);
 	void addDependency(std::string fuzzyClass, std::string dependency);
 	bool contains(std::string name);
-	void buildReasoningGraph();
+	void setupClassifier();
 	ClassList::iterator begin();
 	ClassList::iterator end();
 

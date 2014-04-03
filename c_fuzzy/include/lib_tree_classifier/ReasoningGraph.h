@@ -24,6 +24,8 @@
 #ifndef REASONINGGRAPH_H_
 #define REASONINGGRAPH_H_
 
+#include <vector>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
@@ -39,7 +41,7 @@ public:
 	}
 
 	void addEdge(size_t i, size_t j);
-	void getReasonigIterator();
+	void getReasonigOrder(std::vector<size_t>& order);
 
 public:
 	void drawGraph(std::ostream& out);

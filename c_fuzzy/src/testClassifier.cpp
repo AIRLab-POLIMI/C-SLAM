@@ -32,11 +32,15 @@ int main(int argc, char *argv[])
 	try
 	{
 		TreeClassifierBuilder builder;
+		FuzzyClassifier* classifier;
 
 		builder.parse(argv[1]);
+		classifier = builder.buildFuzzyClassifier();
+		classifier->drawDependencyGraph("/home/dave/classifier.dot");
+		classifier->drawReasoningGraph("/home/dave/reasoning.dot");
 		std::cout << "parsing done" << std::endl;
-	}
-	catch(const std::runtime_error& e)
+		delete classifier;
+	} catch (const std::runtime_error& e)
 	{
 		std::cout << e.what() << std::endl;
 		std::cout << "Check the input file an try again" << std::endl;
