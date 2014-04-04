@@ -37,7 +37,9 @@ void ReasoningGraph::addEdge(size_t i, size_t j)
 
 void ReasoningGraph::drawGraph(ostream& out)
 {
-	write_graphviz(out, graph);
+	string* name = &names[0];
+
+	write_graphviz(out, graph, make_label_writer(name));
 }
 
 void ReasoningGraph::getReasonigOrder(vector<size_t>& order)

@@ -76,11 +76,26 @@ void DependencyGraph::drawGraph(std::ostream& out)
 ReasoningGraph* DependencyGraph::buildReasoningGraph()
 {
 	vector<size_t> components(num_vertices(graph));
+	vector<string> componentsNames;
+
 	size_t num = strong_components(graph,
 				make_iterator_property_map(components.begin(),
 							get(vertex_index, graph)));
 
-	ReasoningGraph* reasoningGraph = new ReasoningGraph(num);
+	componentsNames.resize(num);
+
+	BOOST_FOREACH(size_t i, vertices(graph))
+	{
+		size_t index = components[i];
+		string name = componentsNames[index];
+		if(name.empty())
+			name = names[i];
+		else
+			name = name + string("&") + names[i];
+		componentsNames[index] = name;
+	}
+
+	ReasoningGraph* reasoningGraph = new ReasoningGraph(num, componentsNames);
 
 	BOOST_FOREACH(size_t i, vertices(graph))
 	{

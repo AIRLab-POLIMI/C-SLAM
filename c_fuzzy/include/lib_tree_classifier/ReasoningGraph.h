@@ -25,6 +25,7 @@
 #define REASONINGGRAPH_H_
 
 #include <vector>
+#include <string>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -35,8 +36,8 @@ private:
 	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS> Graph;
 
 public:
-	ReasoningGraph(size_t n) :
-				graph(n)
+	ReasoningGraph(size_t n, std::vector<std::string> names) :
+				graph(n), names(names)
 	{
 	}
 
@@ -48,6 +49,7 @@ public:
 
 private:
 	Graph graph;
+	std::vector<std::string> names;
 };
 
 #endif /* REASONINGGRAPH_H_ */
