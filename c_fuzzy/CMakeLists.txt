@@ -74,7 +74,8 @@ add_library(fuzzy STATIC
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyOperator.cpp
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyReasoner.cpp  
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyRule.cpp
-			${LIB_FUZZY_SOURCE_DIR}/ReasoningData.cpp 
+			${LIB_FUZZY_SOURCE_DIR}/ReasoningData.cpp
+			${LIB_FUZZY_SOURCE_DIR}/VariableMask.cpp 
 			${FLEX_FuzzyScanner_OUTPUTS}
 			${BISON_FuzzyParser_OUTPUTS})
 			

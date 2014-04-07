@@ -34,8 +34,7 @@ void VariableMasks::newVariableMask(std::string variable)
 
 void VariableMasks::updateVariableMask(string& label, size_t currentRule)
 {
-	map<string, BitData>& maskMap = *variableMasks;
-	boost::dynamic_bitset<>& bitset = *maskMap[label].bits;
+	boost::dynamic_bitset<>& bitset = *variableMasks[label].bits;
 	if (currentRule >= bitset.size())
 		bitset.resize(currentRule + 1, false);
 
@@ -50,4 +49,39 @@ void VariableMasks::normalizeVariableMasks(size_t size)
 		it->second.bits->resize(size, false);
 	}
 
+}
+
+size_t VariableMasks::size()
+{
+	return variableMasks.size();
+}
+
+
+bool VariableMasks::contains(string name)
+{
+	return variableMasks.count(name) != 0;
+}
+
+map<string, BitData>::iterator VariableMasks::begin()
+{
+	return variableMasks.begin();
+}
+
+map<string, BitData>::iterator VariableMasks::end()
+{
+	return variableMasks.end();
+}
+
+BitData& VariableMasks::operator[](string variable)
+{
+	return variableMasks[variable];
+}
+
+VariableMasks::~VariableMasks()
+{
+	for (map<string, BitData>::iterator it = variableMasks.begin();
+				it != variableMasks.end(); ++it)
+	{
+		delete it->second.bits;
+	}
 }

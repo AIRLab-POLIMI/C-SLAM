@@ -19,20 +19,21 @@
 class FuzzyKnowledgeBase
 {
 public:
-	FuzzyKnowledgeBase(DomainTable* mfTable,
-				std::map<std::string, BitData>* variableMasks,
+	FuzzyKnowledgeBase(DomainTable* mfTable, VariableMasks* variableMasks,
 				std::vector<Node*>* knowledgeBase) :
 				domainTable(mfTable), variableMasks(variableMasks),
 				knowledgeBase(knowledgeBase)
 	{
 	}
 	size_t size();
-	void addRule(Node* fuzzyRule);
-	std::map<std::string, BitData>& getVariableMasks();
+	VariableMasks& getVariableMasks();
+	DomainTable& getDomaintable();
+	Node& operator[](size_t i);
+
+	void addRule(Node* fuzzyRule, std::vector<std::string>& variables);
+
 	~FuzzyKnowledgeBase();
 
-public:
-	Node& operator[](size_t i);
 private:
 	void deleteMasks();
 	void deleteRules();

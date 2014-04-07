@@ -25,20 +25,45 @@
 
 using namespace std;
 
-void FuzzyKnowledgeBase::addRule(Node* fuzzyRule)
-{
-	knowledgeBase->push_back(fuzzyRule);
-}
-
 size_t FuzzyKnowledgeBase::size()
 {
 	return knowledgeBase->size();
 }
 
-map<string, BitData>& FuzzyKnowledgeBase::getVariableMasks()
+VariableMasks& FuzzyKnowledgeBase::getVariableMasks()
 {
 	return *variableMasks;
 }
+
+DomainTable& FuzzyKnowledgeBase::getDomaintable()
+{
+	return *domainTable;
+}
+
+Node& FuzzyKnowledgeBase::operator[](const size_t i)
+{
+	return *knowledgeBase->at(i);
+}
+
+void FuzzyKnowledgeBase::addRule(Node* fuzzyRule, vector<string>& variables)
+{
+	size_t currentRule = knowledgeBase->size();
+	for (vector<string>::iterator it = variables.begin(); it != variables.end();
+				++it)
+	{
+		if(!variableMasks->contains(*it))
+		{
+			variableMasks->newVariableMask(*it);
+		}
+
+		variableMasks->updateVariableMask(*it, currentRule);
+	}
+
+	knowledgeBase->push_back(fuzzyRule);
+	variableMasks->normalizeVariableMasks(knowledgeBase->size());
+}
+
+
 
 void FuzzyKnowledgeBase::deleteRules()
 {
@@ -46,15 +71,6 @@ void FuzzyKnowledgeBase::deleteRules()
 				it != knowledgeBase->end(); ++it)
 	{
 		delete *it;
-	}
-}
-
-void FuzzyKnowledgeBase::deleteMasks()
-{
-	for (map<string, BitData>::iterator it = variableMasks->begin();
-				it != variableMasks->end(); ++it)
-	{
-		delete it->second.bits;
 	}
 }
 
@@ -76,14 +92,8 @@ void FuzzyKnowledgeBase::deleteDomains()
 	}
 }
 
-Node& FuzzyKnowledgeBase::operator[](const unsigned long i)
-{
-	return *knowledgeBase->at(i);
-}
-
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
 {
-	deleteMasks();
 	delete variableMasks;
 	deleteDomains();
 	delete domainTable;

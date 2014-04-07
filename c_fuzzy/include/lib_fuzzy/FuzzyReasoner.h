@@ -85,7 +85,7 @@ private:
 	FuzzyAggregator aggregator;
 	Defuzzyfier defuzzyfier;
 	InputTable inputs;
-	std::map<std::string, BitData>& variableMasks;
+	VariableMasks& variableMasks;
 	boost::dynamic_bitset<> rulesMask;
 	boost::dynamic_bitset<> inputMask;
 

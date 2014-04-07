@@ -65,7 +65,7 @@ map<string, FuzzyOutput> Defuzzyfier::defuzzify(
 void FuzzyReasoner::addInput(string name, int value)
 {
 	inputs[name] = value;
-	if (variableMasks.count(name) != 0)
+	if (variableMasks.contains(name))
 	{
 		inputs[name] = value;
 		inputMask.set(variableMasks[name].index, true);

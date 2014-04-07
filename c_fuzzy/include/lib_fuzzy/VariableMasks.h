@@ -27,7 +27,22 @@
 #include <string>
 #include <map>
 
-#include "BitData.h"
+#include <boost/dynamic_bitset.hpp>
+
+struct BitData
+{
+	BitData() :
+				index(0), bits(NULL)
+	{
+	}
+	BitData(int index, boost::dynamic_bitset<>* bits) :
+				index(index), bits(bits)
+	{
+	}
+	int index;
+	boost::dynamic_bitset<>* bits;
+
+};
 
 
 class VariableMasks
@@ -40,6 +55,14 @@ public:
 	void newVariableMask(std::string variable);
 	void updateVariableMask(std::string& label, size_t currentRule);
 	void normalizeVariableMasks(size_t size);
+
+	size_t size();
+	bool contains(std::string name);
+	std::map<std::string, BitData>::iterator begin();
+	std::map<std::string, BitData>::iterator end();
+	BitData& operator[](std::string variable);
+
+	~VariableMasks();
 
 private:
 	std::map<std::string, BitData> variableMasks;
