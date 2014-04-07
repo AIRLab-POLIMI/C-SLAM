@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "Node.h"
-#include "BitData.h"
+#include "VariableMasks.h"
 #include "FuzzyMF.h"
 
 class FuzzyKnowledgeBase
@@ -40,7 +40,7 @@ private:
 	void deleteMF(MFTable* mfTable);
 private:
 	DomainTable* domainTable;
-	std::map<std::string, BitData>* variableMasks;
+	VariableMasks* variableMasks;
 	std::vector<Node*>* knowledgeBase;
 };
 

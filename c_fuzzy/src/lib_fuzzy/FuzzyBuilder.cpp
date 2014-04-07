@@ -57,7 +57,7 @@ void FuzzyBuilder::parse(const char *filename)
 
 FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 {
-	normalizeVariableMasks();
+	variableMasks->normalizeVariableMasks(ruleList->size());
 	return new FuzzyKnowledgeBase(domainTable, variableMasks, ruleList);
 }
 
@@ -87,7 +87,7 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 
 Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
 {
-	updateVariableMask(domain);
+	variableMasks->updateVariableMask(domain, ruleList->size());
 	return new FuzzyIs(domainTable, domain, mfLabel);
 }
 
@@ -100,13 +100,12 @@ Node* FuzzyBuilder::buildAssignment(string output, string label)
 void FuzzyBuilder::buildDomain(vector<string> variables)
 {
 	DomainTable& domainMap = *domainTable;
-	map<string, BitData>& maskMap = *variableMasks;
 	mfTable = new MFTable();
 	vector<string>::iterator it;
 	for (it = variables.begin(); it != variables.end(); it++)
 	{
 		domainMap[*it] = mfTable;
-		maskMap[*it] = BitData(maskMap.size(), new boost::dynamic_bitset<>());
+		variableMasks->newVariableMask(*it);
 	}
 }
 
@@ -190,26 +189,6 @@ void FuzzyBuilder::createMap()
 
 }
 
-void FuzzyBuilder::updateVariableMask(string& label)
-{
-	size_t currentRule = ruleList->size();
-	map<string, BitData>& maskMap = *variableMasks;
-	boost::dynamic_bitset<>& bitset = *maskMap[label].bits;
-	if (currentRule >= bitset.size())
-		bitset.resize(currentRule + 1, false);
-
-	bitset[currentRule] = true;
-}
-
-void FuzzyBuilder::normalizeVariableMasks()
-{
-	map<string, BitData>::iterator it;
-	for (it = variableMasks->begin(); it != variableMasks->end(); ++it)
-	{
-		it->second.bits->resize(ruleList->size(), false);
-	}
-
-}
 
 void FuzzyBuilder::chekParametersNumber(string name, FuzzySets fuzzySetType,
 		size_t parametersSize)

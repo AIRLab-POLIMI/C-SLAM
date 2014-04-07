@@ -32,7 +32,7 @@
 #include "FuzzyMF.h"
 #include "FuzzyRule.h"
 #include "FuzzyKnowledgeBase.h"
-#include "BitData.h"
+#include "VariableMasks.h"
 
 #include "FuzzyParser.tab.h"
 #include "FuzzyScanner.h"
@@ -53,7 +53,7 @@ public:
 		domainTable = new DomainTable();
 		mfTable = NULL;
 		ruleList = new std::vector<Node*>();
-		variableMasks = new std::map<std::string, BitData>();
+		variableMasks = new VariableMasks();
 	}
 
 	FuzzyKnowledgeBase* createKnowledgeBase();
@@ -92,8 +92,6 @@ public:
 
 private:
 	void createMap();
-	void updateVariableMask(std::string& label);
-	void normalizeVariableMasks();
 	void checkParameters(std::string name, std::vector<int>& parameters,
 			FuzzySets fuzzySetType);
 	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
@@ -109,7 +107,7 @@ private:
 	DomainTable* domainTable;
 	MFTable* mfTable;
 	std::vector<Node*>* ruleList;
-	std::map<std::string, BitData>* variableMasks;
+	VariableMasks* variableMasks;
 
 };
 
