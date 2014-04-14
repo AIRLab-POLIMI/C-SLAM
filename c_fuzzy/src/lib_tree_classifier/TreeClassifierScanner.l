@@ -42,7 +42,7 @@ UNDERSCORE [_]
 <COMMENT>
 {
 	{NEWLINE} { loc.lines(yyleng); loc.step(); }
-	"/*" { yy_push_state(COMMENT); BEGIN(COMMENT); }
+	"/*" { yy_push_state(YY_START); BEGIN(COMMENT); }
 	"*/" { BEGIN(yy_top_state()); yy_pop_state(); }
 	. {}
 }

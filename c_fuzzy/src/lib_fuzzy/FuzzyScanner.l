@@ -20,11 +20,13 @@
 
 DIGIT [0-9]
 CAPITAL [A-Z]
-LETTER [a-z]|{CAPITAL}
+LOWERCASE [a-z]
+LETTER {LOWERCASE}|{CAPITAL}
 BLANK [ \t]
 NEWLINE \n\r|\n
 FUZZYLABEL tol|tor|tri|tra|int|sgt
 SIGN [-+]
+UNDERSCORE [_]
 
 %{
 	// Code run each time a pattern is matched.
@@ -42,7 +44,7 @@ SIGN [-+]
 <COMMENT>
 {
 	{NEWLINE} { loc.lines(yyleng); loc.step(); }
-	"/*" { yy_push_state(COMMENT); BEGIN(COMMENT); }
+	"/*" { yy_push_state(YY_START); BEGIN(COMMENT); }
 	"*/" { BEGIN(yy_top_state()); yy_pop_state(); }
 	. {}
 }
@@ -54,6 +56,10 @@ SIGN [-+]
  /* keywords and symbols */
 "fuzzify"|"FUZZIFY" { return fz::FuzzyParser::make_FUZZIFY(loc); }
 "end_fuzzify"|"END_FUZZIFY" { return fz::FuzzyParser::make_END_FUZZIFY(loc); }
+"fuzzify_class"|"FUZZIFY_CLASS" { return fz::FuzzyParser::make_FUZZIFY_CLASS(loc); }
+"end_fuzzify_class"|"END_FUZZIFY_CLASS" { return fz::FuzzyParser::make_END_FUZZIFY_CLASS(loc); }
+"fuzzify_predicate"|"FUZZIFY_PREDICATE" { return fz::FuzzyParser::make_FUZZIFY_PREDICATE(loc); }
+"end_fuzzify_predicate"|"END_FUZZIFY_PREDICATE"  { return fz::FuzzyParser::make_END_FUZZIFY_PREDICATE(loc); }
 "and"|"AND" { return fz::FuzzyParser::make_OP_AND(loc); }
 "or"|"OR" { return fz::FuzzyParser::make_OP_OR(loc); }
 "~"|"not"|"NOT" { return fz::FuzzyParser::make_OP_NOT(loc); }
@@ -65,11 +71,13 @@ SIGN [-+]
 ";" { return fz::FuzzyParser::make_END_RULE(loc); }
 ":=" { return fz::FuzzyParser::make_LIKE(loc); }
 "," { return fz::FuzzyParser::make_COMMA(loc); }
+"." { return fz::FuzzyParser::make_PERIOD(loc); }
 
  /* identificators */
-{CAPITAL}({LETTER}|{DIGIT})* { return fz::FuzzyParser::make_ID(yytext, loc); }
--?{DIGIT}+ { return fz::FuzzyParser::make_PARAMETER(atoi(yytext), loc); }
 {FUZZYLABEL} { return fz::FuzzyParser::make_F_LABEL(yytext, loc); }
+{CAPITAL}({LETTER}|{DIGIT}|{UNDERSCORE})* { return fz::FuzzyParser::make_ID(yytext, loc); }
+{LOWERCASE}({LETTER}|{DIGIT}|{UNDERSCORE})* { return fz::FuzzyParser::make_VAR_ID(yytext, loc); }
+-?{DIGIT}+ { return fz::FuzzyParser::make_PARAMETER(atoi(yytext), loc); }
 
  /* unknown tokens */
 . { std::stringstream ss; ss << "Error: Unknown char " << *yytext << " at " << loc << endl; throw std::runtime_error(ss.str()); }

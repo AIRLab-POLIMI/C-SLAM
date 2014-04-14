@@ -47,7 +47,7 @@ class FuzzyBuilder
 
 public:
 	FuzzyBuilder() :
-			parser(NULL), scanner(NULL)
+				parser(NULL), scanner(NULL)
 	{
 		createMap();
 		domainTable = new DomainTable();
@@ -74,18 +74,22 @@ public:
 	Node* buildOr(Node* left, Node* right);
 	Node* buildNot(Node* operand);
 	Node* buildAssignment(std::string output, std::string label);
+	Node* buildAssignment(std::pair<std::string, std::string> classMember,
+				std::string label);
 	Node* buildIs(std::string domain, std::string mfLabel);
+	Node* buildIs(std::pair<std::string, std::string> classMember,
+				std::string mfLabel);
 
 	//Function to build a fuzzy Domain
 	void buildDomain(std::vector<std::string> variables);
 
 	//Functions to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
-			std::vector<int>& parameters);
+				std::vector<int>& parameters);
 	FuzzyMF* buildTor(int bottom, int top);
 	FuzzyMF* buildTol(int top, int bottom);
 	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
-			int bottomRight);
+				int bottomRight);
 	FuzzyMF* buildTri(int left, int center, int right);
 	FuzzyMF* buildInt(int left, int right);
 	FuzzyMF* buildSgt(int value);
@@ -93,9 +97,9 @@ public:
 private:
 	void createMap();
 	void checkParameters(std::string name, std::vector<int>& parameters,
-			FuzzySets fuzzySetType);
+				FuzzySets fuzzySetType);
 	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
-			size_t parametersSize);
+				size_t parametersSize);
 
 private:
 	//Data needed to get Builder working

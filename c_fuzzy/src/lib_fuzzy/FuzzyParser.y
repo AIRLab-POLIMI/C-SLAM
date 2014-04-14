@@ -13,6 +13,7 @@
 
 	#include <vector>
 	#include <map>
+	#include <utility>
 	#include "Node.h"
 	
 	class FuzzyBuilder;
@@ -43,6 +44,7 @@
 %token END 0
 
 %token <std::string> ID
+%token <std::string> VAR_ID
 %token END_RULE
 %token OP_OR
 %token OP_AND
@@ -55,18 +57,25 @@
 
 %token FUZZIFY
 %token END_FUZZIFY
+%token FUZZIFY_CLASS
+%token END_FUZZIFY_CLASS
+%token FUZZIFY_PREDICATE
+%token END_FUZZIFY_PREDICATE
 
 %token LIKE
 %token COMMA
+%token PERIOD
 %token <std::string> F_LABEL
 %token <int> PARAMETER
 
 %type <Node*> wellFormedFormula
 %type <Node*> fuzzyComparison
 %type <Node*> fuzzyAssignment
+%type <std::pair<std::string, std::string> > classMember
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList
 %type <std::vector<std::string> > fuzzyId
+%type <std::string> var
 
 %left OP_AND
 %left OP_OR
@@ -74,7 +83,19 @@
 
 %%
 
-fuzzyFile		: fuzzySet ruleSet 
+fuzzyFile		: fuzzyClass fuzzySet ruleSet 
+			;
+
+fuzzyClass		: FUZZIFY_CLASS fuzzyId fuzzyPredicate END_FUZZIFY_CLASS fuzzyClass
+			| /* Empty */
+			;
+
+fuzzyPredicate 		: FUZZIFY_PREDICATE ID fuzzyPredicateDef END_FUZZIFY_PREDICATE fuzzyPredicate
+			| /* Empty */
+			;
+
+fuzzyPredicateDef 	: wellFormedFormula fuzzyAssignment END_RULE
+			| /* Empty */
 			;
 
 fuzzySet		: FUZZIFY fuzzyId { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY fuzzySet
@@ -156,11 +177,36 @@ fuzzyComparison		: OPEN_B ID IS ID CLOSE_B
 			{
 				$$ = builder.buildIs($2, $4);
 			}
+			| OPEN_B classMember IS ID CLOSE_B
+			{
+				$$ = builder.buildIs($2, $4);
+			}
 			;
 			
 fuzzyAssignment		: THEN OPEN_B ID IS ID CLOSE_B 
 			{
 				$$ = builder.buildAssignment($3, $5);
+			}
+			| THEN OPEN_B classMember IS ID CLOSE_B 
+			{
+				$$ = builder.buildAssignment($3, $5);
+			}
+			;
+
+classMember		: ID PERIOD var
+			{
+				$$.first = $1;
+				$$.second = $3;
+			}
+			;
+
+var 			: ID
+			{
+				$$ = $1;
+			}
+			| VAR_ID
+			{
+				$$ = $1;
 			}
 			;
 %%

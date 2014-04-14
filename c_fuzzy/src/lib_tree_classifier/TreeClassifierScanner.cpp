@@ -926,7 +926,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 45 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.l"
-{ yy_push_state(COMMENT); BEGIN(COMMENT); }
+{ yy_push_state(YY_START); BEGIN(COMMENT); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP

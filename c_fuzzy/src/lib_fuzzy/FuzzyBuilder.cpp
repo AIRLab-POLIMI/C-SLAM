@@ -96,6 +96,19 @@ Node* FuzzyBuilder::buildAssignment(string output, string label)
 	return new FuzzyAssignment(domainTable, output, label);
 }
 
+Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
+{
+	//variableMasks->updateVariableMask(domain, ruleList->size());
+	//return new FuzzyIs(domainTable, domain, mfLabel);
+	return NULL;
+}
+
+Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember, string label)
+{
+	//return new FuzzyAssignment(domainTable, output, label);
+	return NULL;
+}
+
 //Fuzzy domain
 void FuzzyBuilder::buildDomain(vector<string> variables)
 {

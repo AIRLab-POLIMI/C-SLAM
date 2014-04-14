@@ -1,0 +1,34 @@
+/* Knowledge Base for fuzzy Classifier */
+FUZZIFY_CLASS Rectangle
+	FUZZIFY FormFactor
+		Narrow :=  sgt(1);
+	END_FUZZIFY
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS Door
+
+	FUZZIFY_PREDICATE Lateral /*on(Xmin, Xmax) */
+		(Handle.x is Left) or (Handle.x is Right) then (Handle.x is Lateral);
+		/*FUZZIFY Handle.x
+			Left :=  sgt(1);
+			Right :=  sgt(1);
+		END_FUZZIFY*/
+		
+	END_FUZZIFY_PREDICATE
+	
+	/*	
+	FUZZIFY_PREDICATE Centered on(Ymin, Ymax)
+		FUZZIFY Handle.y
+			Centered :=  sgt(1);
+		END_FUZZIFY
+		
+	END_FUZZIFY_PREDICATE
+	
+	
+	FUZZIFY Hanlde.x
+		Perfect wrt x :=  sgt(1);
+	END_FUZZIFY
+	*/
+	
+	
+END_FUZZIFY_CLASS
