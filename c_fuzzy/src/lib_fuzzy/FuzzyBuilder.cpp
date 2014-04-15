@@ -58,7 +58,7 @@ void FuzzyBuilder::parse(const char *filename)
 FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 {
 	variableMasks->normalizeVariableMasks(ruleList->size());
-	return new FuzzyKnowledgeBase(domainTable, variableMasks, ruleList);
+	return new FuzzyKnowledgeBase(namespaceTable, namespaceMasks, ruleList);
 }
 
 void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
@@ -88,44 +88,54 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
 {
 	variableMasks->updateVariableMask(domain, ruleList->size());
-	return new FuzzyIs(domainTable, domain, mfLabel);
+	return new FuzzyIs(namespaceTable, "", domain, mfLabel);
 }
 
 Node* FuzzyBuilder::buildAssignment(string output, string label)
 {
-	return new FuzzyAssignment(domainTable, output, label);
+	return new FuzzyAssignment(namespaceTable, "", output, label);
 }
 
 Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 {
-	//TODO implement this
-	//variableMasks->updateVariableMask(domain, ruleList->size());
-	//return new FuzzyIs(domainTable, domain, mfLabel);
-	return NULL;
+	string nameSpace = classMember.first;
+	string domain = classMember.second;
+	variableMasks->updateVariableMask(domain, ruleList->size());
+	return new FuzzyIs(namespaceTable, nameSpace, domain, mfLabel);
 }
 
 Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
 			string label)
 {
-	//TODO implement this
-	//return new FuzzyAssignment(domainTable, output, label);
-	return NULL;
+	string nameSpace = classMember.first;
+	string output = classMember.second;
+	return new FuzzyAssignment(namespaceTable, nameSpace, output, label);
 }
 
-//Function to build a name space
+//Function to enter a namespace
 void FuzzyBuilder::setNameSpace(string nameSpace)
 {
 	NamespaceTable& namespaceMap = *namespaceTable;
+	NamespaceMasks& masksMap = *namespaceMasks;
 
 	if (namespaceMap.count(nameSpace) == 0)
 	{
 		domainTable = new DomainTable();
 		namespaceMap[nameSpace] = domainTable;
+		variableMasks = new VariableMasks();
+		namespaceMasks->addNameSpace(nameSpace, variableMasks);
 	}
 	else
 	{
 		domainTable = namespaceMap[nameSpace];
+		variableMasks = masksMap[nameSpace];
 	}
+}
+
+//Function to return to the default namespace
+void FuzzyBuilder::setDefaultNameSpace()
+{
+	setNameSpace("");
 }
 
 //Fuzzy domain
@@ -221,7 +231,7 @@ void FuzzyBuilder::createMap()
 
 }
 
-void FuzzyBuilder::setDefaultNamespace()
+void FuzzyBuilder::initializeNameSpaces()
 {
 	namespaceTable = new NamespaceTable();
 	namespaceMasks = new NamespaceMasks();
@@ -230,6 +240,11 @@ void FuzzyBuilder::setDefaultNamespace()
 
 	NamespaceTable& namespaceMap = *namespaceTable;
 	namespaceMap[""] = domainTable;
+
+	namespaceMasks = new NamespaceMasks();
+	variableMasks = new VariableMasks();
+
+	namespaceMasks->addNameSpace("", variableMasks);
 
 }
 

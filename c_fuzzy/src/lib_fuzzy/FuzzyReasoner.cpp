@@ -65,10 +65,11 @@ map<string, FuzzyOutput> Defuzzyfier::defuzzify(
 void FuzzyReasoner::addInput(string name, int value)
 {
 	inputs[name] = value;
-	if (variableMasks.contains(name))
+	if (namespaceMasks.contains(name))
 	{
 		inputs[name] = value;
-		inputMask.set(variableMasks[name].index, true);
+		//FIXME error!!!!
+		inputMask.set(namespaceMasks[name].index, true);
 	}
 }
 
@@ -102,8 +103,9 @@ void FuzzyReasoner::updateRulesMask()
 {
 	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
-	for (map<string, BitData>::iterator it = variableMasks.begin();
-				it != variableMasks.end(); ++it)
+	//FIXME big error!!
+	for (map<string, BitData>::iterator it = namespaceMasks.begin();
+				it != namespaceMasks.end(); ++it)
 	{
 		int index = it->second.index;
 		boost::dynamic_bitset<>& currentMask = *it->second.bits;

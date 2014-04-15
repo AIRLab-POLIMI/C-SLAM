@@ -50,10 +50,9 @@ public:
 				parser(NULL), scanner(NULL)
 	{
 		createMap();
-		setDefaultNamespace();
+		initializeNameSpaces();
 
 		ruleList = new std::vector<Node*>();
-		variableMasks = new VariableMasks();
 	}
 
 	FuzzyKnowledgeBase* createKnowledgeBase();
@@ -80,8 +79,9 @@ public:
 	Node* buildIs(std::pair<std::string, std::string> classMember,
 				std::string mfLabel);
 
-	//Function to build a namespaces
+	//Functions to manage namespaces
 	void setNameSpace(std::string nameSpace);
+	void setDefaultNameSpace();
 
 	//Function to build a fuzzy Domain
 	void buildDomain(std::vector<std::string> variables);
@@ -99,7 +99,7 @@ public:
 
 private:
 	void createMap();
-	void setDefaultNamespace();
+	void initializeNameSpaces();
 	void checkParameters(std::string name, std::vector<int>& parameters,
 				FuzzySets fuzzySetType);
 	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
@@ -113,10 +113,12 @@ private:
 
 	//Data needed to get FuzzyReasoner working
 	NamespaceTable* namespaceTable;
+	NamespaceMasks* namespaceMasks;
+	std::vector<Node*>* ruleList;
+
+	//Data used by the parser for simplicity
 	DomainTable* domainTable;
 	MFTable* mfTable;
-	std::vector<Node*>* ruleList;
-	NamespaceMasks* namespaceMasks;
 	VariableMasks* variableMasks;
 
 };

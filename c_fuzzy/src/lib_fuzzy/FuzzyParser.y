@@ -87,6 +87,9 @@ fuzzyFile		: fuzzyClass fuzzySet ruleSet
 			;
 
 fuzzyClass		: FUZZIFY_CLASS ID { builder.setNameSpace($2); } fuzzyPredicate END_FUZZIFY_CLASS fuzzyClass
+			{
+				builder.setDefaultNameSpace();
+			}
 			| /* Empty */
 			;
 

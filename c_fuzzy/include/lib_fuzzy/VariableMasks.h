@@ -77,7 +77,7 @@ public:
 	bool contains(std::string name);
 	std::map<std::string, VariableMasks*>::iterator begin();
 	std::map<std::string, VariableMasks*>::iterator end();
-	VariableMasks& operator[](std::string nameSpace);
+	VariableMasks* operator[](std::string nameSpace);
 
 	~NamespaceMasks();
 

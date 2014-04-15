@@ -96,7 +96,7 @@ void NamespaceMasks::normalizeVariableMasks(size_t size)
 	for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
 				it != namespaceMasks.end(); ++it)
 	{
-		VariableMasks* mask = *it;
+		VariableMasks* mask = it->second;
 		mask->normalizeVariableMasks(size);
 	}
 }
@@ -121,9 +121,9 @@ map<string, VariableMasks*>::iterator NamespaceMasks::end()
 	return namespaceMasks.end();
 }
 
-VariableMasks& NamespaceMasks::operator[](string nameSpace)
+VariableMasks* NamespaceMasks::operator[](string nameSpace)
 {
-	return *namespaceMasks[nameSpace];
+	return namespaceMasks[nameSpace];
 }
 
 NamespaceMasks::~NamespaceMasks()

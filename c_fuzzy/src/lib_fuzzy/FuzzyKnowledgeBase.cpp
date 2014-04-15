@@ -30,14 +30,14 @@ size_t FuzzyKnowledgeBase::size()
 	return knowledgeBase->size();
 }
 
-VariableMasks& FuzzyKnowledgeBase::getVariableMasks()
+NamespaceMasks& FuzzyKnowledgeBase::getNamespaceMasks()
 {
-	return *variableMasks;
+	return *namespaceMasks;
 }
 
-DomainTable& FuzzyKnowledgeBase::getDomaintable()
+NamespaceTable& FuzzyKnowledgeBase::getNamespaceTable()
 {
-	return *domainTable;
+	return *namespaceTable;
 }
 
 Node& FuzzyKnowledgeBase::operator[](const size_t i)
@@ -45,30 +45,46 @@ Node& FuzzyKnowledgeBase::operator[](const size_t i)
 	return *knowledgeBase->at(i);
 }
 
-void FuzzyKnowledgeBase::addRule(Node* fuzzyRule, vector<string>& variables)
+void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
+		vector<pair<string, string> >& variables)
 {
+
 	size_t currentRule = knowledgeBase->size();
-	for (vector<string>::iterator it = variables.begin(); it != variables.end();
-				++it)
+	for (vector<pair<string, string> >::iterator it = variables.begin();
+			it != variables.end(); ++it)
 	{
-		if(!variableMasks->contains(*it))
+		string nameSpace = it->first;
+		string variableName = it->second;
+		VariableMasks* variableMasks;
+
+		if (!namespaceMasks->contains(nameSpace))
 		{
-			variableMasks->newVariableMask(*it);
+			variableMasks = new VariableMasks();
+			namespaceMasks->addNameSpace(nameSpace, variableMasks);
+			variableMasks->newVariableMask(variableName);
+		}
+		else
+		{
+			NamespaceMasks& map = *namespaceMasks;
+			variableMasks = map[nameSpace];
 		}
 
-		variableMasks->updateVariableMask(*it, currentRule);
+		if(!variableMasks->contains(variableName))
+		{
+			variableMasks->newVariableMask(variableName);
+		}
+
+		variableMasks->updateVariableMask(variableName, currentRule);
 	}
 
 	knowledgeBase->push_back(fuzzyRule);
-	variableMasks->normalizeVariableMasks(knowledgeBase->size());
+	namespaceMasks->normalizeVariableMasks(knowledgeBase->size());
 }
-
-
 
 void FuzzyKnowledgeBase::deleteRules()
 {
 	for (vector<Node*>::iterator it = knowledgeBase->begin();
-				it != knowledgeBase->end(); ++it)
+			it != knowledgeBase->end(); ++it)
 	{
 		delete *it;
 	}
@@ -84,19 +100,28 @@ void FuzzyKnowledgeBase::deleteMF(MFTable* mfTable)
 
 void FuzzyKnowledgeBase::deleteDomains()
 {
-	for (DomainTable::iterator it = domainTable->begin();
-				it != domainTable->end(); ++it)
+	for (NamespaceTable::iterator it1 = namespaceTable->begin();
+			it1 != namespaceTable->end(); ++it1)
 	{
-		deleteMF(it->second);
-		delete it->second;
+		DomainTable* domain = it1->second;
+		for (DomainTable::iterator it2 = domain->begin(); it2 != domain->end();
+				++it2)
+		{
+			deleteMF(it2->second);
+			delete it2->second;
+		}
+
+		delete domain;
+
 	}
+
 }
 
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
 {
-	delete variableMasks;
+	delete namespaceMasks;
 	deleteDomains();
-	delete domainTable;
+	delete namespaceTable;
 	deleteRules();
 	delete knowledgeBase;
 }
