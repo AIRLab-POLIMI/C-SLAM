@@ -50,8 +50,8 @@ public:
 				parser(NULL), scanner(NULL)
 	{
 		createMap();
-		domainTable = new DomainTable();
-		mfTable = NULL;
+		setDefaultNamespace();
+
 		ruleList = new std::vector<Node*>();
 		variableMasks = new VariableMasks();
 	}
@@ -80,6 +80,9 @@ public:
 	Node* buildIs(std::pair<std::string, std::string> classMember,
 				std::string mfLabel);
 
+	//Function to build a namespaces
+	void setNameSpace(std::string nameSpace);
+
 	//Function to build a fuzzy Domain
 	void buildDomain(std::vector<std::string> variables);
 
@@ -96,6 +99,7 @@ public:
 
 private:
 	void createMap();
+	void setDefaultNamespace();
 	void checkParameters(std::string name, std::vector<int>& parameters,
 				FuzzySets fuzzySetType);
 	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
@@ -108,9 +112,11 @@ private:
 	std::map<std::string, FuzzySets> fuzzyMap;
 
 	//Data needed to get FuzzyReasoner working
+	NamespaceTable* namespaceTable;
 	DomainTable* domainTable;
 	MFTable* mfTable;
 	std::vector<Node*>* ruleList;
+	NamespaceMasks* namespaceMasks;
 	VariableMasks* variableMasks;
 
 };

@@ -56,7 +56,6 @@ size_t VariableMasks::size()
 	return variableMasks.size();
 }
 
-
 bool VariableMasks::contains(string name)
 {
 	return variableMasks.count(name) != 0;
@@ -83,5 +82,55 @@ VariableMasks::~VariableMasks()
 				it != variableMasks.end(); ++it)
 	{
 		delete it->second.bits;
+	}
+}
+
+void NamespaceMasks::addNameSpace(std::string nameSpace,
+			VariableMasks* variableMasks)
+{
+	namespaceMasks[nameSpace] = variableMasks;
+}
+
+void NamespaceMasks::normalizeVariableMasks(size_t size)
+{
+	for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
+				it != namespaceMasks.end(); ++it)
+	{
+		VariableMasks* mask = *it;
+		mask->normalizeVariableMasks(size);
+	}
+}
+
+size_t NamespaceMasks::size()
+{
+	return namespaceMasks.size();
+}
+
+bool NamespaceMasks::contains(string name)
+{
+	return namespaceMasks.count(name) != 0;
+}
+
+map<string, VariableMasks*>::iterator NamespaceMasks::begin()
+{
+	return namespaceMasks.begin();
+}
+
+map<string, VariableMasks*>::iterator NamespaceMasks::end()
+{
+	return namespaceMasks.end();
+}
+
+VariableMasks& NamespaceMasks::operator[](string nameSpace)
+{
+	return *namespaceMasks[nameSpace];
+}
+
+NamespaceMasks::~NamespaceMasks()
+{
+	for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
+				it != namespaceMasks.end(); ++it)
+	{
+		delete it->second;
 	}
 }

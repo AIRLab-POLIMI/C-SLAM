@@ -747,7 +747,7 @@ namespace fz {
       yylast_ = 78,     ///< Last index in yytable_.
       yynnts_ = 18,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 6, ///< Termination state number.
+      yyfinal_ = 5, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 25  ///< Number of tokens.

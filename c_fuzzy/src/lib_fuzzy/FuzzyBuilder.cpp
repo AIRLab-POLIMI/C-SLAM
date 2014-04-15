@@ -71,13 +71,13 @@ void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
 Node* FuzzyBuilder::buildAnd(Node* left, Node* right)
 {
 	return new FuzzyAnd(static_cast<FuzzyOperator*>(left),
-			static_cast<FuzzyOperator*>(right));
+				static_cast<FuzzyOperator*>(right));
 }
 
 Node* FuzzyBuilder::buildOr(Node* left, Node* right)
 {
 	return new FuzzyOr(static_cast<FuzzyOperator*>(left),
-			static_cast<FuzzyOperator*>(right));
+				static_cast<FuzzyOperator*>(right));
 }
 
 Node* FuzzyBuilder::buildNot(Node* operand)
@@ -98,15 +98,34 @@ Node* FuzzyBuilder::buildAssignment(string output, string label)
 
 Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 {
+	//TODO implement this
 	//variableMasks->updateVariableMask(domain, ruleList->size());
 	//return new FuzzyIs(domainTable, domain, mfLabel);
 	return NULL;
 }
 
-Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember, string label)
+Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
+			string label)
 {
+	//TODO implement this
 	//return new FuzzyAssignment(domainTable, output, label);
 	return NULL;
+}
+
+//Function to build a name space
+void FuzzyBuilder::setNameSpace(string nameSpace)
+{
+	NamespaceTable& namespaceMap = *namespaceTable;
+
+	if (namespaceMap.count(nameSpace) == 0)
+	{
+		domainTable = new DomainTable();
+		namespaceMap[nameSpace] = domainTable;
+	}
+	else
+	{
+		domainTable = namespaceMap[nameSpace];
+	}
 }
 
 //Fuzzy domain
@@ -141,7 +160,7 @@ void FuzzyBuilder::buildMF(string name, string shape, vector<int>& parameter)
 		case TRA:
 			checkParameters(name, parameter, fuzzySetType);
 			map[name] = buildTra(parameter[3], parameter[2], parameter[1],
-					parameter[0]);
+						parameter[0]);
 			break;
 		case TRI:
 			checkParameters(name, parameter, fuzzySetType);
@@ -171,7 +190,7 @@ FuzzyMF* FuzzyBuilder::buildTol(int top, int bottom)
 }
 
 FuzzyMF* FuzzyBuilder::buildTra(int bottomLeft, int topLeft, int topRight,
-		int bottomRight)
+			int bottomRight)
 {
 	return new TraMF(bottomLeft, topLeft, topRight, bottomRight);
 }
@@ -202,9 +221,20 @@ void FuzzyBuilder::createMap()
 
 }
 
+void FuzzyBuilder::setDefaultNamespace()
+{
+	namespaceTable = new NamespaceTable();
+	namespaceMasks = new NamespaceMasks();
+	domainTable = new DomainTable();
+	mfTable = NULL;
+
+	NamespaceTable& namespaceMap = *namespaceTable;
+	namespaceMap[""] = domainTable;
+
+}
 
 void FuzzyBuilder::chekParametersNumber(string name, FuzzySets fuzzySetType,
-		size_t parametersSize)
+			size_t parametersSize)
 {
 	bool error = false;
 
@@ -239,7 +269,7 @@ void FuzzyBuilder::chekParametersNumber(string name, FuzzySets fuzzySetType,
 }
 
 void FuzzyBuilder::checkParameters(string name, vector<int>& parameters,
-		FuzzySets fuzzySetType)
+			FuzzySets fuzzySetType)
 {
 	size_t parametersSize = parameters.size();
 	chekParametersNumber(name, fuzzySetType, parametersSize);

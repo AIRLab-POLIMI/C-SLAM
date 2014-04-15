@@ -177,5 +177,6 @@ private:
 
 typedef std::map<std::string, FuzzyMF*> MFTable;
 typedef std::map<std::string, MFTable*> DomainTable;
+typedef std::map<std::string, DomainTable*> NamespaceTable;
 
 #endif /* FUZZYMF_H_ */

@@ -44,7 +44,6 @@ struct BitData
 
 };
 
-
 class VariableMasks
 {
 public:
@@ -66,6 +65,24 @@ public:
 
 private:
 	std::map<std::string, BitData> variableMasks;
+};
+
+class NamespaceMasks
+{
+public:
+	void addNameSpace(std::string nameSpace, VariableMasks* variableMasks);
+	void normalizeVariableMasks(size_t size);
+
+	size_t size();
+	bool contains(std::string name);
+	std::map<std::string, VariableMasks*>::iterator begin();
+	std::map<std::string, VariableMasks*>::iterator end();
+	VariableMasks& operator[](std::string nameSpace);
+
+	~NamespaceMasks();
+
+private:
+	std::map<std::string, VariableMasks*> namespaceMasks;
 };
 
 #endif /* VARIABLEMASK_H_ */
