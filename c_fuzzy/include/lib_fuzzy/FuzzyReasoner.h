@@ -73,6 +73,7 @@ public:
 		rulesMask.reset();
 		inputMask.reset();
 	}
+	void addInput(std::string nameSpace, std::string name, int value);
 	void addInput(std::string name, int value);
 	std::map<std::string, FuzzyOutput> run();
 

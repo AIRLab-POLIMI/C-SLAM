@@ -26,11 +26,11 @@
 using namespace std;
 
 map<string, FuzzyOutput> Defuzzyfier::defuzzify(
-			map<string, DataMap>& aggregatedData)
+		map<string, DataMap>& aggregatedData)
 {
 	map<string, FuzzyOutput> results;
 	for (map<string, DataMap>::iterator i = aggregatedData.begin();
-				i != aggregatedData.end(); ++i)
+			i != aggregatedData.end(); ++i)
 	{
 		DataMap dataMap = i->second;
 		double product = 0, weight = 0, value = 0;
@@ -62,15 +62,22 @@ map<string, FuzzyOutput> Defuzzyfier::defuzzify(
 
 }
 
+void FuzzyReasoner::addInput(string nameSpace, string name, int value)
+{
+	if (namespaceMasks.contains(nameSpace))
+	{
+		VariableMasks& variableMasks = *namespaceMasks[nameSpace];
+		if (variableMasks.contains(name))
+		{
+			inputs[nameSpace][name] = value;
+			inputMask.set(variableMasks[name].index, true);
+		}
+	}
+}
+
 void FuzzyReasoner::addInput(string name, int value)
 {
-	inputs[name] = value;
-	if (namespaceMasks.contains(name))
-	{
-		inputs[name] = value;
-		//FIXME error!!!!
-		inputMask.set(namespaceMasks[name].index, true);
-	}
+	addInput("", name, value);
 }
 
 map<string, FuzzyOutput> FuzzyReasoner::run()
@@ -104,16 +111,17 @@ void FuzzyReasoner::updateRulesMask()
 	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
 	//FIXME big error!!
-	for (map<string, BitData>::iterator it = namespaceMasks.begin();
-				it != namespaceMasks.end(); ++it)
-	{
-		int index = it->second.index;
-		boost::dynamic_bitset<>& currentMask = *it->second.bits;
-		if (inputMask[index])
-			rulesMask |= currentMask;
-		else
-			noInputMask |= currentMask;
-	}
+	/*
+	 for (map<string, BitData>::iterator it = namespaceMasks.begin();
+	 it != namespaceMasks.end(); ++it)
+	 {
+	 int index = it->second.index;
+	 boost::dynamic_bitset<>& currentMask = *it->second.bits;
+	 if (inputMask[index])
+	 rulesMask |= currentMask;
+	 else
+	 noInputMask |= currentMask;
+	 }*/
 
 	rulesMask &= noInputMask.flip();
 

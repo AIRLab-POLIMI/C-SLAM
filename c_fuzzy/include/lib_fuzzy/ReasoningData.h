@@ -62,9 +62,9 @@ private:
 };
 
 /**
- * Input map type for cololecting all the inputs
+ * Input map type for collecting all the inputs
  */
-typedef std::map<std::string, int> InputTable;
+typedef std::map<std::string, std::map<std::string, int> > InputTable;
 
 /**
  * Reasoning data struct

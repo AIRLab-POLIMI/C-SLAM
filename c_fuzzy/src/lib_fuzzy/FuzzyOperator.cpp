@@ -54,6 +54,7 @@ double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 	MFTable& mfTable = *map[output];
 	FuzzyMF* mf = mfTable[mfLabel];
 	double result = mf->defuzzify(truthValue);
+	//FIXME BUG!!!
 	reasoningData.aggregator.addValue(output, mfLabel, truthValue, result);
 	return result;
 }
@@ -63,8 +64,9 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	DomainTable& map = *lookUpTable[nameSpace];
 	MFTable& mfTable = *map[label];
 	Node* mFunction = mfTable[mfLabel];
-	int crispValue = reasoningData.inputs[label];
-	reasoningData.inputValue = crispValue;
+	//FIXME BUG
+	//int crispValue = reasoningData.inputs[label];
+	//reasoningData.inputValue = crispValue;
 	return mFunction->evaluate(reasoningData);
 }
 
