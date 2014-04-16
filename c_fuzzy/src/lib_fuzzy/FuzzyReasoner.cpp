@@ -22,6 +22,7 @@
  */
 
 #include "FuzzyReasoner.h"
+#include <iostream>
 
 using namespace std;
 
@@ -51,7 +52,7 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 
 			FuzzyOutput result;
 
-			if (domainMap.size() > 1)
+			if (dataMap.size() > 1)
 			{
 				result.truth = product / value;
 				result.value = product / weight;
