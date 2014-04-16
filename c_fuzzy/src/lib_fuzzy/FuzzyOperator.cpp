@@ -64,9 +64,8 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	DomainTable& map = *lookUpTable[nameSpace];
 	MFTable& mfTable = *map[label];
 	Node* mFunction = mfTable[mfLabel];
-	//FIXME BUG
-	//int crispValue = reasoningData.inputs[label];
-	//reasoningData.inputValue = crispValue;
+	int crispValue = reasoningData.inputs[nameSpace][label];
+	reasoningData.inputValue = crispValue;
 	return mFunction->evaluate(reasoningData);
 }
 
