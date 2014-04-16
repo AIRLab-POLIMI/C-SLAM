@@ -68,6 +68,9 @@ public:
 	//Function to add a rule to the rulebase
 	void buildRule(Node* antecedent, Node* Conseguent);
 
+	//Function to add predicates to the rulebase
+	void buildPredicate(std::string predicateName, Node* definition);
+
 	//Functions to build fuzzy operators
 	Node* buildAnd(Node* left, Node* right);
 	Node* buildOr(Node* left, Node* right);
@@ -78,12 +81,14 @@ public:
 	Node* buildIs(std::string domain, std::string mfLabel);
 	Node* buildIs(std::pair<std::string, std::string> classMember,
 				std::string mfLabel);
+	Node* buildTemplateIs(std::string templateDomain, std::string mfLabel);
 
 	//Functions to manage namespaces
 	void setNameSpace(std::string nameSpace);
 	void setDefaultNameSpace();
 
 	//Function to build a fuzzy Domain
+	void buildDomain(std::string variable);
 	void buildDomain(std::vector<std::string> variables);
 
 	//Functions to build fuzzy MF
@@ -104,6 +109,8 @@ private:
 				FuzzySets fuzzySetType);
 	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
 				size_t parametersSize);
+	VariableMasks& getVariableMasks(std::string nameSpace);
+
 
 private:
 	//Data needed to get Builder working

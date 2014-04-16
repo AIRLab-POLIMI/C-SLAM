@@ -75,7 +75,7 @@
 %type <std::pair<std::string, std::string> > classMember
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList
-%type <std::vector<std::string> > fuzzyId
+%type <std::vector<std::string>> fuzzyId
 %type <std::string> var templateVar
 
 %left OP_AND
@@ -84,18 +84,26 @@
 
 %%
 
-fuzzyFile		: fuzzyClass fuzzySet ruleSet 
+fuzzyFile		: fuzzyDefinitions ruleSet 
 			;
 
-fuzzyClass		: FUZZIFY_CLASS ID { builder.setNameSpace($2); } fuzzyPredicate END_FUZZIFY_CLASS fuzzyClass
+fuzzyDefinitions	: fuzzyClass fuzzyDefinitions
+			| fuzzySet fuzzyDefinitions
+			| /* Empty */
+			;
+
+fuzzyClass		: FUZZIFY_CLASS ID { builder.setNameSpace($2); } fuzzyClassDefinitions END_FUZZIFY_CLASS
 			{
 				builder.setDefaultNameSpace();
 			}
+			;
+
+fuzzyClassDefinitions	: fuzzySet fuzzyClassDefinitions
+			| fuzzyPredicate fuzzyClassDefinitions
 			| /* Empty */
 			;
 
-fuzzyPredicate 		: FUZZIFY_PREDICATE ID fuzzyPredicateList END_FUZZIFY_PREDICATE fuzzyPredicate
-			| /* Empty */
+fuzzyPredicate 		: FUZZIFY_PREDICATE fuzzyPredicateList fuzzyTemplateSet END_FUZZIFY_PREDICATE
 			;
 
 fuzzyPredicateList 	: fuzzyPredicateDef fuzzyPredicateList
@@ -104,19 +112,21 @@ fuzzyPredicateList 	: fuzzyPredicateDef fuzzyPredicateList
 
 fuzzyPredicateDef 	: ID LIKE wellFormedFormula END_RULE
 			{
-			
+				builder.buildPredicate($1, $3);
 			}
 			;
 
-fuzzySet		: FUZZIFY fuzzyId { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY fuzzySet
-			| /* Empty */
+fuzzyTemplateSet	: FUZZIFY templateVar { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY
 			;
 
-fuzzyId			: ID 
+fuzzySet		: FUZZIFY fuzzyId { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY
+			;
+
+fuzzyId			: var 
 			{
 				$$.push_back($1);
 			}
-			| ID COMMA fuzzyId
+			| var COMMA fuzzyId
 			{
 				$$ = $3;
 				$$.push_back($1);

@@ -66,10 +66,9 @@ int main(int argc, char *argv[])
 
 			} while (stop != 'n');
 		}
-		else
-		{
-			reasoner.addInput("Input", 189);
-		}
+
+		//TODO togliere
+		reasoner.addInput("TestClass", "prova", 189);
 
 		OutputTable results = reasoner.run();
 

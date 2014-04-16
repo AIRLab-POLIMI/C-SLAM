@@ -29,9 +29,19 @@ FUZZIFY Output4
 END_FUZZIFY
 
 FUZZIFY Output5
-	Bad := sgt(2);
+	Bad := sgt(0);
 	Ok := sgt(1);
 END_FUZZIFY
+
+FUZZIFY Output6
+	Ok := sgt(1);
+END_FUZZIFY
+
+FUZZIFY_CLASS TestClass
+	FUZZIFY prova
+		Random := tol(100, 200);
+	END_FUZZIFY
+END_FUZZIFY_CLASS
 
 /* Knowledge base */
 if (Input is Near) then (Output1 is Ok);
@@ -41,4 +51,5 @@ if (Input is Far) and (Prova is Far) then (Output3 is Ok);
 if (Prova is Near) then (Output4 is Ok);
 if (Input is Near) or (Input is Medium) then (Output5 is Bad);
 if (Prova is Medium) then (Output5 is Ok);
+if (TestClass.prova is Random) then (Output6 is Ok);
 

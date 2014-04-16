@@ -295,6 +295,7 @@ namespace fz {
       // VAR_ID
       // F_LABEL
       // var
+      // templateVar
       char dummy4[sizeof(std::string)];
 
       // shape
@@ -302,7 +303,7 @@ namespace fz {
       char dummy5[sizeof(std::vector<int>)];
 
       // fuzzyId
-      char dummy6[sizeof(std::vector<std::string> )];
+      char dummy6[sizeof(std::vector<std::string>)];
 };
 
     /// Symbol semantic values.
@@ -346,8 +347,9 @@ namespace fz {
         LIKE = 275,
         COMMA = 276,
         PERIOD = 277,
-        F_LABEL = 278,
-        PARAMETER = 279
+        QUESTION = 278,
+        F_LABEL = 279,
+        PARAMETER = 280
       };
     };
 
@@ -392,7 +394,7 @@ namespace fz {
 
   basic_symbol (typename Base::kind_type t, const std::vector<int> v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const std::vector<std::string>  v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const std::vector<std::string> v, const location_type& l);
 
 
       /// Constructor for symbols with semantic value.
@@ -535,6 +537,10 @@ namespace fz {
     static inline
     symbol_type
     make_PERIOD (const location_type& l);
+
+    static inline
+    symbol_type
+    make_QUESTION (const location_type& l);
 
     static inline
     symbol_type
@@ -744,13 +750,13 @@ namespace fz {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 73,     ///< Last index in yytable_.
-      yynnts_ = 19,  ///< Number of nonterminal symbols.
+      yylast_ = 87,     ///< Last index in yytable_.
+      yynnts_ = 25,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 5, ///< Termination state number.
+      yyfinal_ = 12, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 25  ///< Number of tokens.
+      yyntokens_ = 26  ///< Number of tokens.
     };
 
 
@@ -795,9 +801,10 @@ namespace fz {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25
     };
-    const unsigned int user_token_number_max_ = 279;
+    const unsigned int user_token_number_max_ = 280;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -830,34 +837,35 @@ namespace fz {
   {
       switch (other.type_get ())
     {
-      case 39: // wellFormedFormula
-      case 40: // fuzzyComparison
-      case 41: // fuzzyAssignment
+      case 45: // wellFormedFormula
+      case 46: // fuzzyComparison
+      case 47: // fuzzyAssignment
         value.copy< Node* > (other.value);
         break;
 
-      case 24: // PARAMETER
+      case 25: // PARAMETER
         value.copy< int > (other.value);
         break;
 
-      case 42: // classMember
+      case 48: // classMember
         value.copy< std::pair<std::string, std::string>  > (other.value);
         break;
 
       case 3: // ID
       case 4: // VAR_ID
-      case 23: // F_LABEL
-      case 43: // var
+      case 24: // F_LABEL
+      case 49: // var
+      case 50: // templateVar
         value.copy< std::string > (other.value);
         break;
 
-      case 35: // shape
-      case 36: // parametersList
+      case 41: // shape
+      case 42: // parametersList
         value.copy< std::vector<int> > (other.value);
         break;
 
-      case 33: // fuzzyId
-        value.copy< std::vector<std::string>  > (other.value);
+      case 39: // fuzzyId
+        value.copy< std::vector<std::string> > (other.value);
         break;
 
       default:
@@ -877,34 +885,35 @@ namespace fz {
     (void) v;
       switch (this->type_get ())
     {
-      case 39: // wellFormedFormula
-      case 40: // fuzzyComparison
-      case 41: // fuzzyAssignment
+      case 45: // wellFormedFormula
+      case 46: // fuzzyComparison
+      case 47: // fuzzyAssignment
         value.copy< Node* > (v);
         break;
 
-      case 24: // PARAMETER
+      case 25: // PARAMETER
         value.copy< int > (v);
         break;
 
-      case 42: // classMember
+      case 48: // classMember
         value.copy< std::pair<std::string, std::string>  > (v);
         break;
 
       case 3: // ID
       case 4: // VAR_ID
-      case 23: // F_LABEL
-      case 43: // var
+      case 24: // F_LABEL
+      case 49: // var
+      case 50: // templateVar
         value.copy< std::string > (v);
         break;
 
-      case 35: // shape
-      case 36: // parametersList
+      case 41: // shape
+      case 42: // parametersList
         value.copy< std::vector<int> > (v);
         break;
 
-      case 33: // fuzzyId
-        value.copy< std::vector<std::string>  > (v);
+      case 39: // fuzzyId
+        value.copy< std::vector<std::string> > (v);
         break;
 
       default:
@@ -958,7 +967,7 @@ namespace fz {
   {}
 
   template <typename Base>
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::vector<std::string>  v, const location_type& l)
+   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::vector<std::string> v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -980,34 +989,35 @@ namespace fz {
     // Type destructor.
     switch (yytype)
     {
-      case 39: // wellFormedFormula
-      case 40: // fuzzyComparison
-      case 41: // fuzzyAssignment
+      case 45: // wellFormedFormula
+      case 46: // fuzzyComparison
+      case 47: // fuzzyAssignment
         value.template destroy< Node* > ();
         break;
 
-      case 24: // PARAMETER
+      case 25: // PARAMETER
         value.template destroy< int > ();
         break;
 
-      case 42: // classMember
+      case 48: // classMember
         value.template destroy< std::pair<std::string, std::string>  > ();
         break;
 
       case 3: // ID
       case 4: // VAR_ID
-      case 23: // F_LABEL
-      case 43: // var
+      case 24: // F_LABEL
+      case 49: // var
+      case 50: // templateVar
         value.template destroy< std::string > ();
         break;
 
-      case 35: // shape
-      case 36: // parametersList
+      case 41: // shape
+      case 42: // parametersList
         value.template destroy< std::vector<int> > ();
         break;
 
-      case 33: // fuzzyId
-        value.template destroy< std::vector<std::string>  > ();
+      case 39: // fuzzyId
+        value.template destroy< std::vector<std::string> > ();
         break;
 
       default:
@@ -1024,34 +1034,35 @@ namespace fz {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 39: // wellFormedFormula
-      case 40: // fuzzyComparison
-      case 41: // fuzzyAssignment
+      case 45: // wellFormedFormula
+      case 46: // fuzzyComparison
+      case 47: // fuzzyAssignment
         value.move< Node* > (s.value);
         break;
 
-      case 24: // PARAMETER
+      case 25: // PARAMETER
         value.move< int > (s.value);
         break;
 
-      case 42: // classMember
+      case 48: // classMember
         value.move< std::pair<std::string, std::string>  > (s.value);
         break;
 
       case 3: // ID
       case 4: // VAR_ID
-      case 23: // F_LABEL
-      case 43: // var
+      case 24: // F_LABEL
+      case 49: // var
+      case 50: // templateVar
         value.move< std::string > (s.value);
         break;
 
-      case 35: // shape
-      case 36: // parametersList
+      case 41: // shape
+      case 42: // parametersList
         value.move< std::vector<int> > (s.value);
         break;
 
-      case 33: // fuzzyId
-        value.move< std::vector<std::string>  > (s.value);
+      case 39: // fuzzyId
+        value.move< std::vector<std::string> > (s.value);
         break;
 
       default:
@@ -1104,7 +1115,7 @@ namespace fz {
     {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,   279
+     275,   276,   277,   278,   279,   280
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1236,6 +1247,12 @@ namespace fz {
   }
 
    FuzzyParser ::symbol_type
+   FuzzyParser ::make_QUESTION (const location_type& l)
+  {
+    return symbol_type (token::QUESTION, l);
+  }
+
+   FuzzyParser ::symbol_type
    FuzzyParser ::make_F_LABEL (const std::string& v, const location_type& l)
   {
     return symbol_type (token::F_LABEL, v, l);
@@ -1250,7 +1267,7 @@ namespace fz {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
 } // fz
-#line 1254 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 1271 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
 
 
 

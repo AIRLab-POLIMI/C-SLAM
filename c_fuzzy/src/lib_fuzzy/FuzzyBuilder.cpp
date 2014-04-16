@@ -57,7 +57,7 @@ void FuzzyBuilder::parse(const char *filename)
 
 FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 {
-	variableMasks->normalizeVariableMasks(ruleList->size());
+	namespaceMasks->normalizeVariableMasks(ruleList->size());
 	return new FuzzyKnowledgeBase(namespaceTable, namespaceMasks, ruleList);
 }
 
@@ -65,6 +65,12 @@ void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
 {
 	Node* rule = new FuzzyRule(antecedent, conseguent);
 	ruleList->push_back(rule);
+}
+
+//Predicates
+void FuzzyBuilder::buildPredicate(string predicateName, Node* definition)
+{
+	//FIXME implementami
 }
 
 //Fuzzy operators
@@ -87,21 +93,31 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 
 Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
 {
-	variableMasks->updateVariableMask(domain, ruleList->size());
+	VariableMasks& mask = getVariableMasks("");
+	mask.updateVariableMask(domain, ruleList->size());
 	return new FuzzyIs(namespaceTable, "", domain, mfLabel);
-}
-
-Node* FuzzyBuilder::buildAssignment(string output, string label)
-{
-	return new FuzzyAssignment(namespaceTable, "", output, label);
 }
 
 Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 {
 	string nameSpace = classMember.first;
 	string domain = classMember.second;
-	variableMasks->updateVariableMask(domain, ruleList->size());
+	VariableMasks& mask = getVariableMasks(nameSpace);
+	mask.updateVariableMask(domain, ruleList->size());
 	return new FuzzyIs(namespaceTable, nameSpace, domain, mfLabel);
+}
+
+Node* FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
+{
+	//FIXME errore! implementare
+	//variableMasks->updateVariableMask(domain, ruleList->size());
+	//return new FuzzyIs(namespaceTable, "", domain, mfLabel);
+	return NULL;
+}
+
+Node* FuzzyBuilder::buildAssignment(string output, string label)
+{
+	return new FuzzyAssignment(namespaceTable, "", output, label);
 }
 
 Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
@@ -139,6 +155,13 @@ void FuzzyBuilder::setDefaultNameSpace()
 }
 
 //Fuzzy domain
+void FuzzyBuilder::buildDomain(string variable)
+{
+	vector<string> variableVector;
+	variableVector.push_back(variable);
+	buildDomain(variableVector);
+}
+
 void FuzzyBuilder::buildDomain(vector<string> variables)
 {
 	DomainTable& domainMap = *domainTable;
@@ -246,6 +269,12 @@ void FuzzyBuilder::initializeNameSpaces()
 
 	namespaceMasks->addNameSpace("", variableMasks);
 
+}
+
+VariableMasks& FuzzyBuilder::getVariableMasks(std::string nameSpace)
+{
+	NamespaceMasks& nMask = *namespaceMasks;
+	return *nMask[nameSpace];
 }
 
 void FuzzyBuilder::chekParametersNumber(string name, FuzzySets fuzzySetType,

@@ -20,10 +20,14 @@ FUZZIFY_CLASS Door
 	END_FUZZIFY_PREDICATE
 	
 	FUZZIFY_PREDICATE
-		Perfect := (?y is Perfect)		
+		Perfect := (?y is Perfect)
+		Good := (?y is Good) or (?y is Perfect)
+			
 		FUZZIFY ?y
-			Perfect :=  sgt(1);
+			Good := tol(30, 40); 
+			Perfect := tol(10, 20);
 		END_FUZZIFY
+		
 	END_FUZZIFY_PREDICATE
 	
 	
