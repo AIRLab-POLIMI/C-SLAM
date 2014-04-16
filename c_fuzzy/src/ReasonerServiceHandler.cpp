@@ -50,24 +50,29 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 			Reasoning::Response& response)
 {
 	FuzzyReasoner reasoner(*knowledgeBase);
-	vector<c_fuzzy::InputVariable>::iterator i;
+	vector<c_fuzzy::InputVariable>::iterator it;
 
-	for (i = request.inputs.begin(); i != request.inputs.end(); ++i)
+	for (it = request.inputs.begin(); it != request.inputs.end(); ++it)
 	{
-		reasoner.addInput(i->name, i->value);
+		reasoner.addInput(it->name, it->value);
 	}
 
-	map<string, FuzzyOutput> results = reasoner.run();
+	OutputTable results = reasoner.run();
 
-	map<string, FuzzyOutput>::iterator j;
-
-	for (j = results.begin(); j != results.end(); ++j)
+	for (OutputTable::iterator i = results.begin(); i != results.end(); ++i)
 	{
-		DefuzzyfiedOutput output;
-		output.name = j->first;
-		output.value = j->second.value;
-		output.truth = j->second.truth;
-		response.results.push_back(output);
+		DomainOutputTable& table = i->second;
+
+		for (DomainOutputTable::iterator j = table.begin();
+					j != table.end(); ++j)
+		{
+			DefuzzyfiedOutput output;
+			output.className = i->first;
+			output.name = j->first;
+			output.value = j->second.value;
+			output.truth = j->second.truth;
+			response.results.push_back(output);
+		}
 	}
 
 	return true;

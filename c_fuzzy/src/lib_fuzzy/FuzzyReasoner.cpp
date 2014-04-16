@@ -25,37 +25,45 @@
 
 using namespace std;
 
-map<string, FuzzyOutput> Defuzzyfier::defuzzify(
-		map<string, DataMap>& aggregatedData)
+OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 {
-	map<string, FuzzyOutput> results;
-	for (map<string, DataMap>::iterator i = aggregatedData.begin();
-			i != aggregatedData.end(); ++i)
+	OutputTable results;
+
+	for (AggregationMap::iterator k = aggregatedData.begin();
+				k != aggregatedData.end(); ++k)
 	{
-		DataMap dataMap = i->second;
-		double product = 0, weight = 0, value = 0;
-		for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
-		{
-			FuzzyData& data = j->second;
-			weight += data.weight;
-			value += data.value;
-			product += data.weight * data.value;
-		}
+		string nameSpace = k->first;
+		DomainAggregationMap& domainMap = k->second;
 
-		FuzzyOutput result;
-
-		if (aggregatedData.size() > 1)
+		for (DomainAggregationMap::iterator i = domainMap.begin();
+					i != domainMap.end(); ++i)
 		{
-			result.truth = product / value;
-			result.value = product / weight;
-		}
-		else
-		{
-			result.truth = weight;
-			result.value = value;
-		}
+			string output = i->first;
+			DataMap& dataMap = i->second;
+			double product = 0, weight = 0, value = 0;
+			for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
+			{
+				FuzzyData& data = j->second;
+				weight += data.weight;
+				value += data.value;
+				product += data.weight * data.value;
+			}
 
-		results[i->first] = result;
+			FuzzyOutput result;
+
+			if (aggregatedData.size() > 1)
+			{
+				result.truth = product / value;
+				result.value = product / weight;
+			}
+			else
+			{
+				result.truth = weight;
+				result.value = value;
+			}
+
+			results[nameSpace][output] = result;
+		}
 	}
 
 	return results;
@@ -80,7 +88,7 @@ void FuzzyReasoner::addInput(string name, int value)
 	addInput("", name, value);
 }
 
-map<string, FuzzyOutput> FuzzyReasoner::run()
+OutputTable FuzzyReasoner::run()
 {
 	ReasoningData reasoningData(inputs, aggregator);
 
@@ -97,7 +105,7 @@ map<string, FuzzyOutput> FuzzyReasoner::run()
 	}
 
 	//Use the aggregation operator
-	map<string, DataMap> aggregatedResults = aggregator.getAggregations();
+	AggregationMap aggregatedResults = aggregator.getAggregations();
 
 	//clean all input functions
 	cleanInputData();
@@ -110,18 +118,23 @@ void FuzzyReasoner::updateRulesMask()
 {
 	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
-	//FIXME big error!!
-	/*
-	 for (map<string, BitData>::iterator it = namespaceMasks.begin();
-	 it != namespaceMasks.end(); ++it)
-	 {
-	 int index = it->second.index;
-	 boost::dynamic_bitset<>& currentMask = *it->second.bits;
-	 if (inputMask[index])
-	 rulesMask |= currentMask;
-	 else
-	 noInputMask |= currentMask;
-	 }*/
+
+	for (std::map<std::string, VariableMasks*>::iterator i =
+				namespaceMasks.begin(); i != namespaceMasks.end(); ++i)
+	{
+		VariableMasks* masks = i->second;
+		for (std::map<std::string, BitData>::iterator j = masks->begin();
+					j != masks->end(); ++j)
+		{
+			int index = j->second.index;
+			boost::dynamic_bitset<>& currentMask = *j->second.bits;
+			if (inputMask[index])
+				rulesMask |= currentMask;
+			else
+				noInputMask |= currentMask;
+		}
+
+	}
 
 	rulesMask &= noInputMask.flip();
 

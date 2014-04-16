@@ -43,6 +43,16 @@ struct FuzzyOutput
 	double truth;
 };
 
+/*
+ * Type to store the corresponding domain outputs
+ */
+typedef std::map<std::string, FuzzyOutput>  DomainOutputTable;
+
+/*
+ * Type to store the corresponding namespace outputs
+ */
+typedef std::map<std::string, DomainOutputTable> OutputTable;
+
 /**
  * The class implementing the defuzzyfier
  * this is intended to be an extensible defuzzifyer, but for now, implementing the centroid
@@ -51,8 +61,7 @@ struct FuzzyOutput
 class Defuzzyfier
 {
 public:
-	std::map<std::string, FuzzyOutput> defuzzify(
-				std::map<std::string, DataMap>& aggregatedData);
+	OutputTable defuzzify(AggregationMap& aggregatedData);
 };
 
 /**
@@ -75,7 +84,7 @@ public:
 	}
 	void addInput(std::string nameSpace, std::string name, int value);
 	void addInput(std::string name, int value);
-	std::map<std::string, FuzzyOutput> run();
+	OutputTable run();
 
 private:
 	void updateRulesMask();

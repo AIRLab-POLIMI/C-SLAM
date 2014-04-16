@@ -17,8 +17,8 @@ CLASS Door extends Rectangle IMPORTANT
 	END_CONSTANTS
 	
 	FormFactor is Narrow;
-	Handle.x is Lateral; /*on(Xmin, Xmax); */
-	Handle.y is Centered; /*on(Ymin, Ymax); */
+	Handle.x is Lateral on(Xmin, Xmax);
+	Handle.y is Centered on(Ymin, Ymax); 
 
 END_CLASS
 
@@ -28,8 +28,8 @@ CLASS Handle
 		y;
 	END_VARIABLES
 	
-	x is Lateral wrt Door;/*on Door(Xmin, Xmax);*/
-	y is Centered wrt Door; /*(Ymin, Ymax);*/
+	x is Lateral on Door(Xmin, Xmax);
+	y is Centered on Door(Ymin, Ymax);
 
 END_CLASS
 

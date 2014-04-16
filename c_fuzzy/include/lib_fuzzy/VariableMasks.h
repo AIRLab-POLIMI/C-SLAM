@@ -35,6 +35,7 @@ struct BitData
 				index(0), bits(NULL)
 	{
 	}
+
 	BitData(int index, boost::dynamic_bitset<>* bits) :
 				index(index), bits(bits)
 	{

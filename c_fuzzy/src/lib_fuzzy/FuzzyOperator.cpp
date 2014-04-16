@@ -54,8 +54,8 @@ double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 	MFTable& mfTable = *map[output];
 	FuzzyMF* mf = mfTable[mfLabel];
 	double result = mf->defuzzify(truthValue);
-	//FIXME BUG!!!
-	reasoningData.aggregator.addValue(output, mfLabel, truthValue, result);
+	reasoningData.aggregator.addValue(nameSpace, output, mfLabel, truthValue,
+				result);
 	return result;
 }
 

@@ -26,40 +26,50 @@
 
 using namespace std;
 
-void FuzzyAggregator::addValue(string output, string mfLabel, double weight,
-			double value)
+void FuzzyAggregator::addValue(std::string nameSpace, string output,
+			string mfLabel, double weight, double value)
 {
 	if (weight == 0)
 		return;
 
-	if (aggregationMap.count(output) == 0)
+	if (aggregationMap.count(nameSpace) == 0
+				|| aggregationMap[nameSpace].count(output) == 0)
 	{
 		DataMap dataMap = createDataMap(mfLabel, value, weight);
-		aggregationMap[output] = dataMap;
+		aggregationMap[nameSpace][output] = dataMap;
 	}
 	else
 	{
-		DataMap& dataMap = aggregationMap[output];
+		DataMap& dataMap = aggregationMap[nameSpace][output];
 		if (dataMap.count(mfLabel) == 0)
 		{
-			aggregationMap[output][mfLabel] = createData(value, weight);
+			aggregationMap[nameSpace][output][mfLabel] = createData(value,
+						weight);
 		}
 		else
 		{
-			FuzzyData& data = aggregationMap[output][mfLabel];
+			FuzzyData& data = aggregationMap[nameSpace][output][mfLabel];
 			data.weight += weight;
 			data.cardinality++;
 		}
 	}
 }
 
-map<string, DataMap> FuzzyAggregator::getAggregations()
+AggregationMap FuzzyAggregator::getAggregations()
 {
-	map<string, DataMap> aggregationsOutput;
-	for (map<string, DataMap>::iterator it = aggregationMap.begin();
-				it != aggregationMap.end(); ++it)
+	AggregationMap aggregationsOutput;
+	for (AggregationMap::iterator it1 = aggregationMap.begin();
+				it1 != aggregationMap.end(); ++it1)
 	{
-		aggregationsOutput[it->first] = getAggregation(it->second);
+		string nameSpace = it1->first;
+		DomainAggregationMap& domainAggregation = it1->second;
+		for (DomainAggregationMap::iterator it2 = domainAggregation.begin();
+					it2 != domainAggregation.end(); ++it2)
+		{
+			string domain = it2->first;
+			DataMap& dataMap = it2->second;
+			aggregationsOutput[nameSpace][domain] = getAggregation(dataMap);
+		}
 
 	}
 

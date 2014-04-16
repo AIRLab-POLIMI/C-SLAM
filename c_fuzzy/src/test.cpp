@@ -26,6 +26,7 @@
 #include "FuzzyReasoner.h"
 #include <map>
 #include <stdexcept>
+#include <sstream>
 
 int main(int argc, char *argv[])
 {
@@ -61,30 +62,43 @@ int main(int argc, char *argv[])
 					std::cout << "another input? [y/n]" << std::endl;
 					std::cin >> stop;
 					//stop = 'n';
-				}while (stop != 'n' && stop != 'y');
+				} while (stop != 'n' && stop != 'y');
 
-			}while (stop != 'n');
+			} while (stop != 'n');
 		}
 		else
 		{
 			reasoner.addInput("Input", 189);
 		}
 
-		std::map<std::string, FuzzyOutput> results = reasoner.run();
+		OutputTable results = reasoner.run();
 
 		std::cout << "Reasoning terminato, risultati:" << std::endl;
 
-		for (std::map<std::string, FuzzyOutput>::iterator it = results.begin();
-					it != results.end(); ++it)
+		for (OutputTable::iterator i = results.begin(); i != results.end(); ++i)
 		{
-			std::cout << it->first << " = " << it->second.value << " truth value = "
-			<< it->second.truth << std::endl;
+			DomainOutputTable& map = i->second;
+			for (DomainOutputTable::iterator j = map.begin(); j != map.end();
+						++j)
+			{
+				std::stringstream ss;
+
+				if (!i->first.empty())
+				{
+					ss << i->first << ".";
+				}
+
+				ss << j->first;
+
+				std::cout << ss.str() << " = " << j->second.value
+							<< " truth value = " << j->second.truth
+							<< std::endl;
+			}
 		}
 
 		delete knowledgebase;
 
-	}
-	catch(const std::runtime_error& e)
+	} catch (const std::runtime_error& e)
 	{
 		std::cout << e.what() << std::endl;
 		std::cout << "Check the input file an try again" << std::endl;

@@ -37,7 +37,16 @@ struct FuzzyData
 	int cardinality;
 };
 
+/**
+ * Type used to store labels computed
+ */
 typedef std::map<std::string, FuzzyData> DataMap;
+
+/**
+ * Type used to store aggregation results
+ */
+typedef std::map<std::string, DataMap> DomainAggregationMap;
+typedef std::map<std::string, DomainAggregationMap> AggregationMap;
 
 /**
  * Fuzzy aggregation operator
@@ -47,9 +56,9 @@ typedef std::map<std::string, FuzzyData> DataMap;
 class FuzzyAggregator
 {
 public:
-	void addValue(std::string output, std::string mfLabel, double weight,
+	void addValue(std::string nameSpace, std::string output, std::string mfLabel, double weight,
 				double value);
-	std::map<std::string, DataMap> getAggregations();
+	AggregationMap getAggregations();
 
 private:
 	DataMap getAggregation(DataMap outputs);
@@ -57,7 +66,7 @@ private:
 	FuzzyData createData(double value, double weight);
 
 private:
-	std::map<std::string, DataMap> aggregationMap;
+	AggregationMap aggregationMap;
 
 };
 
