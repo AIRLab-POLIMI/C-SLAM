@@ -72,6 +72,7 @@ UNDERSCORE [_]
 ":=" { return fz::FuzzyParser::make_LIKE(loc); }
 "," { return fz::FuzzyParser::make_COMMA(loc); }
 "." { return fz::FuzzyParser::make_PERIOD(loc); }
+"?" { return fz::FuzzyParser::make_QUESTION(loc); }
 
  /* identificators */
 {FUZZYLABEL} { return fz::FuzzyParser::make_F_LABEL(yytext, loc); }

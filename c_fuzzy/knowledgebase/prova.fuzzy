@@ -28,10 +28,17 @@ FUZZIFY Output4
 	Ok :=  sgt(1);
 END_FUZZIFY
 
+FUZZIFY Output5
+	Bad := sgt(2);
+	Ok := sgt(1);
+END_FUZZIFY
+
 /* Knowledge base */
 if (Input is Near) then (Output1 is Ok);
 if (Prova is Near) then (Output1 is Ok);
-if (Input is Medium)  and (Prova is Medium) then (Output2 is Ok); 
+if (Input is Medium) and (Prova is Medium) then (Output2 is Ok); 
 if (Input is Far) and (Prova is Far) then (Output3 is Ok);
 if (Prova is Near) then (Output4 is Ok);
+if (Input is Near) or (Input is Medium) then (Output5 is Bad);
+if (Prova is Medium) then (Output5 is Ok);
 

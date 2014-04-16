@@ -46,7 +46,7 @@ struct FuzzyOutput
 /*
  * Type to store the corresponding domain outputs
  */
-typedef std::map<std::string, FuzzyOutput>  DomainOutputTable;
+typedef std::map<std::string, FuzzyOutput> DomainOutputTable;
 
 /*
  * Type to store the corresponding namespace outputs
@@ -77,7 +77,7 @@ public:
 				namespaceMasks(knowledgeBase.getNamespaceMasks())
 	{
 		rulesMask.resize(knowledgeBase.size(), false);
-		inputMask.resize(namespaceMasks.size(), false);
+		inputMask.resize(namespaceMasks.variablesNumber(), false);
 
 		rulesMask.reset();
 		inputMask.reset();

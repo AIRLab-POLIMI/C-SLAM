@@ -89,6 +89,8 @@ void NamespaceMasks::addNameSpace(std::string nameSpace,
 			VariableMasks* variableMasks)
 {
 	namespaceMasks[nameSpace] = variableMasks;
+	counterUpdated = false;
+
 }
 
 void NamespaceMasks::normalizeVariableMasks(size_t size)
@@ -104,6 +106,27 @@ void NamespaceMasks::normalizeVariableMasks(size_t size)
 size_t NamespaceMasks::size()
 {
 	return namespaceMasks.size();
+}
+
+size_t NamespaceMasks::variablesNumber()
+{
+	if (counterUpdated)
+	{
+		return variablesCounter;
+	}
+	else
+	{
+		variablesCounter = 0;
+
+		for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
+					it != namespaceMasks.end(); ++it)
+		{
+			variablesCounter += it->second->size();
+		}
+
+		counterUpdated = true;
+		return variablesCounter;
+	}
 }
 
 bool NamespaceMasks::contains(string name)

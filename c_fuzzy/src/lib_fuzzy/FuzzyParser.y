@@ -65,6 +65,7 @@
 %token LIKE
 %token COMMA
 %token PERIOD
+%token QUESTION
 %token <std::string> F_LABEL
 %token <int> PARAMETER
 
@@ -75,7 +76,7 @@
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList
 %type <std::vector<std::string> > fuzzyId
-%type <std::string> var
+%type <std::string> var templateVar
 
 %left OP_AND
 %left OP_OR
@@ -93,12 +94,18 @@ fuzzyClass		: FUZZIFY_CLASS ID { builder.setNameSpace($2); } fuzzyPredicate END_
 			| /* Empty */
 			;
 
-fuzzyPredicate 		: FUZZIFY_PREDICATE ID fuzzyPredicateDef END_FUZZIFY_PREDICATE fuzzyPredicate
+fuzzyPredicate 		: FUZZIFY_PREDICATE ID fuzzyPredicateList END_FUZZIFY_PREDICATE fuzzyPredicate
 			| /* Empty */
 			;
 
-fuzzyPredicateDef 	: wellFormedFormula fuzzyAssignment END_RULE
-			| /* Empty */
+fuzzyPredicateList 	: fuzzyPredicateDef fuzzyPredicateList
+			| fuzzyPredicateDef
+			;
+
+fuzzyPredicateDef 	: ID LIKE wellFormedFormula END_RULE
+			{
+			
+			}
 			;
 
 fuzzySet		: FUZZIFY fuzzyId { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY fuzzySet
@@ -184,6 +191,10 @@ fuzzyComparison		: OPEN_B ID IS ID CLOSE_B
 			{
 				$$ = builder.buildIs($2, $4);
 			}
+			| OPEN_B templateVar IS ID CLOSE_B
+			{
+				$$ = builder.buildTemplateIs($2, $4);
+			}
 			;
 			
 fuzzyAssignment		: THEN OPEN_B ID IS ID CLOSE_B 
@@ -210,6 +221,12 @@ var 			: ID
 			| VAR_ID
 			{
 				$$ = $1;
+			}
+			;
+
+templateVar 		: QUESTION var
+			{
+				$$ = $2;
 			}
 			;
 %%

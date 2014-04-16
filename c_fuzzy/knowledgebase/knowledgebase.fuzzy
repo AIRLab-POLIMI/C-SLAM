@@ -7,28 +7,24 @@ END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS Door
 
-	FUZZIFY_PREDICATE Lateral
-		(Handle.x is Left) or (Handle.x is Right) then (Handle.x is Lateral);
-		/*FUZZIFY Handle.x
-			Left :=  sgt(1);
-			Right :=  sgt(1);
-		END_FUZZIFY*/
+	FUZZIFY_PREDICATE
+		Lateral := (?x is Left) or (?x is Right);
+		Centered := (?x is Centered);
 		
-	END_FUZZIFY_PREDICATE
-	
-	/*	
-	FUZZIFY_PREDICATE Centered on(Ymin, Ymax)
-		FUZZIFY Handle.y
-			Centered :=  sgt(1);
+		FUZZIFY ?x
+			Left :=  tol(30, 40);
+			Centered :=  tra(30, 40, 60, 80);
+			Right :=  tor(60, 80);
 		END_FUZZIFY
 		
 	END_FUZZIFY_PREDICATE
 	
-	
-	FUZZIFY Hanlde.x
-		Perfect wrt x :=  sgt(1);
-	END_FUZZIFY
-	*/
+	FUZZIFY_PREDICATE
+		Perfect := (?y is Perfect)		
+		FUZZIFY ?y
+			Perfect :=  sgt(1);
+		END_FUZZIFY
+	END_FUZZIFY_PREDICATE
 	
 	
 END_FUZZIFY_CLASS

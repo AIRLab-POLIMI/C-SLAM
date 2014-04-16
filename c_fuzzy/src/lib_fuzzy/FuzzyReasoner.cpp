@@ -51,7 +51,7 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 
 			FuzzyOutput result;
 
-			if (aggregatedData.size() > 1)
+			if (domainMap.size() > 1)
 			{
 				result.truth = product / value;
 				result.value = product / weight;
