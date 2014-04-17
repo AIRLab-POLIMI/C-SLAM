@@ -30,32 +30,31 @@
 
 #include "FuzzyMF.h"
 
-enum FuzzySets
-{
-	TOL, TOR, TRA, TRI, INT, SGT
-};
-
 class FuzzyMFEngine
 {
 
 private:
+	enum FuzzySets
+	{
+		TOL, TOR, TRA, TRI, INT, SGT
+	};
+
 	typedef std::map<std::string, FuzzySets> FuzzyMap;
 public:
-	FuzzyMF* buildMF(std::string name, std::string shape,
+	static FuzzyMF* buildMF(std::string name, std::string shape,
 				std::vector<int>& parameters);
-	FuzzyMF* buildTor(int bottom, int top);
-	FuzzyMF* buildTol(int top, int bottom);
-	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
+	static FuzzyMF* buildTor(int bottom, int top);
+	static FuzzyMF* buildTol(int top, int bottom);
+	static FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
 				int bottomRight);
-	FuzzyMF* buildTri(int left, int center, int right);
-	FuzzyMF* buildInt(int left, int right);
-	FuzzyMF* buildSgt(int value);
+	static FuzzyMF* buildTri(int left, int center, int right);
+	static FuzzyMF* buildInt(int left, int right);
+	static FuzzyMF* buildSgt(int value);
 
 private:
-
-	void checkParameters(std::string name, std::vector<int>& parameters,
+	static void checkParameters(std::string name, std::vector<int>& parameters,
 				FuzzySets fuzzySetType);
-	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
+	static void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
 				size_t parametersSize);
 
 private:

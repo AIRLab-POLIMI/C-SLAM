@@ -23,20 +23,18 @@
 
 #include "FuzzyPredicateEngine.h"
 
+#include <stdexcept>
+#include <sstream>
+
 using namespace std;
 
 void FuzzyPredicateEngine::enterNamespace(string nameSpace)
 {
 	currentNamespace = nameSpace;
 
-	if(namespaceTable.count(nameSpace) == 0)
+	if (table.count(nameSpace) == 0)
 	{
-		domainTable = new DomainTable();
-		namespaceTable[nameSpace] = domainTable;
-	}
-	else
-	{
-		domainTable = namespaceTable[nameSpace];
+		table[nameSpace] = new DomainTable();
 	}
 }
 
@@ -45,15 +43,54 @@ void FuzzyPredicateEngine::enterPredicate(string templateVariable)
 	currentTemplateVar = templateVariable;
 }
 
+void FuzzyPredicateEngine::buildDomain(std::string templateVar)
+{
+	DomainTable& domainTable = *table[currentNamespace];
+
+	if(domainTable.count(templateVar) == 0)
+	{
+		domainTable[templateVar] = new MFTable();
+	}
+	else
+	{
+		stringstream ss;
+		ss << "error Redefinition of template variable " << templateVar;
+		if(!currentNamespace.empty())
+			ss << "in class " << currentNamespace;
+		throw logic_error(ss.str());
+	}
+}
+
+void FuzzyPredicateEngine::addTemplateMF(string label, FuzzyMF* mf)
+{
+	DomainTable& domainTable = *table[currentNamespace];
+	MFTable& mfTable = *domainTable[currentTemplateVar];
+	mfTable[label] = mf;
+}
+
 void FuzzyPredicateEngine::buildPredicate(string name, Node* rule)
 {
 	PredicateData data;
 	data.templateVar = currentTemplateVar;
 	data.definition = rule;
-	predicateNamespaceMap[currentNamespace][name] = data;
+	predicateMap[currentNamespace][name] = data;
 }
 
-Node* FuzzyPredicateEngine::getPredicateInstance(string predicate, string variable)
+Node* FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
+			string predicate, pair<string, string> variable)
 {
-	return NULL;
+	if (predicateMap.count(nameSpace) == 1
+				&& predicateMap[nameSpace].count(predicate) == 1)
+	{
+		PredicateData data = predicateMap[nameSpace][predicate];
+		return data.definition->instantiate(variable);
+	}
+
+	throw logic_error("Predicate instantiation failed: predicate doesn't exists");
+}
+
+Node* FuzzyPredicateEngine::getPredicateInstance(string predicate,
+			pair<string, string> variable)
+{
+	return getPredicateInstance("", predicate, variable);
 }

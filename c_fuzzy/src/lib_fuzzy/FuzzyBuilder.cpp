@@ -56,8 +56,10 @@ void FuzzyBuilder::parse(const char *filename)
 
 FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 {
+	NamespaceTable* table = varEngine.getTable();
+	NamespaceMasks* namespaceMasks = varEngine.getMasks();
 	namespaceMasks->normalizeVariableMasks(ruleList->size());
-	return new FuzzyKnowledgeBase(namespaceTable, namespaceMasks, ruleList);
+	return new FuzzyKnowledgeBase(table, namespaceMasks, ruleList);
 }
 
 void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
@@ -66,12 +68,16 @@ void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
 	ruleList->push_back(rule);
 }
 
-
-
 //Predicates
 void FuzzyBuilder::enterPredicate(std::string templateVar)
 {
 	predicateEngine.enterPredicate(templateVar);
+	parsingPredicate = true;
+}
+
+void FuzzyBuilder::exitPredicate()
+{
+	parsingPredicate = false;
 }
 
 void FuzzyBuilder::buildPredicate(std::string predicateName, Node* definition)
@@ -97,28 +103,28 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 
 Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
 {
-	VariableMasks& mask = getVariableMasks("");
+	VariableMasks& mask = varEngine.getVariableMasks("");
 	mask.updateVariableMask(domain, ruleList->size());
-	return new FuzzyIs(namespaceTable, "", domain, mfLabel);
+	return new FuzzyIs(varEngine.getTable(), "", domain, mfLabel);
 }
 
 Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 {
 	string nameSpace = classMember.first;
 	string domain = classMember.second;
-	VariableMasks& mask = getVariableMasks(nameSpace);
+	VariableMasks& mask = varEngine.getVariableMasks(nameSpace);
 	mask.updateVariableMask(domain, ruleList->size());
-	return new FuzzyIs(namespaceTable, nameSpace, domain, mfLabel);
+	return new FuzzyIs(varEngine.getTable(), nameSpace, domain, mfLabel);
 }
 
 Node* FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
 {
-	return new FuzzyTemplateIs(namespaceTable, "", domain, mfLabel);
+	return new FuzzyTemplateIs(varEngine.getTable(), "", domain, mfLabel);
 }
 
 Node* FuzzyBuilder::buildAssignment(string output, string label)
 {
-	return new FuzzyAssignment(namespaceTable, "", output, label);
+	return new FuzzyAssignment(varEngine.getTable(), "", output, label);
 }
 
 Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
@@ -126,28 +132,14 @@ Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
 {
 	string nameSpace = classMember.first;
 	string output = classMember.second;
-	return new FuzzyAssignment(namespaceTable, nameSpace, output, label);
+	return new FuzzyAssignment(varEngine.getTable(), nameSpace, output, label);
 }
 
 //Function to enter a namespace
 void FuzzyBuilder::setNameSpace(string nameSpace)
 {
 	predicateEngine.enterNamespace(nameSpace);
-	NamespaceTable& namespaceMap = *namespaceTable;
-	NamespaceMasks& masksMap = *namespaceMasks;
-
-	if (namespaceMap.count(nameSpace) == 0)
-	{
-		domainTable = new DomainTable();
-		namespaceMap[nameSpace] = domainTable;
-		variableMasks = new VariableMasks();
-		namespaceMasks->addNameSpace(nameSpace, variableMasks);
-	}
-	else
-	{
-		domainTable = namespaceMap[nameSpace];
-		variableMasks = masksMap[nameSpace];
-	}
+	varEngine.enterNamespace(nameSpace);
 }
 
 //Function to return to the default namespace
@@ -159,50 +151,31 @@ void FuzzyBuilder::setDefaultNameSpace()
 //Fuzzy domain
 void FuzzyBuilder::buildDomain(string variable)
 {
-	vector<string> variableVector;
-	variableVector.push_back(variable);
-	buildDomain(variableVector);
+	if (parsingPredicate)
+	{
+		predicateEngine.buildDomain(variable);
+	}
+	else
+	{
+		vector<string> variableVector;
+		variableVector.push_back(variable);
+		buildDomain(variableVector);
+	}
 }
 
 void FuzzyBuilder::buildDomain(vector<string> variables)
 {
-	DomainTable& domainMap = *domainTable;
-	mfTable = new MFTable();
-	vector<string>::iterator it;
-	for (it = variables.begin(); it != variables.end(); it++)
-	{
-		domainMap[*it] = mfTable;
-		variableMasks->newVariableMask(*it);
-	}
+	varEngine.buildDomain(variables);
 }
 
 //Fuzzy MF
 void FuzzyBuilder::buildMF(string name, string shape, vector<int>& parameters)
 {
-	MFTable& map = *mfTable;
-	map[name] = mfEngine.buildMF(name, shape, parameters);
-}
+	FuzzyMF* mf = FuzzyMFEngine::buildMF(name, shape, parameters);
 
-void FuzzyBuilder::initializeNameSpaces()
-{
-	namespaceTable = new NamespaceTable();
-	namespaceMasks = new NamespaceMasks();
-	domainTable = new DomainTable();
-	mfTable = NULL;
-
-	NamespaceTable& namespaceMap = *namespaceTable;
-	namespaceMap[""] = domainTable;
-
-	namespaceMasks = new NamespaceMasks();
-	variableMasks = new VariableMasks();
-
-	namespaceMasks->addNameSpace("", variableMasks);
-
-}
-
-VariableMasks& FuzzyBuilder::getVariableMasks(std::string nameSpace)
-{
-	NamespaceMasks& nMask = *namespaceMasks;
-	return *nMask[nameSpace];
+	if (parsingPredicate)
+		predicateEngine.addTemplateMF(name, mf);
+	else
+		varEngine.addMF(name, mf);
 }
 

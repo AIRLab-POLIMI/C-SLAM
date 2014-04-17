@@ -34,6 +34,7 @@
 #include "FuzzyKnowledgeBase.h"
 #include "VariableMasks.h"
 
+#include "FuzzyVariableEngine.h"
 #include "FuzzyPredicateEngine.h"
 #include "FuzzyMFEngine.h"
 
@@ -47,9 +48,8 @@ public:
 	FuzzyBuilder() :
 				parser(NULL), scanner(NULL)
 	{
-		initializeNameSpaces();
-
 		ruleList = new std::vector<Node*>();
+		parsingPredicate = false;
 	}
 
 	FuzzyKnowledgeBase* createKnowledgeBase();
@@ -67,6 +67,7 @@ public:
 
 	//Function to add predicates to the rulebase
 	void enterPredicate(std::string templateVar);
+	void exitPredicate();
 	void buildPredicate(std::string predicateName, Node* definition);
 
 	//Functions to manage namespaces
@@ -94,25 +95,17 @@ public:
 				std::vector<int>& parameters);
 
 private:
-	void initializeNameSpaces();
-	VariableMasks& getVariableMasks(std::string nameSpace);
-
-private:
 	//Data needed to get Builder working
 	fz::FuzzyParser* parser;
 	fz::FuzzyScanner* scanner;
-	FuzzyMFEngine mfEngine;
+	FuzzyVariableEngine varEngine;
 	FuzzyPredicateEngine predicateEngine;
 
 	//Data needed to get FuzzyReasoner working
-	NamespaceTable* namespaceTable;
-	NamespaceMasks* namespaceMasks;
 	std::vector<Node*>* ruleList;
 
-	//Data used by the parser for simplicity
-	DomainTable* domainTable;
-	MFTable* mfTable;
-	VariableMasks* variableMasks;
+	//Parser state
+	bool parsingPredicate;
 
 };
 

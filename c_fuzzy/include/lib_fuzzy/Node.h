@@ -25,7 +25,7 @@
 #define NODE_H_
 
 #include <string>
-#include <map>
+#include <utility>
 #include <stdexcept>
 
 #include "ReasoningData.h"
@@ -48,7 +48,7 @@ public:
 		return (int) evaluate(reasoningData);
 	}
 
-	virtual Node* instantiate(std::string variableName)
+	virtual Node* instantiate(std::pair<std::string, std::string> variable)
 	{
 		throwUnimplementedException();
 		return NULL;

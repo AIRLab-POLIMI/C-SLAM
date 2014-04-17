@@ -31,10 +31,10 @@ double FuzzyAnd::evaluate(ReasoningData reasoningData)
 	return (a < b) ? a : b;
 }
 
-Node* FuzzyAnd::instantiate(std::string variableName)
+Node* FuzzyAnd::instantiate(std::pair<std::string, std::string> variable)
 {
-	Node* left = leftOperand->instantiate(variableName);
-	Node* right = rightOperand->instantiate(variableName);
+	Node* left = leftOperand->instantiate(variable);
+	Node* right = rightOperand->instantiate(variable);
 	return new FuzzyAnd(left, right);
 }
 
@@ -45,10 +45,10 @@ double FuzzyOr::evaluate(ReasoningData reasoningData)
 	return (a > b) ? a : b;
 }
 
-Node* FuzzyOr::instantiate(std::string variableName)
+Node* FuzzyOr::instantiate(std::pair<std::string, std::string> variable)
 {
-	Node* left = leftOperand->instantiate(variableName);
-	Node* right = rightOperand->instantiate(variableName);
+	Node* left = leftOperand->instantiate(variable);
+	Node* right = rightOperand->instantiate(variable);
 	return new FuzzyOr(left, right);
 }
 
@@ -57,9 +57,9 @@ double FuzzyNot::evaluate(ReasoningData reasoningData)
 	return (1 - operand->evaluate(reasoningData));
 }
 
-Node* FuzzyNot::instantiate(std::string variableName)
+Node* FuzzyNot::instantiate(std::pair<std::string, std::string> variable)
 {
-	Node* op = operand->instantiate(variableName);
+	Node* op = operand->instantiate(variable);
 	return new FuzzyNot(op);
 }
 
@@ -90,7 +90,7 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	return mFunction->evaluate(reasoningData);
 }
 
-Node* FuzzyIs::instantiate(std::string variableName)
+Node* FuzzyIs::instantiate(std::pair<std::string, std::string> variable)
 {
 	return new FuzzyIs(*this);
 }
@@ -100,9 +100,9 @@ double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
 	throw std::logic_error("Evaluation of a non-instantiated template");
 }
 
-Node* FuzzyTemplateIs::instantiate(std::string variableName)
+Node* FuzzyTemplateIs::instantiate(std::pair<std::string, std::string> variable)
 {
-	return new FuzzyIs(&lookUpTable, nameSpace, variableName, mfLabel);
+	return new FuzzyIs(&lookUpTable, variable.first, variable.second, mfLabel);
 }
 
 BinaryFuzzyOperator::~BinaryFuzzyOperator()

@@ -7,7 +7,7 @@ END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS Door
 
-	FUZZIFY_PREDICATE
+	FUZZIFY_PREDICATE ?x
 		Lateral := (?x is Left) or (?x is Right);
 		Centered := (?x is Centered);
 		
@@ -19,7 +19,7 @@ FUZZIFY_CLASS Door
 		
 	END_FUZZIFY_PREDICATE
 	
-	FUZZIFY_PREDICATE
+	FUZZIFY_PREDICATE ?y
 		Perfect := (?y is Perfect)
 		Good := (?y is Good) or (?y is Perfect)
 			

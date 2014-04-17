@@ -73,7 +73,7 @@ public:
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
-	Node* instantiate(std::string variableName);
+	Node* instantiate(std::pair<std::string, std::string> variable);
 };
 
 /**
@@ -89,7 +89,7 @@ public:
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
-	Node* instantiate(std::string variableName);
+	Node* instantiate(std::pair<std::string, std::string> variable);
 };
 
 /**
@@ -105,7 +105,7 @@ public:
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
-	Node* instantiate(std::string variableName);
+	Node* instantiate(std::pair<std::string, std::string> variable);
 	~FuzzyNot();
 
 private:
@@ -127,7 +127,7 @@ public:
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
-	Node* instantiate(std::string variableName);
+	Node* instantiate(std::pair<std::string, std::string> variable);
 
 private:
 	NamespaceTable& lookUpTable;
@@ -151,7 +151,7 @@ public:
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
-	Node* instantiate(std::string variableName);
+	Node* instantiate(std::pair<std::string, std::string> variable);
 
 private:
 	NamespaceTable& lookUpTable;

@@ -45,22 +45,24 @@ private:
 public:
 	FuzzyPredicateEngine()
 	{
-		domainTable = new DomainTable();
-		namespaceTable[""] = domainTable;
+		table[""] = new DomainTable();
 		currentNamespace = "";
 		currentTemplateVar = "";
 	}
 
 	void enterNamespace(std::string nameSpace);
 	void enterPredicate(std::string templateVariable);
+	void buildDomain(std::string templateVar);
+	void addTemplateMF(std::string label, FuzzyMF* mf);
 	void buildPredicate(std::string name, Node* rule);
-	Node* getPredicateInstance(std::string predicate, std::string variable);
-
+	Node* getPredicateInstance(std::string predicate,
+				std::pair<std::string, std::string> variable);
+	Node* getPredicateInstance(std::string nameSpace, std::string predicate,
+				std::pair<std::string, std::string> variable);
 
 private:
-	PredicateMap predicateNamespaceMap;
-	NamespaceTable namespaceTable;
-	DomainTable* domainTable;
+	PredicateMap predicateMap;
+	NamespaceTable table;
 	std::string currentNamespace;
 	std::string currentTemplateVar;
 
