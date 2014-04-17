@@ -750,8 +750,8 @@ namespace fz {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 87,     ///< Last index in yytable_.
-      yynnts_ = 25,  ///< Number of nonterminal symbols.
+      yylast_ = 91,     ///< Last index in yytable_.
+      yynnts_ = 26,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 12, ///< Termination state number.
       yyterror_ = 1,
@@ -837,9 +837,9 @@ namespace fz {
   {
       switch (other.type_get ())
     {
-      case 45: // wellFormedFormula
-      case 46: // fuzzyComparison
-      case 47: // fuzzyAssignment
+      case 46: // wellFormedFormula
+      case 47: // fuzzyComparison
+      case 48: // fuzzyAssignment
         value.copy< Node* > (other.value);
         break;
 
@@ -847,24 +847,24 @@ namespace fz {
         value.copy< int > (other.value);
         break;
 
-      case 48: // classMember
+      case 49: // classMember
         value.copy< std::pair<std::string, std::string>  > (other.value);
         break;
 
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 49: // var
-      case 50: // templateVar
+      case 50: // var
+      case 51: // templateVar
         value.copy< std::string > (other.value);
         break;
 
-      case 41: // shape
-      case 42: // parametersList
+      case 42: // shape
+      case 43: // parametersList
         value.copy< std::vector<int> > (other.value);
         break;
 
-      case 39: // fuzzyId
+      case 40: // fuzzyId
         value.copy< std::vector<std::string> > (other.value);
         break;
 
@@ -885,9 +885,9 @@ namespace fz {
     (void) v;
       switch (this->type_get ())
     {
-      case 45: // wellFormedFormula
-      case 46: // fuzzyComparison
-      case 47: // fuzzyAssignment
+      case 46: // wellFormedFormula
+      case 47: // fuzzyComparison
+      case 48: // fuzzyAssignment
         value.copy< Node* > (v);
         break;
 
@@ -895,24 +895,24 @@ namespace fz {
         value.copy< int > (v);
         break;
 
-      case 48: // classMember
+      case 49: // classMember
         value.copy< std::pair<std::string, std::string>  > (v);
         break;
 
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 49: // var
-      case 50: // templateVar
+      case 50: // var
+      case 51: // templateVar
         value.copy< std::string > (v);
         break;
 
-      case 41: // shape
-      case 42: // parametersList
+      case 42: // shape
+      case 43: // parametersList
         value.copy< std::vector<int> > (v);
         break;
 
-      case 39: // fuzzyId
+      case 40: // fuzzyId
         value.copy< std::vector<std::string> > (v);
         break;
 
@@ -989,9 +989,9 @@ namespace fz {
     // Type destructor.
     switch (yytype)
     {
-      case 45: // wellFormedFormula
-      case 46: // fuzzyComparison
-      case 47: // fuzzyAssignment
+      case 46: // wellFormedFormula
+      case 47: // fuzzyComparison
+      case 48: // fuzzyAssignment
         value.template destroy< Node* > ();
         break;
 
@@ -999,24 +999,24 @@ namespace fz {
         value.template destroy< int > ();
         break;
 
-      case 48: // classMember
+      case 49: // classMember
         value.template destroy< std::pair<std::string, std::string>  > ();
         break;
 
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 49: // var
-      case 50: // templateVar
+      case 50: // var
+      case 51: // templateVar
         value.template destroy< std::string > ();
         break;
 
-      case 41: // shape
-      case 42: // parametersList
+      case 42: // shape
+      case 43: // parametersList
         value.template destroy< std::vector<int> > ();
         break;
 
-      case 39: // fuzzyId
+      case 40: // fuzzyId
         value.template destroy< std::vector<std::string> > ();
         break;
 
@@ -1034,9 +1034,9 @@ namespace fz {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 45: // wellFormedFormula
-      case 46: // fuzzyComparison
-      case 47: // fuzzyAssignment
+      case 46: // wellFormedFormula
+      case 47: // fuzzyComparison
+      case 48: // fuzzyAssignment
         value.move< Node* > (s.value);
         break;
 
@@ -1044,24 +1044,24 @@ namespace fz {
         value.move< int > (s.value);
         break;
 
-      case 48: // classMember
+      case 49: // classMember
         value.move< std::pair<std::string, std::string>  > (s.value);
         break;
 
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 49: // var
-      case 50: // templateVar
+      case 50: // var
+      case 51: // templateVar
         value.move< std::string > (s.value);
         break;
 
-      case 41: // shape
-      case 42: // parametersList
+      case 42: // shape
+      case 43: // parametersList
         value.move< std::vector<int> > (s.value);
         break;
 
-      case 39: // fuzzyId
+      case 40: // fuzzyId
         value.move< std::vector<std::string> > (s.value);
         break;
 

@@ -23,7 +23,6 @@
 
 #include <cctype>
 #include <fstream>
-#include <sstream>
 #include <stdexcept>
 
 #include "FuzzyOperator.h"
@@ -67,10 +66,17 @@ void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
 	ruleList->push_back(rule);
 }
 
+
+
 //Predicates
-void FuzzyBuilder::buildPredicate(string predicateName, Node* definition)
+void FuzzyBuilder::enterPredicate(std::string templateVar)
 {
-	//FIXME implementami
+	predicateEngine.enterPredicate(templateVar);
+}
+
+void FuzzyBuilder::buildPredicate(std::string predicateName, Node* definition)
+{
+	predicateEngine.buildPredicate(predicateName, definition);
 }
 
 //Fuzzy operators
@@ -131,6 +137,7 @@ Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
 //Function to enter a namespace
 void FuzzyBuilder::setNameSpace(string nameSpace)
 {
+	predicateEngine.enterNamespace(nameSpace);
 	NamespaceTable& namespaceMap = *namespaceTable;
 	NamespaceMasks& masksMap = *namespaceMasks;
 
@@ -175,83 +182,10 @@ void FuzzyBuilder::buildDomain(vector<string> variables)
 }
 
 //Fuzzy MF
-void FuzzyBuilder::buildMF(string name, string shape, vector<int>& parameter)
+void FuzzyBuilder::buildMF(string name, string shape, vector<int>& parameters)
 {
 	MFTable& map = *mfTable;
-	FuzzySets fuzzySetType = fuzzyMap[shape];
-
-	switch (fuzzySetType)
-	{
-		case TOL:
-			checkParameters(name, parameter, fuzzySetType);
-			map[name] = buildTol(parameter[1], parameter[0]);
-			break;
-		case TOR:
-			checkParameters(name, parameter, fuzzySetType);
-			map[name] = buildTor(parameter[1], parameter[0]);
-			break;
-		case TRA:
-			checkParameters(name, parameter, fuzzySetType);
-			map[name] = buildTra(parameter[3], parameter[2], parameter[1],
-						parameter[0]);
-			break;
-		case TRI:
-			checkParameters(name, parameter, fuzzySetType);
-			map[name] = buildTri(parameter[2], parameter[1], parameter[0]);
-			break;
-		case INT:
-			checkParameters(name, parameter, fuzzySetType);
-			map[name] = buildInt(parameter[1], parameter[0]);
-			break;
-		case SGT:
-			checkParameters(name, parameter, fuzzySetType);
-			map[name] = buildSgt(parameter[0]);
-			break;
-		default:
-			break;
-	}
-}
-
-FuzzyMF* FuzzyBuilder::buildTor(int bottom, int top)
-{
-	return new TorMF(bottom, top);
-}
-
-FuzzyMF* FuzzyBuilder::buildTol(int top, int bottom)
-{
-	return new TolMF(top, bottom);
-}
-
-FuzzyMF* FuzzyBuilder::buildTra(int bottomLeft, int topLeft, int topRight,
-			int bottomRight)
-{
-	return new TraMF(bottomLeft, topLeft, topRight, bottomRight);
-}
-
-FuzzyMF* FuzzyBuilder::buildTri(int left, int center, int right)
-{
-	return new TriMF(left, center, right);
-}
-
-FuzzyMF* FuzzyBuilder::buildInt(int left, int right)
-{
-	return new IntMF(left, right);
-}
-
-FuzzyMF* FuzzyBuilder::buildSgt(int value)
-{
-	return new SgtMF(value);
-}
-
-void FuzzyBuilder::createMap()
-{
-	fuzzyMap["tol"] = TOL;
-	fuzzyMap["tor"] = TOR;
-	fuzzyMap["tra"] = TRA;
-	fuzzyMap["tri"] = TRI;
-	fuzzyMap["int"] = INT;
-	fuzzyMap["sgt"] = SGT;
-
+	map[name] = mfEngine.buildMF(name, shape, parameters);
 }
 
 void FuzzyBuilder::initializeNameSpaces()
@@ -275,57 +209,5 @@ VariableMasks& FuzzyBuilder::getVariableMasks(std::string nameSpace)
 {
 	NamespaceMasks& nMask = *namespaceMasks;
 	return *nMask[nameSpace];
-}
-
-void FuzzyBuilder::chekParametersNumber(string name, FuzzySets fuzzySetType,
-			size_t parametersSize)
-{
-	bool error = false;
-
-	switch (fuzzySetType)
-	{
-		case SGT:
-			if (parametersSize != 1)
-				error = true;
-			break;
-		case TOL:
-		case TOR:
-		case INT:
-			if (parametersSize != 2)
-				error = true;
-			break;
-		case TRI:
-			if (parametersSize != 3)
-				error = true;
-			break;
-		case TRA:
-			if (parametersSize != 4)
-				error = true;
-			break;
-	}
-
-	if (error)
-	{
-		stringstream ss;
-		ss << "The parameters number is wrong for label " << name;
-		throw runtime_error(ss.str());
-	}
-}
-
-void FuzzyBuilder::checkParameters(string name, vector<int>& parameters,
-			FuzzySets fuzzySetType)
-{
-	size_t parametersSize = parameters.size();
-	chekParametersNumber(name, fuzzySetType, parametersSize);
-
-	for (size_t i = 1; i < parametersSize; i++)
-	{
-		if (parameters[i] > parameters[i - 1])
-		{
-			stringstream ss;
-			ss << "The parameters ordering is wrong for label " << name;
-			throw runtime_error(ss.str());
-		}
-	}
 }
 

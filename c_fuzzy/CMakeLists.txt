@@ -69,6 +69,8 @@ add_flex_bison_dependency(TreeClassifierScanner TreeClassifierParser)
 #build the libraries
 add_library(fuzzy STATIC 
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyBuilder.cpp 
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyMFEngine.cpp
+			${LIB_FUZZY_SOURCE_DIR}/FuzzyPredicateEngine.cpp
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyKnowledgeBase.cpp 
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyMF.cpp  
 			${LIB_FUZZY_SOURCE_DIR}/FuzzyOperator.cpp

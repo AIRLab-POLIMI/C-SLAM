@@ -34,13 +34,11 @@
 #include "FuzzyKnowledgeBase.h"
 #include "VariableMasks.h"
 
+#include "FuzzyPredicateEngine.h"
+#include "FuzzyMFEngine.h"
+
 #include "FuzzyParser.tab.h"
 #include "FuzzyScanner.h"
-
-enum FuzzySets
-{
-	TOL, TOR, TRA, TRI, INT, SGT
-};
 
 class FuzzyBuilder
 {
@@ -49,7 +47,6 @@ public:
 	FuzzyBuilder() :
 				parser(NULL), scanner(NULL)
 	{
-		createMap();
 		initializeNameSpaces();
 
 		ruleList = new std::vector<Node*>();
@@ -69,7 +66,9 @@ public:
 	void buildRule(Node* antecedent, Node* Conseguent);
 
 	//Function to add predicates to the rulebase
+	void enterPredicate(std::string templateVar);
 	void buildPredicate(std::string predicateName, Node* definition);
+
 
 	//Functions to build fuzzy operators
 	Node* buildAnd(Node* left, Node* right);
@@ -94,21 +93,9 @@ public:
 	//Functions to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
 				std::vector<int>& parameters);
-	FuzzyMF* buildTor(int bottom, int top);
-	FuzzyMF* buildTol(int top, int bottom);
-	FuzzyMF* buildTra(int bottomLeft, int topLeft, int topRight,
-				int bottomRight);
-	FuzzyMF* buildTri(int left, int center, int right);
-	FuzzyMF* buildInt(int left, int right);
-	FuzzyMF* buildSgt(int value);
 
 private:
-	void createMap();
 	void initializeNameSpaces();
-	void checkParameters(std::string name, std::vector<int>& parameters,
-				FuzzySets fuzzySetType);
-	void chekParametersNumber(std::string name, FuzzySets fuzzySetType,
-				size_t parametersSize);
 	VariableMasks& getVariableMasks(std::string nameSpace);
 
 
@@ -116,7 +103,8 @@ private:
 	//Data needed to get Builder working
 	fz::FuzzyParser* parser;
 	fz::FuzzyScanner* scanner;
-	std::map<std::string, FuzzySets> fuzzyMap;
+	FuzzyMFEngine mfEngine;
+	FuzzyPredicateEngine predicateEngine;
 
 	//Data needed to get FuzzyReasoner working
 	NamespaceTable* namespaceTable;
