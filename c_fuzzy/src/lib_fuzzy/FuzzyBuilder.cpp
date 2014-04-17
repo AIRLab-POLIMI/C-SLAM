@@ -82,19 +82,17 @@ void FuzzyBuilder::buildPredicate(std::string predicateName, Node* definition)
 //Fuzzy operators
 Node* FuzzyBuilder::buildAnd(Node* left, Node* right)
 {
-	return new FuzzyAnd(static_cast<FuzzyOperator*>(left),
-				static_cast<FuzzyOperator*>(right));
+	return new FuzzyAnd(left, right);
 }
 
 Node* FuzzyBuilder::buildOr(Node* left, Node* right)
 {
-	return new FuzzyOr(static_cast<FuzzyOperator*>(left),
-				static_cast<FuzzyOperator*>(right));
+	return new FuzzyOr(left, right);
 }
 
 Node* FuzzyBuilder::buildNot(Node* operand)
 {
-	return new FuzzyNot(static_cast<FuzzyOperator*>(operand));
+	return new FuzzyNot(operand);
 }
 
 Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
@@ -115,10 +113,7 @@ Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 
 Node* FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
 {
-	//FIXME errore! implementare
-	//variableMasks->updateVariableMask(domain, ruleList->size());
-	//return new FuzzyIs(namespaceTable, "", domain, mfLabel);
-	return NULL;
+	return new FuzzyTemplateIs(namespaceTable, "", domain, mfLabel);
 }
 
 Node* FuzzyBuilder::buildAssignment(string output, string label)

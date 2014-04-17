@@ -39,8 +39,8 @@ private:
 		Node* definition;
 	};
 
-	typedef std::map<std::string, PredicateData> PredicateMap;
-	typedef std::map<std::string, PredicateMap> PredicateNamespaceMap;
+	typedef std::map<std::string, PredicateData> PredicateNameMap;
+	typedef std::map<std::string, PredicateNameMap> PredicateMap;
 
 public:
 	FuzzyPredicateEngine()
@@ -58,7 +58,7 @@ public:
 
 
 private:
-	PredicateNamespaceMap predicateNamespaceMap;
+	PredicateMap predicateNamespaceMap;
 	NamespaceTable namespaceTable;
 	DomainTable* domainTable;
 	std::string currentNamespace;

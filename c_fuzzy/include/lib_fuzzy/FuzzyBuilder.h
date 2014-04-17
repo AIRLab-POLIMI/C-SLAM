@@ -69,6 +69,13 @@ public:
 	void enterPredicate(std::string templateVar);
 	void buildPredicate(std::string predicateName, Node* definition);
 
+	//Functions to manage namespaces
+	void setNameSpace(std::string nameSpace);
+	void setDefaultNameSpace();
+
+	//Function to build a fuzzy Domain
+	void buildDomain(std::string variable);
+	void buildDomain(std::vector<std::string> variables);
 
 	//Functions to build fuzzy operators
 	Node* buildAnd(Node* left, Node* right);
@@ -82,22 +89,13 @@ public:
 				std::string mfLabel);
 	Node* buildTemplateIs(std::string templateDomain, std::string mfLabel);
 
-	//Functions to manage namespaces
-	void setNameSpace(std::string nameSpace);
-	void setDefaultNameSpace();
-
-	//Function to build a fuzzy Domain
-	void buildDomain(std::string variable);
-	void buildDomain(std::vector<std::string> variables);
-
-	//Functions to build fuzzy MF
+	//Function to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
 				std::vector<int>& parameters);
 
 private:
 	void initializeNameSpaces();
 	VariableMasks& getVariableMasks(std::string nameSpace);
-
 
 private:
 	//Data needed to get Builder working

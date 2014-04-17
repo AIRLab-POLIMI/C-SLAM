@@ -49,9 +49,10 @@ class BinaryFuzzyOperator: public FuzzyOperator
 {
 public:
 	BinaryFuzzyOperator(Node* leftOperand, Node* rightOperand) :
-			leftOperand(leftOperand), rightOperand(rightOperand)
+				leftOperand(leftOperand), rightOperand(rightOperand)
 	{
 	}
+
 	virtual ~BinaryFuzzyOperator();
 
 protected:
@@ -67,11 +68,12 @@ protected:
 class FuzzyAnd: public BinaryFuzzyOperator
 {
 public:
-	FuzzyAnd(FuzzyOperator* left, FuzzyOperator* right) :
-			BinaryFuzzyOperator(left, right)
+	FuzzyAnd(Node* left, Node* right) :
+				BinaryFuzzyOperator(left, right)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
+	Node* instantiate(std::string variableName);
 };
 
 /**
@@ -82,11 +84,12 @@ public:
 class FuzzyOr: public BinaryFuzzyOperator
 {
 public:
-	FuzzyOr(FuzzyOperator* left, FuzzyOperator* right) :
-			BinaryFuzzyOperator(left, right)
+	FuzzyOr(Node* left, Node* right) :
+				BinaryFuzzyOperator(left, right)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
+	Node* instantiate(std::string variableName);
 };
 
 /**
@@ -97,15 +100,16 @@ public:
 class FuzzyNot: public FuzzyOperator
 {
 public:
-	FuzzyNot(FuzzyOperator* operand) :
-			operand(operand)
+	FuzzyNot(Node* operand) :
+				operand(operand)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
+	Node* instantiate(std::string variableName);
 	~FuzzyNot();
 
 private:
-	FuzzyOperator* operand;
+	Node* operand;
 };
 
 /**
@@ -117,17 +121,42 @@ class FuzzyIs: public FuzzyOperator
 {
 public:
 	FuzzyIs(NamespaceTable* lookUpTable, std::string nameSpace,
-			std::string label, std::string mfLabel) :
-			lookUpTable(*lookUpTable), nameSpace(nameSpace), label(label), mfLabel(
-					mfLabel)
+				std::string label, std::string mfLabel) :
+				lookUpTable(*lookUpTable), nameSpace(nameSpace), label(label),
+				mfLabel(mfLabel)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);
+	Node* instantiate(std::string variableName);
 
 private:
 	NamespaceTable& lookUpTable;
 	std::string nameSpace;
 	std::string label;
+	std::string mfLabel;
+};
+
+/**
+ * The IS template operator
+ * creates a fake IS operator that needs variable instantiation to work
+ *
+ */
+class FuzzyTemplateIs: public FuzzyOperator
+{
+public:
+	FuzzyTemplateIs(NamespaceTable* lookUpTable, std::string nameSpace,
+				std::string templateVar, std::string mfLabel) :
+				lookUpTable(*lookUpTable), nameSpace(nameSpace),
+				templateVar(templateVar), mfLabel(mfLabel)
+	{
+	}
+	double evaluate(ReasoningData reasoningData);
+	Node* instantiate(std::string variableName);
+
+private:
+	NamespaceTable& lookUpTable;
+	std::string nameSpace;
+	std::string templateVar;
 	std::string mfLabel;
 };
 
@@ -140,9 +169,9 @@ class FuzzyAssignment: public FuzzyOperator
 {
 public:
 	FuzzyAssignment(NamespaceTable* lookUpTable, std::string nameSpace,
-			std::string name, std::string mfLabel) :
-			lookUpTable(*lookUpTable), nameSpace(nameSpace), output(name), mfLabel(
-					mfLabel)
+				std::string name, std::string mfLabel) :
+				lookUpTable(*lookUpTable), nameSpace(nameSpace), output(name),
+				mfLabel(mfLabel)
 	{
 	}
 	double evaluate(ReasoningData reasoningData);

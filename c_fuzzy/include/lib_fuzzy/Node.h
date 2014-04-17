@@ -48,6 +48,12 @@ public:
 		return (int) evaluate(reasoningData);
 	}
 
+	virtual Node* instantiate(std::string variableName)
+	{
+		throwUnimplementedException();
+		return NULL;
+	}
+
 	virtual ~Node()
 	{
 	}

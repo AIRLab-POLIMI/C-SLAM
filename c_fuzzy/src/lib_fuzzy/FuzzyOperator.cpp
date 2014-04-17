@@ -23,11 +23,19 @@
 
 #include "FuzzyOperator.h"
 
+
 double FuzzyAnd::evaluate(ReasoningData reasoningData)
 {
 	double a = leftOperand->evaluate(reasoningData);
 	double b = rightOperand->evaluate(reasoningData);
 	return (a < b) ? a : b;
+}
+
+Node* FuzzyAnd::instantiate(std::string variableName)
+{
+	Node* left = leftOperand->instantiate(variableName);
+	Node* right = rightOperand->instantiate(variableName);
+	return new FuzzyAnd(left, right);
 }
 
 double FuzzyOr::evaluate(ReasoningData reasoningData)
@@ -37,9 +45,22 @@ double FuzzyOr::evaluate(ReasoningData reasoningData)
 	return (a > b) ? a : b;
 }
 
+Node* FuzzyOr::instantiate(std::string variableName)
+{
+	Node* left = leftOperand->instantiate(variableName);
+	Node* right = rightOperand->instantiate(variableName);
+	return new FuzzyOr(left, right);
+}
+
 double FuzzyNot::evaluate(ReasoningData reasoningData)
 {
 	return (1 - operand->evaluate(reasoningData));
+}
+
+Node* FuzzyNot::instantiate(std::string variableName)
+{
+	Node* op = operand->instantiate(variableName);
+	return new FuzzyNot(op);
 }
 
 FuzzyNot::~FuzzyNot()
@@ -67,6 +88,21 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	int crispValue = reasoningData.inputs[nameSpace][label];
 	reasoningData.inputValue = crispValue;
 	return mFunction->evaluate(reasoningData);
+}
+
+Node* FuzzyIs::instantiate(std::string variableName)
+{
+	return new FuzzyIs(*this);
+}
+
+double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
+{
+	throw std::logic_error("Evaluation of a non-instantiated template");
+}
+
+Node* FuzzyTemplateIs::instantiate(std::string variableName)
+{
+	return new FuzzyIs(&lookUpTable, nameSpace, variableName, mfLabel);
 }
 
 BinaryFuzzyOperator::~BinaryFuzzyOperator()
