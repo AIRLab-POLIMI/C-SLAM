@@ -46,7 +46,7 @@ class FuzzyBuilder
 
 public:
 	FuzzyBuilder() :
-				parser(NULL), scanner(NULL)
+			parser(NULL), scanner(NULL)
 	{
 		ruleList = new std::vector<Node*>();
 		parsingPredicate = false;
@@ -82,17 +82,21 @@ public:
 	Node* buildAnd(Node* left, Node* right);
 	Node* buildOr(Node* left, Node* right);
 	Node* buildNot(Node* operand);
-	Node* buildAssignment(std::string output, std::string label);
-	Node* buildAssignment(std::pair<std::string, std::string> classMember,
-				std::string label);
-	Node* buildIs(std::string domain, std::string mfLabel);
-	Node* buildIs(std::pair<std::string, std::string> classMember,
-				std::string mfLabel);
+	Node* buildAssignment(std::pair<std::string, std::string> variable,
+			std::string label);
+	Node* buildIs(std::pair<std::string, std::string> variable,
+			std::string mfLabel);
 	Node* buildTemplateIs(std::string templateDomain, std::string mfLabel);
+
+	//Functions to get predicate instances
+	Node* getPredicateInstance(std::string nameSpace, std::string predicateName,
+			std::pair<std::string, std::string> variable);
+	Node* getPredicateInstance(std::string predicateName,
+			std::pair<std::string, std::string> variable);
 
 	//Function to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
-				std::vector<int>& parameters);
+			std::vector<int>& parameters);
 
 private:
 	//Data needed to get Builder working

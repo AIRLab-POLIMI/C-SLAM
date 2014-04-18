@@ -72,7 +72,8 @@
 %type <Node*> wellFormedFormula
 %type <Node*> fuzzyComparison
 %type <Node*> fuzzyAssignment
-%type <std::pair<std::string, std::string> > classMember
+%type <Node*> fuzzyPredicateCall
+%type <std::pair<std::string, std::string>> variable
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList
 %type <std::vector<std::string>> fuzzyId
@@ -89,6 +90,7 @@ fuzzyFile		: fuzzyDefinitions ruleSet
 
 fuzzyDefinitions	: fuzzyClass fuzzyDefinitions
 			| fuzzySet fuzzyDefinitions
+			| fuzzyPredicate fuzzyDefinitions
 			| /* Empty */
 			;
 
@@ -175,6 +177,10 @@ wellFormedFormula	: fuzzyComparison
 			{
 				$$ = $1;
 			}
+			| fuzzyPredicateCall
+			{
+				$$ = $1;
+			}
 			| OPEN_B wellFormedFormula CLOSE_B 
 			{
 				$$ = $2;
@@ -193,11 +199,7 @@ wellFormedFormula	: fuzzyComparison
 			}
 			;
 
-fuzzyComparison		: OPEN_B ID IS ID CLOSE_B 
-			{
-				$$ = builder.buildIs($2, $4);
-			}
-			| OPEN_B classMember IS ID CLOSE_B
+fuzzyComparison		: OPEN_B variable IS ID CLOSE_B
 			{
 				$$ = builder.buildIs($2, $4);
 			}
@@ -207,20 +209,31 @@ fuzzyComparison		: OPEN_B ID IS ID CLOSE_B
 			}
 			;
 			
-fuzzyAssignment		: THEN OPEN_B ID IS ID CLOSE_B 
+fuzzyPredicateCall	: ID PERIOD ID OPEN_B variable CLOSE_B
 			{
-				$$ = builder.buildAssignment($3, $5);
+				$$ = builder.getPredicateInstance($1, $3, $5);
 			}
-			| THEN OPEN_B classMember IS ID CLOSE_B 
+			| ID OPEN_B variable CLOSE_B
+			{
+				$$ = builder.getPredicateInstance($1, $3);
+			}
+			;
+			
+fuzzyAssignment		: THEN OPEN_B variable IS ID CLOSE_B 
 			{
 				$$ = builder.buildAssignment($3, $5);
 			}
 			;
 
-classMember		: ID PERIOD var
+variable		: ID PERIOD var
 			{
 				$$.first = $1;
 				$$.second = $3;
+			}
+			| var
+			{
+				$$.first = "";
+				$$.second = $1;
 			}
 			;
 
@@ -239,6 +252,7 @@ templateVar 		: QUESTION var
 				$$ = $2;
 			}
 			;
+
 %%
 
 void fz::FuzzyParser::error(const fz::FuzzyParser::location_type& l, const std::string& msg)

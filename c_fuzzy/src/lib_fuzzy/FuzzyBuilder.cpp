@@ -101,13 +101,6 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 	return new FuzzyNot(operand);
 }
 
-Node* FuzzyBuilder::buildIs(string domain, string mfLabel)
-{
-	VariableMasks& mask = varEngine.getVariableMasks("");
-	mask.updateVariableMask(domain, ruleList->size());
-	return new FuzzyIs(varEngine.getTable(), "", domain, mfLabel);
-}
-
 Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 {
 	string nameSpace = classMember.first;
@@ -122,17 +115,25 @@ Node* FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
 	return new FuzzyTemplateIs(varEngine.getTable(), "", domain, mfLabel);
 }
 
-Node* FuzzyBuilder::buildAssignment(string output, string label)
-{
-	return new FuzzyAssignment(varEngine.getTable(), "", output, label);
-}
-
 Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
-			string label)
+		string label)
 {
 	string nameSpace = classMember.first;
 	string output = classMember.second;
 	return new FuzzyAssignment(varEngine.getTable(), nameSpace, output, label);
+}
+
+//fuzzy predicates
+Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
+		pair<string, string> variable)
+{
+	//FIXME get aslo MF
+	return predicateEngine.getPredicateInstance(nameSpace, predicateName, variable);
+}
+
+Node* FuzzyBuilder::getPredicateInstance(string predicateName, pair<string, string> variable)
+{
+	return getPredicateInstance("", predicateName, variable);
 }
 
 //Function to enter a namespace

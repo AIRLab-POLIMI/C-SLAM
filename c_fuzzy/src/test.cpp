@@ -28,6 +28,59 @@
 #include <stdexcept>
 #include <sstream>
 
+char askYNQuestion(std::string question)
+{
+	char stop;
+
+	do
+	{
+		std::cout << question <<" [y/n]" << std::endl;
+		std::cin >> stop;
+	} while (stop != 'n' && stop != 'y');
+
+	return stop;
+
+}
+
+void getInputs(FuzzyReasoner& reasoner)
+{
+	char stop;
+
+	stop = askYNQuestion("insert simple input?");
+
+	while (stop != 'n')
+	{
+		int value;
+		std::string name;
+		std::cout << "insert input name: " << std::endl;
+		std::cin >> name;
+		std::cout << "insert input value: " << std::endl;
+		std::cin >> value;
+		reasoner.addInput(name, value);
+
+		stop = askYNQuestion("another input?");
+
+	}
+
+	stop = askYNQuestion("insert class input?");
+
+	while (stop != 'n')
+	{
+		int value;
+		std::string nameSpace;
+		std::string name;
+		std::cout << "insert input class: " << std::endl;
+		std::cin >> nameSpace;
+		std::cout << "insert input name: " << std::endl;
+		std::cin >> name;
+		std::cout << "insert input value: " << std::endl;
+		std::cin >> value;
+		reasoner.addInput(nameSpace, name, value);
+
+		stop = askYNQuestion("another input?");
+	}
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -40,60 +93,13 @@ int main(int argc, char *argv[])
 		FuzzyKnowledgeBase* knowledgebase = builder.createKnowledgeBase();
 		FuzzyReasoner reasoner(*knowledgebase);
 
-		if (argc == 2)
-		{
-			char stop;
-
-			do
-			{
-				int value;
-				std::string name;
-				std::cout << "insert input name: " << std::endl;
-				std::cin >> name;
-				//name = "Input";
-				std::cout << "insert input value: " << std::endl;
-				std::cin >> value;
-				//value = 150;
-
-				reasoner.addInput(name, value);
-
-				do
-				{
-					std::cout << "another input? [y/n]" << std::endl;
-					std::cin >> stop;
-					//stop = 'n';
-				} while (stop != 'n' && stop != 'y');
-
-			} while (stop != 'n');
-		}
-
-		//TODO togliere
-		reasoner.addInput("TestClass", "prova", 189);
+		getInputs(reasoner);
 
 		OutputTable results = reasoner.run();
 
 		std::cout << "Reasoning terminato, risultati:" << std::endl;
 
-		for (OutputTable::iterator i = results.begin(); i != results.end(); ++i)
-		{
-			DomainOutputTable& map = i->second;
-			for (DomainOutputTable::iterator j = map.begin(); j != map.end();
-						++j)
-			{
-				std::stringstream ss;
-
-				if (!i->first.empty())
-				{
-					ss << i->first << ".";
-				}
-
-				ss << j->first;
-
-				std::cout << ss.str() << " = " << j->second.value
-							<< " truth value = " << j->second.truth
-							<< std::endl;
-			}
-		}
+		std::cout << results << std::endl;
 
 		delete knowledgebase;
 

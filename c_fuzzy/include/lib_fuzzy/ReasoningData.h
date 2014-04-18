@@ -26,6 +26,7 @@
 
 #include <map>
 #include <string>
+#include <ostream>
 
 /**
  * Helper struct for passing data about fuzzy labels
@@ -56,8 +57,8 @@ typedef std::map<std::string, DomainAggregationMap> AggregationMap;
 class FuzzyAggregator
 {
 public:
-	void addValue(std::string nameSpace, std::string output, std::string mfLabel, double weight,
-				double value);
+	void addValue(std::string nameSpace, std::string output,
+			std::string mfLabel, double weight, double value);
 	AggregationMap getAggregations();
 
 private:
@@ -75,13 +76,29 @@ private:
  */
 typedef std::map<std::string, std::map<std::string, int> > InputTable;
 
+inline std::ostream& operator<<(std::ostream& os, const InputTable& inputs)
+{
+	for (InputTable::const_iterator i = inputs.begin(); i != inputs.end(); ++i)
+	{
+		for (std::map<std::string, int>::const_iterator j = i->second.begin();
+				j != i->second.end(); ++j)
+		{
+			os << i->first << "::" << j->first << ", " << j->second
+					<< std::endl;
+
+		}
+	}
+
+	return os;
+}
+
 /**
  * Reasoning data struct
  */
 struct ReasoningData
 {
 	ReasoningData(InputTable& inputs, FuzzyAggregator& aggregator) :
-				inputs(inputs), aggregator(aggregator)
+			inputs(inputs), aggregator(aggregator)
 	{
 		truthValue = 0;
 		inputValue = 0;

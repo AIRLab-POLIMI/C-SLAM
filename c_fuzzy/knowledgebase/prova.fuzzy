@@ -42,10 +42,41 @@ FUZZIFY_CLASS TestClass
 		Random := tol(100, 200);
 	END_FUZZIFY
 	
+	FUZZIFY bim
+		Ok := sgt(1);
+	END_FUZZIFY
+	
+	FUZZIFY bum
+		Ok := sgt(1);
+	END_FUZZIFY
+	
 	FUZZIFY bam
 		Ok := sgt(1);
 	END_FUZZIFY
+	
+	/*
+	FUZZIFY_PREDICATE ?x
+		Predicate := (?x is Good);
+		
+		FUZZIFY ?x
+			Good := int(0, 10);
+		END_FUZZIFY
+
+	END_FUZZIFY_PREDICATE
+	*/
+	
 END_FUZZIFY_CLASS
+
+/*
+FUZZIFY_PREDICATE ?x
+	Predicate := (?x is Good);
+	
+	FUZZIFY ?x
+		Good := int(0, 10);
+	END_FUZZIFY
+
+END_FUZZIFY_PREDICATE
+*/
 
 /* Knowledge base */
 if (Input is Near) then (Output1 is Ok);
@@ -56,5 +87,12 @@ if (Prova is Near) then (Output4 is Ok);
 if (Input is Near) or (Input is Medium) then (Output5 is Bad);
 if (Prova is Medium) then (Output5 is Ok);
 if (TestClass.prova is Random) then (Output6 is Ok);
+
+/*
+if Predicate(h) then (TestClass.bim is Ok);
+if TestClass.Predicate(h) then (TestClass.bum is Ok);
+*/
 if (TestClass.prova is Random) then (TestClass.bam is Ok);
+
+
 

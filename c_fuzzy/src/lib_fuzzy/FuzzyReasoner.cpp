@@ -91,6 +91,7 @@ void FuzzyReasoner::addInput(string name, int value)
 
 OutputTable FuzzyReasoner::run()
 {
+	cout << inputs << endl; //TODO LEVARE
 	ReasoningData reasoningData(inputs, aggregator);
 
 	//Calculates the rules to be used

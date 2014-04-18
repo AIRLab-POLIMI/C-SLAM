@@ -53,6 +53,27 @@ typedef std::map<std::string, FuzzyOutput> DomainOutputTable;
  */
 typedef std::map<std::string, DomainOutputTable> OutputTable;
 
+inline std::ostream& operator<<(std::ostream& os, const OutputTable& outputs)
+{
+	for (OutputTable::const_iterator i = outputs.begin(); i != outputs.end(); ++i)
+	{
+		const DomainOutputTable& map = i->second;
+		for (DomainOutputTable::const_iterator j = map.begin(); j != map.end(); ++j)
+		{
+
+			if (!i->first.empty())
+			{
+				os << i->first << ".";
+			}
+
+			os << j->first << " = " << j->second.value
+					<< ", truth value: = " << j->second.truth << std::endl;
+		}
+	}
+
+	return os;
+}
+
 /**
  * The class implementing the defuzzyfier
  * this is intended to be an extensible defuzzifyer, but for now, implementing the centroid
@@ -73,8 +94,8 @@ class FuzzyReasoner
 {
 public:
 	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
-				knowledgeBase(knowledgeBase),
-				namespaceMasks(knowledgeBase.getNamespaceMasks())
+			knowledgeBase(knowledgeBase), namespaceMasks(
+					knowledgeBase.getNamespaceMasks())
 	{
 		rulesMask.resize(knowledgeBase.size(), false);
 		inputMask.resize(namespaceMasks.variablesNumber(), false);
