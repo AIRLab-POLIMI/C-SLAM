@@ -68,14 +68,14 @@ void FuzzyVariableEngine::buildDomain(std::vector<std::string> variables)
 	{
 		domainMap[*it] = mfTable;
 		pair<string, string> variable(currentNamespace, *it);
-		namespaceMasks->newVariableMask(variable);
+		variableMasks->newVariableMask(variable);
 	}
 }
 
 void FuzzyVariableEngine::updateVariableMask(std::pair<std::string, std::string>& variable,
 				size_t currentRule)
 {
-	namespaceMasks->updateVariableMask(variable, currentRule);
+	variableMasks->updateVariableMask(variable, currentRule);
 }
 
 NamespaceTable* FuzzyVariableEngine::getTable()
@@ -83,8 +83,8 @@ NamespaceTable* FuzzyVariableEngine::getTable()
 	return namespaceTable;
 }
 
-NamespaceMasks* FuzzyVariableEngine::getMasks()
+VariableMasks* FuzzyVariableEngine::getMasks()
 {
-	return namespaceMasks;
+	return variableMasks;
 }
 

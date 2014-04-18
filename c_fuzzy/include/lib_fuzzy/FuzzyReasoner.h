@@ -94,11 +94,11 @@ class FuzzyReasoner
 {
 public:
 	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
-			knowledgeBase(knowledgeBase), namespaceMasks(
-					knowledgeBase.getNamespaceMasks())
+			knowledgeBase(knowledgeBase), variableMasks(
+					knowledgeBase.getMasks())
 	{
 		rulesMask.resize(knowledgeBase.size(), false);
-		inputMask.resize(namespaceMasks.size(), false);
+		inputMask.resize(variableMasks.size(), false);
 
 		rulesMask.reset();
 		inputMask.reset();
@@ -116,7 +116,7 @@ private:
 	FuzzyAggregator aggregator;
 	Defuzzyfier defuzzyfier;
 	InputTable inputs;
-	NamespaceMasks& namespaceMasks;
+	VariableMasks& variableMasks;
 	boost::dynamic_bitset<> rulesMask;
 	boost::dynamic_bitset<> inputMask;
 

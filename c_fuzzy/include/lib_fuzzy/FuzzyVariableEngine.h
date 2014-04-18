@@ -36,7 +36,7 @@ public:
 	FuzzyVariableEngine()
 	{
 		initializeNamespaces();
-		namespaceMasks = new NamespaceMasks();
+		variableMasks = new VariableMasks();
 	}
 
 	void enterNamespace(std::string nameSpace);
@@ -45,7 +45,7 @@ public:
 	void updateVariableMask(std::pair<std::string, std::string>& variable,
 				size_t currentRule);
 	NamespaceTable* getTable();
-	NamespaceMasks* getMasks();
+	VariableMasks* getMasks();
 
 private:
 	void initializeNamespaces();
@@ -57,7 +57,7 @@ private:
 	MFTable* mfTable;
 
 	//Mask data
-	NamespaceMasks* namespaceMasks;
+	VariableMasks* variableMasks;
 
 	//currentNamespace
 	std::string currentNamespace;

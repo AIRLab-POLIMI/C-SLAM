@@ -74,9 +74,9 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 void FuzzyReasoner::addInput(string nameSpace, string name, int value)
 {
 	pair<string, string> variable(nameSpace, name);
-	if (namespaceMasks.contains(variable))
+	if (variableMasks.contains(variable))
 	{
-		size_t index = namespaceMasks.getMaskIndex(variable);
+		size_t index = variableMasks.getMaskIndex(variable);
 		inputs[nameSpace][name] = value;
 		inputMask.set(index, true);
 	}
@@ -118,9 +118,9 @@ void FuzzyReasoner::updateRulesMask()
 	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
 
-	for (size_t index = 0; index < namespaceMasks.size(); index++)
+	for (size_t index = 0; index < variableMasks.size(); index++)
 	{
-		boost::dynamic_bitset<>& currentMask = namespaceMasks[index];
+		boost::dynamic_bitset<>& currentMask = variableMasks[index];
 		if (inputMask[index])
 			rulesMask |= currentMask;
 		else

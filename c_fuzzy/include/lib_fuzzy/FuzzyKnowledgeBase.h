@@ -37,13 +37,13 @@ class FuzzyKnowledgeBase
 {
 public:
 	FuzzyKnowledgeBase(NamespaceTable* namespaceTable,
-			NamespaceMasks* namespaceMasks, std::vector<Node*>* knowledgeBase) :
-			namespaceTable(namespaceTable), namespaceMasks(namespaceMasks), knowledgeBase(
+			VariableMasks* variableMasks, std::vector<Node*>* knowledgeBase) :
+			namespaceTable(namespaceTable), variableMasks(variableMasks), knowledgeBase(
 					knowledgeBase)
 	{
 	}
 	size_t size();
-	NamespaceMasks& getNamespaceMasks();
+	VariableMasks& getMasks();
 	NamespaceTable& getNamespaceTable();
 	Node& operator[](size_t i);
 
@@ -60,7 +60,7 @@ private:
 
 private:
 	NamespaceTable* namespaceTable;
-	NamespaceMasks* namespaceMasks;
+	VariableMasks* variableMasks;
 	std::vector<Node*>* knowledgeBase;
 };
 

@@ -30,7 +30,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-class NamespaceMasks
+class VariableMasks
 {
 
 private:
@@ -38,15 +38,15 @@ private:
 	typedef std::map<std::string, std::map<std::string, size_t> > IndexMap;
 
 public:
-	boost::dynamic_bitset<>& operator[](size_t index);
 	void newVariableMask(std::pair<std::string, std::string>& variable);
-	size_t getMaskIndex(std::pair<std::string, std::string>& variable);
 	void updateVariableMask(std::pair<std::string, std::string>& variable,
 			size_t currentRule);
 	void normalizeVariableMasks(size_t size);
 
 	size_t size();
-	bool contains(std::pair<std::string, std::string> variable);
+	bool contains(std::pair<std::string, std::string>& variable);
+	boost::dynamic_bitset<>& operator[](size_t index);
+	size_t getMaskIndex(std::pair<std::string, std::string>& variable);
 
 private:
 	IndexMap indexMap;

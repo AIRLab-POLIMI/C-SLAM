@@ -30,9 +30,9 @@ size_t FuzzyKnowledgeBase::size()
 	return knowledgeBase->size();
 }
 
-NamespaceMasks& FuzzyKnowledgeBase::getNamespaceMasks()
+VariableMasks& FuzzyKnowledgeBase::getMasks()
 {
-	return *namespaceMasks;
+	return *variableMasks;
 }
 
 NamespaceTable& FuzzyKnowledgeBase::getNamespaceTable()
@@ -55,16 +55,16 @@ void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
 			it != variables.end(); ++it)
 	{
 
-		if(!namespaceMasks->contains(*it))
+		if(!variableMasks->contains(*it))
 		{
-			namespaceMasks->newVariableMask(*it);
+			variableMasks->newVariableMask(*it);
 		}
 
-		namespaceMasks->updateVariableMask(*it, currentRule);
+		variableMasks->updateVariableMask(*it, currentRule);
 	}
 
 	knowledgeBase->push_back(fuzzyRule);
-	namespaceMasks->normalizeVariableMasks(knowledgeBase->size());
+	variableMasks->normalizeVariableMasks(knowledgeBase->size());
 
 }
 
@@ -106,7 +106,7 @@ void FuzzyKnowledgeBase::deleteDomains()
 
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
 {
-	delete namespaceMasks;
+	delete variableMasks;
 	deleteDomains();
 	delete namespaceTable;
 	deleteRules();

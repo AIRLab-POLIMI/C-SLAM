@@ -25,7 +25,17 @@
 
 using namespace std;
 
-void NamespaceMasks::updateVariableMask(pair<string, string>& variable,
+void VariableMasks::newVariableMask(pair<string, string>& variable)
+{
+	size_t index = variableMasks.size();
+	string nameSpace = variable.first;
+	string domain = variable.second;
+	boost::dynamic_bitset<> mask;
+	variableMasks.push_back(mask);
+	indexMap[nameSpace][domain] = index;
+}
+
+void VariableMasks::updateVariableMask(pair<string, string>& variable,
 		size_t currentRule)
 {
 	string nameSpace = variable.first;
@@ -38,7 +48,7 @@ void NamespaceMasks::updateVariableMask(pair<string, string>& variable,
 	bitset[currentRule] = true;
 }
 
-void NamespaceMasks::normalizeVariableMasks(size_t size)
+void VariableMasks::normalizeVariableMasks(size_t size)
 {
 	for (MasksVector::iterator it = variableMasks.begin();
 			it != variableMasks.end(); ++it)
@@ -47,12 +57,12 @@ void NamespaceMasks::normalizeVariableMasks(size_t size)
 	}
 }
 
-size_t NamespaceMasks::size()
+size_t VariableMasks::size()
 {
 	return variableMasks.size();
 }
 
-bool NamespaceMasks::contains(pair<string, string> variable)
+bool VariableMasks::contains(pair<string, string>& variable)
 {
 	string nameSpace = variable.first;
 	string domain = variable.second;
@@ -60,23 +70,12 @@ bool NamespaceMasks::contains(pair<string, string> variable)
 			&& indexMap[nameSpace].count(domain) == 1;
 }
 
-boost::dynamic_bitset<>& NamespaceMasks::operator[](size_t index)
+boost::dynamic_bitset<>& VariableMasks::operator[](size_t index)
 {
 	return variableMasks[index];
 }
 
-void NamespaceMasks::newVariableMask(
-		std::pair<std::string, std::string>& variable)
-{
-	size_t index = variableMasks.size();
-	string nameSpace = variable.first;
-	string domain = variable.second;
-	boost::dynamic_bitset<> mask;
-	variableMasks.push_back(mask);
-	indexMap[nameSpace][domain] = index;
-}
-
-size_t NamespaceMasks::getMaskIndex(pair<string, string>& variable)
+size_t VariableMasks::getMaskIndex(pair<string, string>& variable)
 {
 	string nameSpace = variable.first;
 	string domain = variable.second;

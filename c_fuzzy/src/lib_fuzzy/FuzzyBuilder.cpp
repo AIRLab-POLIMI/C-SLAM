@@ -57,9 +57,9 @@ void FuzzyBuilder::parse(const char *filename)
 FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 {
 	NamespaceTable* table = varEngine.getTable();
-	NamespaceMasks* namespaceMasks = varEngine.getMasks();
-	namespaceMasks->normalizeVariableMasks(ruleList->size());
-	return new FuzzyKnowledgeBase(table, namespaceMasks, ruleList);
+	VariableMasks* variableMasks = varEngine.getMasks();
+	variableMasks->normalizeVariableMasks(ruleList->size());
+	return new FuzzyKnowledgeBase(table, variableMasks, ruleList);
 }
 
 void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
