@@ -25,73 +25,32 @@
 #define VARIABLEMASK_H_
 
 #include <string>
+#include <vector>
 #include <map>
 
 #include <boost/dynamic_bitset.hpp>
 
-struct BitData
-{
-	BitData() :
-				index(0), bits(NULL)
-	{
-	}
-
-	BitData(int index, boost::dynamic_bitset<>* bits) :
-				index(index), bits(bits)
-	{
-	}
-	int index;
-	boost::dynamic_bitset<>* bits;
-
-};
-
-class VariableMasks
-{
-public:
-	VariableMasks()
-	{
-	}
-
-	void newVariableMask(std::string variable);
-	void updateVariableMask(std::string& label, size_t currentRule);
-	void normalizeVariableMasks(size_t size);
-
-	size_t size();
-	bool contains(std::string name);
-	std::map<std::string, BitData>::iterator begin();
-	std::map<std::string, BitData>::iterator end();
-	BitData& operator[](std::string variable);
-
-	~VariableMasks();
-
-private:
-	std::map<std::string, BitData> variableMasks;
-};
-
 class NamespaceMasks
 {
-public:
-	NamespaceMasks() :
-				variablesCounter(0), counterUpdated(false)
-	{
-	}
 
-	void addNameSpace(std::string nameSpace, VariableMasks* variableMasks);
+private:
+	typedef std::vector<boost::dynamic_bitset<> > MasksVector;
+	typedef std::map<std::string, std::map<std::string, size_t> > IndexMap;
+
+public:
+	boost::dynamic_bitset<>& operator[](size_t index);
+	void newVariableMask(std::pair<std::string, std::string>& variable);
+	size_t getMaskIndex(std::pair<std::string, std::string>& variable);
+	void updateVariableMask(std::pair<std::string, std::string>& variable,
+			size_t currentRule);
 	void normalizeVariableMasks(size_t size);
 
 	size_t size();
-	size_t variablesNumber();
-	bool contains(std::string name);
-	std::map<std::string, VariableMasks*>::iterator begin();
-	std::map<std::string, VariableMasks*>::iterator end();
-	VariableMasks* operator[](std::string nameSpace);
-
-	~NamespaceMasks();
+	bool contains(std::pair<std::string, std::string> variable);
 
 private:
-	std::map<std::string, VariableMasks*> namespaceMasks;
-	size_t variablesCounter;
-	bool counterUpdated;
+	IndexMap indexMap;
+	MasksVector variableMasks;
 };
 
 #endif /* VARIABLEMASK_H_ */

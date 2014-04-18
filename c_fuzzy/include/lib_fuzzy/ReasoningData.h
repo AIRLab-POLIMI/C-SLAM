@@ -83,7 +83,12 @@ inline std::ostream& operator<<(std::ostream& os, const InputTable& inputs)
 		for (std::map<std::string, int>::const_iterator j = i->second.begin();
 				j != i->second.end(); ++j)
 		{
-			os << i->first << "::" << j->first << ", " << j->second
+			if(!i->first.empty())
+			{
+				os << i->first << ".";
+			}
+
+			os << j->first << "=" << j->second
 					<< std::endl;
 
 		}

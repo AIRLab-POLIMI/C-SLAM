@@ -27,18 +27,12 @@ using namespace std;
 
 void FuzzyVariableEngine::initializeNamespaces()
 {
+	currentNamespace = "";
 	namespaceTable = new NamespaceTable();
 	domainTable = new DomainTable();
 	mfTable = NULL;
 	NamespaceTable& namespaceMap = *namespaceTable;
-	namespaceMap[""] = domainTable;
-}
-
-void FuzzyVariableEngine::initializeMasks()
-{
-	namespaceMasks = new NamespaceMasks();
-	variableMasks = new VariableMasks();
-	namespaceMasks->addNameSpace("", variableMasks);
+	namespaceMap[currentNamespace] = domainTable;
 }
 
 void FuzzyVariableEngine::enterNamespace(string nameSpace)
@@ -49,17 +43,13 @@ void FuzzyVariableEngine::enterNamespace(string nameSpace)
 	{
 		domainTable = new DomainTable();
 		namespaceMap[nameSpace] = domainTable;
-
-		variableMasks = new VariableMasks();
-		namespaceMasks->addNameSpace(nameSpace, variableMasks);
 	}
 	else
 	{
 		domainTable = namespaceMap[nameSpace];
-
-		NamespaceMasks& masksMap = *namespaceMasks;
-		variableMasks = masksMap[nameSpace];
 	}
+
+	currentNamespace = nameSpace;
 }
 
 void FuzzyVariableEngine::addMF(std::string label, FuzzyMF* mf)
@@ -77,8 +67,15 @@ void FuzzyVariableEngine::buildDomain(std::vector<std::string> variables)
 				it++)
 	{
 		domainMap[*it] = mfTable;
-		variableMasks->newVariableMask(*it);
+		pair<string, string> variable(currentNamespace, *it);
+		namespaceMasks->newVariableMask(variable);
 	}
+}
+
+void FuzzyVariableEngine::updateVariableMask(std::pair<std::string, std::string>& variable,
+				size_t currentRule)
+{
+	namespaceMasks->updateVariableMask(variable, currentRule);
 }
 
 NamespaceTable* FuzzyVariableEngine::getTable()
@@ -89,11 +86,5 @@ NamespaceTable* FuzzyVariableEngine::getTable()
 NamespaceMasks* FuzzyVariableEngine::getMasks()
 {
 	return namespaceMasks;
-}
-
-VariableMasks& FuzzyVariableEngine::getVariableMasks(std::string nameSpace)
-{
-	NamespaceMasks& nMask = *namespaceMasks;
-	return *nMask[nameSpace];
 }
 

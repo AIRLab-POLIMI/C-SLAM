@@ -105,8 +105,7 @@ Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
 {
 	string nameSpace = classMember.first;
 	string domain = classMember.second;
-	VariableMasks& mask = varEngine.getVariableMasks(nameSpace);
-	mask.updateVariableMask(domain, ruleList->size());
+	varEngine.updateVariableMask(classMember, ruleList->size());
 	return new FuzzyIs(varEngine.getTable(), nameSpace, domain, mfLabel);
 }
 

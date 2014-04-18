@@ -25,135 +25,62 @@
 
 using namespace std;
 
-void VariableMasks::newVariableMask(std::string variable)
+void NamespaceMasks::updateVariableMask(pair<string, string>& variable,
+		size_t currentRule)
 {
-	size_t variableIndex = variableMasks.size();
-	variableMasks[variable] = BitData(variableIndex,
-				new boost::dynamic_bitset<>());
-}
-
-void VariableMasks::updateVariableMask(string& label, size_t currentRule)
-{
-	boost::dynamic_bitset<>& bitset = *variableMasks[label].bits;
+	string nameSpace = variable.first;
+	string domain = variable.second;
+	size_t index = indexMap[nameSpace][domain];
+	boost::dynamic_bitset<>& bitset = variableMasks[index];
 	if (currentRule >= bitset.size())
 		bitset.resize(currentRule + 1, false);
 
 	bitset[currentRule] = true;
 }
 
-void VariableMasks::normalizeVariableMasks(size_t size)
-{
-	map<string, BitData>::iterator it;
-	for (it = variableMasks.begin(); it != variableMasks.end(); ++it)
-	{
-		it->second.bits->resize(size, false);
-	}
-
-}
-
-size_t VariableMasks::size()
-{
-	return variableMasks.size();
-}
-
-bool VariableMasks::contains(string name)
-{
-	return variableMasks.count(name) != 0;
-}
-
-map<string, BitData>::iterator VariableMasks::begin()
-{
-	return variableMasks.begin();
-}
-
-map<string, BitData>::iterator VariableMasks::end()
-{
-	return variableMasks.end();
-}
-
-BitData& VariableMasks::operator[](string variable)
-{
-	return variableMasks[variable];
-}
-
-VariableMasks::~VariableMasks()
-{
-	for (map<string, BitData>::iterator it = variableMasks.begin();
-				it != variableMasks.end(); ++it)
-	{
-		delete it->second.bits;
-	}
-}
-
-void NamespaceMasks::addNameSpace(std::string nameSpace,
-			VariableMasks* variableMasks)
-{
-	namespaceMasks[nameSpace] = variableMasks;
-	counterUpdated = false;
-
-}
-
 void NamespaceMasks::normalizeVariableMasks(size_t size)
 {
-	for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
-				it != namespaceMasks.end(); ++it)
+	for (MasksVector::iterator it = variableMasks.begin();
+			it != variableMasks.end(); ++it)
 	{
-		VariableMasks* mask = it->second;
-		mask->normalizeVariableMasks(size);
+		it->resize(size, false);
 	}
 }
 
 size_t NamespaceMasks::size()
 {
-	return namespaceMasks.size();
+	return variableMasks.size();
 }
 
-size_t NamespaceMasks::variablesNumber()
+bool NamespaceMasks::contains(pair<string, string> variable)
 {
-	if (counterUpdated)
-	{
-		return variablesCounter;
-	}
-	else
-	{
-		variablesCounter = 0;
-
-		for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
-					it != namespaceMasks.end(); ++it)
-		{
-			variablesCounter += it->second->size();
-		}
-
-		counterUpdated = true;
-		return variablesCounter;
-	}
+	string nameSpace = variable.first;
+	string domain = variable.second;
+	return indexMap.count(nameSpace) == 1
+			&& indexMap[nameSpace].count(domain) == 1;
 }
 
-bool NamespaceMasks::contains(string name)
+boost::dynamic_bitset<>& NamespaceMasks::operator[](size_t index)
 {
-	return namespaceMasks.count(name) != 0;
+	return variableMasks[index];
 }
 
-map<string, VariableMasks*>::iterator NamespaceMasks::begin()
+void NamespaceMasks::newVariableMask(
+		std::pair<std::string, std::string>& variable)
 {
-	return namespaceMasks.begin();
+	size_t index = variableMasks.size();
+	string nameSpace = variable.first;
+	string domain = variable.second;
+	boost::dynamic_bitset<> mask;
+	variableMasks.push_back(mask);
+	indexMap[nameSpace][domain] = index;
 }
 
-map<string, VariableMasks*>::iterator NamespaceMasks::end()
+size_t NamespaceMasks::getMaskIndex(pair<string, string>& variable)
 {
-	return namespaceMasks.end();
+	string nameSpace = variable.first;
+	string domain = variable.second;
+
+	return indexMap[nameSpace][domain];
 }
 
-VariableMasks* NamespaceMasks::operator[](string nameSpace)
-{
-	return namespaceMasks[nameSpace];
-}
-
-NamespaceMasks::~NamespaceMasks()
-{
-	for (map<string, VariableMasks*>::iterator it = namespaceMasks.begin();
-				it != namespaceMasks.end(); ++it)
-	{
-		delete it->second;
-	}
-}

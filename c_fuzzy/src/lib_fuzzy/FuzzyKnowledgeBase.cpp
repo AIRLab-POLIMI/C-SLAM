@@ -50,35 +50,22 @@ void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
 {
 
 	size_t currentRule = knowledgeBase->size();
+
 	for (vector<pair<string, string> >::iterator it = variables.begin();
 			it != variables.end(); ++it)
 	{
-		string nameSpace = it->first;
-		string variableName = it->second;
-		VariableMasks* variableMasks;
 
-		if (!namespaceMasks->contains(nameSpace))
+		if(!namespaceMasks->contains(*it))
 		{
-			variableMasks = new VariableMasks();
-			namespaceMasks->addNameSpace(nameSpace, variableMasks);
-			variableMasks->newVariableMask(variableName);
-		}
-		else
-		{
-			NamespaceMasks& map = *namespaceMasks;
-			variableMasks = map[nameSpace];
+			namespaceMasks->newVariableMask(*it);
 		}
 
-		if(!variableMasks->contains(variableName))
-		{
-			variableMasks->newVariableMask(variableName);
-		}
-
-		variableMasks->updateVariableMask(variableName, currentRule);
+		namespaceMasks->updateVariableMask(*it, currentRule);
 	}
 
 	knowledgeBase->push_back(fuzzyRule);
 	namespaceMasks->normalizeVariableMasks(knowledgeBase->size());
+
 }
 
 void FuzzyKnowledgeBase::deleteRules()

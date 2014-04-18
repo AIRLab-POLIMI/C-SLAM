@@ -54,7 +54,6 @@ FUZZIFY_CLASS TestClass
 		Ok := sgt(1);
 	END_FUZZIFY
 	
-	/*
 	FUZZIFY_PREDICATE ?x
 		Predicate := (?x is Good);
 		
@@ -63,11 +62,10 @@ FUZZIFY_CLASS TestClass
 		END_FUZZIFY
 
 	END_FUZZIFY_PREDICATE
-	*/
 	
 END_FUZZIFY_CLASS
 
-/*
+
 FUZZIFY_PREDICATE ?x
 	Predicate := (?x is Good);
 	
@@ -76,10 +74,10 @@ FUZZIFY_PREDICATE ?x
 	END_FUZZIFY
 
 END_FUZZIFY_PREDICATE
-*/
+
 
 /* Knowledge base */
-if (Input is Near) then (Output1 is Ok);
+if (Input is Near) then (Output1 is Ok); 
 if (Prova is Near) then (Output1 is Ok);
 if (Input is Medium) and (Prova is Medium) then (Output2 is Ok); 
 if (Input is Far) and (Prova is Far) then (Output3 is Ok);
@@ -88,10 +86,8 @@ if (Input is Near) or (Input is Medium) then (Output5 is Bad);
 if (Prova is Medium) then (Output5 is Ok);
 if (TestClass.prova is Random) then (Output6 is Ok);
 
-/*
 if Predicate(h) then (TestClass.bim is Ok);
 if TestClass.Predicate(h) then (TestClass.bum is Ok);
-*/
 if (TestClass.prova is Random) then (TestClass.bam is Ok);
 
 

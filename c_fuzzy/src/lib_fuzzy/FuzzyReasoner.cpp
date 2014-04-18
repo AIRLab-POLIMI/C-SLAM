@@ -31,13 +31,13 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 	OutputTable results;
 
 	for (AggregationMap::iterator k = aggregatedData.begin();
-				k != aggregatedData.end(); ++k)
+			k != aggregatedData.end(); ++k)
 	{
 		string nameSpace = k->first;
 		DomainAggregationMap& domainMap = k->second;
 
 		for (DomainAggregationMap::iterator i = domainMap.begin();
-					i != domainMap.end(); ++i)
+				i != domainMap.end(); ++i)
 		{
 			string output = i->first;
 			DataMap& dataMap = i->second;
@@ -73,14 +73,12 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 
 void FuzzyReasoner::addInput(string nameSpace, string name, int value)
 {
-	if (namespaceMasks.contains(nameSpace))
+	pair<string, string> variable(nameSpace, name);
+	if (namespaceMasks.contains(variable))
 	{
-		VariableMasks& variableMasks = *namespaceMasks[nameSpace];
-		if (variableMasks.contains(name))
-		{
-			inputs[nameSpace][name] = value;
-			inputMask.set(variableMasks[name].index, true);
-		}
+		size_t index = namespaceMasks.getMaskIndex(variable);
+		inputs[nameSpace][name] = value;
+		inputMask.set(index, true);
 	}
 }
 
@@ -91,7 +89,6 @@ void FuzzyReasoner::addInput(string name, int value)
 
 OutputTable FuzzyReasoner::run()
 {
-	cout << inputs << endl; //TODO LEVARE
 	ReasoningData reasoningData(inputs, aggregator);
 
 	//Calculates the rules to be used
@@ -121,21 +118,13 @@ void FuzzyReasoner::updateRulesMask()
 	boost::dynamic_bitset<> noInputMask(knowledgeBase.size());
 	noInputMask.reset();
 
-	for (std::map<std::string, VariableMasks*>::iterator i =
-				namespaceMasks.begin(); i != namespaceMasks.end(); ++i)
+	for (size_t index = 0; index < namespaceMasks.size(); index++)
 	{
-		VariableMasks* masks = i->second;
-		for (std::map<std::string, BitData>::iterator j = masks->begin();
-					j != masks->end(); ++j)
-		{
-			int index = j->second.index;
-			boost::dynamic_bitset<>& currentMask = *j->second.bits;
-			if (inputMask[index])
-				rulesMask |= currentMask;
-			else
-				noInputMask |= currentMask;
-		}
-
+		boost::dynamic_bitset<>& currentMask = namespaceMasks[index];
+		if (inputMask[index])
+			rulesMask |= currentMask;
+		else
+			noInputMask |= currentMask;
 	}
 
 	rulesMask &= noInputMask.flip();

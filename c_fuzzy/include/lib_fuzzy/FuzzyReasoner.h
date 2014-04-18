@@ -98,7 +98,7 @@ public:
 					knowledgeBase.getNamespaceMasks())
 	{
 		rulesMask.resize(knowledgeBase.size(), false);
-		inputMask.resize(namespaceMasks.variablesNumber(), false);
+		inputMask.resize(namespaceMasks.size(), false);
 
 		rulesMask.reset();
 		inputMask.reset();
