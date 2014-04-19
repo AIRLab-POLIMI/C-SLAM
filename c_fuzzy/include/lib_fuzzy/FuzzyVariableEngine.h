@@ -41,6 +41,7 @@ public:
 
 	void enterNamespace(std::string nameSpace);
 	void addMF(std::string label, FuzzyMF* mf);
+	void addDomains(std::string nameSpace, DomainTable* domain);
 	void buildDomain(std::vector<std::string> variables);
 	void updateVariableMask(std::pair<std::string, std::string>& variable,
 				size_t currentRule);

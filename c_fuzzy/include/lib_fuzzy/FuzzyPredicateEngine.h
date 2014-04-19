@@ -30,8 +30,11 @@
 #include "Node.h"
 #include "FuzzyMF.h"
 
+typedef std::pair<Node*, DomainTable*> PredicateInstance;
+
 class FuzzyPredicateEngine
 {
+
 private:
 	struct PredicateData
 	{
@@ -55,10 +58,14 @@ public:
 	void buildDomain(std::string templateVar);
 	void addTemplateMF(std::string label, FuzzyMF* mf);
 	void buildPredicate(std::string name, Node* rule);
-	Node* getPredicateInstance(std::string predicate,
-				std::pair<std::string, std::string> variable);
-	Node* getPredicateInstance(std::string nameSpace, std::string predicate,
-				std::pair<std::string, std::string> variable);
+	PredicateInstance getPredicateInstance(std::string predicate,
+			std::pair<std::string, std::string> variable);
+	PredicateInstance getPredicateInstance(std::string nameSpace, std::string predicate,
+			std::pair<std::string, std::string> variable);
+
+private:
+	DomainTable* instantiatePredicateVar(std::string nameSpace, std::string templateVar,
+			std::string variable);
 
 private:
 	PredicateMap predicateMap;

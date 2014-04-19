@@ -126,56 +126,61 @@ Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
 Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
 		pair<string, string> variable)
 {
-	//FIXME get aslo MF
-	return predicateEngine.getPredicateInstance(nameSpace, predicateName, variable);
+	PredicateInstance instance = predicateEngine.getPredicateInstance(nameSpace,
+			predicateName, variable);
+	varEngine.addDomains(variable.first, instance.second);
+	varEngine.updateVariableMask(variable, ruleList->size());
+
+	return instance.first;
 }
 
-Node* FuzzyBuilder::getPredicateInstance(string predicateName, pair<string, string> variable)
+Node* FuzzyBuilder::getPredicateInstance(string predicateName,
+	pair<string, string> variable)
 {
-	return getPredicateInstance("", predicateName, variable);
+return getPredicateInstance("", predicateName, variable);
 }
 
 //Function to enter a namespace
 void FuzzyBuilder::setNameSpace(string nameSpace)
 {
-	predicateEngine.enterNamespace(nameSpace);
-	varEngine.enterNamespace(nameSpace);
+predicateEngine.enterNamespace(nameSpace);
+varEngine.enterNamespace(nameSpace);
 }
 
 //Function to return to the default namespace
 void FuzzyBuilder::setDefaultNameSpace()
 {
-	setNameSpace("");
+setNameSpace("");
 }
 
 //Fuzzy domain
 void FuzzyBuilder::buildDomain(string variable)
 {
-	if (parsingPredicate)
-	{
-		predicateEngine.buildDomain(variable);
-	}
-	else
-	{
-		vector<string> variableVector;
-		variableVector.push_back(variable);
-		buildDomain(variableVector);
-	}
+if (parsingPredicate)
+{
+	predicateEngine.buildDomain(variable);
+}
+else
+{
+	vector<string> variableVector;
+	variableVector.push_back(variable);
+	buildDomain(variableVector);
+}
 }
 
 void FuzzyBuilder::buildDomain(vector<string> variables)
 {
-	varEngine.buildDomain(variables);
+varEngine.buildDomain(variables);
 }
 
 //Fuzzy MF
 void FuzzyBuilder::buildMF(string name, string shape, vector<int>& parameters)
 {
-	FuzzyMF* mf = FuzzyMFEngine::buildMF(name, shape, parameters);
+FuzzyMF* mf = FuzzyMFEngine::buildMF(name, shape, parameters);
 
-	if (parsingPredicate)
-		predicateEngine.addTemplateMF(name, mf);
-	else
-		varEngine.addMF(name, mf);
+if (parsingPredicate)
+	predicateEngine.addTemplateMF(name, mf);
+else
+	varEngine.addMF(name, mf);
 }
 

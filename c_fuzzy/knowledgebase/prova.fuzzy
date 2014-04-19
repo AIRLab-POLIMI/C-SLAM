@@ -58,7 +58,7 @@ FUZZIFY_CLASS TestClass
 		Predicate := (?x is Good);
 		
 		FUZZIFY ?x
-			Good := int(0, 10);
+			Good := tol(0, 100);
 		END_FUZZIFY
 
 	END_FUZZIFY_PREDICATE
@@ -70,7 +70,7 @@ FUZZIFY_PREDICATE ?x
 	Predicate := (?x is Good);
 	
 	FUZZIFY ?x
-		Good := int(0, 10);
+		Good := tol(0, 100);
 	END_FUZZIFY
 
 END_FUZZIFY_PREDICATE
@@ -87,7 +87,7 @@ if (Prova is Medium) then (Output5 is Ok);
 if (TestClass.prova is Random) then (Output6 is Ok);
 
 if Predicate(h) then (TestClass.bim is Ok);
-if TestClass.Predicate(h) then (TestClass.bum is Ok);
+if TestClass.Predicate(TestClass.i) then (TestClass.bum is Ok);
 if (TestClass.prova is Random) then (TestClass.bam is Ok);
 
 

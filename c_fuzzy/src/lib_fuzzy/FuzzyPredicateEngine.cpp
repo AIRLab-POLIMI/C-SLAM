@@ -47,15 +47,15 @@ void FuzzyPredicateEngine::buildDomain(std::string templateVar)
 {
 	DomainTable& domainTable = *table[currentNamespace];
 
-	if(domainTable.count(templateVar) == 0)
+	if (domainTable.count(templateVar) == 0)
 	{
 		domainTable[templateVar] = new MFTable();
 	}
 	else
 	{
 		stringstream ss;
-		ss << "error Redefinition of template variable " << templateVar;
-		if(!currentNamespace.empty())
+		ss << "Error: redefinition of template variable " << templateVar;
+		if (!currentNamespace.empty())
 			ss << "in class " << currentNamespace;
 		throw logic_error(ss.str());
 	}
@@ -76,21 +76,37 @@ void FuzzyPredicateEngine::buildPredicate(string name, Node* rule)
 	predicateMap[currentNamespace][name] = data;
 }
 
-Node* FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
-			string predicate, pair<string, string> variable)
+PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
+		string predicate, pair<string, string> variable)
 {
 	if (predicateMap.count(nameSpace) == 1
-				&& predicateMap[nameSpace].count(predicate) == 1)
+			&& predicateMap[nameSpace].count(predicate) == 1)
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
-		return data.definition->instantiate(variable);
+		Node* predicate = data.definition->instantiate(variable);
+		DomainTable* domains = instantiatePredicateVar(nameSpace,
+				data.templateVar, variable.second);
+		return PredicateInstance(predicate, domains);
 	}
 
-	throw logic_error("Predicate instantiation failed: predicate doesn't exists");
+	throw logic_error(
+			"Predicate instantiation failed: predicate doesn't exists");
 }
 
-Node* FuzzyPredicateEngine::getPredicateInstance(string predicate,
-			pair<string, string> variable)
+PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string predicate,
+		pair<string, string> variable)
 {
 	return getPredicateInstance("", predicate, variable);
+}
+
+DomainTable* FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
+		string templateVar, string variable)
+{
+	DomainTable& templateDomain = *table[nameSpace];
+	MFTable* mfTable = templateDomain[templateVar];
+	DomainTable* domain = new DomainTable();
+	DomainTable& domainMap = *domain;
+	domainMap[variable] = mfTable;
+
+	return domain;
 }

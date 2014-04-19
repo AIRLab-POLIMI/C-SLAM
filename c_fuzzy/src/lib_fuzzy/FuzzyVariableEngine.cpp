@@ -23,6 +23,9 @@
 
 #include "FuzzyVariableEngine.h"
 
+#include <stdexcept>
+#include <sstream>
+
 using namespace std;
 
 void FuzzyVariableEngine::initializeNamespaces()
@@ -52,19 +55,44 @@ void FuzzyVariableEngine::enterNamespace(string nameSpace)
 	currentNamespace = nameSpace;
 }
 
-void FuzzyVariableEngine::addMF(std::string label, FuzzyMF* mf)
+void FuzzyVariableEngine::addMF(string label, FuzzyMF* mf)
 {
 	MFTable& map = *mfTable;
 	map[label] = mf;
 }
 
-void FuzzyVariableEngine::buildDomain(std::vector<std::string> variables)
+void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
+{
+	NamespaceTable& namespaceMap = *namespaceTable;
+	if (namespaceMap.count(nameSpace) == 0)
+	{
+		stringstream ss;
+		ss << "Error: non existing class " << nameSpace;
+		throw logic_error(ss.str());
+	}
+
+	for (DomainTable::iterator it = domain->begin(); it != domain->end(); ++it)
+	{
+		string domainName = it->first;
+		MFTable* mfTable = it->second;
+		DomainTable& domainTable = *namespaceMap[nameSpace];
+		if (domainTable.count(domainName) == 0)
+		{
+			domainTable[domainName] = mfTable;
+			pair<string, string> variable(nameSpace, domainName);
+			variableMasks->newVariableMask(variable);
+		}
+	}
+
+}
+
+void FuzzyVariableEngine::buildDomain(vector<string> variables)
 {
 	DomainTable& domainMap = *domainTable;
 	mfTable = new MFTable();
 
 	for (vector<string>::iterator it = variables.begin(); it != variables.end();
-				it++)
+			it++)
 	{
 		domainMap[*it] = mfTable;
 		pair<string, string> variable(currentNamespace, *it);
@@ -72,8 +100,8 @@ void FuzzyVariableEngine::buildDomain(std::vector<std::string> variables)
 	}
 }
 
-void FuzzyVariableEngine::updateVariableMask(std::pair<std::string, std::string>& variable,
-				size_t currentRule)
+void FuzzyVariableEngine::updateVariableMask(pair<string, string>& variable,
+		size_t currentRule)
 {
 	variableMasks->updateVariableMask(variable, currentRule);
 }

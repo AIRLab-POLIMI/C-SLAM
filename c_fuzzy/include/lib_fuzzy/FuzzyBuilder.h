@@ -56,8 +56,6 @@ public:
 
 	void parse(const char *filename);
 
-	std::ostream& print(std::ostream &stream);
-
 	virtual ~FuzzyBuilder();
 
 public:
