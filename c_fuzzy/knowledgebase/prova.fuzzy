@@ -85,7 +85,7 @@ if (Prova is Near) then (Output4 is Ok);
 if (Input is Near) or (Input is Medium) then (Output5 is Bad);
 if (Prova is Medium) then (Output5 is Ok);
 if (TestClass.prova is Random) then (Output6 is Ok);
-
+//rules that uses predicates
 if Predicate(h) then (TestClass.bim is Ok);
 if TestClass.Predicate(TestClass.i) then (TestClass.bum is Ok);
 if (TestClass.prova is Random) then (TestClass.bam is Ok);

@@ -16,7 +16,7 @@
 %option noyywrap nounput batch debug noinput c++
 %option prefix="tc"
 
-%x COMMENT
+%x COMMENT LINECOMMENT
 
 DIGIT [0-9]
 CAPITAL [A-Z]
@@ -44,6 +44,13 @@ UNDERSCORE [_]
 	{NEWLINE} { loc.lines(yyleng); loc.step(); }
 	"/*" { yy_push_state(YY_START); BEGIN(COMMENT); }
 	"*/" { BEGIN(yy_top_state()); yy_pop_state(); }
+	. {}
+}
+
+"//" { yy_push_state(YY_START); BEGIN(LINECOMMENT); }
+<LINECOMMENT>
+{
+	{NEWLINE} { loc.lines(yyleng); loc.step(); BEGIN(yy_top_state()); yy_pop_state(); }
 	. {}
 }
 
