@@ -29,10 +29,7 @@
 #include <map>
 
 #include "Node.h"
-#include "FuzzyMF.h"
-#include "FuzzyRule.h"
 #include "FuzzyKnowledgeBase.h"
-#include "VariableMasks.h"
 
 #include "FuzzyVariableEngine.h"
 #include "FuzzyPredicateEngine.h"
@@ -45,12 +42,7 @@ class FuzzyBuilder
 {
 
 public:
-	FuzzyBuilder() :
-			parser(NULL), scanner(NULL)
-	{
-		ruleList = new std::vector<Node*>();
-		parsingPredicate = false;
-	}
+	FuzzyBuilder();
 
 	FuzzyKnowledgeBase* createKnowledgeBase();
 
@@ -100,10 +92,11 @@ private:
 	//Data needed to get Builder working
 	fz::FuzzyParser* parser;
 	fz::FuzzyScanner* scanner;
-	FuzzyVariableEngine varEngine;
-	FuzzyPredicateEngine predicateEngine;
 
-	//Data needed to get FuzzyReasoner working
+
+	//Data needed to build the knowledgeBase
+	FuzzyVariableEngine* varEngine;
+	FuzzyPredicateEngine* predicateEngine;
 	std::vector<Node*>* ruleList;
 
 	//Parser state

@@ -65,7 +65,6 @@ FUZZIFY_CLASS TestClass
 	
 END_FUZZIFY_CLASS
 
-
 FUZZIFY_PREDICATE ?x
 	Predicate := (?x is Good);
 	
@@ -74,6 +73,21 @@ FUZZIFY_PREDICATE ?x
 	END_FUZZIFY
 
 END_FUZZIFY_PREDICATE
+
+FUZZIFY_CLASS TestDefuzzify
+	FUZZIFY Prova
+		Near := tol(100,200);
+		Medium := tra(100,200,300,400);
+		Far := tor(300,400);
+	END_FUZZIFY
+	
+	FUZZIFY out
+		Near := sgt(100);
+		Medium := sgt(200);
+		Far := sgt(300);
+	END_FUZZIFY
+
+END_FUZZIFY_CLASS
 
 
 /* Knowledge base */
@@ -89,6 +103,8 @@ if (TestClass.prova is Random) then (Output6 is Ok);
 if Predicate(h) then (TestClass.bim is Ok);
 if TestClass.Predicate(TestClass.i) then (TestClass.bum is Ok);
 if (TestClass.prova is Random) then (TestClass.bam is Ok);
-
-
+//Test defuzzification on classes
+if (TestDefuzzify.Prova is Near) then (TestDefuzzify.out is Near);
+if (TestDefuzzify.Prova is Medium) then (TestDefuzzify.out is Medium);
+if (TestDefuzzify.Prova is Far) then (TestDefuzzify.out is Far);
 

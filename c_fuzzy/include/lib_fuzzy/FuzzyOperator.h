@@ -120,9 +120,9 @@ private:
 class FuzzyIs: public FuzzyOperator
 {
 public:
-	FuzzyIs(NamespaceTable* lookUpTable, std::string nameSpace,
+	FuzzyIs(NamespaceTable& lookUpTable, std::string nameSpace,
 				std::string label, std::string mfLabel) :
-				lookUpTable(*lookUpTable), nameSpace(nameSpace), label(label),
+				lookUpTable(lookUpTable), nameSpace(nameSpace), label(label),
 				mfLabel(mfLabel)
 	{
 	}
@@ -144,9 +144,9 @@ private:
 class FuzzyTemplateIs: public FuzzyOperator
 {
 public:
-	FuzzyTemplateIs(NamespaceTable* lookUpTable, std::string nameSpace,
+	FuzzyTemplateIs(NamespaceTable& lookUpTable, std::string nameSpace,
 				std::string templateVar, std::string mfLabel) :
-				lookUpTable(*lookUpTable), nameSpace(nameSpace),
+				lookUpTable(lookUpTable), nameSpace(nameSpace),
 				templateVar(templateVar), mfLabel(mfLabel)
 	{
 	}
@@ -168,9 +168,9 @@ private:
 class FuzzyAssignment: public FuzzyOperator
 {
 public:
-	FuzzyAssignment(NamespaceTable* lookUpTable, std::string nameSpace,
+	FuzzyAssignment(NamespaceTable& lookUpTable, std::string nameSpace,
 				std::string name, std::string mfLabel) :
-				lookUpTable(*lookUpTable), nameSpace(nameSpace), output(name),
+				lookUpTable(lookUpTable), nameSpace(nameSpace), output(name),
 				mfLabel(mfLabel)
 	{
 	}

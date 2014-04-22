@@ -28,28 +28,21 @@
 
 using namespace std;
 
-void FuzzyVariableEngine::initializeNamespaces()
+FuzzyVariableEngine::FuzzyVariableEngine()
 {
-	currentNamespace = "";
-	namespaceTable = new NamespaceTable();
-	domainTable = new DomainTable();
-	mfTable = NULL;
-	NamespaceTable& namespaceMap = *namespaceTable;
-	namespaceMap[currentNamespace] = domainTable;
+	initializeNamespaces();
 }
 
 void FuzzyVariableEngine::enterNamespace(string nameSpace)
 {
-	NamespaceTable& namespaceMap = *namespaceTable;
-
-	if (namespaceMap.count(nameSpace) == 0)
+	if (namespaceTable.count(nameSpace) == 0)
 	{
 		domainTable = new DomainTable();
-		namespaceMap[nameSpace] = domainTable;
+		namespaceTable[nameSpace] = domainTable;
 	}
 	else
 	{
-		domainTable = namespaceMap[nameSpace];
+		domainTable = namespaceTable[nameSpace];
 	}
 
 	currentNamespace = nameSpace;
@@ -63,8 +56,7 @@ void FuzzyVariableEngine::addMF(string label, FuzzyMF* mf)
 
 void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
 {
-	NamespaceTable& namespaceMap = *namespaceTable;
-	if (namespaceMap.count(nameSpace) == 0)
+	if (namespaceTable.count(nameSpace) == 0)
 	{
 		stringstream ss;
 		ss << "Error: non existing class " << nameSpace;
@@ -75,12 +67,12 @@ void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
 	{
 		string domainName = it->first;
 		MFTable* mfTable = it->second;
-		DomainTable& domainTable = *namespaceMap[nameSpace];
+		DomainTable& domainTable = *namespaceTable[nameSpace];
 		if (domainTable.count(domainName) == 0)
 		{
 			domainTable[domainName] = mfTable;
 			pair<string, string> variable(nameSpace, domainName);
-			variableMasks->newVariableMask(variable);
+			variableMasks.newVariableMask(variable);
 		}
 	}
 
@@ -96,23 +88,81 @@ void FuzzyVariableEngine::buildDomain(vector<string> variables)
 	{
 		domainMap[*it] = mfTable;
 		pair<string, string> variable(currentNamespace, *it);
-		variableMasks->newVariableMask(variable);
+		variableMasks.newVariableMask(variable);
+	}
+}
+void FuzzyVariableEngine::normalizeVariableMasks(size_t size)
+{
+	variableMasks.normalizeVariableMasks(size);
+}
+
+void FuzzyVariableEngine::updateVariableMask(pair<string, string>& var, size_t rule)
+{
+	variableMasks.updateVariableMask(var, rule);
+}
+
+void FuzzyVariableEngine::updateVariableMask(
+		vector<pair<string, string> >& vars, size_t rule)
+{
+	for (vector<pair<string, string> >::iterator it = vars.begin();
+			it != vars.end(); ++it)
+	{
+
+		if (!variableMasks.contains(*it))
+		{
+			variableMasks.newVariableMask(*it);
+		}
+
+		variableMasks.updateVariableMask(*it, rule);
 	}
 }
 
-void FuzzyVariableEngine::updateVariableMask(pair<string, string>& variable,
-		size_t currentRule)
-{
-	variableMasks->updateVariableMask(variable, currentRule);
-}
-
-NamespaceTable* FuzzyVariableEngine::getTable()
+NamespaceTable& FuzzyVariableEngine::getTable()
 {
 	return namespaceTable;
 }
 
-VariableMasks* FuzzyVariableEngine::getMasks()
+VariableMasks& FuzzyVariableEngine::getMasks()
 {
 	return variableMasks;
 }
 
+void FuzzyVariableEngine::initializeNamespaces()
+{
+	currentNamespace = "";
+	domainTable = new DomainTable();
+	mfTable = NULL;
+	namespaceTable[currentNamespace] = domainTable;
+}
+
+void FuzzyVariableEngine::deleteDomains()
+{
+	for (NamespaceTable::iterator it1 = namespaceTable.begin();
+			it1 != namespaceTable.end(); ++it1)
+	{
+		DomainTable* domain = it1->second;
+		for (DomainTable::iterator it2 = domain->begin(); it2 != domain->end();
+				++it2)
+		{
+			deleteMF(it2->second);
+			delete it2->second;
+		}
+
+		delete domain;
+
+	}
+
+}
+
+void FuzzyVariableEngine::deleteMF(MFTable* mfTable)
+{
+	for (MFTable::iterator it = mfTable->begin(); it != mfTable->end(); ++it)
+	{
+		delete it->second;
+	}
+}
+
+FuzzyVariableEngine::~FuzzyVariableEngine()
+{
+	deleteDomains();
+}

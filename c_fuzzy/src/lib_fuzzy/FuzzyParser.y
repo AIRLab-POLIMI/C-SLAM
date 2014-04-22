@@ -106,6 +106,9 @@ fuzzyClassDefinitions	: fuzzySet fuzzyClassDefinitions
 			;
 
 fuzzyPredicate 		: FUZZIFY_PREDICATE templateVar { builder.enterPredicate($2); } fuzzyPredicateList fuzzyTemplateSet END_FUZZIFY_PREDICATE
+			{
+				builder.exitPredicate();
+			}
 			;
 
 fuzzyPredicateList 	: fuzzyPredicateDef fuzzyPredicateList

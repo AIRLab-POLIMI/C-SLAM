@@ -25,6 +25,13 @@
 
 using namespace std;
 
+FuzzyKnowledgeBase::FuzzyKnowledgeBase(FuzzyVariableEngine* variables,
+		FuzzyPredicateEngine* predicates, std::vector<Node*>* knowledgeBase) :
+		variables(variables), predicates(predicates), knowledgeBase(
+				knowledgeBase)
+{
+}
+
 size_t FuzzyKnowledgeBase::size()
 {
 	return knowledgeBase->size();
@@ -32,12 +39,12 @@ size_t FuzzyKnowledgeBase::size()
 
 VariableMasks& FuzzyKnowledgeBase::getMasks()
 {
-	return *variableMasks;
+	return variables->getMasks();
 }
 
 NamespaceTable& FuzzyKnowledgeBase::getNamespaceTable()
 {
-	return *namespaceTable;
+	return variables->getTable();
 }
 
 Node& FuzzyKnowledgeBase::operator[](const size_t i)
@@ -46,25 +53,14 @@ Node& FuzzyKnowledgeBase::operator[](const size_t i)
 }
 
 void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
-		vector<pair<string, string> >& variables)
+		vector<pair<string, string> >& vars)
 {
 
 	size_t currentRule = knowledgeBase->size();
 
-	for (vector<pair<string, string> >::iterator it = variables.begin();
-			it != variables.end(); ++it)
-	{
-
-		if(!variableMasks->contains(*it))
-		{
-			variableMasks->newVariableMask(*it);
-		}
-
-		variableMasks->updateVariableMask(*it, currentRule);
-	}
-
+	variables->updateVariableMask(vars, currentRule);
 	knowledgeBase->push_back(fuzzyRule);
-	variableMasks->normalizeVariableMasks(knowledgeBase->size());
+	variables->normalizeVariableMasks(knowledgeBase->size());
 
 }
 
@@ -77,38 +73,10 @@ void FuzzyKnowledgeBase::deleteRules()
 	}
 }
 
-void FuzzyKnowledgeBase::deleteMF(MFTable* mfTable)
-{
-	for (MFTable::iterator it = mfTable->begin(); it != mfTable->end(); ++it)
-	{
-		delete it->second;
-	}
-}
-
-void FuzzyKnowledgeBase::deleteDomains()
-{
-	for (NamespaceTable::iterator it1 = namespaceTable->begin();
-			it1 != namespaceTable->end(); ++it1)
-	{
-		DomainTable* domain = it1->second;
-		for (DomainTable::iterator it2 = domain->begin(); it2 != domain->end();
-				++it2)
-		{
-			deleteMF(it2->second);
-			delete it2->second;
-		}
-
-		delete domain;
-
-	}
-
-}
-
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
 {
-	delete variableMasks;
-	deleteDomains();
-	delete namespaceTable;
+	delete variables;
+	delete predicates;
 	deleteRules();
 	delete knowledgeBase;
 }

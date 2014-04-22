@@ -626,224 +626,232 @@ namespace fz {
 #line 627 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 16:
-#line 116 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 13:
+#line 109 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				builder.buildPredicate(yystack_[3].value.as< std::string > (), yystack_[1].value.as< Node* > ());
+				builder.exitPredicate();
 			}
 #line 635 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
+  case 16:
+#line 119 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+    {
+				builder.buildPredicate(yystack_[3].value.as< std::string > (), yystack_[1].value.as< Node* > ());
+			}
+#line 643 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+    break;
+
   case 17:
-#line 121 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+#line 124 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     { builder.buildDomain(yystack_[0].value.as< std::string > ()); }
-#line 641 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+#line 649 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 19:
-#line 124 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+#line 127 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     { builder.buildDomain(yystack_[0].value.as< std::vector<std::string> > ()); }
-#line 647 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 21:
-#line 128 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
-    {
-				yylhs.value.as< std::vector<std::string> > ().push_back(yystack_[0].value.as< std::string > ());
-			}
 #line 655 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
+  case 21:
+#line 131 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+    {
+				yylhs.value.as< std::vector<std::string> > ().push_back(yystack_[0].value.as< std::string > ());
+			}
+#line 663 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+    break;
+
   case 22:
-#line 132 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+#line 135 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::vector<std::string> > () = yystack_[0].value.as< std::vector<std::string> > ();
 				yylhs.value.as< std::vector<std::string> > ().push_back(yystack_[2].value.as< std::string > ());
 			}
-#line 664 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 23:
-#line 139 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
-    {
-				builder.buildMF(yystack_[4].value.as< std::string > (), yystack_[2].value.as< std::string > (), yystack_[1].value.as< std::vector<int> > ());
-			}
 #line 672 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 24:
-#line 143 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 23:
+#line 142 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				builder.buildMF(yystack_[5].value.as< std::string > (), yystack_[3].value.as< std::string > (), yystack_[2].value.as< std::vector<int> > ());
+				builder.buildMF(yystack_[4].value.as< std::string > (), yystack_[2].value.as< std::string > (), yystack_[1].value.as< std::vector<int> > ());
 			}
 #line 680 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 25:
-#line 149 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 24:
+#line 146 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< std::vector<int> > () = yystack_[1].value.as< std::vector<int> > ();
+				builder.buildMF(yystack_[5].value.as< std::string > (), yystack_[3].value.as< std::string > (), yystack_[2].value.as< std::vector<int> > ());
 			}
 #line 688 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 26:
-#line 155 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
-    { 
-				yylhs.value.as< std::vector<int> > ().push_back(yystack_[0].value.as< int > ());
+  case 25:
+#line 152 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+    {
+				yylhs.value.as< std::vector<int> > () = yystack_[1].value.as< std::vector<int> > ();
 			}
 #line 696 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
+  case 26:
+#line 158 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+    { 
+				yylhs.value.as< std::vector<int> > ().push_back(yystack_[0].value.as< int > ());
+			}
+#line 704 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+    break;
+
   case 27:
-#line 159 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+#line 162 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     { 
 				yylhs.value.as< std::vector<int> > () = yystack_[0].value.as< std::vector<int> > ();
 				yylhs.value.as< std::vector<int> > ().push_back(yystack_[2].value.as< int > ());
 			}
-#line 705 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 30:
-#line 171 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
-    {
-				builder.buildRule(yystack_[2].value.as< Node* > (), yystack_[1].value.as< Node* > ());
-			}
 #line 713 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 31:
-#line 177 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 30:
+#line 174 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = yystack_[0].value.as< Node* > ();
+				builder.buildRule(yystack_[2].value.as< Node* > (), yystack_[1].value.as< Node* > ());
 			}
 #line 721 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 32:
-#line 181 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 31:
+#line 180 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< Node* > () = yystack_[0].value.as< Node* > ();
 			}
 #line 729 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 33:
-#line 185 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 32:
+#line 184 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = yystack_[1].value.as< Node* > ();
+				yylhs.value.as< Node* > () = yystack_[0].value.as< Node* > ();
 			}
 #line 737 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 34:
-#line 189 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 33:
+#line 188 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildNot(yystack_[0].value.as< Node* > ());
+				yylhs.value.as< Node* > () = yystack_[1].value.as< Node* > ();
 			}
 #line 745 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 35:
-#line 193 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 34:
+#line 192 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildOr(yystack_[2].value.as< Node* > (), yystack_[0].value.as< Node* > ());
+				yylhs.value.as< Node* > () = builder.buildNot(yystack_[0].value.as< Node* > ());
 			}
 #line 753 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 36:
-#line 197 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 35:
+#line 196 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildAnd(yystack_[2].value.as< Node* > (),yystack_[0].value.as< Node* > ());
+				yylhs.value.as< Node* > () = builder.buildOr(yystack_[2].value.as< Node* > (), yystack_[0].value.as< Node* > ());
 			}
 #line 761 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 37:
-#line 203 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 36:
+#line 200 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildIs(yystack_[3].value.as< std::pair<std::string, std::string> > (), yystack_[1].value.as< std::string > ());
+				yylhs.value.as< Node* > () = builder.buildAnd(yystack_[2].value.as< Node* > (),yystack_[0].value.as< Node* > ());
 			}
 #line 769 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 38:
-#line 207 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 37:
+#line 206 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildTemplateIs(yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::string > ());
+				yylhs.value.as< Node* > () = builder.buildIs(yystack_[3].value.as< std::pair<std::string, std::string> > (), yystack_[1].value.as< std::string > ());
 			}
 #line 777 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 39:
-#line 213 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 38:
+#line 210 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[5].value.as< std::string > (), yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::pair<std::string, std::string> > ());
+				yylhs.value.as< Node* > () = builder.buildTemplateIs(yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::string > ());
 			}
 #line 785 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 40:
-#line 217 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 39:
+#line 216 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::pair<std::string, std::string> > ());
+				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[5].value.as< std::string > (), yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::pair<std::string, std::string> > ());
 			}
 #line 793 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 41:
-#line 223 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 40:
+#line 220 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildAssignment(yystack_[3].value.as< std::pair<std::string, std::string> > (), yystack_[1].value.as< std::string > ());
+				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::pair<std::string, std::string> > ());
 			}
 #line 801 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
+  case 41:
+#line 226 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+    {
+				yylhs.value.as< Node* > () = builder.buildAssignment(yystack_[3].value.as< std::pair<std::string, std::string> > (), yystack_[1].value.as< std::string > ());
+			}
+#line 809 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+    break;
+
   case 42:
-#line 229 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+#line 232 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::pair<std::string, std::string> > ().first = yystack_[2].value.as< std::string > ();
 				yylhs.value.as< std::pair<std::string, std::string> > ().second = yystack_[0].value.as< std::string > ();
 			}
-#line 810 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+#line 818 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 43:
-#line 234 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+#line 237 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::pair<std::string, std::string> > ().first = "";
 				yylhs.value.as< std::pair<std::string, std::string> > ().second = yystack_[0].value.as< std::string > ();
 			}
-#line 819 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
-    break;
-
-  case 44:
-#line 241 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
-    {
-				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
-			}
 #line 827 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 45:
-#line 245 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 44:
+#line 244 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
 			}
 #line 835 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
-  case 46:
-#line 251 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+  case 45:
+#line 248 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
 			}
 #line 843 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
 
+  case 46:
+#line 254 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
+    {
+				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
+			}
+#line 851 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+    break;
 
-#line 847 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
+
+#line 855 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
             default:
               break;
             }
@@ -1243,10 +1251,10 @@ namespace fz {
    FuzzyParser ::yyrline_[] =
   {
        0,    88,    88,    91,    92,    93,    94,    97,    97,   103,
-     104,   105,   108,   108,   111,   112,   115,   121,   121,   124,
-     124,   127,   131,   138,   142,   148,   154,   158,   165,   166,
-     170,   176,   180,   184,   188,   192,   196,   202,   206,   212,
-     216,   222,   228,   233,   240,   244,   250
+     104,   105,   108,   108,   114,   115,   118,   124,   124,   127,
+     127,   130,   134,   141,   145,   151,   157,   161,   168,   169,
+     173,   179,   183,   187,   191,   195,   199,   205,   209,   215,
+     219,   225,   231,   236,   243,   247,   253
   };
 
   // Print the state stack on the debug stream.
@@ -1281,8 +1289,8 @@ namespace fz {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:1155
 } // fz
-#line 1285 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:1155
-#line 256 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:1156
+#line 1293 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:1155
+#line 259 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:1156
 
 
 void fz::FuzzyParser::error(const fz::FuzzyParser::location_type& l, const std::string& msg)

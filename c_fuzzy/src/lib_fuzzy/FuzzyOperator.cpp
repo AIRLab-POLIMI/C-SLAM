@@ -102,7 +102,7 @@ double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
 
 Node* FuzzyTemplateIs::instantiate(std::pair<std::string, std::string> variable)
 {
-	return new FuzzyIs(&lookUpTable, variable.first, variable.second, mfLabel);
+	return new FuzzyIs(lookUpTable, variable.first, variable.second, mfLabel);
 }
 
 BinaryFuzzyOperator::~BinaryFuzzyOperator()

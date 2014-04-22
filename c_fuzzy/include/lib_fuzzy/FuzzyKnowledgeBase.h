@@ -21,7 +21,6 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef FUZZYKNOWLEDGEBASE_H_
 #define FUZZYKNOWLEDGEBASE_H_
 
@@ -30,37 +29,31 @@
 #include <vector>
 
 #include "Node.h"
-#include "VariableMasks.h"
-#include "FuzzyMF.h"
+#include "FuzzyVariableEngine.h"
+#include "FuzzyPredicateEngine.h"
 
 class FuzzyKnowledgeBase
 {
 public:
-	FuzzyKnowledgeBase(NamespaceTable* namespaceTable,
-			VariableMasks* variableMasks, std::vector<Node*>* knowledgeBase) :
-			namespaceTable(namespaceTable), variableMasks(variableMasks), knowledgeBase(
-					knowledgeBase)
-	{
-	}
+	FuzzyKnowledgeBase(FuzzyVariableEngine* variables,
+			FuzzyPredicateEngine* predicates,
+			std::vector<Node*>* knowledgeBase);
 	size_t size();
 	VariableMasks& getMasks();
 	NamespaceTable& getNamespaceTable();
 	Node& operator[](size_t i);
 
 	void addRule(Node* fuzzyRule,
-			std::vector<std::pair<std::string, std::string> >& variables);
+			std::vector<std::pair<std::string, std::string> >& vars);
 
 	~FuzzyKnowledgeBase();
 
 private:
-	void deleteMasks();
-	void deleteRules();
-	void deleteDomains();
-	void deleteMF(MFTable* mfTable);
 
+	void deleteRules();
 private:
-	NamespaceTable* namespaceTable;
-	VariableMasks* variableMasks;
+	FuzzyVariableEngine* variables;
+	FuzzyPredicateEngine* predicates;
 	std::vector<Node*>* knowledgeBase;
 };
 
