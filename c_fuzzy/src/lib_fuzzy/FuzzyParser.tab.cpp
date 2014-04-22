@@ -254,12 +254,12 @@ namespace fz {
         value.move< Node* > (that.value);
         break;
 
-      case 25: // PARAMETER
-        value.move< int > (that.value);
+      case 50: // variable
+        value.move< Variable > (that.value);
         break;
 
-      case 50: // variable
-        value.move< std::pair<std::string, std::string> > (that.value);
+      case 25: // PARAMETER
+        value.move< int > (that.value);
         break;
 
       case 3: // ID
@@ -301,12 +301,12 @@ namespace fz {
         value.copy< Node* > (that.value);
         break;
 
-      case 25: // PARAMETER
-        value.copy< int > (that.value);
+      case 50: // variable
+        value.copy< Variable > (that.value);
         break;
 
-      case 50: // variable
-        value.copy< std::pair<std::string, std::string> > (that.value);
+      case 25: // PARAMETER
+        value.copy< int > (that.value);
         break;
 
       case 3: // ID
@@ -564,12 +564,12 @@ namespace fz {
         yylhs.value.build< Node* > ();
         break;
 
-      case 25: // PARAMETER
-        yylhs.value.build< int > ();
+      case 50: // variable
+        yylhs.value.build< Variable > ();
         break;
 
-      case 50: // variable
-        yylhs.value.build< std::pair<std::string, std::string> > ();
+      case 25: // PARAMETER
+        yylhs.value.build< int > ();
         break;
 
       case 3: // ID
@@ -771,7 +771,7 @@ namespace fz {
   case 37:
 #line 206 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildIs(yystack_[3].value.as< std::pair<std::string, std::string> > (), yystack_[1].value.as< std::string > ());
+				yylhs.value.as< Node* > () = builder.buildIs(yystack_[3].value.as< Variable > (), yystack_[1].value.as< std::string > ());
 			}
 #line 777 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
@@ -787,7 +787,7 @@ namespace fz {
   case 39:
 #line 216 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[5].value.as< std::string > (), yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::pair<std::string, std::string> > ());
+				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[5].value.as< std::string > (), yystack_[3].value.as< std::string > (), yystack_[1].value.as< Variable > ());
 			}
 #line 793 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
@@ -795,7 +795,7 @@ namespace fz {
   case 40:
 #line 220 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[3].value.as< std::string > (), yystack_[1].value.as< std::pair<std::string, std::string> > ());
+				yylhs.value.as< Node* > () = builder.getPredicateInstance(yystack_[3].value.as< std::string > (), yystack_[1].value.as< Variable > ());
 			}
 #line 801 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
@@ -803,7 +803,7 @@ namespace fz {
   case 41:
 #line 226 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< Node* > () = builder.buildAssignment(yystack_[3].value.as< std::pair<std::string, std::string> > (), yystack_[1].value.as< std::string > ());
+				yylhs.value.as< Node* > () = builder.buildAssignment(yystack_[3].value.as< Variable > (), yystack_[1].value.as< std::string > ());
 			}
 #line 809 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
@@ -811,8 +811,8 @@ namespace fz {
   case 42:
 #line 232 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< std::pair<std::string, std::string> > ().first = yystack_[2].value.as< std::string > ();
-				yylhs.value.as< std::pair<std::string, std::string> > ().second = yystack_[0].value.as< std::string > ();
+				yylhs.value.as< Variable > ().nameSpace = yystack_[2].value.as< std::string > ();
+				yylhs.value.as< Variable > ().domain = yystack_[0].value.as< std::string > ();
 			}
 #line 818 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;
@@ -820,8 +820,8 @@ namespace fz {
   case 43:
 #line 237 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< std::pair<std::string, std::string> > ().first = "";
-				yylhs.value.as< std::pair<std::string, std::string> > ().second = yystack_[0].value.as< std::string > ();
+				yylhs.value.as< Variable > ().nameSpace = "";
+				yylhs.value.as< Variable > ().domain = yystack_[0].value.as< std::string > ();
 			}
 #line 827 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp" // lalr1.cc:847
     break;

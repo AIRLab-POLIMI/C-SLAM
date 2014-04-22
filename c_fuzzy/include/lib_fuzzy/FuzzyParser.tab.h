@@ -286,11 +286,11 @@ namespace fz {
       // fuzzyAssignment
       char dummy1[sizeof(Node*)];
 
-      // PARAMETER
-      char dummy2[sizeof(int)];
-
       // variable
-      char dummy3[sizeof(std::pair<std::string, std::string>)];
+      char dummy2[sizeof(Variable)];
+
+      // PARAMETER
+      char dummy3[sizeof(int)];
 
       // ID
       // VAR_ID
@@ -387,9 +387,9 @@ namespace fz {
 
   basic_symbol (typename Base::kind_type t, const Node* v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const Variable v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const std::pair<std::string, std::string> v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
 
@@ -845,12 +845,12 @@ namespace fz {
         value.copy< Node* > (other.value);
         break;
 
-      case 25: // PARAMETER
-        value.copy< int > (other.value);
+      case 50: // variable
+        value.copy< Variable > (other.value);
         break;
 
-      case 50: // variable
-        value.copy< std::pair<std::string, std::string> > (other.value);
+      case 25: // PARAMETER
+        value.copy< int > (other.value);
         break;
 
       case 3: // ID
@@ -894,12 +894,12 @@ namespace fz {
         value.copy< Node* > (v);
         break;
 
-      case 25: // PARAMETER
-        value.copy< int > (v);
+      case 50: // variable
+        value.copy< Variable > (v);
         break;
 
-      case 50: // variable
-        value.copy< std::pair<std::string, std::string> > (v);
+      case 25: // PARAMETER
+        value.copy< int > (v);
         break;
 
       case 3: // ID
@@ -942,14 +942,14 @@ namespace fz {
   {}
 
   template <typename Base>
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const int v, const location_type& l)
+   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Variable v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
   {}
 
   template <typename Base>
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::pair<std::string, std::string> v, const location_type& l)
+   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const int v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -999,12 +999,12 @@ namespace fz {
         value.template destroy< Node* > ();
         break;
 
-      case 25: // PARAMETER
-        value.template destroy< int > ();
+      case 50: // variable
+        value.template destroy< Variable > ();
         break;
 
-      case 50: // variable
-        value.template destroy< std::pair<std::string, std::string> > ();
+      case 25: // PARAMETER
+        value.template destroy< int > ();
         break;
 
       case 3: // ID
@@ -1045,12 +1045,12 @@ namespace fz {
         value.move< Node* > (s.value);
         break;
 
-      case 25: // PARAMETER
-        value.move< int > (s.value);
+      case 50: // variable
+        value.move< Variable > (s.value);
         break;
 
-      case 50: // variable
-        value.move< std::pair<std::string, std::string> > (s.value);
+      case 25: // PARAMETER
+        value.move< int > (s.value);
         break;
 
       case 3: // ID

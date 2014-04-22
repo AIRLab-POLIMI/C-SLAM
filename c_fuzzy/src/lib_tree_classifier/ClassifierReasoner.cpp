@@ -23,27 +23,26 @@
 
 #include "ClassifierReasoner.h"
 
+#include "RuleBuilder.h"
+
 using namespace std;
 
 ClassifierReasoner::ClassifierReasoner(FuzzyClassifier& classifier,
 		FuzzyKnowledgeBase& knowledgeBase) :
-		classifier(classifier), reasoner(knowledgeBase)
+		classifier(classifier), knowledgeBase(knowledgeBase)
 {
 	for (ClassList::iterator i = classifier.begin(); i != classifier.end(); ++i)
 	{
-		string classname = i->first;
+		string className = i->first;
 		FuzzyClass& fuzzyClass = *i->second;
-		FuzzyFeatureList& features = *fuzzyClass.getfeatureList();
-		for (FuzzyFeatureList::iterator j = features.begin();
-				j != features.end(); ++j)
-		{
-
-		}
-
+		RuleBuilder builder(knowledgeBase);
+		table[className] = builder.buildClassRule(fuzzyClass);
 	}
+
+	reasoner = new FuzzyReasoner(knowledgeBase);
 }
 
-void ClassifierReasoner::addInstance(ObjectInstance& instance)
+void ClassifierReasoner::addInstance(ObjectInstance* instance)
 {
 	inputs.push_back(instance);
 }

@@ -31,7 +31,7 @@ double FuzzyAnd::evaluate(ReasoningData reasoningData)
 	return (a < b) ? a : b;
 }
 
-Node* FuzzyAnd::instantiate(std::pair<std::string, std::string> variable)
+Node* FuzzyAnd::instantiate(Variable variable)
 {
 	Node* left = leftOperand->instantiate(variable);
 	Node* right = rightOperand->instantiate(variable);
@@ -45,7 +45,7 @@ double FuzzyOr::evaluate(ReasoningData reasoningData)
 	return (a > b) ? a : b;
 }
 
-Node* FuzzyOr::instantiate(std::pair<std::string, std::string> variable)
+Node* FuzzyOr::instantiate(Variable variable)
 {
 	Node* left = leftOperand->instantiate(variable);
 	Node* right = rightOperand->instantiate(variable);
@@ -57,7 +57,7 @@ double FuzzyNot::evaluate(ReasoningData reasoningData)
 	return (1 - operand->evaluate(reasoningData));
 }
 
-Node* FuzzyNot::instantiate(std::pair<std::string, std::string> variable)
+Node* FuzzyNot::instantiate(Variable variable)
 {
 	Node* op = operand->instantiate(variable);
 	return new FuzzyNot(op);
@@ -90,7 +90,7 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	return mFunction->evaluate(reasoningData);
 }
 
-Node* FuzzyIs::instantiate(std::pair<std::string, std::string> variable)
+Node* FuzzyIs::instantiate(Variable variable)
 {
 	return new FuzzyIs(*this);
 }
@@ -100,9 +100,9 @@ double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
 	throw std::logic_error("Evaluation of a non-instantiated template");
 }
 
-Node* FuzzyTemplateIs::instantiate(std::pair<std::string, std::string> variable)
+Node* FuzzyTemplateIs::instantiate(Variable variable)
 {
-	return new FuzzyIs(lookUpTable, variable.first, variable.second, mfLabel);
+	return new FuzzyIs(lookUpTable, variable.nameSpace, variable.domain, mfLabel);
 }
 
 BinaryFuzzyOperator::~BinaryFuzzyOperator()

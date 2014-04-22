@@ -21,38 +21,21 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VARIABLEMASK_H_
-#define VARIABLEMASK_H_
+#ifndef VARIABLEGENERATOR_H_
+#define VARIABLEGENERATOR_H_
 
-#include <string>
-#include <vector>
 #include <map>
+#include <string>
 
-#include <boost/dynamic_bitset.hpp>
-
-#include "Variable.h"
-
-class VariableMasks
+class VariableGenerator
 {
-
-private:
-	typedef std::vector<boost::dynamic_bitset<> > MasksVector;
-	typedef std::map<std::string, std::map<std::string, size_t> > IndexMap;
-
 public:
-	void newVariableMask(Variable& variable);
-	void updateVariableMask(Variable& variable,
-			size_t currentRule);
-	void normalizeVariableMasks(size_t size);
-
-	size_t size();
-	bool contains(Variable& variable);
-	boost::dynamic_bitset<>& operator[](size_t index);
-	size_t getMaskIndex(Variable& variable);
-
-private:
-	IndexMap indexMap;
-	MasksVector variableMasks;
+	std::string addMatchVariable(Variable var, Variable target);
+	std::string addOnVariable(Variable var, Variable min, Variable max);
+	std::string addInverseOnVariable(Variable min, Variable max, Variable target);
 };
 
-#endif /* VARIABLEMASK_H_ */
+typedef std::map<std::string, VariableGenerator*> GeneratedVarTable;
+
+
+#endif /* VARIABLEGENERATOR_H_ */

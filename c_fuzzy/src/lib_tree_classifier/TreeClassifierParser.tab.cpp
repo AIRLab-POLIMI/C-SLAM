@@ -838,94 +838,85 @@ namespace tc {
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[5].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[3].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[1].value.as< std::string > ());
+				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[0].value.as< std::string > ());
 			}
-#line 843 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 844 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 28:
-#line 218 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 219 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[9].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[7].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[3].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[1].value.as< std::string > ());
-
-
-				if(!yystack_[6].value.as< std::string > ().empty())
-				{
-					yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[6].value.as< std::string > ());
-				}
+				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[6].value.as< std::string > ());
 			}
-#line 860 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 856 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 29:
-#line 233 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 229 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[8].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[5].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[3].value.as< std::string > ());
 				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[1].value.as< std::string > ());
-
-
-				if(!yystack_[7].value.as< std::string > ().empty())
-				{
-					yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[7].value.as< std::string > ());
-				}
+				yylhs.value.as< std::vector<std::string>  > ().push_back(yystack_[7].value.as< std::string > ());
 			}
-#line 877 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 868 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 30:
-#line 249 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 240 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
 			}
-#line 885 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 876 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 31:
-#line 253 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 244 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = "";
 			}
-#line 893 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 884 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 32:
-#line 259 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 250 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
 			}
-#line 901 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 892 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 33:
-#line 263 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 254 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = "";
 			}
-#line 909 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 900 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 34:
-#line 270 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 261 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
 			}
-#line 917 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 908 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
   case 35:
-#line 274 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
+#line 265 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
 				yylhs.value.as< std::string > () = yystack_[0].value.as< std::string > ();
 			}
-#line 925 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 916 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
 
 
-#line 929 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
+#line 920 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
             default:
               break;
             }
@@ -1300,8 +1291,8 @@ namespace tc {
   {
        0,    79,    79,    80,    83,    89,    94,    99,   104,   109,
      114,   119,   124,   130,   136,   142,   148,   153,   159,   164,
-     170,   175,   180,   185,   190,   195,   202,   209,   217,   232,
-     248,   253,   258,   263,   269,   273
+     170,   175,   180,   185,   190,   195,   202,   209,   218,   228,
+     239,   244,   249,   254,   260,   264
   };
 
   // Print the state stack on the debug stream.
@@ -1336,8 +1327,8 @@ namespace tc {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:1155
 } // tc
-#line 1340 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:1155
-#line 279 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:1156
+#line 1331 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:1155
+#line 270 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:1156
 
 
 void tc::TreeClassifierParser::error(const tc::TreeClassifierParser::location_type& l, const std::string& msg)

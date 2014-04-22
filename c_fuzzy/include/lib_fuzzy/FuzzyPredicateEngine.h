@@ -59,9 +59,10 @@ public:
 	void addTemplateMF(std::string label, FuzzyMF* mf);
 	void buildPredicate(std::string name, Node* rule);
 	PredicateInstance getPredicateInstance(std::string predicate,
-			std::pair<std::string, std::string> variable);
+			Variable variable);
 	PredicateInstance getPredicateInstance(std::string nameSpace, std::string predicate,
-			std::pair<std::string, std::string> variable);
+			Variable variable);
+
 
 private:
 	DomainTable* instantiatePredicateVar(std::string nameSpace, std::string templateVar,

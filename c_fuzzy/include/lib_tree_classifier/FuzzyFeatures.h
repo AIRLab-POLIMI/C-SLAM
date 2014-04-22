@@ -21,6 +21,16 @@ typedef std::pair<std::vector<std::string>, FeatureType> FuzzyFeatureData;
 class FuzzyFeature
 {
 public:
+	FuzzyFeature(std::string fuzzyLabel) :
+			fuzzyLabel(fuzzyLabel)
+	{
+	}
+
+	std::string getFuzzyLabel()
+	{
+		return fuzzyLabel;
+	}
+
 	virtual FeatureType getFeatureType() = 0;
 
 	virtual std::vector<std::string> getVariables() = 0;
@@ -33,13 +43,16 @@ public:
 	{
 	}
 
+private:
+	std::string fuzzyLabel;
+
 };
 
 class FuzzySimpleFeature: public FuzzyFeature
 {
 public:
 	FuzzySimpleFeature(std::string variable, std::string fuzzyLabel) :
-			variable(variable), fuzzyLabel(fuzzyLabel)
+			FuzzyFeature(fuzzyLabel), variable(variable)
 	{
 	}
 
@@ -67,14 +80,14 @@ public:
 
 private:
 	std::string variable;
-	std::string fuzzyLabel;
 };
 
 class FuzzyRelation: public FuzzyFeature
 {
 public:
-	FuzzyRelation(std::string className, std::string member) :
-			className(className), member(member)
+	FuzzyRelation(std::string className, std::string member,
+			std::string fuzzyLabel) :
+			FuzzyFeature(fuzzyLabel), className(className), member(member)
 	{
 	}
 
@@ -100,9 +113,9 @@ class FuzzySimpleRelation: public FuzzyRelation
 {
 public:
 	FuzzySimpleRelation(std::string className, std::string member,
-			std::string matchingVar, std::string fuzzyLabel = "") :
-			FuzzyRelation(className, member), matchingVar(matchingVar), fuzzyLabel(
-					fuzzyLabel)
+			std::string matchingVar, std::string fuzzyLabel) :
+			FuzzyRelation(className, member, fuzzyLabel), matchingVar(
+					matchingVar)
 	{
 	}
 
@@ -120,7 +133,7 @@ public:
 
 private:
 	std::string matchingVar;
-	std::string fuzzyLabel;
+
 };
 
 class FuzzyComplexRelation: public FuzzyRelation
@@ -128,9 +141,9 @@ class FuzzyComplexRelation: public FuzzyRelation
 public:
 	FuzzyComplexRelation(std::string className, std::string member,
 			std::string variable1, std::string variable2,
-			std::string fuzzyLabel = "") :
-			FuzzyRelation(className, member), variable1(variable1), variable2(
-					variable2), fuzzyLabel(fuzzyLabel)
+			std::string fuzzyLabel) :
+			FuzzyRelation(className, member, fuzzyLabel), variable1(variable1), variable2(
+					variable2)
 	{
 	}
 
@@ -150,17 +163,15 @@ public:
 private:
 	std::string variable1;
 	std::string variable2;
-	std::string fuzzyLabel;
 };
 
 class FuzzyInverseRelation: public FuzzyRelation
 {
 public:
 	FuzzyInverseRelation(std::string className, std::string variable,
-			std::string member1, std::string member2,
-			std::string fuzzyLabel = "") :
-			FuzzyRelation(className, variable), member1(member1), member2(
-					member2), fuzzyLabel(fuzzyLabel)
+			std::string member1, std::string member2, std::string fuzzyLabel) :
+			FuzzyRelation(className, variable, fuzzyLabel), member1(member1), member2(
+					member2)
 	{
 	}
 
@@ -180,7 +191,6 @@ public:
 private:
 	std::string member1;
 	std::string member2;
-	std::string fuzzyLabel;
 };
 
 typedef std::vector<FuzzyFeature*> FuzzyFeatureList;

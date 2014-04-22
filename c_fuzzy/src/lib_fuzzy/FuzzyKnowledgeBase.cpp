@@ -53,7 +53,7 @@ Node& FuzzyKnowledgeBase::operator[](const size_t i)
 }
 
 void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
-		vector<pair<string, string> >& vars)
+		vector<Variable>& vars)
 {
 
 	size_t currentRule = knowledgeBase->size();
@@ -71,6 +71,17 @@ void FuzzyKnowledgeBase::deleteRules()
 	{
 		delete *it;
 	}
+}
+
+Node* FuzzyKnowledgeBase::getPredicateInstance(string nameSpace,
+		string predicateName, Variable variable)
+{
+	PredicateInstance instance = predicates->getPredicateInstance(nameSpace,
+			predicateName, variable);
+	variables->addDomains(variable.nameSpace, instance.second);
+	this->variables->updateVariableMask(variable, knowledgeBase->size());
+
+	return instance.first;
 }
 
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()

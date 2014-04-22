@@ -43,14 +43,15 @@ public:
 	NamespaceTable& getNamespaceTable();
 	Node& operator[](size_t i);
 
-	void addRule(Node* fuzzyRule,
-			std::vector<std::pair<std::string, std::string> >& vars);
+	void addRule(Node* fuzzyRule, std::vector<Variable>& vars);
+	Node* getPredicateInstance(std::string nameSpace, std::string predicateName,
+			Variable variable);
 
 	~FuzzyKnowledgeBase();
 
 private:
-
 	void deleteRules();
+
 private:
 	FuzzyVariableEngine* variables;
 	FuzzyPredicateEngine* predicates;

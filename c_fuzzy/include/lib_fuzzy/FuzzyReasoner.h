@@ -93,16 +93,7 @@ public:
 class FuzzyReasoner
 {
 public:
-	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
-			knowledgeBase(knowledgeBase), variableMasks(
-					knowledgeBase.getMasks())
-	{
-		rulesMask.resize(knowledgeBase.size(), false);
-		inputMask.resize(variableMasks.size(), false);
-
-		rulesMask.reset();
-		inputMask.reset();
-	}
+	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase);
 	void addInput(std::string nameSpace, std::string name, int value);
 	void addInput(std::string name, int value);
 	OutputTable run();

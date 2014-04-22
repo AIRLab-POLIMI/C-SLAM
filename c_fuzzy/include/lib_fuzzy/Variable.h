@@ -21,38 +21,29 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VARIABLEMASK_H_
-#define VARIABLEMASK_H_
+#ifndef VARIABLE_H_
+#define VARIABLE_H_
 
 #include <string>
-#include <vector>
-#include <map>
 
-#include <boost/dynamic_bitset.hpp>
-
-#include "Variable.h"
-
-class VariableMasks
+/**
+ * Variable type
+ * Class that represent the pair namespace/variable in the fuzzy rules
+ *
+ */
+struct Variable
 {
+	Variable()
+	{
+	}
 
-private:
-	typedef std::vector<boost::dynamic_bitset<> > MasksVector;
-	typedef std::map<std::string, std::map<std::string, size_t> > IndexMap;
+	Variable(std::string nameSpace, std::string variable) :
+			nameSpace(nameSpace), domain(variable)
+	{
+	}
 
-public:
-	void newVariableMask(Variable& variable);
-	void updateVariableMask(Variable& variable,
-			size_t currentRule);
-	void normalizeVariableMasks(size_t size);
-
-	size_t size();
-	bool contains(Variable& variable);
-	boost::dynamic_bitset<>& operator[](size_t index);
-	size_t getMaskIndex(Variable& variable);
-
-private:
-	IndexMap indexMap;
-	MasksVector variableMasks;
+	std::string nameSpace;
+	std::string domain;
 };
 
-#endif /* VARIABLEMASK_H_ */
+#endif /* VARIABLE_H_ */

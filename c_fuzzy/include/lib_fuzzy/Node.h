@@ -29,6 +29,7 @@
 #include <stdexcept>
 
 #include "ReasoningData.h"
+#include "Variable.h"
 
 /**
  * Base abstract class Node
@@ -48,7 +49,7 @@ public:
 		return (int) evaluate(reasoningData);
 	}
 
-	virtual Node* instantiate(std::pair<std::string, std::string> variable)
+	virtual Node* instantiate(Variable variable)
 	{
 		throwUnimplementedException();
 		return NULL;

@@ -73,7 +73,7 @@
 %type <Node*> fuzzyComparison
 %type <Node*> fuzzyAssignment
 %type <Node*> fuzzyPredicateCall
-%type <std::pair<std::string, std::string>> variable
+%type <Variable> variable
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList
 %type <std::vector<std::string>> fuzzyId
@@ -230,13 +230,13 @@ fuzzyAssignment		: THEN OPEN_B variable IS ID CLOSE_B
 
 variable		: ID PERIOD var
 			{
-				$$.first = $1;
-				$$.second = $3;
+				$$.nameSpace = $1;
+				$$.domain = $3;
 			}
 			| var
 			{
-				$$.first = "";
-				$$.second = $1;
+				$$.nameSpace = "";
+				$$.domain = $1;
 			}
 			;
 

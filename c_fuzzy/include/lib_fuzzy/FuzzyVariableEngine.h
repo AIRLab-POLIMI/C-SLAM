@@ -40,9 +40,9 @@ public:
 	void addDomains(std::string nameSpace, DomainTable* domain);
 	void buildDomain(std::vector<std::string> variables);
 	void normalizeVariableMasks(size_t size);
-	void updateVariableMask(std::pair<std::string, std::string>& var, size_t rule);
+	void updateVariableMask(Variable& var, size_t rule);
 	void updateVariableMask(
-			std::vector<std::pair<std::string, std::string> >& vars,
+			std::vector<Variable>& vars,
 			size_t rule);
 	NamespaceTable& getTable();
 	VariableMasks& getMasks();

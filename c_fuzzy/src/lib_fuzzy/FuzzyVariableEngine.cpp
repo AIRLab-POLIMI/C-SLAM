@@ -71,7 +71,7 @@ void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
 		if (domainTable.count(domainName) == 0)
 		{
 			domainTable[domainName] = mfTable;
-			pair<string, string> variable(nameSpace, domainName);
+			Variable variable(nameSpace, domainName);
 			variableMasks.newVariableMask(variable);
 		}
 	}
@@ -87,7 +87,7 @@ void FuzzyVariableEngine::buildDomain(vector<string> variables)
 			it++)
 	{
 		domainMap[*it] = mfTable;
-		pair<string, string> variable(currentNamespace, *it);
+		Variable variable(currentNamespace, *it);
 		variableMasks.newVariableMask(variable);
 	}
 }
@@ -96,15 +96,15 @@ void FuzzyVariableEngine::normalizeVariableMasks(size_t size)
 	variableMasks.normalizeVariableMasks(size);
 }
 
-void FuzzyVariableEngine::updateVariableMask(pair<string, string>& var, size_t rule)
+void FuzzyVariableEngine::updateVariableMask(Variable& var, size_t rule)
 {
 	variableMasks.updateVariableMask(var, rule);
 }
 
 void FuzzyVariableEngine::updateVariableMask(
-		vector<pair<string, string> >& vars, size_t rule)
+		vector<Variable>& vars, size_t rule)
 {
-	for (vector<pair<string, string> >::iterator it = vars.begin();
+	for (vector<Variable>::iterator it = vars.begin();
 			it != vars.end(); ++it)
 	{
 

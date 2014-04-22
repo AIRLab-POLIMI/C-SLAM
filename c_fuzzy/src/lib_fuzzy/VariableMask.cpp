@@ -25,21 +25,21 @@
 
 using namespace std;
 
-void VariableMasks::newVariableMask(pair<string, string>& variable)
+void VariableMasks::newVariableMask(Variable& variable)
 {
 	size_t index = variableMasks.size();
-	string nameSpace = variable.first;
-	string domain = variable.second;
+	string nameSpace = variable.nameSpace;
+	string domain = variable.domain;
 	boost::dynamic_bitset<> mask;
 	variableMasks.push_back(mask);
 	indexMap[nameSpace][domain] = index;
 }
 
-void VariableMasks::updateVariableMask(pair<string, string>& variable,
+void VariableMasks::updateVariableMask(Variable& variable,
 		size_t currentRule)
 {
-	string nameSpace = variable.first;
-	string domain = variable.second;
+	string nameSpace = variable.nameSpace;
+	string domain = variable.domain;
 	size_t index = indexMap[nameSpace][domain];
 	boost::dynamic_bitset<>& bitset = variableMasks[index];
 	if (currentRule >= bitset.size())
@@ -62,10 +62,10 @@ size_t VariableMasks::size()
 	return variableMasks.size();
 }
 
-bool VariableMasks::contains(pair<string, string>& variable)
+bool VariableMasks::contains(Variable& variable)
 {
-	string nameSpace = variable.first;
-	string domain = variable.second;
+	string nameSpace = variable.nameSpace;
+	string domain = variable.domain;
 	return indexMap.count(nameSpace) == 1
 			&& indexMap[nameSpace].count(domain) == 1;
 }
@@ -75,10 +75,10 @@ boost::dynamic_bitset<>& VariableMasks::operator[](size_t index)
 	return variableMasks[index];
 }
 
-size_t VariableMasks::getMaskIndex(pair<string, string>& variable)
+size_t VariableMasks::getMaskIndex(Variable& variable)
 {
-	string nameSpace = variable.first;
-	string domain = variable.second;
+	string nameSpace = variable.nameSpace;
+	string domain = variable.domain;
 
 	return indexMap[nameSpace][domain];
 }

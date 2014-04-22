@@ -120,10 +120,10 @@ Node* FuzzyBuilder::buildNot(Node* operand)
 	return new FuzzyNot(operand);
 }
 
-Node* FuzzyBuilder::buildIs(pair<string, string> classMember, string mfLabel)
+Node* FuzzyBuilder::buildIs(Variable classMember, string mfLabel)
 {
-	string nameSpace = classMember.first;
-	string domain = classMember.second;
+	string nameSpace = classMember.nameSpace;
+	string domain = classMember.domain;
 	varEngine->updateVariableMask(classMember, ruleList->size());
 	return new FuzzyIs(varEngine->getTable(), nameSpace, domain, mfLabel);
 }
@@ -133,28 +133,27 @@ Node* FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
 	return new FuzzyTemplateIs(varEngine->getTable(), "", domain, mfLabel);
 }
 
-Node* FuzzyBuilder::buildAssignment(pair<string, string> classMember,
-		string label)
+Node* FuzzyBuilder::buildAssignment(Variable classMember, string label)
 {
-	string nameSpace = classMember.first;
-	string output = classMember.second;
+	string nameSpace = classMember.nameSpace;
+	string output = classMember.domain;
 	return new FuzzyAssignment(varEngine->getTable(), nameSpace, output, label);
 }
 
 //fuzzy predicates
 Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
-		pair<string, string> variable)
+		Variable variable)
 {
 	PredicateInstance instance = predicateEngine->getPredicateInstance(
 			nameSpace, predicateName, variable);
-	varEngine->addDomains(variable.first, instance.second);
+	varEngine->addDomains(variable.nameSpace, instance.second);
 	varEngine->updateVariableMask(variable, ruleList->size());
 
 	return instance.first;
 }
 
 Node* FuzzyBuilder::getPredicateInstance(string predicateName,
-		pair<string, string> variable)
+		Variable variable)
 {
 	return getPredicateInstance("", predicateName, variable);
 }

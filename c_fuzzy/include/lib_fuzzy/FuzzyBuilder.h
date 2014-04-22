@@ -72,17 +72,14 @@ public:
 	Node* buildAnd(Node* left, Node* right);
 	Node* buildOr(Node* left, Node* right);
 	Node* buildNot(Node* operand);
-	Node* buildAssignment(std::pair<std::string, std::string> variable,
-			std::string label);
-	Node* buildIs(std::pair<std::string, std::string> variable,
-			std::string mfLabel);
+	Node* buildAssignment(Variable variable, std::string label);
+	Node* buildIs(Variable variable, std::string mfLabel);
 	Node* buildTemplateIs(std::string templateDomain, std::string mfLabel);
 
 	//Functions to get predicate instances
 	Node* getPredicateInstance(std::string nameSpace, std::string predicateName,
-			std::pair<std::string, std::string> variable);
-	Node* getPredicateInstance(std::string predicateName,
-			std::pair<std::string, std::string> variable);
+			Variable variable);
+	Node* getPredicateInstance(std::string predicateName, Variable variable);
 
 	//Function to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
@@ -92,7 +89,6 @@ private:
 	//Data needed to get Builder working
 	fz::FuzzyParser* parser;
 	fz::FuzzyScanner* scanner;
-
 
 	//Data needed to build the knowledgeBase
 	FuzzyVariableEngine* varEngine;

@@ -21,46 +21,44 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLASSIFIERREASONER_H_
-#define CLASSIFIERREASONER_H_
+#ifndef RULEBUILDER_H_
+#define RULEBUILDER_H_
 
-#include <map>
-#include <vector>
 #include <string>
 
+#include "Node.h"
 #include "FuzzyKnowledgeBase.h"
-#include "FuzzyClassifier.h"
-#include "FuzzyReasoner.h"
+#include "FuzzyClass.h"
+
 #include "VariableGenerator.h"
 
-typedef std::map<std::string, int> ObjectProperties;
-typedef std::map<std::string, double> ClassificationMap;
-typedef std::vector<ClassificationMap> InstanceClassification;
+class FuzzyClass;
+class FuzzySimpleFeature;
+class FuzzySimpleRelation;
+class FuzzyComplexRelation;
+class FuzzyInverseRelation;
 
-struct ObjectInstance
+class RuleBuilder
 {
-	size_t id;
-	ObjectProperties properties;
-};
-
-class ClassifierReasoner
-{
-private:
-	typedef std::map<std::string, int> ClassificationTable;
 public:
-	ClassifierReasoner(FuzzyClassifier& classifier,
-			FuzzyKnowledgeBase& knowledgeBase);
+	RuleBuilder(FuzzyKnowledgeBase& knowledgeBase);
+	VariableGenerator* buildClassRule(FuzzyClass& fuzzyClass);
 
-	void addInstance(ObjectInstance* instance);
-	InstanceClassification runClassification();
 private:
-	FuzzyClassifier& classifier;
-	FuzzyKnowledgeBase& knowledgeBase;
-	std::vector<ObjectInstance*> inputs;
-	FuzzyReasoner* reasoner;
-	GeneratedVarTable table;
+	Node* buildFeatureRule(FuzzyFeature& feature);
+	Node* buildSimpleFeatureRule(FuzzySimpleFeature& feature);
+	Node* buildSimpleRelationRule(FuzzySimpleRelation& relation);
+	Node* buildComplexRelationRule(FuzzyComplexRelation& relation);
+	Node* buildInverseRelationRule(FuzzyInverseRelation& relation);
 
-	ClassificationTable table;
+private:
+	FuzzyKnowledgeBase& knowledgeBase;
+
+	//data needed to build rules
+	std::string currentClass;
+
+	VariableGenerator* generator;
+
 };
 
-#endif /* CLASSIFIERREASONER_H_ */
+#endif /* RULEBUILDER_H_ */

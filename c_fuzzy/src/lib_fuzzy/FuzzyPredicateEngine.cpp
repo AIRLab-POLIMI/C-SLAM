@@ -77,15 +77,16 @@ void FuzzyPredicateEngine::buildPredicate(string name, Node* rule)
 }
 
 PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
-		string predicate, pair<string, string> variable)
+		string predicate, Variable variable)
 {
 	if (predicateMap.count(nameSpace) == 1
 			&& predicateMap[nameSpace].count(predicate) == 1)
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
 		Node* predicate = data.definition->instantiate(variable);
+		//TODO controllare
 		DomainTable* domains = instantiatePredicateVar(nameSpace,
-				data.templateVar, variable.second);
+				data.templateVar, variable.domain);
 		return PredicateInstance(predicate, domains);
 	}
 
@@ -94,7 +95,7 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 }
 
 PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string predicate,
-		pair<string, string> variable)
+		Variable variable)
 {
 	return getPredicateInstance("", predicate, variable);
 }

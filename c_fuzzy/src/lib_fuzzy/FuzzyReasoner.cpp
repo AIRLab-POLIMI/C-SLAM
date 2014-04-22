@@ -71,9 +71,19 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 
 }
 
+FuzzyReasoner::FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
+		knowledgeBase(knowledgeBase), variableMasks(knowledgeBase.getMasks())
+{
+	rulesMask.resize(knowledgeBase.size(), false);
+	inputMask.resize(variableMasks.size(), false);
+
+	rulesMask.reset();
+	inputMask.reset();
+}
+
 void FuzzyReasoner::addInput(string nameSpace, string name, int value)
 {
-	pair<string, string> variable(nameSpace, name);
+	Variable variable(nameSpace, name);
 	if (variableMasks.contains(variable))
 	{
 		size_t index = variableMasks.getMaskIndex(variable);

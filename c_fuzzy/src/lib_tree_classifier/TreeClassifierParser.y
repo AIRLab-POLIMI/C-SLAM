@@ -211,6 +211,7 @@ fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree
 				$$.push_back($1);
 				$$.push_back($3);
 				$$.push_back($5);
+				$$.push_back($6);
 			}
 			;
 
@@ -220,12 +221,7 @@ fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR
 				$$.push_back($3);
 				$$.push_back($7);
 				$$.push_back($9);
-
-
-				if(!$4.empty())
-				{
-					$$.push_back($4);
-				}
+				$$.push_back($4);
 			}
 			;
 			
@@ -235,12 +231,7 @@ fuzzyInverseRelation	: var fuzzyConstraint ON ID LPAR var COMMA var RPAR
 				$$.push_back($4);
 				$$.push_back($6);
 				$$.push_back($8);
-
-
-				if(!$2.empty())
-				{
-					$$.push_back($2);
-				}
+				$$.push_back($2);
 			}
 			;
 
