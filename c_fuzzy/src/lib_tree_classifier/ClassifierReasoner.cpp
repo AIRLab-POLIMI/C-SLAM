@@ -58,7 +58,7 @@ InstanceClassification ClassifierReasoner::run()
 				i != classifier.endReasoning(); ++i)
 	{
 		ClassList& classList = *i;
-		vector<ObjectList> candidates;
+		map<string, ObjectList> candidates;
 
 		getCandidates(classList, candidates);
 		classify(classList, candidates, results);
@@ -69,13 +69,14 @@ InstanceClassification ClassifierReasoner::run()
 }
 
 void ClassifierReasoner::getCandidates(ClassList& classList,
-			vector<ObjectList>& candidates)
+			map<string, ObjectList>& candidates)
 {
-	for (ClassList::iterator j = classList.begin(); j != classList.end(); ++j)
+	for (ClassList::iterator it = classList.begin(); it != classList.end();
+				++it)
 	{
-		candidates.resize(candidates.size() + 1);
-		FuzzyClass* fuzzyClass = j->second;
-		getClassCandidates(fuzzyClass, candidates.back());
+		string className = it->first;
+		FuzzyClass* fuzzyClass = it->second;
+		getClassCandidates(fuzzyClass, candidates[className]);
 	}
 
 }
@@ -122,11 +123,44 @@ bool ClassifierReasoner::hasClassVariables(ObjectInstance& instance,
 	return true;
 }
 
+void ClassifierReasoner::classify(ClassList& classList,
+			map<string, ObjectList>& candidates,
+			InstanceClassification& results)
+{
+	vector<ObjectInstance*> instanceList;
+	recursiveClassify(classList.begin(), classList.end(), candidates,
+				instanceList, results);
+}
 
-void ClassifierReasoner::classify(ClassList& classList, std::vector<ObjectList>& candidates,
+void ClassifierReasoner::recursiveClassify(ClassList::iterator current, ClassList::iterator end,
+			map<string, ObjectList>& candidates,
+			vector<ObjectInstance*>& instanceList,
+			InstanceClassification& results)
+{
+
+	if (current != end)
+	{
+		string currentClass = current->first;
+		ObjectList& candidate = candidates[currentClass];
+		current++;
+		for (ObjectList::iterator it = candidate.begin(); it != candidate.end();
+					++it)
+		{
+			instanceList.push_back(*it);
+			recursiveClassify(current, end, candidates, instanceList, results);
+			instanceList.pop_back();
+		}
+
+	}
+	else
+	{
+		classifyInstances(instanceList, results);
+	}
+}
+
+void ClassifierReasoner::classifyInstances(std::vector<ObjectInstance*>& instanceList,
 				InstanceClassification& results)
 {
 
-
-
 }
+
