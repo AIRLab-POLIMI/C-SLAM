@@ -26,13 +26,19 @@
 
 #include <map>
 #include <string>
+#include "Variable.h"
 #include "ClassificationData.h"
+
 
 class VariableGenerator
 {
 private:
 	struct MatchVar
 	{
+		MatchVar()
+		{
+		}
+
 		MatchVar(Variable var, Variable target) :
 					var(var), target(target)
 		{
@@ -43,6 +49,10 @@ private:
 
 	struct OnVar
 	{
+		OnVar()
+		{
+		}
+
 		OnVar(Variable var, Variable min, Variable max) :
 					var(var), min(min), max(max)
 		{
@@ -54,6 +64,10 @@ private:
 
 	struct InverseVar
 	{
+		InverseVar()
+		{
+		}
+
 		InverseVar(Variable min, Variable max, Variable target) :
 					min(min), max(max), target(target)
 		{

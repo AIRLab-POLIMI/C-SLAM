@@ -23,7 +23,8 @@
 
 #include "VariableGenerator.h"
 
-#include <strstream>
+#include <sstream>
+#include <cmath>
 
 using namespace std;
 
@@ -43,7 +44,7 @@ string VariableGenerator::addOnVariable(Variable var, Variable min,
 			Variable max)
 {
 	string newVar = getNewVar();
-	matchVars[newVar] = OnVar(var, min, max);
+	onVars[newVar] = OnVar(var, min, max);
 	return newVar;
 }
 
@@ -51,7 +52,7 @@ string VariableGenerator::addInverseOnVariable(Variable min, Variable max,
 			Variable target)
 {
 	string newVar = getNewVar();
-	matchVars[newVar] = InverseVar(min, max, target);
+	inverseVars[newVar] = InverseVar(min, max, target);
 	return newVar;
 }
 

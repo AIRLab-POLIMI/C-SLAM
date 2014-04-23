@@ -83,7 +83,8 @@ add_library(fuzzy STATIC
 			${BISON_FuzzyParser_OUTPUTS})
 			
 add_library(tree_classifier STATIC 
-            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/ClassifierReasoner.cpp 
+            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/ClassifierReasoner.cpp
+            ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/VariableGenerator.cpp 
             ${LIB_TREE_CLASSIFIER_SOURCE_DIR}/RuleBuilder.cpp 
 			${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierBuilder.cpp 
 			${LIB_TREE_CLASSIFIER_SOURCE_DIR}/TreeClassifierScanner.cpp
