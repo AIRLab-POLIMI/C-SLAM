@@ -23,6 +23,15 @@
 
 #include "FuzzyMF.h"
 
+FuzzyMF::~FuzzyMF()
+{
+}
+
+TolMF::TolMF(int top, int bottom) :
+			top(top), bottom(bottom)
+{
+}
+
 double TolMF::evaluate(ReasoningData reasoningData)
 {
 	int value = reasoningData.inputValue;
@@ -32,6 +41,11 @@ double TolMF::evaluate(ReasoningData reasoningData)
 		return FUZZY_MIN_V;
 	else
 		return line(top, FUZZY_MAX_V, bottom, FUZZY_MIN_V, value);
+}
+
+TorMF::TorMF(int bottom, int top) :
+			top(top), bottom(bottom)
+{
 }
 
 double TolMF::defuzzify(double level)
@@ -55,6 +69,11 @@ double TorMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
+TriMF::TriMF(int left, int center, int right) :
+			left(left), right(right), center(center)
+{
+}
+
 double TriMF::evaluate(ReasoningData reasoningData)
 {
 	int value = reasoningData.inputValue;
@@ -71,6 +90,12 @@ double TriMF::evaluate(ReasoningData reasoningData)
 double TriMF::defuzzify(double level)
 {
 	return throwUnimplementedException();
+}
+
+TraMF::TraMF(int bottomLeft, int topLeft, int topRight, int bottomRight) :
+			bottomLeft(bottomLeft), topLeft(topLeft), topRight(topRight),
+			bottomRight(bottomRight)
+{
 }
 
 double TraMF::evaluate(ReasoningData reasoningData)
@@ -91,6 +116,12 @@ double TraMF::defuzzify(double level)
 	return throwUnimplementedException();
 }
 
+IntMF::IntMF(int left, int right) :
+			left(left), right(right)
+{
+}
+
+
 double IntMF::evaluate(ReasoningData reasoningData)
 {
 	int value = reasoningData.inputValue;
@@ -103,6 +134,11 @@ double IntMF::evaluate(ReasoningData reasoningData)
 double IntMF::defuzzify(double level)
 {
 	return throwUnimplementedException();
+}
+
+SgtMF::SgtMF(int value) :
+			value(value)
+{
 }
 
 double SgtMF::evaluate(ReasoningData reasoningData)

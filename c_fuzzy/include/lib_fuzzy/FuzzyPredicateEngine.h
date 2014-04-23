@@ -46,12 +46,7 @@ private:
 	typedef std::map<std::string, PredicateNameMap> PredicateMap;
 
 public:
-	FuzzyPredicateEngine()
-	{
-		table[""] = new DomainTable();
-		currentNamespace = "";
-		currentTemplateVar = "";
-	}
+	FuzzyPredicateEngine();
 
 	void enterNamespace(std::string nameSpace);
 	void enterPredicate(std::string templateVariable);

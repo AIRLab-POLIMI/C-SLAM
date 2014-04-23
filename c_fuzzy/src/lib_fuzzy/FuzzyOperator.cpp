@@ -23,6 +23,27 @@
 
 #include "FuzzyOperator.h"
 
+using namespace std;
+
+FuzzyOperator::~FuzzyOperator()
+{
+}
+
+BinaryFuzzyOperator::BinaryFuzzyOperator(Node* leftOperand, Node* rightOperand) :
+			leftOperand(leftOperand), rightOperand(rightOperand)
+{
+}
+
+BinaryFuzzyOperator::~BinaryFuzzyOperator()
+{
+	delete leftOperand;
+	delete rightOperand;
+}
+
+FuzzyAnd::FuzzyAnd(Node* left, Node* right) :
+			BinaryFuzzyOperator(left, right)
+{
+}
 
 double FuzzyAnd::evaluate(ReasoningData reasoningData)
 {
@@ -38,6 +59,11 @@ Node* FuzzyAnd::instantiate(Variable variable)
 	return new FuzzyAnd(left, right);
 }
 
+FuzzyOr::FuzzyOr(Node* left, Node* right) :
+			BinaryFuzzyOperator(left, right)
+{
+}
+
 double FuzzyOr::evaluate(ReasoningData reasoningData)
 {
 	double a = leftOperand->evaluate(reasoningData);
@@ -50,6 +76,11 @@ Node* FuzzyOr::instantiate(Variable variable)
 	Node* left = leftOperand->instantiate(variable);
 	Node* right = rightOperand->instantiate(variable);
 	return new FuzzyOr(left, right);
+}
+
+FuzzyNot::FuzzyNot(Node* operand) :
+			operand(operand)
+{
 }
 
 double FuzzyNot::evaluate(ReasoningData reasoningData)
@@ -68,16 +99,11 @@ FuzzyNot::~FuzzyNot()
 	delete operand;
 }
 
-double FuzzyAssignment::evaluate(ReasoningData reasoningData)
+FuzzyIs::FuzzyIs(NamespaceTable& lookUpTable, string nameSpace,
+			string label, string mfLabel) :
+			lookUpTable(lookUpTable), nameSpace(nameSpace), label(label),
+			mfLabel(mfLabel)
 {
-	double truthValue = reasoningData.truthValue;
-	DomainTable& map = *lookUpTable[nameSpace];
-	MFTable& mfTable = *map[output];
-	FuzzyMF* mf = mfTable[mfLabel];
-	double result = mf->defuzzify(truthValue);
-	reasoningData.aggregator.addValue(nameSpace, output, mfLabel, truthValue,
-				result);
-	return result;
 }
 
 double FuzzyIs::evaluate(ReasoningData reasoningData)
@@ -95,19 +121,40 @@ Node* FuzzyIs::instantiate(Variable variable)
 	return new FuzzyIs(*this);
 }
 
+FuzzyTemplateIs::FuzzyTemplateIs(NamespaceTable& lookUpTable,
+			string nameSpace, string templateVar, string mfLabel) :
+			lookUpTable(lookUpTable), nameSpace(nameSpace),
+			templateVar(templateVar), mfLabel(mfLabel)
+{
+}
+
 double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
 {
-	throw std::logic_error("Evaluation of a non-instantiated template");
+	throw logic_error("Evaluation of a non-instantiated template");
 }
 
 Node* FuzzyTemplateIs::instantiate(Variable variable)
 {
-	return new FuzzyIs(lookUpTable, variable.nameSpace, variable.domain, mfLabel);
+	return new FuzzyIs(lookUpTable, variable.nameSpace, variable.domain,
+				mfLabel);
 }
 
-BinaryFuzzyOperator::~BinaryFuzzyOperator()
+FuzzyAssignment::FuzzyAssignment(NamespaceTable& lookUpTable,
+			string nameSpace, string name, string mfLabel) :
+			lookUpTable(lookUpTable), nameSpace(nameSpace), output(name),
+			mfLabel(mfLabel)
 {
-	delete leftOperand;
-	delete rightOperand;
+}
+
+double FuzzyAssignment::evaluate(ReasoningData reasoningData)
+{
+	double truthValue = reasoningData.truthValue;
+	DomainTable& map = *lookUpTable[nameSpace];
+	MFTable& mfTable = *map[output];
+	FuzzyMF* mf = mfTable[mfLabel];
+	double result = mf->defuzzify(truthValue);
+	reasoningData.aggregator.addValue(nameSpace, output, mfLabel, truthValue,
+				result);
+	return result;
 }
 

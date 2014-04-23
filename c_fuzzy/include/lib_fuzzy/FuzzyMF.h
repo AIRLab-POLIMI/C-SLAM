@@ -38,9 +38,7 @@ class FuzzyMF: public Node
 {
 public:
 	virtual double defuzzify(double level) = 0;
-	virtual ~FuzzyMF()
-	{
-	}
+	virtual ~FuzzyMF();
 
 protected:
 	double inline line(int x1, double y1, int x2, double y2, int x)
@@ -61,10 +59,7 @@ public:
 class TolMF: public FuzzyMF
 {
 public:
-	TolMF(int top, int bottom) :
-				top(top), bottom(bottom)
-	{
-	}
+	TolMF(int top, int bottom);
 	virtual double evaluate(ReasoningData reasoningData);
 	double defuzzify(double level);
 
@@ -81,10 +76,7 @@ class TorMF: public FuzzyMF
 {
 
 public:
-	TorMF(int bottom, int top) :
-				top(top), bottom(bottom)
-	{
-	}
+	TorMF(int bottom, int top);
 	virtual double evaluate(ReasoningData reasoningData);
 	double defuzzify(double level);
 
@@ -102,10 +94,7 @@ class TriMF: public FuzzyMF
 {
 
 public:
-	TriMF(int left, int center, int right) :
-				left(left), right(right), center(center)
-	{
-	}
+	TriMF(int left, int center, int right);
 	virtual double evaluate(ReasoningData reasoningData);
 	double defuzzify(double level);
 
@@ -122,11 +111,7 @@ class TraMF: public FuzzyMF
 {
 
 public:
-	TraMF(int bottomLeft, int topLeft, int topRight, int bottomRight) :
-				bottomLeft(bottomLeft), topLeft(topLeft), topRight(topRight),
-				bottomRight(bottomRight)
-	{
-	}
+	TraMF(int bottomLeft, int topLeft, int topRight, int bottomRight);
 	virtual double evaluate(ReasoningData reasoningData);
 	double defuzzify(double level);
 
@@ -144,10 +129,7 @@ class IntMF: public FuzzyMF
 {
 
 public:
-	IntMF(int left, int right) :
-				left(left), right(right)
-	{
-	}
+	IntMF(int left, int right);
 	virtual double evaluate(ReasoningData reasoningData);
 	double defuzzify(double level);
 
@@ -164,10 +146,7 @@ private:
 class SgtMF: public FuzzyMF
 {
 public:
-	SgtMF(int value) :
-				value(value)
-	{
-	}
+	SgtMF(int value);
 	virtual double evaluate(ReasoningData reasoningData);
 	double defuzzify(double level);
 

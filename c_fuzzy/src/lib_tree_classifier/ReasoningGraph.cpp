@@ -30,6 +30,11 @@
 using namespace std;
 using namespace boost;
 
+ReasoningGraph::ReasoningGraph(size_t n, std::vector<std::string> names) :
+			graph(n), names(names)
+{
+}
+
 void ReasoningGraph::addEdge(size_t i, size_t j)
 {
 	add_edge(i, j, graph);

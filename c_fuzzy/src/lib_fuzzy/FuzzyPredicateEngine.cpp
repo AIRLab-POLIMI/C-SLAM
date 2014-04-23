@@ -28,6 +28,13 @@
 
 using namespace std;
 
+FuzzyPredicateEngine::FuzzyPredicateEngine()
+{
+	table[""] = new DomainTable();
+	currentNamespace = "";
+	currentTemplateVar = "";
+}
+
 void FuzzyPredicateEngine::enterNamespace(string nameSpace)
 {
 	currentNamespace = nameSpace;

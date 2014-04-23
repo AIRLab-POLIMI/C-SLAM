@@ -29,10 +29,7 @@
 class FuzzyRule: public Node
 {
 public:
-	FuzzyRule(Node* antecedent, Node* conseguent) :
-				antecedent(antecedent), conseguent(conseguent)
-	{
-	}
+	FuzzyRule(Node* antecedent, Node* conseguent);
 	double evaluate(ReasoningData reasoningData);
 	~FuzzyRule();
 

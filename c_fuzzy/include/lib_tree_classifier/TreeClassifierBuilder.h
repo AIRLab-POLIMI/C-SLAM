@@ -35,12 +35,7 @@ class TreeClassifierBuilder
 {
 
 public:
-	TreeClassifierBuilder() :
-			parser(NULL), scanner(NULL)
-	{
-		classifier = new FuzzyClassifier();
-	}
-
+	TreeClassifierBuilder();
 	void parse(const char *filename);
 	FuzzyClassifier* buildFuzzyClassifier();
 

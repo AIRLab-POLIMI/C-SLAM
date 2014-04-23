@@ -29,6 +29,13 @@
 
 using namespace std;
 
+TreeClassifierBuilder::TreeClassifierBuilder()
+{
+	parser = NULL;
+	scanner = NULL;
+	classifier = new FuzzyClassifier();
+}
+
 void TreeClassifierBuilder::parse(const char *filename)
 {
 	ifstream inputFile(filename);
@@ -57,7 +64,7 @@ FuzzyClassifier* TreeClassifierBuilder::buildFuzzyClassifier()
 }
 
 VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
-		string variable)
+			string variable)
 {
 
 	list = eventuallyInitialize(list);
@@ -75,7 +82,7 @@ VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
 }
 
 ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
-		string constant, std::string value)
+			string constant, std::string value)
 {
 	list = eventuallyInitialize(list);
 
@@ -94,13 +101,13 @@ ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
 }
 
 FuzzyFeature* TreeClassifierBuilder::buildSimpleFeature(string variable,
-		string fuzzyLabel)
+			string fuzzyLabel)
 {
 	return new FuzzySimpleFeature(variable, fuzzyLabel);
 }
 
 FuzzyFeature* TreeClassifierBuilder::buildSimpleRelation(
-		vector<string>& labelList)
+			vector<string>& labelList)
 {
 	string className = labelList[0];
 	string member = labelList[1];
@@ -111,7 +118,7 @@ FuzzyFeature* TreeClassifierBuilder::buildSimpleRelation(
 }
 
 FuzzyFeature* TreeClassifierBuilder::buildComplexRelation(
-		vector<string>& labelList)
+			vector<string>& labelList)
 {
 	string className = labelList[0];
 	string member = labelList[1];
@@ -120,12 +127,12 @@ FuzzyFeature* TreeClassifierBuilder::buildComplexRelation(
 	string fuzzyLabel = labelList[4];
 
 	return new FuzzyComplexRelation(className, member, variable1, variable2,
-			fuzzyLabel);
+				fuzzyLabel);
 
 }
 
 FuzzyFeature* TreeClassifierBuilder::buildInverseRelation(
-		vector<string>& labelList)
+			vector<string>& labelList)
 {
 	string variable = labelList[0];
 	string className = labelList[1];
@@ -134,12 +141,12 @@ FuzzyFeature* TreeClassifierBuilder::buildInverseRelation(
 	string fuzzyLabel = labelList[4];
 
 	return new FuzzyInverseRelation(className, variable, member1, member2,
-			fuzzyLabel);
+				fuzzyLabel);
 
 }
 
 FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
-		FuzzyFeatureList* list, vector<string>& labelList, FeatureType type)
+			FuzzyFeatureList* list, vector<string>& labelList, FeatureType type)
 {
 	FuzzyFeature* feature;
 
@@ -173,8 +180,8 @@ FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 }
 
 void TreeClassifierBuilder::buildClass(string name, string superClassName,
-		VariableList* variables, ConstantList* constants,
-		FuzzyFeatureList* featureList, bool important)
+			VariableList* variables, ConstantList* constants,
+			FuzzyFeatureList* featureList, bool important)
 {
 	variables = eventuallyInitialize(variables);
 	constants = eventuallyInitialize(constants);
@@ -185,19 +192,19 @@ void TreeClassifierBuilder::buildClass(string name, string superClassName,
 
 	checkSuperClass(name, superClassName, superClass);
 	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
-			constants, featureList, important);
+				constants, featureList, important);
 	classifier->addClass(fuzzyClass);
 }
 
 /* Consistency checks */
 void TreeClassifierBuilder::checkSuperClass(const string& name,
-		const string& superClassName, FuzzyClass* superClass)
+			const string& superClassName, FuzzyClass* superClass)
 {
 	if (superClass == NULL && superClassName.compare("") != 0)
 	{
 		stringstream ss;
 		ss << "Error: class " << name << " extends a non declared class "
-				<< superClassName;
+					<< superClassName;
 		throw runtime_error(ss.str());
 
 	}
@@ -253,31 +260,31 @@ void TreeClassifierBuilder::checkFeatureList(FuzzyClass& fuzzyClass)
 }
 
 void TreeClassifierBuilder::checkVariable(FuzzyClass& fuzzyClass,
-		string variable)
+			string variable)
 {
 	if (!fuzzyClass.containsVar(variable))
 	{
 		stringstream ss;
 		ss << "Error: rule in class " << fuzzyClass.getName()
-				<< " references non existing variable " << variable;
+					<< " references non existing variable " << variable;
 		throw runtime_error(ss.str());
 	}
 }
 
 void TreeClassifierBuilder::checkRelationVar(string relatedVariable,
-		FuzzyClass& relatedClass, FuzzyClass& fuzzyClass)
+			FuzzyClass& relatedClass, FuzzyClass& fuzzyClass)
 {
 	if (!relatedClass.containsVar(relatedVariable))
 	{
 		stringstream ss;
 		ss << "Error: relation in class " << fuzzyClass.getName()
-				<< " references non existing variable " << relatedVariable;
+					<< " references non existing variable " << relatedVariable;
 		throw runtime_error(ss.str());
 	}
 }
 
 void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
-		FuzzyFeature& relation)
+			FuzzyFeature& relation)
 {
 	string object = relation.getRelationObject();
 
@@ -285,7 +292,7 @@ void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
 	{
 		stringstream ss;
 		ss << "Error: relation in class " << fuzzyClass.getName()
-				<< " references non existing class " << object;
+					<< " references non existing class " << object;
 		throw runtime_error(ss.str());
 	}
 
