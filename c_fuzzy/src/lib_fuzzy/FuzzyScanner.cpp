@@ -617,7 +617,7 @@ static yyconst flex_int16_t yy_rule_linenum[36] =
 	#include <string>
 	
 	#include "FuzzyParser.tab.h"
-	#include "FuzzyScanner.h"
+	#include "FuzzyScanner.h" 
 	
 	#undef yywrap
 	#define yywrap() 1

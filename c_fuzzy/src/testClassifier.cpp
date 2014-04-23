@@ -24,26 +24,50 @@
 #include <map>
 #include <stdexcept>
 
+#include "FuzzyBuilder.h"
 #include "TreeClassifierBuilder.h"
+#include "ClassifierReasoner.h"
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {
 
 	try
 	{
-		TreeClassifierBuilder builder;
+		FuzzyBuilder kbBuilder;
+		TreeClassifierBuilder classifierBuilder;
 		FuzzyClassifier* classifier;
+		FuzzyKnowledgeBase* knowledgeBase;
 
-		builder.parse(argv[1]);
-		classifier = builder.buildFuzzyClassifier();
+		cout << "Parsing classifier file" << endl;
+		classifierBuilder.parse(argv[1]);
+		classifier = classifierBuilder.buildFuzzyClassifier();
 		classifier->drawDependencyGraph("/home/dave/classifier.dot");
 		classifier->drawReasoningGraph("/home/dave/reasoning.dot");
-		std::cout << "parsing done" << std::endl;
+		cout << "Parsing done" << endl;
+
+		cout << "Parsing knowledgeBase file" << endl;
+		kbBuilder.parse(argv[2]);
+		knowledgeBase = kbBuilder.createKnowledgeBase();
+		cout << "Parsing done" << endl;
+
+
+		cout << "Starting classifier reasoner" << endl;
+		ClassifierReasoner reasoner(*classifier, *knowledgeBase);
+		reasoner.run();
+
 		delete classifier;
-	} catch (const std::runtime_error& e)
+	}
+	catch (const std::runtime_error& e)
 	{
-		std::cout << e.what() << std::endl;
-		std::cout << "Check the input file an try again" << std::endl;
+		cout << e.what() << endl;
+		cout << "Check the input file an try again" << endl;
+	}
+	catch (const std::logic_error& e)
+	{
+		cout << e.what() << endl;
+		cout << "Check the input file an try again" << endl;
 	}
 
 }

@@ -29,24 +29,17 @@
 #include "FuzzyOperator.h"
 #include "FuzzyRule.h"
 
+#include "FuzzyParser.tab.h"
+#include "FuzzyScanner.h"
+
 using namespace std;
 
 FuzzyBuilder::FuzzyBuilder()
 {
-	parser = NULL;
-	scanner = NULL;
 	varEngine = NULL;
 	predicateEngine = NULL;
 	ruleList = NULL;
 	parsingPredicate = false;
-}
-
-FuzzyBuilder::~FuzzyBuilder()
-{
-	if (scanner != NULL)
-		delete (scanner);
-	if (parser != NULL)
-		delete (parser);
 }
 
 void FuzzyBuilder::parse(const char *filename)
@@ -59,8 +52,8 @@ void FuzzyBuilder::parse(const char *filename)
 	}
 
 	//initialize scanner and parser
-	scanner = new fz::FuzzyScanner(&inputFile);
-	parser = new fz::FuzzyParser(*this, *scanner);
+	fz::FuzzyScanner* scanner = new fz::FuzzyScanner(&inputFile);
+	fz::FuzzyParser* parser = new fz::FuzzyParser(*this, *scanner);
 
 	//initialize knowledge base data
 	varEngine = new FuzzyVariableEngine();
@@ -73,6 +66,11 @@ void FuzzyBuilder::parse(const char *filename)
 	{
 		throw runtime_error("Parse Failed");
 	}
+
+	if(scanner)
+		delete scanner;
+	if(parser)
+		delete parser;
 }
 
 FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
@@ -142,10 +140,10 @@ Node* FuzzyBuilder::buildAssignment(Variable classMember, string label)
 
 //fuzzy predicates
 Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
-		Variable variable)
+			Variable variable)
 {
 	PredicateInstance instance = predicateEngine->getPredicateInstance(
-			nameSpace, predicateName, variable);
+				nameSpace, predicateName, variable);
 	varEngine->addDomains(variable.nameSpace, instance.second);
 	varEngine->updateVariableMask(variable, ruleList->size());
 
@@ -153,7 +151,7 @@ Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
 }
 
 Node* FuzzyBuilder::getPredicateInstance(string predicateName,
-		Variable variable)
+			Variable variable)
 {
 	return getPredicateInstance("", predicateName, variable);
 }

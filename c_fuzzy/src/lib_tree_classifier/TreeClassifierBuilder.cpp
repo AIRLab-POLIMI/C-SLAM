@@ -27,12 +27,13 @@
 
 #include "TreeClassifierBuilder.h"
 
+#include "TreeClassifierParser.tab.h"
+#include "TreeClassifierScanner.h"
+
 using namespace std;
 
 TreeClassifierBuilder::TreeClassifierBuilder()
 {
-	parser = NULL;
-	scanner = NULL;
 	classifier = new FuzzyClassifier();
 }
 
@@ -44,13 +45,21 @@ void TreeClassifierBuilder::parse(const char *filename)
 		throw runtime_error("Bad file to parse");
 	}
 
-	scanner = new tc::TreeClassifierScanner(&inputFile);
-	parser = new tc::TreeClassifierParser(*this, *scanner);
+	tc::TreeClassifierScanner* scanner = new tc::TreeClassifierScanner(
+				&inputFile);
+	tc::TreeClassifierParser* parser = new tc::TreeClassifierParser(*this,
+				*scanner);
 
 	if (parser->parse() == -1)
 	{
 		throw runtime_error("Parse Failed");
 	}
+
+	if (parser)
+			delete (parser);
+
+		if (scanner)
+			delete (scanner);
 
 }
 
@@ -313,13 +322,4 @@ void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
 	}
 
 	classifier->addDependency(fuzzyClass.getName(), object);
-}
-
-TreeClassifierBuilder::~TreeClassifierBuilder()
-{
-	if (parser != NULL)
-		delete (parser);
-
-	if (scanner != NULL)
-		delete (scanner);
 }

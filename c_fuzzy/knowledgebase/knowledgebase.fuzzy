@@ -17,11 +17,15 @@ FUZZIFY_CLASS Door
 			Right :=  tor(60, 80);
 		END_FUZZIFY
 		
-	END_FUZZIFY_PREDICATE
+	END_FUZZIFY_PREDICATE	
 	
+END_FUZZIFY_CLASS
+
+
+FUZZIFY_CLASS ConcentricCircle
 	FUZZIFY_PREDICATE ?y
-		Perfect := (?y is Perfect)
-		Good := (?y is Good) or (?y is Perfect)
+		Perfect := (?y is Perfect);
+		Good := (?y is Good) or (?y is Perfect);
 			
 		FUZZIFY ?y
 			Good := tol(30, 40); 
@@ -29,6 +33,21 @@ FUZZIFY_CLASS Door
 		END_FUZZIFY
 		
 	END_FUZZIFY_PREDICATE
-	
+
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS Handle
+
+	FUZZIFY_PREDICATE ?x
+		Lateral := (?x is Left) or (?x is Right);
+		Centered := (?x is Centered);
+		
+		FUZZIFY ?x
+			Left :=  tol(30, 40);
+			Centered :=  tra(30, 40, 60, 80);
+			Right :=  tor(60, 80);
+		END_FUZZIFY
+		
+	END_FUZZIFY_PREDICATE	
 	
 END_FUZZIFY_CLASS

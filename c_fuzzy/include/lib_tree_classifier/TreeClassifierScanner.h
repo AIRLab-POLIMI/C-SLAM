@@ -30,6 +30,7 @@
 #define YY_DECL tc::TreeClassifierParser::symbol_type tc::TreeClassifierScanner::lex()
 
 #ifndef __FLEX_LEXER_H
+#undef yyFlexLexer
 #define yyFlexLexer tcFlexLexer
 #include "FlexLexer.h"
 #undef yyFlexLexer

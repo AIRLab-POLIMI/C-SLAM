@@ -30,7 +30,7 @@
 using namespace std;
 using namespace boost;
 
-ReasoningGraph::ReasoningGraph(size_t n, std::vector<std::string> names) :
+ReasoningGraph::ReasoningGraph(size_t n, vector<vector<string> > names) :
 			graph(n), names(names)
 {
 }
@@ -42,7 +42,19 @@ void ReasoningGraph::addEdge(size_t i, size_t j)
 
 void ReasoningGraph::drawGraph(ostream& out)
 {
-	string* name = &names[0];
+	string name[names.size()];
+
+	for (size_t i = 0; i < names.size(); i++)
+	{
+		vector<string>& nodeNames = names[i];
+
+		name[i] = nodeNames[0];
+
+		for (size_t j = 1; j < nodeNames.size(); j++)
+		{
+			name[i] = name[i] + "&" + nodeNames[j];
+		}
+	}
 
 	write_graphviz(out, graph, make_label_writer(name));
 }
@@ -50,4 +62,9 @@ void ReasoningGraph::drawGraph(ostream& out)
 void ReasoningGraph::getReasonigOrder(vector<size_t>& order)
 {
 	topological_sort(graph, back_inserter(order));
+}
+
+vector<string> ReasoningGraph::getNodeNames(size_t index)
+{
+	return names[index];
 }

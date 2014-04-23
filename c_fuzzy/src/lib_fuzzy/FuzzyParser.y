@@ -36,6 +36,8 @@
 	#include <fstream>
 	
 	#include "FuzzyBuilder.h"
+	#include "FuzzyScanner.h"
+	#include "FuzzyParser.tab.h"
 	
 	#undef yylex
 	#define yylex scanner.lex

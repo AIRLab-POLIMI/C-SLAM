@@ -93,6 +93,7 @@ add_library(tree_classifier STATIC
 			${LIB_TREE_CLASSIFIER_SOURCE_DIR}/FuzzyClassifier.cpp
 			${FLEX_TreeClassifierScanner_OUTPUTS}
 			${BISON_TreeClassifierParser_OUTPUTS})
+			
 
 #remember to move the headers into include!
 add_dependencies(fuzzy HeadersFuzzy)
@@ -103,7 +104,7 @@ add_executable(prova src/test.cpp)
 add_executable(test_classifier src/testClassifier.cpp)
 
 target_link_libraries(prova fuzzy)
-target_link_libraries(test_classifier tree_classifier)
+target_link_libraries(test_classifier tree_classifier fuzzy)
 
 #clean all remaining headers
 add_custom_command(TARGET fuzzy POST_BUILD

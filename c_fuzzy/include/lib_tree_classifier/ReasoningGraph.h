@@ -36,16 +36,17 @@ private:
 	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS> Graph;
 
 public:
-	ReasoningGraph(size_t n, std::vector<std::string> names);
+	ReasoningGraph(size_t n, std::vector<std::vector<std::string> > names);
 	void addEdge(size_t i, size_t j);
 	void getReasonigOrder(std::vector<size_t>& order);
+	std::vector<std::string> getNodeNames(size_t index);
 
 public:
 	void drawGraph(std::ostream& out);
 
 private:
 	Graph graph;
-	std::vector<std::string> names;
+	std::vector<std::vector<std::string> > names;
 };
 
 #endif /* REASONINGGRAPH_H_ */

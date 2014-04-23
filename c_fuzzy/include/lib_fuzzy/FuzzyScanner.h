@@ -30,6 +30,7 @@
 #define YY_DECL fz::FuzzyParser::symbol_type fz::FuzzyScanner::lex()
 
 #ifndef __FLEX_LEXER_H
+#undef yyFlexLexer
 #define yyFlexLexer fzFlexLexer
 #include "FlexLexer.h"
 #undef yyFlexLexer

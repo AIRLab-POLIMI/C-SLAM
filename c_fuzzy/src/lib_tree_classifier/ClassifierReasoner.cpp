@@ -28,8 +28,8 @@
 using namespace std;
 
 ClassifierReasoner::ClassifierReasoner(FuzzyClassifier& classifier,
-		FuzzyKnowledgeBase& knowledgeBase) :
-		classifier(classifier), knowledgeBase(knowledgeBase)
+			FuzzyKnowledgeBase& knowledgeBase) :
+			classifier(classifier), knowledgeBase(knowledgeBase)
 {
 	for (ClassList::iterator i = classifier.begin(); i != classifier.end(); ++i)
 	{
@@ -47,11 +47,32 @@ void ClassifierReasoner::addInstance(ObjectInstance* instance)
 	inputs.push_back(instance);
 }
 
-InstanceClassification ClassifierReasoner::runClassification()
+InstanceClassification ClassifierReasoner::run()
 {
 	InstanceClassification results;
 
 	table.clear();
 
+	for (ReasoningList::iterator it = classifier.beginReasoning();
+				it != classifier.endReasoning(); ++it)
+	{
+		//TODO implement reasoning cycle
+	}
+
 	return results;
+}
+
+bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass)
+{
+	const VariableList& variables = fuzzyClass.getVars();
+	for (VariableList::const_iterator it = variables.begin();
+				it != variables.end(); ++it)
+	{
+		if (instance.properties.count(*it) == 0)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

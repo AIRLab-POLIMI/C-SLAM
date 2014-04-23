@@ -4,7 +4,7 @@
 	#include <string>
 	
 	#include "FuzzyParser.tab.h"
-	#include "FuzzyScanner.h"
+	#include "FuzzyScanner.h" 
 	
 	#undef yywrap
 	#define yywrap() 1

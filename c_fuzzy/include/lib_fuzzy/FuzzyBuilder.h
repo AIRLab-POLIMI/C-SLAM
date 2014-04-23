@@ -35,9 +35,6 @@
 #include "FuzzyPredicateEngine.h"
 #include "FuzzyMFEngine.h"
 
-#include "FuzzyParser.tab.h"
-#include "FuzzyScanner.h"
-
 class FuzzyBuilder
 {
 
@@ -47,8 +44,6 @@ public:
 	FuzzyKnowledgeBase* createKnowledgeBase();
 
 	void parse(const char *filename);
-
-	virtual ~FuzzyBuilder();
 
 public:
 
@@ -86,9 +81,6 @@ public:
 			std::vector<int>& parameters);
 
 private:
-	//Data needed to get Builder working
-	fz::FuzzyParser* parser;
-	fz::FuzzyScanner* scanner;
 
 	//Data needed to build the knowledgeBase
 	FuzzyVariableEngine* varEngine;

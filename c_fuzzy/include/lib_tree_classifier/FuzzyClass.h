@@ -38,10 +38,10 @@ class FuzzyClass
 {
 public:
 	FuzzyClass(std::string name, FuzzyClass* superClass,
-			VariableList* variables, ConstantList* constants,
-			FuzzyFeatureList* features, bool important) :
-			name(name), superClass(superClass), variables(variables), constants(
-					constants), features(features), important(important)
+				VariableList* variables, ConstantList* constants,
+				FuzzyFeatureList* features, bool important) :
+				name(name), superClass(superClass), variables(variables),
+				constants(constants), features(features), important(important)
 	{
 	}
 
@@ -63,7 +63,18 @@ public:
 	inline bool containsVar(std::string var)
 	{
 		return (variables->count(var) == 1)
-				|| (superClass && superClass->containsVar(var));
+					|| (superClass && superClass->containsVar(var));
+	}
+
+	inline VariableList getVars()
+	{
+		VariableList vars;
+		if(superClass)
+			vars = superClass->getVars();
+
+		vars.insert(variables->begin(), variables->end());
+
+		return vars;
 	}
 
 	~FuzzyClass()

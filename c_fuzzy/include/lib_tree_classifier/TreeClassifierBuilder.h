@@ -21,15 +21,13 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FUZZYBUILDER_H_
-#define FUZZYBUILDER_H_
+#ifndef TREECLASSIFIERBUILDER_H_
+#define TREECLASSIFIERBUILDER_H_
 
 #include <string>
 
 #include "FuzzyClass.h"
 #include "FuzzyClassifier.h"
-#include "TreeClassifierParser.tab.h"
-#include "TreeClassifierScanner.h"
 
 class TreeClassifierBuilder
 {
@@ -38,8 +36,6 @@ public:
 	TreeClassifierBuilder();
 	void parse(const char *filename);
 	FuzzyClassifier* buildFuzzyClassifier();
-
-	virtual ~TreeClassifierBuilder();
 
 private:
 	template<class ListType>
@@ -77,13 +73,9 @@ private:
 			FuzzyClass& fuzzyClass);
 
 private:
-	//Data needed to get Builder working
-	tc::TreeClassifierParser* parser;
-	tc::TreeClassifierScanner* scanner;
-
 	//Data needed to track created classes
 	FuzzyClassifier* classifier;
 
 };
 
-#endif /* FUZZYBUILDER_H_ */
+#endif /* TREECLASSIFIERBUILDER_H_ */

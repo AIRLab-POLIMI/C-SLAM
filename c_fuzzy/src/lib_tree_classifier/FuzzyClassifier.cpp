@@ -66,6 +66,37 @@ ClassList::iterator FuzzyClassifier::end()
 void FuzzyClassifier::setupClassifier()
 {
 	rGraph = dGraph.buildReasoningGraph();
+
+	vector<size_t> order;
+	rGraph->getReasonigOrder(order);
+
+	for (vector<size_t>::iterator i = order.begin(); i != order.end(); i++)
+	{
+		size_t index = *i;
+		const vector<string>& nodeNames = rGraph->getNodeNames(index);
+		ClassList list;
+
+		for (vector<string>::const_iterator j = nodeNames.begin();
+					j != nodeNames.end(); ++j)
+		{
+			string name = *j;
+			FuzzyClass* fuzzyClass = classList[name];
+			list[name] = fuzzyClass;
+		}
+
+		reasoningList.push_back(list);
+	}
+
+}
+
+ReasoningList::iterator FuzzyClassifier::beginReasoning()
+{
+	return reasoningList.begin();
+}
+
+ReasoningList::iterator FuzzyClassifier::endReasoning()
+{
+	return reasoningList.end();
 }
 
 void FuzzyClassifier::drawDependencyGraph(string path)
@@ -83,5 +114,10 @@ void FuzzyClassifier::drawReasoningGraph(string path)
 		out.open(path.c_str());
 		rGraph->drawGraph(out);
 	}
-
 }
+
+FuzzyClassifier::~FuzzyClassifier()
+{
+	delete rGraph;
+}
+

@@ -27,6 +27,7 @@
 #include <map>
 #include <stdexcept>
 #include <sstream>
+#include <iostream>
 
 char askYNQuestion(std::string question)
 {
@@ -103,7 +104,8 @@ int main(int argc, char *argv[])
 
 		delete knowledgebase;
 
-	} catch (const std::runtime_error& e)
+	}
+	catch (const std::runtime_error& e)
 	{
 		std::cout << e.what() << std::endl;
 		std::cout << "Check the input file an try again" << std::endl;

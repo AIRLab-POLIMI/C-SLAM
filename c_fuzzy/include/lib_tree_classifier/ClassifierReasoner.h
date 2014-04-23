@@ -42,9 +42,11 @@ private:
 public:
 	ClassifierReasoner(FuzzyClassifier& classifier,
 			FuzzyKnowledgeBase& knowledgeBase);
-
 	void addInstance(ObjectInstance* instance);
-	InstanceClassification runClassification();
+	InstanceClassification run();
+
+private:
+	bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass);
 
 private:
 	FuzzyClassifier& classifier;

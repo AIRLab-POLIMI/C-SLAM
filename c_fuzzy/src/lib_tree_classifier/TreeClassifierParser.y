@@ -33,6 +33,9 @@
 	#include<fstream>
 
 	#include "TreeClassifierBuilder.h"
+	#include "TreeClassifierParser.tab.h"
+	#include "TreeClassifierScanner.h"
+
 	
 	#undef yylex
 	#define yylex scanner.lex

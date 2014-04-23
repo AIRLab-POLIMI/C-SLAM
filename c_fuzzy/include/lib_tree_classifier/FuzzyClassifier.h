@@ -25,11 +25,15 @@
 #define FUZZYCLASSIFIER_H_
 
 #include <string>
+#include <map>
+#include <vector>
+#include <set>
 
 #include "DependencyGraph.h"
 #include "FuzzyClass.h"
 
 typedef std::map<std::string, FuzzyClass*> ClassList;
+typedef std::vector<ClassList> ReasoningList;
 
 class FuzzyClassifier
 {
@@ -41,6 +45,11 @@ public:
 	void setupClassifier();
 	ClassList::iterator begin();
 	ClassList::iterator end();
+	ReasoningList::iterator beginReasoning();
+	ReasoningList::iterator endReasoning();
+
+	~FuzzyClassifier();
+
 
 public:
 	void drawDependencyGraph(std::string path);
@@ -50,6 +59,7 @@ private:
 	ClassList classList;
 	DependencyGraph dGraph;
 	ReasoningGraph* rGraph;
+	ReasoningList reasoningList;
 };
 
 #endif /* FUZZYCLASSIFIER_H_ */
