@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 		cout << "Starting classifier reasoner" << endl;
 		ClassifierReasoner reasoner(*classifier, *knowledgeBase);
 		reasoner.run();
+		cout << "Reasoning done" << endl;
 
 		delete classifier;
 	}

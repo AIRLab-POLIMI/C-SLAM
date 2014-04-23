@@ -34,24 +34,32 @@
 #include "VariableGenerator.h"
 #include "ClassificationData.h"
 
-
 class ClassifierReasoner
 {
 private:
-	typedef std::map<std::string, int> ClassificationTable;
+	typedef std::map<std::string, ObjectList> ClassificationTable;
 public:
 	ClassifierReasoner(FuzzyClassifier& classifier,
-			FuzzyKnowledgeBase& knowledgeBase);
+				FuzzyKnowledgeBase& knowledgeBase);
 	void addInstance(ObjectInstance* instance);
 	InstanceClassification run();
 
 private:
+	//instance retrival
+	void getClassCandidates(FuzzyClass* fuzzyClass, ObjectList& candidates);
+	ObjectList& getSuperClassCandidates(FuzzyClass* fuzzyClass);
 	bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass);
+	void getCandidates(ClassList& classList,
+				std::vector<ObjectList>& candidates);
+
+	//classification
+	void classify(ClassList& classList, std::vector<ObjectList>& candidates,
+				InstanceClassification& results);
 
 private:
 	FuzzyClassifier& classifier;
 	FuzzyKnowledgeBase& knowledgeBase;
-	std::vector<ObjectInstance*> inputs;
+	ObjectList inputs;
 	FuzzyReasoner* reasoner;
 	GeneratedVarTable genVarTable;
 

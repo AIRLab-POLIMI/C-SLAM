@@ -24,6 +24,7 @@
 #include "ClassifierReasoner.h"
 
 #include "RuleBuilder.h"
+#include <iostream>
 
 using namespace std;
 
@@ -53,16 +54,60 @@ InstanceClassification ClassifierReasoner::run()
 
 	table.clear();
 
-	for (ReasoningList::iterator it = classifier.beginReasoning();
-				it != classifier.endReasoning(); ++it)
+	for (ReasoningList::iterator i = classifier.beginReasoning();
+				i != classifier.endReasoning(); ++i)
 	{
-		//TODO implement reasoning cycle
+		ClassList& classList = *i;
+		vector<ObjectList> candidates;
+
+		getCandidates(classList, candidates);
+		classify(classList, candidates, results);
+
 	}
 
 	return results;
 }
 
-bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass)
+void ClassifierReasoner::getCandidates(ClassList& classList,
+			vector<ObjectList>& candidates)
+{
+	for (ClassList::iterator j = classList.begin(); j != classList.end(); ++j)
+	{
+		candidates.resize(candidates.size() + 1);
+		FuzzyClass* fuzzyClass = j->second;
+		getClassCandidates(fuzzyClass, candidates.back());
+	}
+
+}
+
+void ClassifierReasoner::getClassCandidates(FuzzyClass* fuzzyClass,
+			ObjectList& candidates)
+{
+	ObjectList& list = getSuperClassCandidates(fuzzyClass);
+
+	for (ObjectList::iterator it = list.begin(); it != list.end(); ++it)
+	{
+		ObjectInstance* instance = *it;
+		if (hasClassVariables(*instance, *fuzzyClass))
+			candidates.push_back(instance);
+	}
+}
+
+ObjectList& ClassifierReasoner::getSuperClassCandidates(FuzzyClass* fuzzyClass)
+{
+	FuzzyClass* superClass = fuzzyClass->getSuperClass();
+	if (superClass)
+	{
+		return table[superClass->getName()];
+	}
+	else
+	{
+		return inputs;
+	}
+}
+
+bool ClassifierReasoner::hasClassVariables(ObjectInstance& instance,
+			FuzzyClass& fuzzyClass)
 {
 	const VariableList& variables = fuzzyClass.getVars();
 	for (VariableList::const_iterator it = variables.begin();
@@ -75,4 +120,13 @@ bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass)
 	}
 
 	return true;
+}
+
+
+void ClassifierReasoner::classify(ClassList& classList, std::vector<ObjectList>& candidates,
+				InstanceClassification& results)
+{
+
+
+
 }

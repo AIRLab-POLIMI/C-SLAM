@@ -39,4 +39,6 @@ struct ObjectInstance
 	ObjectProperties properties;
 };
 
+typedef std::vector<ObjectInstance*>  ObjectList;
+
 #endif /* CLASSIFICATIONDATA_H_ */
