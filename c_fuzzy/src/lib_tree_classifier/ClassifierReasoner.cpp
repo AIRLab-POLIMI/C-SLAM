@@ -36,7 +36,7 @@ ClassifierReasoner::ClassifierReasoner(FuzzyClassifier& classifier,
 		string className = i->first;
 		FuzzyClass& fuzzyClass = *i->second;
 		RuleBuilder builder(knowledgeBase);
-		table[className] = builder.buildClassRule(fuzzyClass);
+		genVarTable[className] = builder.buildClassRule(fuzzyClass);
 	}
 
 	reasoner = new FuzzyReasoner(knowledgeBase);

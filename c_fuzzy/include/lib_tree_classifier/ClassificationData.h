@@ -21,39 +21,22 @@
  *  along with c_fuzzy.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLASSIFIERREASONER_H_
-#define CLASSIFIERREASONER_H_
+#ifndef CLASSIFICATIONDATA_H_
+#define CLASSIFICATIONDATA_H_
 
-#include <map>
-#include <vector>
 #include <string>
+#include <vector>
+#include <map>
 
-#include "FuzzyKnowledgeBase.h"
-#include "FuzzyClassifier.h"
-#include "FuzzyReasoner.h"
-#include "VariableGenerator.h"
-#include "ClassificationData.h"
+typedef std::map<std::string, int> ObjectProperties;
+typedef std::map<std::string, ObjectProperties*> InputClasses;
+typedef std::map<std::string, double> ClassificationMap;
+typedef std::vector<ClassificationMap> InstanceClassification;
 
-
-class ClassifierReasoner
+struct ObjectInstance
 {
-private:
-	typedef std::map<std::string, int> ClassificationTable;
-public:
-	ClassifierReasoner(FuzzyClassifier& classifier,
-			FuzzyKnowledgeBase& knowledgeBase);
-
-	void addInstance(ObjectInstance* instance);
-	InstanceClassification runClassification();
-
-private:
-	FuzzyClassifier& classifier;
-	FuzzyKnowledgeBase& knowledgeBase;
-	std::vector<ObjectInstance*> inputs;
-	FuzzyReasoner* reasoner;
-	GeneratedVarTable genVarTable;
-
-	ClassificationTable table;
+	size_t id;
+	ObjectProperties properties;
 };
 
-#endif /* CLASSIFIERREASONER_H_ */
+#endif /* CLASSIFICATIONDATA_H_ */
