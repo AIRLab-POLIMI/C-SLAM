@@ -53,6 +53,11 @@ bool FuzzyClassifier::contains(string name)
 	return classList.count(name) == 1;
 }
 
+vector<string> FuzzyClassifier::getDependenciesNames(FuzzyClass* fuzzyClass)
+{
+	return dGraph.getDependencies(fuzzyClass->getName());
+}
+
 ClassList::iterator FuzzyClassifier::begin()
 {
 	return classList.begin();

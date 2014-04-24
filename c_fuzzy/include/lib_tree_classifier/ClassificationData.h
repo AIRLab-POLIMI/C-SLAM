@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 typedef std::map<std::string, int> ObjectProperties;
 typedef std::map<std::string, double> ClassificationMap;
@@ -41,19 +42,21 @@ struct ObjectInstance
 typedef std::vector<ObjectInstance*> ObjectList;
 typedef std::map<std::string, ObjectList> ObjectListMap;
 typedef std::map<std::string, ObjectInstance*> ObjectMap;
-typedef std::map<std::string, ObjectMap> DependencyMap;
+
+typedef std::set<size_t> TabuList;
 
 struct ClassificationData
 {
-	ClassificationData(ObjectMap& instanceMap, ObjectListMap& candidates,
+	ClassificationData(ObjectListMap& candidates,
 				InstanceClassification& results) :
-				instanceMap(instanceMap), candidates(candidates),
-				results(results)
+				candidates(candidates), results(results)
 	{
 	}
 
 	//local classification data
-	ObjectMap& instanceMap;
+	ObjectMap instanceMap;
+	ObjectMap dependencyMap;
+	TabuList tabuList;
 
 	//Global classification data
 	ObjectListMap& candidates;

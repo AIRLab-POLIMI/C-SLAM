@@ -58,17 +58,17 @@ InstanceClassification ClassifierReasoner::run()
 	{
 		ClassList& classList = *i;
 		ObjectListMap candidates;
+		DepLists dependencies;
 
-		getCandidates(classList, candidates);
-		classify(classList, candidates, results);
-
+		getCandidates(classList, candidates, dependencies);
+		classify(classList, dependencies, candidates, results);
 	}
 
 	return results;
 }
 
 void ClassifierReasoner::getCandidates(ClassList& classList,
-			ObjectListMap& candidates)
+			ObjectListMap& candidates, DepLists& deps)
 {
 	for (ClassList::iterator it = classList.begin(); it != classList.end();
 				++it)
@@ -76,6 +76,7 @@ void ClassifierReasoner::getCandidates(ClassList& classList,
 		string className = it->first;
 		FuzzyClass* fuzzyClass = it->second;
 		getClassCandidates(fuzzyClass, candidates[className]);
+		deps[className] = classifier.getDependenciesNames(fuzzyClass);
 	}
 
 }
@@ -122,16 +123,15 @@ bool ClassifierReasoner::hasClassVariables(ObjectInstance& instance,
 	return true;
 }
 
-void ClassifierReasoner::classify(ClassList& classList,
+void ClassifierReasoner::classify(ClassList& classList, DepLists& deps,
 			ObjectListMap& candidates, InstanceClassification& results)
 {
-	ObjectMap instanceMap;
-	ClassificationData data(instanceMap, candidates, results);
-	recursiveClassify(classList.begin(), classList.end(), data);
+	ClassificationData data(candidates, results);
+	recursiveClassify(classList.begin(), classList.end(), deps, data);
 }
 
 void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
-			ClassList::iterator end, ClassificationData& data)
+			ClassList::iterator end, DepLists& deps, ClassificationData& data)
 {
 
 	if (current != end)
@@ -142,14 +142,52 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 		for (ObjectList::iterator it = candidate.begin(); it != candidate.end();
 					++it)
 		{
-			data.instanceMap[currentClass] = *it;
-			recursiveClassify(current, end, data);
+			ObjectInstance* instance = *it;
+			if (hasBeenConsidered(instance, data))
+				continue;
+			data.instanceMap[currentClass] = instance;
+			recursiveClassify(current, end, deps, data);
+			noMoreConsidered(instance, data);
 		}
 
 	}
 	else
 	{
 		classifyInstances(data);
+	}
+}
+
+void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
+			ClassList::iterator end, DepList::iterator currentDep,
+			DepList::iterator endDep, DepLists& deps, ClassificationData& data)
+{
+	if (currentDep != endDep)
+	{
+		string dependencyName = *currentDep;
+		currentDep++;
+		ObjectList& dependencyObjects = table[dependencyName];
+
+		if (data.dependencyMap.count(dependencyName) == 0)
+		{
+			for (ObjectList::iterator it = dependencyObjects.begin();
+						it != dependencyObjects.end(); ++it)
+			{
+				ObjectInstance* instance = *it;
+				if (hasBeenConsidered(instance, data))
+					continue;
+				data.dependencyMap[dependencyName] = instance;
+				recursiveClassify(current, end, currentDep, endDep, deps, data);
+				noMoreConsidered(instance, data);
+			}
+		}
+		else
+		{
+			recursiveClassify(current, end, currentDep, endDep, deps, data);
+		}
+	}
+	else
+	{
+		recursiveClassify(current, end, deps, data);
 	}
 }
 
@@ -165,9 +203,51 @@ void ClassifierReasoner::classifyInstances(ClassificationData& data)
 
 		VariableGenerator* generator = genVarTable[className];
 
-		//generator->getGeneratedProperties()
-		//reasoner->addInput(className, genProperties);
+		ObjectMap commonMap = data.dependencyMap;
+
+		for(ObjectMap::iterator j = data.candidates.begin(); j != data.candidates.end(); ++j)
+		{
+			string objectName = j->first;
+			ObjectInstance* object = j->second;
+
+			if(commonMap.count(objectName) == 0)
+			{
+				commonMap[objectName] = object;
+			}
+		}
+
+
+		ObjectProperties genProperties = generator->getGeneratedProperties(commonMap);
+		reasoner->addInput(className, genProperties);
+
+		OutputTable result = reasoner->run();
+
+		//TODO add results to outpust and table
 
 	}
+}
+
+bool ClassifierReasoner::hasBeenConsidered(ObjectInstance* instance,
+			ClassificationData& data)
+{
+	TabuList& tabuList = data.tabuList;
+	size_t id = instance->id;
+	if (tabuList.count(id) != 0)
+	{
+		return true;
+	}
+	else
+	{
+		tabuList.insert(id);
+		return false;
+	}
+
+}
+
+void ClassifierReasoner::noMoreConsidered(ObjectInstance* instance, ClassificationData& data)
+{
+	TabuList& tabuList = data.tabuList;
+	size_t id = instance->id;
+	tabuList.erase(id);
 }
 

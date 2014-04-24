@@ -46,6 +46,7 @@ public:
 	void addClass(FuzzyClass* fuzzyClass);
 	void addDependency(FuzzyClass* fuzzyClass, FuzzyClass* dependency);
 	void addDependency(std::string fuzzyClass, std::string dependency);
+	NameList getDependencies(std::string className);
 	ReasoningGraph* buildReasoningGraph();
 	void drawGraph(std::ostream& out);
 

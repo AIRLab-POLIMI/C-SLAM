@@ -65,6 +65,20 @@ void DependencyGraph::addDependency(string fuzzyClass, string dependency)
 	add_edge(classId, dependencyId, graph);
 }
 
+DependencyGraph::NameList DependencyGraph::getDependencies(string className)
+{
+	NameList list;
+	size_t node = indexes[className];
+
+	BOOST_FOREACH(size_t i, adjacent_vertices(node, graph))
+	{
+		list.push_back(names[i]);
+	}
+
+	return list;
+
+}
+
 void DependencyGraph::drawGraph(std::ostream& out)
 {
 	//Ugly, but works...

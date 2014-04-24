@@ -42,6 +42,7 @@ public:
 	void addClass(FuzzyClass* fuzzyClass);
 	void addDependency(std::string fuzzyClass, std::string dependency);
 	bool contains(std::string name);
+	std::vector<std::string> getDependenciesNames(FuzzyClass* fuzzyClass);
 	void setupClassifier();
 	ClassList::iterator begin();
 	ClassList::iterator end();

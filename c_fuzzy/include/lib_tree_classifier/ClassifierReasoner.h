@@ -38,6 +38,8 @@ class ClassifierReasoner
 {
 private:
 	typedef std::map<std::string, ObjectList> ClassificationTable;
+	typedef std::vector<std::string> DepList;
+	typedef std::map<std::string, DepList> DepLists;
 public:
 	ClassifierReasoner(FuzzyClassifier& classifier,
 				FuzzyKnowledgeBase& knowledgeBase);
@@ -49,16 +51,20 @@ private:
 	void getClassCandidates(FuzzyClass* fuzzyClass, ObjectList& candidates);
 	ObjectList& getSuperClassCandidates(FuzzyClass* fuzzyClass);
 	bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass);
-	void getCandidates(ClassList& classList, ObjectListMap& candidates);
-
-	//dependency retrival
+	void getCandidates(ClassList& classList, ObjectListMap& candidates,
+				DepLists& deps);
 
 	//classification
-	void classify(ClassList& classList, ObjectListMap& candidates,
-				InstanceClassification& results);
+	void classify(ClassList& classList, DepLists& deps,
+				ObjectListMap& candidates, InstanceClassification& results);
 	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
-				ClassificationData& data);
+				DepLists& deps, ClassificationData& data);
+	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
+				DepList::iterator currentDep, DepList::iterator endDep,
+				DepLists& deps, ClassificationData& data);
 	void classifyInstances(ClassificationData& data);
+	bool hasBeenConsidered(ObjectInstance* instance, ClassificationData& data);
+	void noMoreConsidered(ObjectInstance* instance, ClassificationData& data);
 
 private:
 	FuzzyClassifier& classifier;
