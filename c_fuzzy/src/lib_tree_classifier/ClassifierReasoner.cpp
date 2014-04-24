@@ -24,7 +24,6 @@
 #include "ClassifierReasoner.h"
 
 #include "RuleBuilder.h"
-#include <iostream>
 
 using namespace std;
 
@@ -58,7 +57,7 @@ InstanceClassification ClassifierReasoner::run()
 				i != classifier.endReasoning(); ++i)
 	{
 		ClassList& classList = *i;
-		map<string, ObjectList> candidates;
+		ObjectListMap candidates;
 
 		getCandidates(classList, candidates);
 		classify(classList, candidates, results);
@@ -69,7 +68,7 @@ InstanceClassification ClassifierReasoner::run()
 }
 
 void ClassifierReasoner::getCandidates(ClassList& classList,
-			map<string, ObjectList>& candidates)
+			ObjectListMap& candidates)
 {
 	for (ClassList::iterator it = classList.begin(); it != classList.end();
 				++it)
@@ -124,43 +123,51 @@ bool ClassifierReasoner::hasClassVariables(ObjectInstance& instance,
 }
 
 void ClassifierReasoner::classify(ClassList& classList,
-			map<string, ObjectList>& candidates,
-			InstanceClassification& results)
+			ObjectListMap& candidates, InstanceClassification& results)
 {
-	vector<ObjectInstance*> instanceList;
-	recursiveClassify(classList.begin(), classList.end(), candidates,
-				instanceList, results);
+	ObjectMap instanceMap;
+	ClassificationData data(instanceMap, candidates, results);
+	recursiveClassify(classList.begin(), classList.end(), data);
 }
 
-void ClassifierReasoner::recursiveClassify(ClassList::iterator current, ClassList::iterator end,
-			map<string, ObjectList>& candidates,
-			vector<ObjectInstance*>& instanceList,
-			InstanceClassification& results)
+void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
+			ClassList::iterator end, ClassificationData& data)
 {
 
 	if (current != end)
 	{
 		string currentClass = current->first;
-		ObjectList& candidate = candidates[currentClass];
+		ObjectList& candidate = data.candidates[currentClass];
 		current++;
 		for (ObjectList::iterator it = candidate.begin(); it != candidate.end();
 					++it)
 		{
-			instanceList.push_back(*it);
-			recursiveClassify(current, end, candidates, instanceList, results);
-			instanceList.pop_back();
+			data.instanceMap[currentClass] = *it;
+			recursiveClassify(current, end, data);
 		}
 
 	}
 	else
 	{
-		classifyInstances(instanceList, results);
+		classifyInstances(data);
 	}
 }
 
-void ClassifierReasoner::classifyInstances(std::vector<ObjectInstance*>& instanceList,
-				InstanceClassification& results)
+void ClassifierReasoner::classifyInstances(ClassificationData& data)
 {
+	for (ObjectMap::iterator it = data.instanceMap.begin();
+				it != data.instanceMap.end(); ++it)
+	{
+		string className = it->first;
+		ObjectInstance* instance = it->second;
+		ObjectProperties& properties = instance->properties;
+		reasoner->addInput(className, properties);
 
+		VariableGenerator* generator = genVarTable[className];
+
+		//generator->getGeneratedProperties()
+		//reasoner->addInput(className, genProperties);
+
+	}
 }
 

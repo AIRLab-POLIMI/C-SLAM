@@ -49,19 +49,16 @@ private:
 	void getClassCandidates(FuzzyClass* fuzzyClass, ObjectList& candidates);
 	ObjectList& getSuperClassCandidates(FuzzyClass* fuzzyClass);
 	bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass);
-	void getCandidates(ClassList& classList,
-				std::map<std::string, ObjectList>& candidates);
+	void getCandidates(ClassList& classList, ObjectListMap& candidates);
+
+	//dependency retrival
 
 	//classification
-	void classify(ClassList& classList,
-				std::map<std::string, ObjectList>& candidates,
+	void classify(ClassList& classList, ObjectListMap& candidates,
 				InstanceClassification& results);
 	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
-				std::map<std::string, ObjectList>& candidates,
-				std::vector<ObjectInstance*>& instanceList,
-				InstanceClassification& results);
-	void classifyInstances(std::vector<ObjectInstance*>& instanceList,
-				InstanceClassification& results);
+				ClassificationData& data);
+	void classifyInstances(ClassificationData& data);
 
 private:
 	FuzzyClassifier& classifier;

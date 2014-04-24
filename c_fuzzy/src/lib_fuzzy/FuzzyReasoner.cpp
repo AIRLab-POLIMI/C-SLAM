@@ -31,13 +31,13 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 	OutputTable results;
 
 	for (AggregationMap::iterator k = aggregatedData.begin();
-			k != aggregatedData.end(); ++k)
+				k != aggregatedData.end(); ++k)
 	{
 		string nameSpace = k->first;
 		DomainAggregationMap& domainMap = k->second;
 
 		for (DomainAggregationMap::iterator i = domainMap.begin();
-				i != domainMap.end(); ++i)
+					i != domainMap.end(); ++i)
 		{
 			string output = i->first;
 			DataMap& dataMap = i->second;
@@ -72,7 +72,8 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 }
 
 FuzzyReasoner::FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
-		knowledgeBase(knowledgeBase), variableMasks(knowledgeBase.getMasks())
+			knowledgeBase(knowledgeBase),
+			variableMasks(knowledgeBase.getMasks())
 {
 	rulesMask.resize(knowledgeBase.size(), false);
 	inputMask.resize(variableMasks.size(), false);
@@ -81,15 +82,29 @@ FuzzyReasoner::FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase) :
 	inputMask.reset();
 }
 
-void FuzzyReasoner::addInput(string nameSpace, string name, int value)
+void FuzzyReasoner::addInput(Variable variable, int value)
 {
-	Variable variable(nameSpace, name);
 	if (variableMasks.contains(variable))
 	{
 		size_t index = variableMasks.getMaskIndex(variable);
-		inputs[nameSpace][name] = value;
+		inputs[variable.nameSpace][variable.domain] = value;
 		inputMask.set(index, true);
 	}
+}
+
+void FuzzyReasoner::addInput(string nameSpace, InputMembers& members)
+{
+	for(InputMembers::iterator it = members.begin(); it != members.end(); ++it)
+	{
+		Variable input(nameSpace, it->first);
+		addInput(input, it->second);
+	}
+}
+
+void FuzzyReasoner::addInput(string nameSpace, string name, int value)
+{
+	Variable variable(nameSpace, name);
+	addInput(variable, value);
 }
 
 void FuzzyReasoner::addInput(string name, int value)

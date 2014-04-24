@@ -29,7 +29,6 @@
 #include <map>
 
 typedef std::map<std::string, int> ObjectProperties;
-typedef std::map<std::string, ObjectProperties*> InputClasses;
 typedef std::map<std::string, double> ClassificationMap;
 typedef std::vector<ClassificationMap> InstanceClassification;
 
@@ -39,6 +38,26 @@ struct ObjectInstance
 	ObjectProperties properties;
 };
 
-typedef std::vector<ObjectInstance*>  ObjectList;
+typedef std::vector<ObjectInstance*> ObjectList;
+typedef std::map<std::string, ObjectList> ObjectListMap;
+typedef std::map<std::string, ObjectInstance*> ObjectMap;
+typedef std::map<std::string, ObjectMap> DependencyMap;
+
+struct ClassificationData
+{
+	ClassificationData(ObjectMap& instanceMap, ObjectListMap& candidates,
+				InstanceClassification& results) :
+				instanceMap(instanceMap), candidates(candidates),
+				results(results)
+	{
+	}
+
+	//local classification data
+	ObjectMap& instanceMap;
+
+	//Global classification data
+	ObjectListMap& candidates;
+	InstanceClassification& results;
+};
 
 #endif /* CLASSIFICATIONDATA_H_ */

@@ -45,6 +45,12 @@ public:
 	OutputTable defuzzify(AggregationMap& aggregatedData);
 };
 
+
+/**
+ * Typedef shortcut for class inputs
+ */
+typedef std::map<std::string, int> InputMembers;
+
 /**
  * The class implementing the reasoner.
  *
@@ -54,6 +60,9 @@ class FuzzyReasoner
 {
 public:
 	FuzzyReasoner(FuzzyKnowledgeBase& knowledgeBase);
+
+	void addInput(Variable variable, int value);
+	void addInput(std::string nameSpace, InputMembers& members);
 	void addInput(std::string nameSpace, std::string name, int value);
 	void addInput(std::string name, int value);
 	OutputTable run();

@@ -56,7 +56,7 @@ string VariableGenerator::addInverseOnVariable(Variable min, Variable max,
 	return newVar;
 }
 
-ObjectProperties VariableGenerator::getGeneratedProperties(InputClasses& inputs)
+ObjectProperties VariableGenerator::getGeneratedProperties(ObjectMap& inputs)
 {
 	ObjectProperties generated;
 	generateMatches(inputs, generated);
@@ -67,7 +67,7 @@ ObjectProperties VariableGenerator::getGeneratedProperties(InputClasses& inputs)
 
 }
 
-void VariableGenerator::generateMatches(InputClasses& inputs,
+void VariableGenerator::generateMatches(ObjectMap& inputs,
 			ObjectProperties& generated)
 {
 	for (MatchVarMap::iterator it = matchVars.begin(); it != matchVars.end();
@@ -84,7 +84,7 @@ void VariableGenerator::generateMatches(InputClasses& inputs,
 	}
 }
 
-void VariableGenerator::generateOns(InputClasses& inputs,
+void VariableGenerator::generateOns(ObjectMap& inputs,
 			ObjectProperties& generated)
 {
 	for (OnVarMap::iterator it = onVars.begin(); it != onVars.end(); ++it)
@@ -102,7 +102,7 @@ void VariableGenerator::generateOns(InputClasses& inputs,
 	}
 }
 
-void VariableGenerator::generateInverses(InputClasses& inputs,
+void VariableGenerator::generateInverses(ObjectMap& inputs,
 			ObjectProperties& generated)
 {
 	for (InverseVarMap::iterator it = inverseVars.begin();
@@ -121,12 +121,12 @@ void VariableGenerator::generateInverses(InputClasses& inputs,
 	}
 }
 
-int VariableGenerator::getValue(InputClasses& inputs, Variable var)
+int VariableGenerator::getValue(ObjectMap& inputs, Variable var)
 {
 	string nameSpace = var.nameSpace;
 	string domain = var.domain;
 
-	ObjectProperties& properties = *inputs[nameSpace];
+	ObjectProperties& properties = inputs[nameSpace]->properties;
 
 	return properties[domain];
 }
