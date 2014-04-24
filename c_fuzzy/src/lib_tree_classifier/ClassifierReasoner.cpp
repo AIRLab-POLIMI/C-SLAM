@@ -205,19 +205,20 @@ void ClassifierReasoner::classifyInstances(ClassificationData& data)
 
 		ObjectMap commonMap = data.dependencyMap;
 
-		for(ObjectMap::iterator j = data.candidates.begin(); j != data.candidates.end(); ++j)
+		for (ObjectMap::iterator j = data.instanceMap.begin();
+					j != data.instanceMap.end(); ++j)
 		{
 			string objectName = j->first;
 			ObjectInstance* object = j->second;
 
-			if(commonMap.count(objectName) == 0)
+			if (commonMap.count(objectName) == 0)
 			{
 				commonMap[objectName] = object;
 			}
 		}
 
-
-		ObjectProperties genProperties = generator->getGeneratedProperties(commonMap);
+		ObjectProperties genProperties = generator->getGeneratedProperties(
+					commonMap);
 		reasoner->addInput(className, genProperties);
 
 		OutputTable result = reasoner->run();
@@ -244,7 +245,8 @@ bool ClassifierReasoner::hasBeenConsidered(ObjectInstance* instance,
 
 }
 
-void ClassifierReasoner::noMoreConsidered(ObjectInstance* instance, ClassificationData& data)
+void ClassifierReasoner::noMoreConsidered(ObjectInstance* instance,
+			ClassificationData& data)
 {
 	TabuList& tabuList = data.tabuList;
 	size_t id = instance->id;

@@ -24,11 +24,13 @@
 #include "RuleBuilder.h"
 
 #include "FuzzyOperator.h"
+#include "FuzzyMFEngine.h"
+#include "FuzzyRule.h"
 
 using namespace std;
 
 RuleBuilder::RuleBuilder(FuzzyKnowledgeBase& knowledgeBase) :
-		knowledgeBase(knowledgeBase), generator(NULL)
+			knowledgeBase(knowledgeBase), generator(NULL)
 {
 }
 
@@ -38,18 +40,21 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 	generator = new VariableGenerator();
 
 	Node* lhs;
+	Node* rhs;
+
+	vector<Variable> variables;
 
 	FuzzyFeatureList& features = *fuzzyClass.getfeatureList();
 
 	FuzzyFeatureList::reverse_iterator start = features.rbegin();
 	FuzzyFeatureList::reverse_iterator end = features.rend();
 
-	for (FuzzyFeatureList::reverse_iterator i = start;
-			i != end; ++i)
+	for (FuzzyFeatureList::reverse_iterator i = start; i != end; ++i)
 	{
 		FuzzyFeature* feature = *i;
-		Node* featureRule = buildFeatureRule(*feature);
-
+		FeatureBuilt featureBuilt = buildFeatureRule(*feature);
+		Node* featureRule = featureBuilt.first;
+		variables.push_back(featureBuilt.second);
 		if (i == start)
 		{
 			lhs = featureRule;
@@ -61,43 +66,51 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 
 	}
 
-	//FIXME add rule...
+	rhs = buildRHS();
+	Node* rule = new FuzzyRule(lhs, rhs);
+
+	knowledgeBase.addRule(rule, variables);
 
 	return generator;
 }
 
-Node* RuleBuilder::buildFeatureRule(FuzzyFeature& feature)
+RuleBuilder::FeatureBuilt RuleBuilder::buildFeatureRule(FuzzyFeature& feature)
 {
 	switch (feature.getFeatureType())
 	{
 		case SIM_F:
 			return buildSimpleFeatureRule(
-					static_cast<FuzzySimpleFeature&>(feature));
+						static_cast<FuzzySimpleFeature&>(feature));
 		case SIM_R:
 			return buildSimpleRelationRule(
-					static_cast<FuzzySimpleRelation&>(feature));
+						static_cast<FuzzySimpleRelation&>(feature));
 		case COM_R:
 			return buildComplexRelationRule(
-					static_cast<FuzzyComplexRelation&>(feature));
+						static_cast<FuzzyComplexRelation&>(feature));
 		case INV_R:
 			return buildInverseRelationRule(
-					static_cast<FuzzyInverseRelation&>(feature));
+						static_cast<FuzzyInverseRelation&>(feature));
 		default:
-			return NULL;
+			return FeatureBuilt(NULL, Variable("", ""));
 	}
 }
 
-Node* RuleBuilder::buildSimpleFeatureRule(FuzzySimpleFeature& feature)
+RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleFeatureRule(
+			FuzzySimpleFeature& feature)
 {
 	string varName = feature.getVariables().back();
 	string label = feature.getFuzzyLabel();
 
-	return new FuzzyIs(knowledgeBase.getNamespaceTable(), currentClass, varName,
-			label);
+	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), currentClass,
+				varName, label);
+	Variable var(currentClass, varName);
+
+	return FeatureBuilt(is, var);
 
 }
 
-Node* RuleBuilder::buildSimpleRelationRule(FuzzySimpleRelation& relation)
+RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleRelationRule(
+			FuzzySimpleRelation& relation)
 {
 	string varName = relation.getVariables().back();
 	string label = relation.getFuzzyLabel();
@@ -108,19 +121,23 @@ Node* RuleBuilder::buildSimpleRelationRule(FuzzySimpleRelation& relation)
 	Variable target(relatedClass, relatedVar);
 	string generatedVar = generator->addMatchVariable(variable, target);
 
+	Variable var(currentClass, generatedVar);
+
 	if (!label.empty())
 	{
-		return knowledgeBase.getPredicateInstance(currentClass, label,
-				Variable(currentClass, generatedVar));
+		Node* node = knowledgeBase.getPredicateInstance(currentClass, label,
+					Variable(currentClass, generatedVar));
+		return FeatureBuilt(node, var);
 	}
 	else
 	{
 		//TODO implement
-		return NULL;
+		return FeatureBuilt(NULL, var);
 	}
 }
 
-Node* RuleBuilder::buildComplexRelationRule(FuzzyComplexRelation& relation)
+RuleBuilder::FeatureBuilt RuleBuilder::buildComplexRelationRule(
+			FuzzyComplexRelation& relation)
 {
 	string varMin = relation.getVariables()[0];
 	string varMax = relation.getVariables()[1];
@@ -133,22 +150,27 @@ Node* RuleBuilder::buildComplexRelationRule(FuzzyComplexRelation& relation)
 	Variable target(relatedClass, relatedVar);
 	string generatedVar = generator->addOnVariable(target, min, max);
 
+	Variable var(currentClass, generatedVar);
+
 	if (!label.empty())
 	{
 
-		return knowledgeBase.getPredicateInstance(currentClass, label,
-				Variable(currentClass, generatedVar));
+		Node* node = knowledgeBase.getPredicateInstance(currentClass, label,
+					Variable(currentClass, generatedVar));
+
+		return FeatureBuilt(node, var);
 	}
 	else
 	{
 		//TODO implement
-		return NULL;
+		return FeatureBuilt(NULL, var);
 	}
 }
 
-Node* RuleBuilder::buildInverseRelationRule(FuzzyInverseRelation& relation)
+RuleBuilder::FeatureBuilt RuleBuilder::buildInverseRelationRule(
+			FuzzyInverseRelation& relation)
 {
-	string var = relation.getRelationVariable();
+	string variable = relation.getRelationVariable();
 	string label = relation.getFuzzyLabel();
 
 	string relatedClass = relation.getRelationObject();
@@ -157,17 +179,38 @@ Node* RuleBuilder::buildInverseRelationRule(FuzzyInverseRelation& relation)
 
 	Variable min(relatedClass, varMin);
 	Variable max(relatedClass, varMax);
-	Variable target(currentClass, var);
+	Variable target(currentClass, variable);
 	string generatedVar = generator->addInverseOnVariable(min, max, target);
+
+	Variable var(currentClass, generatedVar);
 
 	if (!label.empty())
 	{
-		return knowledgeBase.getPredicateInstance(currentClass, label,
-				Variable(currentClass, generatedVar));
+		Node* node = knowledgeBase.getPredicateInstance(currentClass, label,
+					Variable(currentClass, generatedVar));
+
+		return FeatureBuilt(node, var);
 	}
 	else
 	{
 		//TODO implement
-		return NULL;
+		return FeatureBuilt(NULL, var);
 	}
 }
+
+Node* RuleBuilder::buildRHS()
+{
+	MFTable* mfTable;
+	MFTable& table = *mfTable;
+	table["True"] = FuzzyMFEngine::buildSgt(1);
+
+	DomainTable* domain = new DomainTable();
+	DomainTable& dTable = *domain;
+	dTable[currentClass] = mfTable;
+
+	knowledgeBase.addDomain(currentClass, domain);
+
+	return new FuzzyAssignment(knowledgeBase.getNamespaceTable(), currentClass,
+				currentClass, "True");
+}
+

@@ -64,7 +64,7 @@ void FuzzyPredicateEngine::buildDomain(std::string templateVar)
 		ss << "Error: redefinition of template variable " << templateVar;
 		if (!currentNamespace.empty())
 			ss << " in class " << currentNamespace;
-		throw logic_error(ss.str());
+		throw runtime_error(ss.str());
 	}
 }
 
@@ -91,7 +91,6 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
 		Node* predicate = data.definition->instantiate(variable);
-		//TODO controllare
 		DomainTable* domains = instantiatePredicateVar(nameSpace,
 				data.templateVar, variable.domain);
 		return PredicateInstance(predicate, domains);
@@ -106,7 +105,7 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 	}
 
 	ss << predicate << "' doesn't exists";
-	throw logic_error(ss.str());
+	throw runtime_error(ss.str());
 }
 
 PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string predicate,

@@ -64,6 +64,11 @@ void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
 
 }
 
+void FuzzyKnowledgeBase::addDomain(std::string nameSpace, DomainTable* domain)
+{
+	variables->addDomains(nameSpace, domain);
+}
+
 void FuzzyKnowledgeBase::deleteRules()
 {
 	for (vector<Node*>::iterator it = knowledgeBase->begin();

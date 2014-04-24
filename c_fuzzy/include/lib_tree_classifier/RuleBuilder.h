@@ -25,6 +25,7 @@
 #define RULEBUILDER_H_
 
 #include <string>
+#include <utility>
 
 #include "Node.h"
 #include "FuzzyKnowledgeBase.h"
@@ -40,16 +41,19 @@ class FuzzyInverseRelation;
 
 class RuleBuilder
 {
+private:
+	typedef std::pair<Node*, Variable> FeatureBuilt;
 public:
 	RuleBuilder(FuzzyKnowledgeBase& knowledgeBase);
 	VariableGenerator* buildClassRule(FuzzyClass& fuzzyClass);
 
 private:
-	Node* buildFeatureRule(FuzzyFeature& feature);
-	Node* buildSimpleFeatureRule(FuzzySimpleFeature& feature);
-	Node* buildSimpleRelationRule(FuzzySimpleRelation& relation);
-	Node* buildComplexRelationRule(FuzzyComplexRelation& relation);
-	Node* buildInverseRelationRule(FuzzyInverseRelation& relation);
+	FeatureBuilt buildFeatureRule(FuzzyFeature& feature);
+	FeatureBuilt buildSimpleFeatureRule(FuzzySimpleFeature& feature);
+	FeatureBuilt buildSimpleRelationRule(FuzzySimpleRelation& relation);
+	FeatureBuilt buildComplexRelationRule(FuzzyComplexRelation& relation);
+	FeatureBuilt buildInverseRelationRule(FuzzyInverseRelation& relation);
+	Node* buildRHS();
 
 private:
 	FuzzyKnowledgeBase& knowledgeBase;

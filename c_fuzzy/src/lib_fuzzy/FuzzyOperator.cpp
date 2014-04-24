@@ -130,7 +130,7 @@ FuzzyTemplateIs::FuzzyTemplateIs(NamespaceTable& lookUpTable,
 
 double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
 {
-	throw logic_error("Evaluation of a non-instantiated template");
+	throw runtime_error("Evaluation of a non-instantiated template");
 }
 
 Node* FuzzyTemplateIs::instantiate(Variable variable)

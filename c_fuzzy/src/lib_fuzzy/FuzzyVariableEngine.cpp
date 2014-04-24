@@ -60,7 +60,7 @@ void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
 	{
 		stringstream ss;
 		ss << "Error: non existing class " << nameSpace;
-		throw logic_error(ss.str());
+		throw runtime_error(ss.str());
 	}
 
 	for (DomainTable::iterator it = domain->begin(); it != domain->end(); ++it)

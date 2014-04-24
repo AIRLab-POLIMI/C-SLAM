@@ -65,10 +65,4 @@ int main(int argc, char *argv[])
 		cout << e.what() << endl;
 		cout << "Check the input file an try again" << endl;
 	}
-	catch (const std::logic_error& e)
-	{
-		cout << e.what() << endl;
-		cout << "Check the input file an try again" << endl;
-	}
-
 }
