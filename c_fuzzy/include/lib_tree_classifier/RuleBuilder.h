@@ -29,6 +29,7 @@
 
 #include "Node.h"
 #include "FuzzyKnowledgeBase.h"
+#include "FuzzyMFEngine.h"
 #include "FuzzyClass.h"
 
 #include "VariableGenerator.h"
@@ -53,7 +54,12 @@ private:
 	FeatureBuilt buildSimpleRelationRule(FuzzySimpleRelation& relation);
 	FeatureBuilt buildComplexRelationRule(FuzzyComplexRelation& relation);
 	FeatureBuilt buildInverseRelationRule(FuzzyInverseRelation& relation);
+	FeatureBuilt buildFeature(std::string generatedVar, std::string label,
+				bool simple);
 	Node* buildRHS();
+	Node* buildCrispMatch(Variable var);
+	Node* buildCrispOn(Variable var);
+	void addDomain(std::string domain, std::string label, FuzzyMF* table);
 
 private:
 	FuzzyKnowledgeBase& knowledgeBase;

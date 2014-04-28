@@ -24,7 +24,6 @@
 #include "RuleBuilder.h"
 
 #include "FuzzyOperator.h"
-#include "FuzzyMFEngine.h"
 #include "FuzzyRule.h"
 
 using namespace std;
@@ -122,18 +121,9 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleRelationRule(
 	string generatedVar = generator->addMatchVariable(variable, target);
 
 	Variable var(currentClass, generatedVar);
+	Node* node;
 
-	if (!label.empty())
-	{
-		Node* node = knowledgeBase.getPredicateInstance(currentClass, label,
-					Variable(currentClass, generatedVar));
-		return FeatureBuilt(node, var);
-	}
-	else
-	{
-		//TODO implement
-		return FeatureBuilt(NULL, var);
-	}
+	return buildFeature(generatedVar, label, true);
 }
 
 RuleBuilder::FeatureBuilt RuleBuilder::buildComplexRelationRule(
@@ -150,21 +140,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildComplexRelationRule(
 	Variable target(relatedClass, relatedVar);
 	string generatedVar = generator->addOnVariable(target, min, max);
 
-	Variable var(currentClass, generatedVar);
-
-	if (!label.empty())
-	{
-
-		Node* node = knowledgeBase.getPredicateInstance(currentClass, label,
-					Variable(currentClass, generatedVar));
-
-		return FeatureBuilt(node, var);
-	}
-	else
-	{
-		//TODO implement
-		return FeatureBuilt(NULL, var);
-	}
+	return buildFeature(generatedVar, label, false);
 }
 
 RuleBuilder::FeatureBuilt RuleBuilder::buildInverseRelationRule(
@@ -182,35 +158,68 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildInverseRelationRule(
 	Variable target(currentClass, variable);
 	string generatedVar = generator->addInverseOnVariable(min, max, target);
 
+	return buildFeature(generatedVar, label, false);
+}
+
+RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string generatedVar,
+			string label, bool simple)
+{
 	Variable var(currentClass, generatedVar);
+	Node* node;
 
 	if (!label.empty())
 	{
-		Node* node = knowledgeBase.getPredicateInstance(currentClass, label,
-					Variable(currentClass, generatedVar));
-
-		return FeatureBuilt(node, var);
+		node = knowledgeBase.getPredicateInstance(currentClass, label, var);
+	}
+	else if(simple)
+	{
+		node = buildCrispMatch(var);
 	}
 	else
 	{
-		//TODO implement
-		return FeatureBuilt(NULL, var);
+		node = buildCrispOn(var);
 	}
+
+	return FeatureBuilt(node, var);
 }
 
 Node* RuleBuilder::buildRHS()
 {
-	MFTable* mfTable;
-	MFTable& table = *mfTable;
-	table["True"] = FuzzyMFEngine::buildSgt(1);
-
-	DomainTable* domain = new DomainTable();
-	DomainTable& dTable = *domain;
-	dTable[currentClass] = mfTable;
-
-	knowledgeBase.addDomain(currentClass, domain);
-
+	addDomain(currentClass, "True", FuzzyMFEngine::buildSgt(1));
 	return new FuzzyAssignment(knowledgeBase.getNamespaceTable(), currentClass,
 				currentClass, "True");
+}
+
+Node* RuleBuilder::buildCrispMatch(Variable var)
+{
+	addDomain(var.domain, "Perfect", FuzzyMFEngine::buildSgt(0));
+
+	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), var.nameSpace,
+				var.domain, "Perfect");
+
+	return is;
+}
+
+Node* RuleBuilder::buildCrispOn(Variable var)
+{
+	addDomain(var.domain, "Into", FuzzyMFEngine::buildInt(0, 100));
+
+	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), var.nameSpace,
+				var.domain, "Into");
+
+	return is;
+}
+
+void RuleBuilder::addDomain(string domain, string label, FuzzyMF* fuzzyMF)
+{
+	MFTable* mfTable;
+	MFTable & table = *mfTable;
+	table[label] = fuzzyMF;
+
+	DomainTable* domainTable = new DomainTable();
+	DomainTable& dTable = *domainTable;
+	dTable[currentClass] = mfTable;
+
+	knowledgeBase.addDomain(currentClass, domainTable);
 }
 
