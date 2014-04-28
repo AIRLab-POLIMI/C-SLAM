@@ -193,6 +193,12 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 
 void ClassifierReasoner::classifyInstances(ClassificationData& data)
 {
+	setupReasoning(data);
+	runReasoning(data);
+}
+
+void ClassifierReasoner::setupReasoning(ClassificationData& data)
+{
 	for (ObjectMap::iterator it = data.instanceMap.begin();
 				it != data.instanceMap.end(); ++it)
 	{
@@ -200,30 +206,39 @@ void ClassifierReasoner::classifyInstances(ClassificationData& data)
 		ObjectInstance* instance = it->second;
 		ObjectProperties& properties = instance->properties;
 		reasoner->addInput(className, properties);
-
 		VariableGenerator* generator = genVarTable[className];
-
 		ObjectMap commonMap = data.dependencyMap;
-
 		for (ObjectMap::iterator j = data.instanceMap.begin();
 					j != data.instanceMap.end(); ++j)
 		{
 			string objectName = j->first;
 			ObjectInstance* object = j->second;
-
 			if (commonMap.count(objectName) == 0)
 			{
 				commonMap[objectName] = object;
 			}
 		}
-
 		ObjectProperties genProperties = generator->getGeneratedProperties(
 					commonMap);
 		reasoner->addInput(className, genProperties);
+	}
+}
 
-		OutputTable result = reasoner->run();
+void ClassifierReasoner::runReasoning(ClassificationData& data)
+{
+	OutputTable result = reasoner->run();
+	for (ObjectMap::iterator i = data.instanceMap.begin();
+				i != data.instanceMap.end(); ++i)
+	{
+		string className = i->first;
+		ObjectInstance* instance = i->second;
+		double truthValue = result[className][className].truth;
+		ClassificationMap& instanceClassifications = data.results[instance->id];
 
-		//TODO add results to outpust and table
+		if (truthValue > 0
+			&& (instanceClassifications.count(className) == 0
+				|| instanceClassifications[className] < truthValue))
+			instanceClassifications[className] = truthValue;
 
 	}
 }

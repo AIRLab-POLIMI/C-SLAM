@@ -212,8 +212,8 @@ Node* RuleBuilder::buildCrispOn(Variable var)
 
 void RuleBuilder::addDomain(string domain, string label, FuzzyMF* fuzzyMF)
 {
-	MFTable* mfTable;
-	MFTable & table = *mfTable;
+	MFTable* mfTable = new MFTable();
+	MFTable& table = *mfTable;
 	table[label] = fuzzyMF;
 
 	DomainTable* domainTable = new DomainTable();

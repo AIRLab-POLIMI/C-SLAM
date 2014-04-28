@@ -65,6 +65,8 @@ private:
 	void classifyInstances(ClassificationData& data);
 	bool hasBeenConsidered(ObjectInstance* instance, ClassificationData& data);
 	void noMoreConsidered(ObjectInstance* instance, ClassificationData& data);
+	void setupReasoning(ClassificationData& data);
+	void runReasoning(ClassificationData& data);
 
 private:
 	FuzzyClassifier& classifier;
