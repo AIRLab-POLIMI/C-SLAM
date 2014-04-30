@@ -37,7 +37,7 @@
 class ClassifierReasoner
 {
 private:
-	typedef std::map<std::string, ObjectList> ClassificationTable;
+	//typedef std::map<std::string, ObjectList> ClassificationTable;
 	typedef std::vector<std::string> DepList;
 	typedef std::map<std::string, DepList> DepLists;
 public:
@@ -67,6 +67,7 @@ private:
 	void noMoreConsidered(ObjectInstance* instance, ClassificationData& data);
 	void setupReasoning(ClassificationData& data);
 	void runReasoning(ClassificationData& data);
+	ObjectList& getDependencyObjects(std::string& dependencyName, ClassificationData& data);
 
 private:
 	FuzzyClassifier& classifier;
@@ -75,7 +76,7 @@ private:
 	FuzzyReasoner* reasoner;
 	GeneratedVarTable genVarTable;
 
-	ClassificationTable table;
+	ObjectListMap table;
 };
 
 #endif /* CLASSIFIERREASONER_H_ */

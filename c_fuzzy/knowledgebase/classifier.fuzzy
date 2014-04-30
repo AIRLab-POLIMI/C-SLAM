@@ -40,7 +40,7 @@ CLASS ConcentricCircle
 		y;
 	END_VARIABLES
 	
-	ConcentricCircle.x match x degree Good;
+	ConcentricCircle.x match x degree Perfect;
 	ConcentricCircle.y match y degree Perfect;	
 
 END_CLASS

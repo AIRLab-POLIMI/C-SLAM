@@ -56,36 +56,38 @@ string VariableGenerator::addInverseOnVariable(Variable min, Variable max,
 	return newVar;
 }
 
-ObjectProperties VariableGenerator::getGeneratedProperties(ObjectMap& inputs)
+ObjectProperties VariableGenerator::getGeneratedProperties(
+			ObjectMap& candidates, ObjectMap& dependencies)
 {
 	ObjectProperties generated;
-	generateMatches(inputs, generated);
-	generateOns(inputs, generated);
-	generateInverses(inputs, generated);
+	generateMatches(candidates, dependencies, generated);
+	generateOns(candidates, dependencies, generated);
+	generateInverses(candidates, dependencies, generated);
 
 	return generated;
 
 }
 
-void VariableGenerator::generateMatches(ObjectMap& inputs,
-			ObjectProperties& generated)
+void VariableGenerator::generateMatches(ObjectMap& candidates,
+			ObjectMap& dependencies, ObjectProperties& generated)
 {
 	for (MatchVarMap::iterator it = matchVars.begin(); it != matchVars.end();
 				++it)
 	{
+
 		string varName = it->first;
 		MatchVar& match = it->second;
 		Variable& var = match.var;
 		Variable& target = match.target;
 
-		int value = abs(getValue(inputs, var) - getValue(inputs, target));
+		int value = abs(getValue(candidates, var) - getValue(dependencies, target));
 
 		generated[varName] = value;
 	}
 }
 
-void VariableGenerator::generateOns(ObjectMap& inputs,
-			ObjectProperties& generated)
+void VariableGenerator::generateOns(ObjectMap& candidates,
+			ObjectMap& dependencies, ObjectProperties& generated)
 {
 	for (OnVarMap::iterator it = onVars.begin(); it != onVars.end(); ++it)
 	{
@@ -95,15 +97,15 @@ void VariableGenerator::generateOns(ObjectMap& inputs,
 		Variable& min = on.min;
 		Variable& max = on.max;
 
-		int value = 100 * getValue(inputs, var)
-					/ abs(getValue(inputs, max) - getValue(inputs, min));
+		int value = 100 * getValue(dependencies, var)
+			/ abs(getValue(candidates, max) - getValue(candidates, min));
 
 		generated[varName] = value;
 	}
 }
 
-void VariableGenerator::generateInverses(ObjectMap& inputs,
-			ObjectProperties& generated)
+void VariableGenerator::generateInverses(ObjectMap& candidates,
+			ObjectMap& dependencies, ObjectProperties& generated)
 {
 	for (InverseVarMap::iterator it = inverseVars.begin();
 				it != inverseVars.end(); ++it)
@@ -114,8 +116,8 @@ void VariableGenerator::generateInverses(ObjectMap& inputs,
 		Variable& min = inverse.min;
 		Variable& max = inverse.max;
 
-		int value = 100 * getValue(inputs, target)
-					/ abs(getValue(inputs, max) - getValue(inputs, min));
+		int value = 100 * getValue(candidates, target)
+			/ abs(getValue(dependencies, max) - getValue(dependencies, min));
 
 		generated[varName] = value;
 	}

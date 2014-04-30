@@ -30,6 +30,21 @@
 
 using namespace std;
 
+void addInstances(ClassifierReasoner& reasoner)
+{
+	ObjectInstance* instance = new ObjectInstance();
+	instance->id = 0;
+	instance->properties["x"] = 10;
+	instance->properties["y"] = 10;
+	reasoner.addInstance(instance);
+
+	instance = new ObjectInstance();
+	instance->id = 1;
+	instance->properties["x"] = 20;
+	instance->properties["y"] = 20;
+	reasoner.addInstance(instance);
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -52,11 +67,12 @@ int main(int argc, char *argv[])
 		knowledgeBase = kbBuilder.createKnowledgeBase();
 		cout << "Parsing done" << endl;
 
-
 		cout << "Starting classifier reasoner" << endl;
 		ClassifierReasoner reasoner(*classifier, *knowledgeBase);
-		reasoner.run();
-		cout << "Reasoning done" << endl;
+		addInstances(reasoner);
+		const InstanceClassification& classifications = reasoner.run();
+		cout << "Reasoning done, results: " << endl;
+		cout << classifications;
 
 		delete classifier;
 	}

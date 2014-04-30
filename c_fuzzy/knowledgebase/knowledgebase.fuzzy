@@ -25,11 +25,11 @@ END_FUZZIFY_CLASS
 FUZZIFY_CLASS ConcentricCircle
 	FUZZIFY_PREDICATE ?y
 		Perfect := (?y is Perfect);
-		Good := (?y is Good) or (?y is Perfect);
+		Good := (?y is Good);
 			
 		FUZZIFY ?y
-			Good := tol(30, 40); 
-			Perfect := tol(10, 20);
+			Good := tol(5, 10); 
+			Perfect := tol(0, 5);
 		END_FUZZIFY
 		
 	END_FUZZIFY_PREDICATE

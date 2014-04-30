@@ -146,7 +146,9 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 			if (hasBeenConsidered(instance, data))
 				continue;
 			data.instanceMap[currentClass] = instance;
-			recursiveClassify(current, end, deps, data);
+			DepList& instanceDependencies = deps[currentClass];
+			recursiveClassify(current, end, instanceDependencies.begin(),
+						instanceDependencies.end(), deps, data);
 			noMoreConsidered(instance, data);
 		}
 
@@ -165,7 +167,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 	{
 		string dependencyName = *currentDep;
 		currentDep++;
-		ObjectList& dependencyObjects = table[dependencyName];
+		ObjectList& dependencyObjects = getDependencyObjects(dependencyName, data);
 
 		if (data.dependencyMap.count(dependencyName) == 0)
 		{
@@ -207,20 +209,20 @@ void ClassifierReasoner::setupReasoning(ClassificationData& data)
 		ObjectProperties& properties = instance->properties;
 		reasoner->addInput(className, properties);
 		VariableGenerator* generator = genVarTable[className];
-		ObjectMap commonMap = data.dependencyMap;
-		for (ObjectMap::iterator j = data.instanceMap.begin();
-					j != data.instanceMap.end(); ++j)
-		{
-			string objectName = j->first;
-			ObjectInstance* object = j->second;
-			if (commonMap.count(objectName) == 0)
-			{
-				commonMap[objectName] = object;
-			}
-		}
-		ObjectProperties genProperties = generator->getGeneratedProperties(
-					commonMap);
+		ObjectProperties genProperties = generator->getGeneratedProperties(data.instanceMap, data.dependencyMap);
 		reasoner->addInput(className, genProperties);
+	}
+}
+
+ObjectList& ClassifierReasoner::getDependencyObjects(string& dependencyName, ClassificationData& data)
+{
+	if(data.candidates.count(dependencyName) == 1)
+	{
+		return data.candidates[dependencyName];
+	}
+	else
+	{
+		return table[dependencyName];
 	}
 }
 

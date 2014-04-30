@@ -88,12 +88,12 @@ public:
 	std::string addInverseOnVariable(Variable min, Variable max,
 				Variable target);
 
-	ObjectProperties getGeneratedProperties(ObjectMap& inputs);
+	ObjectProperties getGeneratedProperties(ObjectMap& candidates, ObjectMap& dependencies);
 
 private:
-	void generateMatches(ObjectMap& inputs, ObjectProperties& generated);
-	void generateOns(ObjectMap& inputs, ObjectProperties& generated);
-	void generateInverses(ObjectMap& inputs, ObjectProperties& generated);
+	void generateMatches(ObjectMap& candidates, ObjectMap& dependencies, ObjectProperties& generated);
+	void generateOns(ObjectMap& candidates, ObjectMap& dependencies, ObjectProperties& generated);
+	void generateInverses(ObjectMap& candidates, ObjectMap& dependencies, ObjectProperties& generated);
 	int getValue(ObjectMap& inputs, Variable var);
 	std::string getNewVar();
 private:

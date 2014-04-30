@@ -28,10 +28,28 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <iostream>
 
 typedef std::map<std::string, int> ObjectProperties;
 typedef std::map<std::string, double> ClassificationMap;
-typedef std::vector<ClassificationMap> InstanceClassification;
+typedef std::map<size_t, ClassificationMap> InstanceClassification;
+
+inline std::ostream& operator<<(std::ostream& os,
+			const InstanceClassification& inputs)
+{
+	for (InstanceClassification::const_iterator i = inputs.begin();
+				i != inputs.end(); ++i)
+	{
+		for (ClassificationMap::const_iterator j = i->second.begin();
+					j != i->second.end(); ++j)
+		{
+			os << "Instance #" << i->first << std::endl;
+			os << j->first << "=" << j->second << std::endl;
+		}
+	}
+
+	return os;
+}
 
 struct ObjectInstance
 {
