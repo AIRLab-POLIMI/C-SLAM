@@ -28,7 +28,7 @@ FUZZIFY_CLASS ConcentricCircle
 		Good := (?y is Good);
 			
 		FUZZIFY ?y
-			Good := tol(5, 10); 
+			Good := tol(0, 10); 
 			Perfect := tol(0, 5);
 		END_FUZZIFY
 		

@@ -181,6 +181,8 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 				recursiveClassify(current, end, currentDep, endDep, deps, data);
 				noMoreConsidered(instance, data);
 			}
+
+			data.dependencyMap.erase(dependencyName);
 		}
 		else
 		{
