@@ -57,7 +57,7 @@ struct ObjectInstance
 	ObjectProperties properties;
 };
 
-typedef std::vector<ObjectInstance*> ObjectList;
+typedef std::set<ObjectInstance*> ObjectList;
 typedef std::map<std::string, ObjectList> ObjectListMap;
 typedef std::map<std::string, ObjectInstance*> ObjectMap;
 
