@@ -43,6 +43,15 @@ void addInstances(ClassifierReasoner& reasoner)
 	instance->properties["x"] = 15;
 	instance->properties["y"] = 15;
 	reasoner.addInstance(instance);
+
+	instance = new ObjectInstance();
+	instance->id = 2;
+	instance->properties["Xmin"] = 0;
+	instance->properties["Xmax"] = 20;
+	instance->properties["Ymin"] = 0;
+	instance->properties["Ymax"] = 40;
+	instance->properties["FormFactor"] = 1;
+	reasoner.addInstance(instance);
 }
 
 int main(int argc, char *argv[])
@@ -75,8 +84,7 @@ int main(int argc, char *argv[])
 		cout << classifications;
 
 		delete classifier;
-	}
-	catch (const std::runtime_error& e)
+	} catch (const std::runtime_error& e)
 	{
 		cout << e.what() << endl;
 		cout << "Check the input file an try again" << endl;

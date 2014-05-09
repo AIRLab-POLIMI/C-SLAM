@@ -45,6 +45,11 @@ public:
 	{
 	}
 
+	inline bool isTrivial()
+	{
+		return features->size() == 0;
+	}
+
 	inline FuzzyFeatureList* getfeatureList()
 	{
 		return features;

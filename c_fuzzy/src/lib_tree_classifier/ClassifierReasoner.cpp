@@ -28,8 +28,8 @@
 using namespace std;
 
 ClassifierReasoner::ClassifierReasoner(FuzzyClassifier& classifier,
-		FuzzyKnowledgeBase& knowledgeBase) :
-		classifier(classifier), knowledgeBase(knowledgeBase)
+			FuzzyKnowledgeBase& knowledgeBase) :
+			classifier(classifier), knowledgeBase(knowledgeBase)
 {
 	for (ClassList::iterator i = classifier.begin(); i != classifier.end(); ++i)
 	{
@@ -54,7 +54,7 @@ InstanceClassification ClassifierReasoner::run()
 	table.clear();
 
 	for (ReasoningList::iterator i = classifier.beginReasoning();
-			i != classifier.endReasoning(); ++i)
+				i != classifier.endReasoning(); ++i)
 	{
 		ClassList& classList = *i;
 		ObjectListMap candidates;
@@ -68,10 +68,10 @@ InstanceClassification ClassifierReasoner::run()
 }
 
 void ClassifierReasoner::getCandidates(ClassList& classList,
-		ObjectListMap& candidates, DepLists& deps)
+			ObjectListMap& candidates, DepLists& deps)
 {
 	for (ClassList::iterator it = classList.begin(); it != classList.end();
-			++it)
+				++it)
 	{
 		string className = it->first;
 		FuzzyClass* fuzzyClass = it->second;
@@ -82,7 +82,7 @@ void ClassifierReasoner::getCandidates(ClassList& classList,
 }
 
 void ClassifierReasoner::getClassCandidates(FuzzyClass* fuzzyClass,
-		ObjectList& candidates)
+			ObjectList& candidates)
 {
 	ObjectList& list = getSuperClassCandidates(fuzzyClass);
 
@@ -108,11 +108,11 @@ ObjectList& ClassifierReasoner::getSuperClassCandidates(FuzzyClass* fuzzyClass)
 }
 
 bool ClassifierReasoner::hasClassVariables(ObjectInstance& instance,
-		FuzzyClass& fuzzyClass)
+			FuzzyClass& fuzzyClass)
 {
 	const VariableList& variables = fuzzyClass.getVars();
 	for (VariableList::const_iterator it = variables.begin();
-			it != variables.end(); ++it)
+				it != variables.end(); ++it)
 	{
 		if (instance.properties.count(*it) == 0)
 		{
@@ -124,14 +124,36 @@ bool ClassifierReasoner::hasClassVariables(ObjectInstance& instance,
 }
 
 void ClassifierReasoner::classify(ClassList& classList, DepLists& deps,
-		ObjectListMap& candidates, InstanceClassification& results)
+			ObjectListMap& candidates, InstanceClassification& results)
 {
 	ClassificationData data(candidates, results);
-	recursiveClassify(classList.begin(), classList.end(), deps, data);
+	ClassList::iterator begin = classList.begin();
+	ClassList::iterator end = classList.end();
+
+	if (begin != end && begin->second->isTrivial())
+		trivialClassify(begin, end, deps, data);
+	else
+		recursiveClassify(begin, end, deps, data);
+}
+
+void ClassifierReasoner::trivialClassify(ClassList::iterator current,
+			ClassList::iterator end, DepLists& deps, ClassificationData& data)
+{
+	string className = current->first;
+	ObjectList candidates = data.candidates[className];
+
+	for(ObjectList::iterator i = candidates.begin(); i != candidates.end(); ++i)
+	{
+		ObjectInstance* instance = *i;
+		ClassificationMap& instanceClassifications = data.results[instance->id];
+		instanceClassifications[className] = 1.0;
+		table[className].insert(instance);
+	}
+
 }
 
 void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
-		ClassList::iterator end, DepLists& deps, ClassificationData& data)
+			ClassList::iterator end, DepLists& deps, ClassificationData& data)
 {
 
 	if (current != end)
@@ -140,7 +162,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 		ObjectList& candidate = data.candidates[currentClass];
 		current++;
 		for (ObjectList::iterator it = candidate.begin(); it != candidate.end();
-				++it)
+					++it)
 		{
 			ObjectInstance* instance = *it;
 			if (hasBeenConsidered(instance, data))
@@ -148,7 +170,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 			data.instanceMap[currentClass] = instance;
 			DepList& instanceDependencies = deps[currentClass];
 			recursiveClassify(current, end, instanceDependencies.begin(),
-					instanceDependencies.end(), deps, data);
+						instanceDependencies.end(), deps, data);
 			noMoreConsidered(instance, data);
 		}
 
@@ -160,20 +182,20 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 }
 
 void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
-		ClassList::iterator end, DepList::iterator currentDep,
-		DepList::iterator endDep, DepLists& deps, ClassificationData& data)
+			ClassList::iterator end, DepList::iterator currentDep,
+			DepList::iterator endDep, DepLists& deps, ClassificationData& data)
 {
 	if (currentDep != endDep)
 	{
 		string dependencyName = *currentDep;
 		currentDep++;
 		ObjectList& dependencyObjects = getDependencyObjects(dependencyName,
-				data);
+					data);
 
 		if (data.dependencyMap.count(dependencyName) == 0)
 		{
 			for (ObjectList::iterator it = dependencyObjects.begin();
-					it != dependencyObjects.end(); ++it)
+						it != dependencyObjects.end(); ++it)
 			{
 				ObjectInstance* instance = *it;
 				if (hasBeenConsidered(instance, data))
@@ -205,7 +227,7 @@ void ClassifierReasoner::classifyInstances(ClassificationData& data)
 void ClassifierReasoner::setupReasoning(ClassificationData& data)
 {
 	for (ObjectMap::iterator it = data.instanceMap.begin();
-			it != data.instanceMap.end(); ++it)
+				it != data.instanceMap.end(); ++it)
 	{
 		string className = it->first;
 		ObjectInstance* instance = it->second;
@@ -213,13 +235,13 @@ void ClassifierReasoner::setupReasoning(ClassificationData& data)
 		reasoner->addInput(className, properties);
 		VariableGenerator* generator = genVarTable[className];
 		ObjectProperties genProperties = generator->getGeneratedProperties(
-				data.instanceMap, data.dependencyMap);
+					data.instanceMap, data.dependencyMap);
 		reasoner->addInput(className, genProperties);
 	}
 }
 
 ObjectList& ClassifierReasoner::getDependencyObjects(string& dependencyName,
-		ClassificationData& data)
+			ClassificationData& data)
 {
 	if (data.candidates.count(dependencyName) == 1)
 	{
@@ -235,15 +257,17 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 {
 	OutputTable result = reasoner->run();
 	for (ObjectMap::iterator i = data.instanceMap.begin();
-			i != data.instanceMap.end(); ++i)
+				i != data.instanceMap.end(); ++i)
 	{
 		string className = i->first;
 		ObjectInstance* instance = i->second;
 		double truthValue = result[className][className].truth;
 		ClassificationMap& instanceClassifications = data.results[instance->id];
 
-		if (truthValue > 0 && (instanceClassifications.count(className) == 0
-				|| instanceClassifications[className] < truthValue))
+		if (truthValue > 0
+					&& (instanceClassifications.count(className) == 0
+								|| instanceClassifications[className]
+											< truthValue))
 		{
 			instanceClassifications[className] = truthValue;
 		}
@@ -253,7 +277,7 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 }
 
 bool ClassifierReasoner::hasBeenConsidered(ObjectInstance* instance,
-		ClassificationData& data)
+			ClassificationData& data)
 {
 	TabuList& tabuList = data.tabuList;
 	size_t id = instance->id;
@@ -270,7 +294,7 @@ bool ClassifierReasoner::hasBeenConsidered(ObjectInstance* instance,
 }
 
 void ClassifierReasoner::noMoreConsidered(ObjectInstance* instance,
-		ClassificationData& data)
+			ClassificationData& data)
 {
 	TabuList& tabuList = data.tabuList;
 	size_t id = instance->id;

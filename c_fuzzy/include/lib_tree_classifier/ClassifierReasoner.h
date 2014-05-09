@@ -37,7 +37,6 @@
 class ClassifierReasoner
 {
 private:
-	//typedef std::map<std::string, ObjectList> ClassificationTable;
 	typedef std::vector<std::string> DepList;
 	typedef std::map<std::string, DepList> DepLists;
 public:
@@ -57,6 +56,8 @@ private:
 	//classification
 	void classify(ClassList& classList, DepLists& deps,
 				ObjectListMap& candidates, InstanceClassification& results);
+	void trivialClassify(ClassList::iterator current, ClassList::iterator end,
+				DepLists& deps, ClassificationData& data);
 	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
 				DepLists& deps, ClassificationData& data);
 	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
