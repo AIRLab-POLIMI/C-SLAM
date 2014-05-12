@@ -142,7 +142,8 @@ void ClassifierReasoner::trivialClassify(ClassList::iterator current,
 	string className = current->first;
 	ObjectList candidates = data.candidates[className];
 
-	for(ObjectList::iterator i = candidates.begin(); i != candidates.end(); ++i)
+	for (ObjectList::iterator i = candidates.begin(); i != candidates.end();
+				++i)
 	{
 		ObjectInstance* instance = *i;
 		ClassificationMap& instanceClassifications = data.results[instance->id];
@@ -160,7 +161,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 	{
 		string currentClass = current->first;
 		ObjectList& candidate = data.candidates[currentClass];
-		current++;
+
 		for (ObjectList::iterator it = candidate.begin(); it != candidate.end();
 					++it)
 		{
@@ -189,11 +190,13 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 	{
 		string dependencyName = *currentDep;
 		currentDep++;
-		ObjectList& dependencyObjects = getDependencyObjects(dependencyName,
-					data);
 
-		if (data.dependencyMap.count(dependencyName) == 0)
+		if (data.dependencyMap.count(dependencyName) == 0
+					&& data.candidates.count(dependencyName) == 0)
 		{
+			ObjectList& dependencyObjects = getDependencyObjects(current->first,
+						dependencyName, data);
+
 			for (ObjectList::iterator it = dependencyObjects.begin();
 						it != dependencyObjects.end(); ++it)
 			{
@@ -214,7 +217,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 	}
 	else
 	{
-		recursiveClassify(current, end, deps, data);
+		recursiveClassify(++current, end, deps, data);
 	}
 }
 
@@ -240,10 +243,10 @@ void ClassifierReasoner::setupReasoning(ClassificationData& data)
 	}
 }
 
-ObjectList& ClassifierReasoner::getDependencyObjects(string& dependencyName,
-			ClassificationData& data)
+ObjectList& ClassifierReasoner::getDependencyObjects(const string& className,
+			const string& dependencyName, ClassificationData& data)
 {
-	if (data.candidates.count(dependencyName) == 1)
+	if (className == dependencyName)
 	{
 		return data.candidates[dependencyName];
 	}

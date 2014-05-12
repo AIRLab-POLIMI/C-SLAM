@@ -25,12 +25,16 @@
 
 #include <sstream>
 #include <cmath>
+#include <stdexcept>
 
 using namespace std;
 
 VariableGenerator::VariableGenerator()
 {
 	varCounter = 0;
+
+	currentCandidates = NULL;
+	currentDependecies = NULL;
 }
 
 string VariableGenerator::addMatchVariable(Variable var, Variable target)
@@ -60,16 +64,20 @@ ObjectProperties VariableGenerator::getGeneratedProperties(
 			ObjectMap& candidates, ObjectMap& dependencies)
 {
 	ObjectProperties generated;
-	generateMatches(candidates, dependencies, generated);
-	generateOns(candidates, dependencies, generated);
-	generateInverses(candidates, dependencies, generated);
+	currentCandidates = &candidates;
+	currentDependecies = &dependencies;
+	generateMatches(generated);
+	generateOns(generated);
+	generateInverses(generated);
+
+	currentCandidates = NULL;
+	currentDependecies = NULL;
 
 	return generated;
 
 }
 
-void VariableGenerator::generateMatches(ObjectMap& candidates,
-			ObjectMap& dependencies, ObjectProperties& generated)
+void VariableGenerator::generateMatches(ObjectProperties& generated)
 {
 	for (MatchVarMap::iterator it = matchVars.begin(); it != matchVars.end();
 				++it)
@@ -80,14 +88,13 @@ void VariableGenerator::generateMatches(ObjectMap& candidates,
 		Variable& var = match.var;
 		Variable& target = match.target;
 
-		int value = abs(getValue(candidates, var) - getValue(dependencies, target));
+		int value = abs(getValue(var) - getDepValue(target));
 
 		generated[varName] = value;
 	}
 }
 
-void VariableGenerator::generateOns(ObjectMap& candidates,
-			ObjectMap& dependencies, ObjectProperties& generated)
+void VariableGenerator::generateOns(ObjectProperties& generated)
 {
 	for (OnVarMap::iterator it = onVars.begin(); it != onVars.end(); ++it)
 	{
@@ -97,15 +104,13 @@ void VariableGenerator::generateOns(ObjectMap& candidates,
 		Variable& min = on.min;
 		Variable& max = on.max;
 
-		int value = 100 * getValue(dependencies, var)
-			/ abs(getValue(candidates, max) - getValue(candidates, min));
+		int value = 100 * getDepValue(var) / abs(getValue(max) - getValue(min));
 
 		generated[varName] = value;
 	}
 }
 
-void VariableGenerator::generateInverses(ObjectMap& candidates,
-			ObjectMap& dependencies, ObjectProperties& generated)
+void VariableGenerator::generateInverses(ObjectProperties& generated)
 {
 	for (InverseVarMap::iterator it = inverseVars.begin();
 				it != inverseVars.end(); ++it)
@@ -116,8 +121,7 @@ void VariableGenerator::generateInverses(ObjectMap& candidates,
 		Variable& min = inverse.min;
 		Variable& max = inverse.max;
 
-		int value = 100 * getValue(candidates, target)
-			/ abs(getValue(dependencies, max) - getValue(dependencies, min));
+		int value = 100 * getValue(target) / abs(getDepValue(max) - getDepValue(min));
 
 		generated[varName] = value;
 	}
@@ -125,12 +129,31 @@ void VariableGenerator::generateInverses(ObjectMap& candidates,
 
 int VariableGenerator::getValue(ObjectMap& inputs, Variable var)
 {
-	string nameSpace = var.nameSpace;
-	string domain = var.domain;
+	string& nameSpace = var.nameSpace;
+	string& domain = var.domain;
 
 	ObjectProperties& properties = inputs[nameSpace]->properties;
 
 	return properties[domain];
+}
+
+int VariableGenerator::getValue(Variable var)
+{
+	return getValue(*currentCandidates, var);
+}
+
+int VariableGenerator::getDepValue(Variable var)
+{
+	string& className = var.nameSpace;
+
+	if (currentDependecies->count(className) == 1)
+		return getValue(*currentDependecies, var);
+	else if (currentCandidates->count(className) == 1)
+		return getValue(*currentCandidates, var);
+	else
+		throw runtime_error(
+					"Error, no class object " + className + " found in inputs");
+
 }
 
 string VariableGenerator::getNewVar()

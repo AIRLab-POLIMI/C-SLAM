@@ -68,7 +68,8 @@ private:
 	void noMoreConsidered(ObjectInstance* instance, ClassificationData& data);
 	void setupReasoning(ClassificationData& data);
 	void runReasoning(ClassificationData& data);
-	ObjectList& getDependencyObjects(std::string& dependencyName, ClassificationData& data);
+	ObjectList& getDependencyObjects(const std::string& className,
+				const std::string& dependencyName, ClassificationData& data);
 
 private:
 	FuzzyClassifier& classifier;

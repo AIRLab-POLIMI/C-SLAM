@@ -34,45 +34,50 @@ void DependencyGraph::addClass(FuzzyClass* fuzzyClass)
 	size_t id = num_vertices(graph);
 	string name = fuzzyClass->getName();
 	indexes[name] = id;
-	names.push_back(name);
 
-	add_vertex(graph);
+	Graph::vertex_descriptor v = add_vertex(graph);
+
+	graph[v].name = name;
 
 	FuzzyClass* superClass = fuzzyClass->getSuperClass();
 
 	if (superClass != NULL)
 	{
-		addDependency(fuzzyClass, superClass);
+		addDependency(fuzzyClass, superClass, true);
 	}
 
 }
 
 void DependencyGraph::addDependency(FuzzyClass* fuzzyClass,
-			FuzzyClass* dependency)
+			FuzzyClass* dependency, bool isSuperClass)
 {
 	string className = fuzzyClass->getName();
 	string dependencyName = dependency->getName();
 
-	addDependency(className, dependencyName);
+	addDependency(className, dependencyName, isSuperClass);
 }
 
-void DependencyGraph::addDependency(string fuzzyClass, string dependency)
+void DependencyGraph::addDependency(string fuzzyClass, string dependency,
+			bool isSuperClass)
 {
 
-	size_t classId = indexes[fuzzyClass];
-	size_t dependencyId = indexes[dependency];
+	Graph::vertex_descriptor classId = indexes[fuzzyClass];
+	Graph::vertex_descriptor dependencyId = indexes[dependency];
 
-	add_edge(classId, dependencyId, graph);
+	Graph::edge_descriptor edge = add_edge(classId, dependencyId, graph).first;
+	graph[edge].isSuperClass = isSuperClass;
 }
 
 DependencyGraph::NameList DependencyGraph::getDependencies(string className)
 {
 	NameList list;
-	size_t node = indexes[className];
+	Graph::vertex_descriptor node = indexes[className];
 
-	BOOST_FOREACH(size_t i, adjacent_vertices(node, graph))
+	BOOST_FOREACH(Graph::vertex_descriptor i, adjacent_vertices(node, graph))
 	{
-		list.push_back(names[i]);
+		Graph::edge_descriptor e = edge(node, i, graph).first;
+		if (!graph[e].isSuperClass)
+			list.push_back(graph[i].name);
 	}
 
 	return list;
@@ -81,15 +86,13 @@ DependencyGraph::NameList DependencyGraph::getDependencies(string className)
 
 void DependencyGraph::drawGraph(std::ostream& out)
 {
-	//Ugly, but works...
-	string* name = &names[0];
-
-	write_graphviz(out, graph, make_label_writer(name));
+	write_graphviz(out, graph, make_label_writer(get(&Vertex::name, graph)),
+				make_label_writer(get(&Edge::isSuperClass, graph)));
 }
 
 ReasoningGraph* DependencyGraph::buildReasoningGraph()
 {
-	vector<size_t> components(num_vertices(graph));
+	vector<Graph::vertex_descriptor> components(num_vertices(graph));
 	vector<vector<string> > componentsNames;
 
 	size_t num = strong_components(graph,
@@ -98,10 +101,10 @@ ReasoningGraph* DependencyGraph::buildReasoningGraph()
 
 	componentsNames.resize(num);
 
-	BOOST_FOREACH(size_t i, vertices(graph))
+	BOOST_FOREACH(Graph::vertex_descriptor i, vertices(graph))
 	{
 		size_t index = components[i];
-		componentsNames[index].push_back(names[i]);
+		componentsNames[index].push_back(graph[i].name);
 	}
 
 	ReasoningGraph* reasoningGraph = new ReasoningGraph(num, componentsNames);

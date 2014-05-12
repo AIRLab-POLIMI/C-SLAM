@@ -31,8 +31,21 @@ using namespace std;
 using namespace boost;
 
 ReasoningGraph::ReasoningGraph(size_t n, vector<vector<string> > names) :
-			graph(n), names(names)
+			graph(n)
 {
+	for (size_t i = 0; i < names.size(); i++)
+	{
+
+		vector<string>& nodeNames = names[i];
+
+		graph[i].nodeNames = nodeNames;
+		graph[i].name = nodeNames[0];
+
+		for (size_t j = 1; j < nodeNames.size(); j++)
+		{
+			graph[i].name = graph[i].name + "&" + nodeNames[j];
+		}
+	}
 }
 
 void ReasoningGraph::addEdge(size_t i, size_t j)
@@ -42,21 +55,7 @@ void ReasoningGraph::addEdge(size_t i, size_t j)
 
 void ReasoningGraph::drawGraph(ostream& out)
 {
-	string name[names.size()];
-
-	for (size_t i = 0; i < names.size(); i++)
-	{
-		vector<string>& nodeNames = names[i];
-
-		name[i] = nodeNames[0];
-
-		for (size_t j = 1; j < nodeNames.size(); j++)
-		{
-			name[i] = name[i] + "&" + nodeNames[j];
-		}
-	}
-
-	write_graphviz(out, graph, make_label_writer(name));
+	write_graphviz(out, graph, make_label_writer(get(&Vertex::name, graph)));
 }
 
 void ReasoningGraph::getReasonigOrder(vector<size_t>& order)
@@ -66,5 +65,6 @@ void ReasoningGraph::getReasonigOrder(vector<size_t>& order)
 
 vector<string> ReasoningGraph::getNodeNames(size_t index)
 {
-	return names[index];
+	Graph::vertex_descriptor v = index;
+	return graph[v].nodeNames;
 }

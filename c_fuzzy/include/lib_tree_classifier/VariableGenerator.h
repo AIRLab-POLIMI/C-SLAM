@@ -91,16 +91,23 @@ public:
 	ObjectProperties getGeneratedProperties(ObjectMap& candidates, ObjectMap& dependencies);
 
 private:
-	void generateMatches(ObjectMap& candidates, ObjectMap& dependencies, ObjectProperties& generated);
-	void generateOns(ObjectMap& candidates, ObjectMap& dependencies, ObjectProperties& generated);
-	void generateInverses(ObjectMap& candidates, ObjectMap& dependencies, ObjectProperties& generated);
+	void generateMatches(ObjectProperties& generated);
+	void generateOns(ObjectProperties& generated);
+	void generateInverses(ObjectProperties& generated);
 	int getValue(ObjectMap& inputs, Variable var);
+	int getValue(Variable var);
+	int getDepValue(Variable var);
+	ObjectMap* findObject();
 	std::string getNewVar();
 private:
 	MatchVarMap matchVars;
 	OnVarMap onVars;
 	InverseVarMap inverseVars;
 	size_t varCounter;
+
+	//Helper members
+	ObjectMap* currentCandidates;
+	ObjectMap* currentDependecies;
 
 };
 

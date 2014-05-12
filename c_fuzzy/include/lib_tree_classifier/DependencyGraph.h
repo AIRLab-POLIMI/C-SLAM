@@ -38,14 +38,24 @@ class DependencyGraph
 {
 
 private:
-	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS> Graph;
-	typedef std::map<std::string, size_t> IndexMap;
+	struct Vertex
+	{
+	    std::string name;
+	};
+
+	struct Edge
+	{
+	    bool isSuperClass;
+	};
+
+	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS, Vertex, Edge> Graph;
+	typedef std::map<std::string, Graph::vertex_descriptor> IndexMap;
 	typedef std::vector<std::string> NameList;
 
 public:
 	void addClass(FuzzyClass* fuzzyClass);
-	void addDependency(FuzzyClass* fuzzyClass, FuzzyClass* dependency);
-	void addDependency(std::string fuzzyClass, std::string dependency);
+	void addDependency(FuzzyClass* fuzzyClass, FuzzyClass* dependency, bool isSuperClass = false);
+	void addDependency(std::string fuzzyClass, std::string dependency, bool isSuperClass = false);
 	NameList getDependencies(std::string className);
 	ReasoningGraph* buildReasoningGraph();
 	void drawGraph(std::ostream& out);
@@ -53,7 +63,6 @@ public:
 private:
 	Graph graph;
 	IndexMap indexes;
-	NameList names;
 };
 
 #endif /* DEPENDENCYGRAPH_H_ */

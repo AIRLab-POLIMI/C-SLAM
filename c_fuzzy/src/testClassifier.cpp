@@ -52,6 +52,12 @@ void addInstances(ClassifierReasoner& reasoner)
 	instance->properties["Ymax"] = 40;
 	instance->properties["FormFactor"] = 1;
 	reasoner.addInstance(instance);
+
+	instance = new ObjectInstance();
+	instance->id = 3;
+	instance->properties["x"] = 18;
+	instance->properties["y"] = 20;
+	reasoner.addInstance(instance);
 }
 
 int main(int argc, char *argv[])

@@ -33,7 +33,13 @@
 class ReasoningGraph
 {
 private:
-	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS> Graph;
+	struct Vertex
+	{
+		std::string name;
+	    std::vector<std::string> nodeNames;
+	};
+
+	typedef boost::adjacency_list<boost::setS, boost::vecS, boost::directedS, Vertex> Graph;
 
 public:
 	ReasoningGraph(size_t n, std::vector<std::vector<std::string> > names);
@@ -46,7 +52,6 @@ public:
 
 private:
 	Graph graph;
-	std::vector<std::vector<std::string> > names;
 };
 
 #endif /* REASONINGGRAPH_H_ */
