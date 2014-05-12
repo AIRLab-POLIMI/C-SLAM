@@ -34,14 +34,14 @@ void addInstances(ClassifierReasoner& reasoner)
 {
 	ObjectInstance* instance = new ObjectInstance();
 	instance->id = 0;
-	instance->properties["x"] = 10;
-	instance->properties["y"] = 10;
+	instance->properties["x"] = 100;
+	instance->properties["y"] = 100;
 	reasoner.addInstance(instance);
 
 	instance = new ObjectInstance();
 	instance->id = 1;
-	instance->properties["x"] = 15;
-	instance->properties["y"] = 15;
+	instance->properties["x"] = 105;
+	instance->properties["y"] = 105;
 	reasoner.addInstance(instance);
 
 	instance = new ObjectInstance();

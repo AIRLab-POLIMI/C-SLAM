@@ -191,8 +191,10 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 		string dependencyName = *currentDep;
 		currentDep++;
 
+		//TODO si può risolvere meglio ragionando a livello di grafo dipendenze?
 		if (data.dependencyMap.count(dependencyName) == 0
-					&& data.candidates.count(dependencyName) == 0)
+					&& (data.candidates.count(dependencyName) == 0
+								|| dependencyName == current->first))
 		{
 			ObjectList& dependencyObjects = getDependencyObjects(current->first,
 						dependencyName, data);
