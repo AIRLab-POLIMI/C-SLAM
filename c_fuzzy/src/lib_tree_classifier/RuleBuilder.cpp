@@ -23,6 +23,8 @@
 
 #include "RuleBuilder.h"
 
+#include <stdexcept>
+
 #include "FuzzyOperator.h"
 #include "FuzzyRule.h"
 
@@ -35,6 +37,7 @@ RuleBuilder::RuleBuilder(FuzzyKnowledgeBase& knowledgeBase) :
 
 VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 {
+	fixNameSpace(fuzzyClass);
 	currentClass = fuzzyClass.getName();
 	generator = new VariableGenerator();
 
@@ -71,6 +74,21 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 	knowledgeBase.addRule(rule, variables);
 
 	return generator;
+}
+
+void RuleBuilder::fixNameSpace(FuzzyClass& fuzzyClass)
+{
+	FuzzyClass* superClass = fuzzyClass.getSuperClass();
+
+	if (superClass)
+	{
+		string className = fuzzyClass.getName();
+		string superClassName = superClass->getName();
+
+		NamespaceTable& table = knowledgeBase.getNamespaceTable();
+
+		knowledgeBase.addDomains(className, *table[superClassName]);
+	}
 }
 
 RuleBuilder::FeatureBuilt RuleBuilder::buildFeatureRule(FuzzyFeature& feature)
@@ -161,8 +179,8 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildInverseRelationRule(
 	return buildFeature(generatedVar, label, false);
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string generatedVar,
-			string label, bool simple)
+RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
+			string& label, bool simple)
 {
 	Variable var(currentClass, generatedVar);
 	Node* node;
@@ -171,7 +189,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string generatedVar,
 	{
 		node = knowledgeBase.getPredicateInstance(currentClass, label, var);
 	}
-	else if(simple)
+	else if (simple)
 	{
 		node = buildCrispMatch(var);
 	}
@@ -210,16 +228,17 @@ Node* RuleBuilder::buildCrispOn(Variable var)
 	return is;
 }
 
-void RuleBuilder::addDomain(string domain, string label, FuzzyMF* fuzzyMF)
+void RuleBuilder::addDomain(const string& domain, const string& label,
+			FuzzyMF* fuzzyMF)
 {
 	MFTable* mfTable = new MFTable();
 	MFTable& table = *mfTable;
 	table[label] = fuzzyMF;
 
-	DomainTable* domainTable = new DomainTable();
-	DomainTable& dTable = *domainTable;
-	dTable[currentClass] = mfTable;
+	DomainTable domainTable;
+	domainTable[currentClass] = mfTable;
 
-	knowledgeBase.addDomain(currentClass, domainTable);
+	knowledgeBase.addDomains(currentClass, domainTable);
+
 }
 

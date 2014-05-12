@@ -44,8 +44,8 @@ public:
 	Node& operator[](size_t i);
 
 	void addRule(Node* fuzzyRule, std::vector<Variable>& vars);
-	void addDomain(std::string nameSpace, DomainTable* domain);
-	Node* getPredicateInstance(std::string nameSpace, std::string predicateName,
+	void addDomains(std::string& nameSpace, DomainTable& domain);
+	Node* getPredicateInstance(std::string& nameSpace, std::string& predicateName,
 			Variable variable);
 
 	~FuzzyKnowledgeBase();

@@ -35,9 +35,9 @@ class FuzzyVariableEngine
 public:
 	FuzzyVariableEngine();
 
-	void enterNamespace(std::string nameSpace);
-	void addMF(std::string label, FuzzyMF* mf);
-	void addDomains(std::string nameSpace, DomainTable* domain);
+	void enterNamespace(std::string& nameSpace);
+	void addMF(std::string& label, FuzzyMF* mf);
+	void addDomains(std::string& nameSpace, DomainTable& domain);
 	void buildDomain(std::vector<std::string> variables);
 	void normalizeVariableMasks(size_t size);
 	void updateVariableMask(Variable& var, size_t rule);
@@ -53,6 +53,7 @@ private:
 	void deleteMasks();
 	void deleteDomains();
 	void deleteMF(MFTable* mfTable);
+	void checkNameSpaceExistence(std::string& nameSpace);
 
 private:
 	//Variable data

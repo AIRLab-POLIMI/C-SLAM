@@ -144,8 +144,10 @@ Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
 {
 	PredicateInstance instance = predicateEngine->getPredicateInstance(
 				nameSpace, predicateName, variable);
-	varEngine->addDomains(variable.nameSpace, instance.second);
+	varEngine->addDomains(variable.nameSpace, *instance.second);
 	varEngine->updateVariableMask(variable, ruleList->size());
+
+	delete instance.second;
 
 	return instance.first;
 }

@@ -49,17 +49,19 @@ public:
 	VariableGenerator* buildClassRule(FuzzyClass& fuzzyClass);
 
 private:
+	void fixNameSpace(FuzzyClass& fuzzyClass);
 	FeatureBuilt buildFeatureRule(FuzzyFeature& feature);
 	FeatureBuilt buildSimpleFeatureRule(FuzzySimpleFeature& feature);
 	FeatureBuilt buildSimpleRelationRule(FuzzySimpleRelation& relation);
 	FeatureBuilt buildComplexRelationRule(FuzzyComplexRelation& relation);
 	FeatureBuilt buildInverseRelationRule(FuzzyInverseRelation& relation);
-	FeatureBuilt buildFeature(std::string generatedVar, std::string label,
+	FeatureBuilt buildFeature(std::string& generatedVar, std::string& label,
 				bool simple);
 	Node* buildRHS();
 	Node* buildCrispMatch(Variable var);
 	Node* buildCrispOn(Variable var);
-	void addDomain(std::string domain, std::string label, FuzzyMF* table);
+	void addDomain(const std::string& domain, const std::string& label,
+				FuzzyMF* table);
 
 private:
 	FuzzyKnowledgeBase& knowledgeBase;

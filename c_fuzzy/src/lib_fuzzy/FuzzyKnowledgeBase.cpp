@@ -64,7 +64,7 @@ void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
 
 }
 
-void FuzzyKnowledgeBase::addDomain(std::string nameSpace, DomainTable* domain)
+void FuzzyKnowledgeBase::addDomains(string& nameSpace, DomainTable& domain)
 {
 	variables->addDomains(nameSpace, domain);
 }
@@ -78,12 +78,12 @@ void FuzzyKnowledgeBase::deleteRules()
 	}
 }
 
-Node* FuzzyKnowledgeBase::getPredicateInstance(string nameSpace,
-		string predicateName, Variable variable)
+Node* FuzzyKnowledgeBase::getPredicateInstance(string& nameSpace,
+		string& predicateName, Variable variable)
 {
 	PredicateInstance instance = predicates->getPredicateInstance(nameSpace,
 			predicateName, variable);
-	variables->addDomains(variable.nameSpace, instance.second);
+	variables->addDomains(variable.nameSpace, *instance.second);
 	this->variables->updateVariableMask(variable, knowledgeBase->size());
 
 	return instance.first;

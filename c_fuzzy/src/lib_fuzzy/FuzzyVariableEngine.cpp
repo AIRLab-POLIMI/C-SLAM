@@ -33,7 +33,7 @@ FuzzyVariableEngine::FuzzyVariableEngine()
 	initializeNamespaces();
 }
 
-void FuzzyVariableEngine::enterNamespace(string nameSpace)
+void FuzzyVariableEngine::enterNamespace(string& nameSpace)
 {
 	if (namespaceTable.count(nameSpace) == 0)
 	{
@@ -48,13 +48,13 @@ void FuzzyVariableEngine::enterNamespace(string nameSpace)
 	currentNamespace = nameSpace;
 }
 
-void FuzzyVariableEngine::addMF(string label, FuzzyMF* mf)
+void FuzzyVariableEngine::addMF(string& label, FuzzyMF* mf)
 {
 	MFTable& map = *mfTable;
 	map[label] = mf;
 }
 
-void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
+void FuzzyVariableEngine::checkNameSpaceExistence(string& nameSpace)
 {
 	if (namespaceTable.count(nameSpace) == 0)
 	{
@@ -62,8 +62,13 @@ void FuzzyVariableEngine::addDomains(string nameSpace, DomainTable* domain)
 		ss << "Error: non existing class " << nameSpace;
 		throw runtime_error(ss.str());
 	}
+}
 
-	for (DomainTable::iterator it = domain->begin(); it != domain->end(); ++it)
+void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
+{
+	checkNameSpaceExistence(nameSpace);
+
+	for (DomainTable::iterator it = domain.begin(); it != domain.end(); ++it)
 	{
 		string domainName = it->first;
 		MFTable* mfTable = it->second;
