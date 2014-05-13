@@ -1,0 +1,6 @@
+#definition of the basic Classification service
+#The input objects for the classification
+InputObject[] objects
+---
+#the classification outputs
+ObjectClassification[] results

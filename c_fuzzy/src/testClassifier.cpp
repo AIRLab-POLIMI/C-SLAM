@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
 		cout << classifications;
 
 		delete classifier;
-	} catch (const std::runtime_error& e)
+	}
+	catch (const std::runtime_error& e)
 	{
 		cout << e.what() << endl;
 		cout << "Check the input file an try again" << endl;

@@ -6,15 +6,25 @@ project(c_fuzzy)
 # If catkin is not found, just compile the executable without ROS goodies
 if(catkin_FOUND)
     add_message_files(FILES
+                      ClassificationOutput.msg  
                       DefuzzyfiedOutput.msg  
+                      InputObject.msg  
                       InputVariable.msg  
+                      ObjectClassification.msg  
                       SimbolicOutput.msg)
-    add_service_files(FILES Reasoning.srv)
+    add_service_files(FILES 
+                      Reasoning.srv 
+                      Classification.srv)
     generate_messages()
 	catkin_package(CATKIN_DEPENDS message_runtime)
-	include_directories(include include/lib_fuzzy include/lib_tree_classifier ${catkin_INCLUDE_DIRS})
+	include_directories(include 
+	                    include/lib_fuzzy 
+	                    include/lib_tree_classifier 
+	                    ${catkin_INCLUDE_DIRS})
 else()
-	include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/include/lib_fuzzy ${PROJECT_SOURCE_DIR}/include/lib_tree_classifier)
+	include_directories(${PROJECT_SOURCE_DIR}/include 
+	                    ${PROJECT_SOURCE_DIR}/include/lib_fuzzy 
+	                    ${PROJECT_SOURCE_DIR}/include/lib_tree_classifier)
 endif()
 
 
@@ -22,7 +32,7 @@ endif()
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-#set the folder of c_fuzzy_lib
+#set the folder of lib_fuzzy and lib_tree_classifier
 set(LIB_FUZZY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_fuzzy)
 set(LIB_TREE_CLASSIFIER_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_tree_classifier)
 

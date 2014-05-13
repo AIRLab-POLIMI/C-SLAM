@@ -114,9 +114,6 @@ void FuzzyReasoner::addInput(string name, int value)
 
 OutputTable FuzzyReasoner::run()
 {
-	cout << "Reasoner Inputs" << endl;
-	cout << inputs;
-	cout << "End of reasoner Inputs" << endl;
 	ReasoningData reasoningData(inputs, aggregator);
 
 	//Calculates the rules to be used
