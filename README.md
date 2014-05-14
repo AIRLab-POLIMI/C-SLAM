@@ -17,6 +17,20 @@ COMPILING
 The system can be build using the ros build tool `catkin`. Just create a catkin workspace, put the content of this repository in the src repository and run `catkin_make` to build the system.
 check [this](http://ros.org/wiki/catkin/Tutorials/create_a_workspace) tutorial to get more info on catkin.
 
+RUNNING THE REASONER
+--------------------
+
+The reasoner can be used either to evaluate fuzzy rules from a knowledge base or for classify objects by using a fuzzy classifier tree, for which you must specify both a knowledge base for the fuzzy rules and the file of the classifier.
+
+To run the reasoner node:
+
+rosrun c_fuzzy c_fuzzy_reasoner <KNOWLEDGEBASE_PATH> <KNOWLEDGEBASE_CLASSIFIER_PATH> <CLASSIFIER_PATH>
+
+the reasoner will activate two services,
+/classification
+/reasoning
+
+
 RUNNING WITH BAGS
 -----------------
 
