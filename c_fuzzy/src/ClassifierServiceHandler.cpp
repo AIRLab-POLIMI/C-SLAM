@@ -85,6 +85,7 @@ void ClassifierServiceHandler::addInputs(vector<ObjectInstance>& objects,
 			instance.properties[j->name] = j->value;
 		}
 
+
 		reasoner->addInstance(&instance);
 	}
 }
@@ -97,7 +98,7 @@ void ClassifierServiceHandler::sendOutputs(
 				it != results.end(); ++it)
 	{
 		response.results.push_back(ObjectClassification());
-		ObjectClassification classification = response.results.back();
+		ObjectClassification& classification = response.results.back();
 		classification.id = it->first;
 		const ClassificationMap& map = it->second;
 		for (ClassificationMap::const_iterator j = map.begin(); j != map.end(); j++)
@@ -107,7 +108,6 @@ void ClassifierServiceHandler::sendOutputs(
 			out.className = j->first;
 			out.membership = j->second;
 		}
-		response.results.push_back(classification);
 	}
 }
 
