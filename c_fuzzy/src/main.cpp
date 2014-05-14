@@ -25,21 +25,27 @@
 #include <stdexcept>
 
 #include "ReasonerServiceHandler.h"
+#include "ClassifierServiceHandler.h"
 
-//main del servizio
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "fuzzy_reasoner_server");
 	ros::NodeHandle n;
 
-	if (argc > 1)
+	if (argc > 3)
 	{
 		try
 		{
-			ReasonerServiceHandler handler(argv[1]);
+			ReasonerServiceHandler reasonerHandler(argv[1]);
+			ClassifierServiceHandler classifierHandler(argv[2], argv[3]);
 
-			ros::ServiceServer service = n.advertiseService("reasoning",
-						&ReasonerServiceHandler::reasoningCallback, &handler);
+			ros::ServiceServer reasonerService = n.advertiseService("reasoning",
+						&ReasonerServiceHandler::reasoningCallback,
+						&reasonerHandler);
+			ros::ServiceServer classifierService = n.advertiseService(
+						"classification",
+						&ClassifierServiceHandler::classificationCallback,
+						&classifierHandler);
 			ROS_INFO("Reasoner setup correctly");
 			ros::spin();
 			ROS_INFO("Reasoner shut down");

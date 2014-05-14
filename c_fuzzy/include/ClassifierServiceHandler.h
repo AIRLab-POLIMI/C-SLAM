@@ -45,7 +45,7 @@ private:
 	FuzzyClassifier* classifier;
 	ClassifierReasoner* reasoner;
 
-	void addInputs(const std::vector<ObjectInstance>& objects,
+	void addInputs(std::vector<ObjectInstance>& objects,
 				std::vector<c_fuzzy::InputObject>& inputs);
 	void sendOutputs(const InstanceClassification& results,
 				c_fuzzy::Classification::Response& response);

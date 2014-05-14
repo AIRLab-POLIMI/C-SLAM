@@ -134,8 +134,12 @@ if(catkin_FOUND)
 
 add_executable(${PROJECT_NAME}_reasoner 
                src/main.cpp 
-               src/ReasonerServiceHandler.cpp)
+               src/ReasonerServiceHandler.cpp
+               src/ClassifierServiceHandler.cpp)
                
-target_link_libraries(${PROJECT_NAME}_reasoner fuzzy ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_reasoner 
+                      fuzzy 
+                      tree_classifier 
+                      ${catkin_LIBRARIES})
 
 endif()

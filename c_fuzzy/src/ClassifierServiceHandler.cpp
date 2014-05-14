@@ -26,6 +26,8 @@
 #include <string>
 
 #include "ClassifierServiceHandler.h"
+#include "FuzzyBuilder.h"
+#include "TreeClassifierBuilder.h"
 
 #include <iostream>
 
@@ -68,7 +70,7 @@ ClassifierServiceHandler::~ClassifierServiceHandler()
 	delete knowledgeBase;
 }
 
-void ClassifierServiceHandler::addInputs(const vector<ObjectInstance>& objects,
+void ClassifierServiceHandler::addInputs(vector<ObjectInstance>& objects,
 			vector<InputObject>& inputs)
 {
 	for (size_t i = 0; i < inputs.size(); i++)
@@ -82,6 +84,7 @@ void ClassifierServiceHandler::addInputs(const vector<ObjectInstance>& objects,
 		{
 			instance.properties[j->name] = j->value;
 		}
+
 		reasoner->addInstance(&instance);
 	}
 }
@@ -96,8 +99,8 @@ void ClassifierServiceHandler::sendOutputs(
 		response.results.push_back(ObjectClassification());
 		ObjectClassification classification = response.results.back();
 		classification.id = it->first;
-		ClassificationMap& map = it->second;
-		for (ClassificationMap::iterator j = map.begin(); j != map.end(); j++)
+		const ClassificationMap& map = it->second;
+		for (ClassificationMap::const_iterator j = map.begin(); j != map.end(); j++)
 		{
 			classification.classifications.push_back(ClassificationOutput());
 			ClassificationOutput& out = classification.classifications.back();
