@@ -54,7 +54,8 @@ InstanceClassification ClassifierReasoner::run(double threshold)
 	setThreshold(threshold);
 	InstanceClassification results;
 
-	table.clear();
+
+
 
 	for (ReasoningList::iterator i = classifier.beginReasoning();
 				i != classifier.endReasoning(); ++i)
@@ -66,6 +67,9 @@ InstanceClassification ClassifierReasoner::run(double threshold)
 		getCandidates(classList, candidates, dependencies);
 		classify(classList, dependencies, candidates, results);
 	}
+
+	table.clear();
+	inputs.clear();
 
 	return results;
 }
