@@ -24,11 +24,11 @@ The reasoner can be used either to evaluate fuzzy rules from a knowledge base or
 
 To run the reasoner node:
 
-rosrun c_fuzzy c_fuzzy_reasoner <KNOWLEDGEBASE_PATH> <KNOWLEDGEBASE_CLASSIFIER_PATH> <CLASSIFIER_PATH>
+rosrun c_fuzzy c_fuzzy_reasoner < KNOWLEDGEBASE_PATH > < KNOWLEDGEBASE_CLASSIFIER_PATH > < CLASSIFIER_PATH >
 
-the reasoner will activate two services,
-/classification
-/reasoning
+the reasoner will activate two services:
+- /classification
+- /reasoning
 
 
 RUNNING WITH BAGS
