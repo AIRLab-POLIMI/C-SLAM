@@ -1,4 +1,6 @@
 #definition of the basic Classification service
+#The treshold for the classification
+float64 threshold
 #The input objects for the classification
 InputObject[] objects
 ---

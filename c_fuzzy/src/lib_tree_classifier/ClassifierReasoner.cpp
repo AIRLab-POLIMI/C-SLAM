@@ -40,6 +40,8 @@ ClassifierReasoner::ClassifierReasoner(FuzzyClassifier& classifier,
 	}
 
 	reasoner = new FuzzyReasoner(knowledgeBase);
+	threshold = 1.0;
+
 }
 
 void ClassifierReasoner::addInstance(ObjectInstance* instance)
@@ -47,8 +49,9 @@ void ClassifierReasoner::addInstance(ObjectInstance* instance)
 	inputs.insert(instance);
 }
 
-InstanceClassification ClassifierReasoner::run()
+InstanceClassification ClassifierReasoner::run(double threshold)
 {
+	setThreshold(threshold);
 	InstanceClassification results;
 
 	table.clear();
@@ -65,6 +68,11 @@ InstanceClassification ClassifierReasoner::run()
 	}
 
 	return results;
+}
+
+void ClassifierReasoner::setThreshold(double thr)
+{
+	threshold = min(max(thr, 0.0), 1.0);
 }
 
 void ClassifierReasoner::getCandidates(ClassList& classList,
@@ -269,7 +277,7 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 		double truthValue = result[className][className].truth;
 		ClassificationMap& instanceClassifications = data.results[instance->id];
 
-		if (truthValue > 0
+		if (truthValue >= threshold && truthValue > 0
 					&& (instanceClassifications.count(className) == 0
 								|| instanceClassifications[className]
 											< truthValue))

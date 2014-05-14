@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 		cout << "Starting classifier reasoner" << endl;
 		ClassifierReasoner reasoner(*classifier, *knowledgeBase);
 		addInstances(reasoner);
-		const InstanceClassification& classifications = reasoner.run();
+		const InstanceClassification& classifications = reasoner.run(0);
 		cout << "Reasoning done, results: " << endl;
 		cout << classifications;
 

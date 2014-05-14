@@ -57,7 +57,7 @@ bool ClassifierServiceHandler::classificationCallback(
 	vector<ObjectInstance> objects(inputs.size());
 
 	addInputs(objects, inputs);
-	const InstanceClassification& results = reasoner->run();
+	const InstanceClassification& results = reasoner->run(request.threshold);
 	sendOutputs(results, response);
 
 	return true;

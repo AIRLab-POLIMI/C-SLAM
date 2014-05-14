@@ -43,9 +43,12 @@ public:
 	ClassifierReasoner(FuzzyClassifier& classifier,
 				FuzzyKnowledgeBase& knowledgeBase);
 	void addInstance(ObjectInstance* instance);
-	InstanceClassification run();
+	InstanceClassification run(double thresold);
 
 private:
+	//threshold normalization
+	void setThreshold(double threshold);
+
 	//instance retrival
 	void getClassCandidates(FuzzyClass* fuzzyClass, ObjectList& candidates);
 	ObjectList& getSuperClassCandidates(FuzzyClass* fuzzyClass);
@@ -79,6 +82,7 @@ private:
 	GeneratedVarTable genVarTable;
 
 	ObjectListMap table;
+	double threshold;
 };
 
 #endif /* CLASSIFIERREASONER_H_ */

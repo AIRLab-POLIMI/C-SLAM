@@ -3,6 +3,7 @@
 #Epic test script used to test the c_fuzzy_reasoner classification service
 echo "two concentric circles and a door (with handle)"
 rosservice call /classification "
+threshold: 0.0
 objects: 
 -
   id: 0
