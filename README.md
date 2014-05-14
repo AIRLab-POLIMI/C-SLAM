@@ -46,8 +46,8 @@ Copyright & contacts
 
 This project is distributed under the GNU GPL license, version 3.
 
-(C) 2012 Davide Tateo
+(C) 2012-2014 Davide Tateo
 
-(C) 2012 Politecnico Di Milano
+(C) 2012-2014 Politecnico Di Milano
 
 For further information, please contact davide.tateo90@gmail.com
