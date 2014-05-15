@@ -65,6 +65,18 @@ public:
 		return superClass;
 	}
 
+	inline std::string getSuperClassName()
+	{
+		if(superClass)
+		{
+			return superClass->getName();
+		}
+		else
+		{
+			return "";
+		}
+	}
+
 	inline bool containsVar(std::string var)
 	{
 		return (variables->count(var) == 1)

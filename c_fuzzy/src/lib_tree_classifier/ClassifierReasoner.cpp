@@ -54,9 +54,6 @@ InstanceClassification ClassifierReasoner::run(double threshold)
 	setThreshold(threshold);
 	InstanceClassification results;
 
-
-
-
 	for (ReasoningList::iterator i = classifier.beginReasoning();
 				i != classifier.endReasoning(); ++i)
 	{
@@ -159,7 +156,8 @@ void ClassifierReasoner::trivialClassify(ClassList::iterator current,
 	{
 		ObjectInstance* instance = *i;
 		ClassificationMap& instanceClassifications = data.results[instance->id];
-		instanceClassifications[className] = 1.0;
+		instanceClassifications[className] = getMembershipLevel(instance->id,
+					className, 1.0, data);
 		table[className].insert(instance);
 	}
 
@@ -286,11 +284,34 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 								|| instanceClassifications[className]
 											< truthValue))
 		{
-			instanceClassifications[className] = truthValue;
+			instanceClassifications[className] = getMembershipLevel(
+						instance->id, className, truthValue, data);
+			table[className].insert(instance);
 		}
 
-		table[className].insert(instance);
 	}
+}
+
+double ClassifierReasoner::getMembershipLevel(size_t id, FuzzyClass* fuzzyClass, double level,
+			ClassificationData& data)
+{
+	const string& superClass = fuzzyClass->getSuperClassName();
+
+	if (data.results.count(id) != 0 && !superClass.empty())
+	{
+		double maxLevel = data.results[id][superClass];
+		return min(maxLevel, level);
+	}
+	else
+	{
+		return level;
+	}
+}
+
+double ClassifierReasoner::getMembershipLevel(size_t id, string& className,
+			double level, ClassificationData& data)
+{
+	return getMembershipLevel(id, classifier.getClass(className), level, data);
 }
 
 bool ClassifierReasoner::hasBeenConsidered(ObjectInstance* instance,

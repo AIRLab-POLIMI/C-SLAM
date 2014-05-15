@@ -38,7 +38,7 @@ typedef std::vector<ClassList> ReasoningList;
 class FuzzyClassifier
 {
 public:
-	FuzzyClass* getClass(std::string);
+	FuzzyClass* getClass(std::string name);
 	void addClass(FuzzyClass* fuzzyClass);
 	void addDependency(std::string fuzzyClass, std::string dependency);
 	bool contains(std::string name);

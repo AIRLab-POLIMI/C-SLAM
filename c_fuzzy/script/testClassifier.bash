@@ -41,6 +41,9 @@ objects:
   -
     name: 'FormFactor'
     value: 1
+  -
+    name: 'color'
+    value: 12
 -
   id: 3
   variables:

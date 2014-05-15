@@ -47,7 +47,7 @@ public:
 
 private:
 	//threshold normalization
-	void setThreshold(double threshold);
+	void setThreshold(double thr);
 
 	//instance retrival
 	void getClassCandidates(FuzzyClass* fuzzyClass, ObjectList& candidates);
@@ -55,6 +55,8 @@ private:
 	bool hasClassVariables(ObjectInstance& instance, FuzzyClass& fuzzyClass);
 	void getCandidates(ClassList& classList, ObjectListMap& candidates,
 				DepLists& deps);
+	ObjectList& getDependencyObjects(const std::string& className,
+				const std::string& dependencyName, ClassificationData& data);
 
 	//classification
 	void classify(ClassList& classList, DepLists& deps,
@@ -67,12 +69,16 @@ private:
 				DepList::iterator currentDep, DepList::iterator endDep,
 				DepLists& deps, ClassificationData& data);
 	void classifyInstances(ClassificationData& data);
-	bool hasBeenConsidered(ObjectInstance* instance, ClassificationData& data);
-	void noMoreConsidered(ObjectInstance* instance, ClassificationData& data);
 	void setupReasoning(ClassificationData& data);
 	void runReasoning(ClassificationData& data);
-	ObjectList& getDependencyObjects(const std::string& className,
-				const std::string& dependencyName, ClassificationData& data);
+	double getMembershipLevel(size_t id, FuzzyClass* fuzzyClass, double level,
+					ClassificationData& data);
+	double getMembershipLevel(size_t id, std::string& className, double level,
+				ClassificationData& data);
+
+	//tabu list management
+	bool hasBeenConsidered(ObjectInstance* instance, ClassificationData& data);
+	void noMoreConsidered(ObjectInstance* instance, ClassificationData& data);
 
 private:
 	FuzzyClassifier& classifier;

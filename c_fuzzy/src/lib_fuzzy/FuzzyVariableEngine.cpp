@@ -59,7 +59,8 @@ void FuzzyVariableEngine::checkNameSpaceExistence(string& nameSpace)
 	if (namespaceTable.count(nameSpace) == 0)
 	{
 		stringstream ss;
-		ss << "Error: non existing class " << nameSpace;
+		ss << "Error: non existing class " << nameSpace << endl;;
+		ss << "You must define a namespace in the knowledgeBase for each class";
 		throw runtime_error(ss.str());
 	}
 }
