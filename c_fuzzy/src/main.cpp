@@ -52,12 +52,12 @@ int main(int argc, char **argv)
 		}
 		catch (std::runtime_error& e)
 		{
-			ROS_INFO(e.what());
-			ROS_INFO("Check the knowledge base file");
+			ROS_ERROR(e.what());
+			ROS_ERROR("Check the knowledge base file");
 		}
 	}
 	else
-		ROS_INFO("No knowledge base specified");
+		ROS_ERROR("No knowledge base specified");
 
 	return 0;
 }

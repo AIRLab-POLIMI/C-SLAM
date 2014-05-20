@@ -70,16 +70,16 @@ int main(int argc, char *argv[])
 		FuzzyClassifier* classifier;
 		FuzzyKnowledgeBase* knowledgeBase;
 
+		cout << "Parsing knowledgeBase file" << endl;
+		kbBuilder.parse(argv[1]);
+		knowledgeBase = kbBuilder.createKnowledgeBase();
+		cout << "Parsing done" << endl;
+
 		cout << "Parsing classifier file" << endl;
-		classifierBuilder.parse(argv[1]);
+		classifierBuilder.parse(argv[2]);
 		classifier = classifierBuilder.buildFuzzyClassifier();
 		classifier->drawDependencyGraph("/home/dave/classifier.dot");
 		classifier->drawReasoningGraph("/home/dave/reasoning.dot");
-		cout << "Parsing done" << endl;
-
-		cout << "Parsing knowledgeBase file" << endl;
-		kbBuilder.parse(argv[2]);
-		knowledgeBase = kbBuilder.createKnowledgeBase();
 		cout << "Parsing done" << endl;
 
 		cout << "Starting classifier reasoner" << endl;

@@ -23,8 +23,3 @@ add_executable(cognitive_vision src/Callbacks.cpp
 
 #link libriaries
 target_link_libraries(cognitive_vision ${catkin_LIBRARIES})
-
-#install launch files
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)

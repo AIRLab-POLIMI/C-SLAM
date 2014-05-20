@@ -27,6 +27,18 @@
 
 namespace enc = sensor_msgs::image_encodings;
 
+Dispatcher::Dispatcher(ros::NodeHandle& n) :
+			it(n), rotX(0), rotY(0), rotZ(0)
+{
+	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
+				&Dispatcher::handleNavdata, this);
+	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
+				&Dispatcher::handleImage, this);
+	classificationService = n.serviceClient<c_fuzzy::Classification>(
+				"classification", true);
+
+}
+
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
 	rotX = navdata.rotX;
@@ -41,7 +53,8 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	try
 	{
 		cv_ptr = cv_bridge::toCvCopy(msg, enc::BGR8);
-	} catch (cv_bridge::Exception& e)
+	}
+	catch (cv_bridge::Exception& e)
 	{
 		ROS_ERROR("cv_bridge exception: %s", e.what());
 		return;
@@ -52,5 +65,12 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	detector.setYaw(rotZ);
 
 	detector.detect(cv_ptr->image);
+}
 
+void Dispatcher::classify(c_fuzzy::Classification& serviceCall)
+{
+	if (classificationService.isValid())
+	{
+		classificationService.call(serviceCall);
+	}
 }

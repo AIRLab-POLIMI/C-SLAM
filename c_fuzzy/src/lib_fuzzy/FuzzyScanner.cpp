@@ -2153,7 +2153,7 @@ void fzfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 97 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.l"
+#line 96 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyScanner.l"
 
 
 

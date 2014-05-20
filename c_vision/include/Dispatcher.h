@@ -29,27 +29,22 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <ardrone_autonomy/Navdata.h>
-
+#include <c_fuzzy/Classification.h>
 #include "CognitiveDetector.h"
 
 class Dispatcher
 {
 public:
-	Dispatcher(ros::NodeHandle& n) :
-				it(n), rotX(0), rotY(0), rotZ(0)
-	{
-		navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
-					&Dispatcher::handleNavdata, this);
-		imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
-					&Dispatcher::handleImage, this);
-	}
+	Dispatcher(ros::NodeHandle& n);
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
+	void classify(c_fuzzy::Classification& serviceCall);
 
 private:
 	image_transport::ImageTransport it;
 	ros::Subscriber navdataSubscriber;
 	image_transport::Subscriber imageSubscriber;
+	ros::ServiceClient classificationService;
 
 	double rotX, rotY, rotZ;
 
