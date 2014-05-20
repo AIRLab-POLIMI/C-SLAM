@@ -31,13 +31,13 @@ the reasoner will activate two services:
 - /reasoning
 
 
-RUNNING WITH BAGS
+RUNNING THE SYSTEM
 -----------------
 
-There is a launch file that can be used to launch the system, opening rqt_bag to testthe system with AR Drone bags. It also launch the image_proc node to rectify the AR drone input image.
+There is a launch file that can be used to launch the system, that can be used with the AR Drone ROS driver, or with rqt_bag to test the system using AR Drone bags. It also launch the image_proc node to rectify the AR drone input image.
 You can use the launch file with the following command:
 
-`roslaunch c_vision c_vision.launch`
+`roslaunch c_slam c_slam.launch`
 
 
 
