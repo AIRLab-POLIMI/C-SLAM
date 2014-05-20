@@ -1,13 +1,10 @@
+<!-- Launch file to run the cognitive slam system -->
 <launch>
 	<!-- Arguments -->
 	<arg name="camera_source" default="/ardrone" />
-	<arg name="knowledgebase" default="$(find c_fuzzy)/knowledgebase/prova.fuzzy" />
-	<arg name="classifierkb" default="$(find c_fuzzy)/knowledgebase/knowledgbase.fuzzy" />
-	<arg name="classifier" default="$(find c_fuzzy)/knowledgebase/classifier.fuzzy" />
-	
-	<!-- Tools 
-	<node name="rqt_console" pkg="rqt_console" type="rqt_console" />
-	<node name="rqt_bag" pkg="rqt_bag" type="rqt_bag" /> -->
+	<arg name="knowledgebase" default="$(find c_slam)/knowledgebase/prova.fuzzy" />
+	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.fuzzy" />
+	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
@@ -15,7 +12,7 @@
 	</group>
 	
 	<!-- System nodes -->
-	<node name="cognitive_vision" pkg="c_vision" type="cognitive_vision" />
-	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner" args="$(arg knowledgebase) $(arg classifierkb) $(arg classifier)"/> 		
+	<node name="cognitive_vision" pkg="c_vision" type="cognitive_vision" output="screen"/>
+	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner" args="$(arg knowledgebase) $(arg classifierkb) $(arg classifier)" /> 		
 
 </launch> 
