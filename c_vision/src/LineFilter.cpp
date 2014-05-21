@@ -36,7 +36,7 @@ using namespace std;
 bool isHighestLine(cv::Vec4i i, cv::Vec4i j);
 bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 
-void LineFilter::filter(vector<Vec4i> lines, double roll)
+void LineFilter::filter(vector<Vec4i>& lines, double roll)
 {
 	const double delta_max_vertical = from_degrees(5); //5 degrees of error
 	const double delta_max_horizontal = from_degrees(10); //10 degrees of error

@@ -2,4 +2,4 @@
 #the name of the input variable
 string name
 #the value to be assigned
-uint32 value
+int32 value

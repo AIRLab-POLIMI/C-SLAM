@@ -19,7 +19,8 @@ add_executable(cognitive_vision src/Callbacks.cpp
                                 src/HoughDetector.cpp 
                                 src/ImageView.cpp 
                                 src/LineFilter.cpp
-                                src/main.cpp)
+                                src/main.cpp
+                                src/ObjectClassificator.cpp)
 
 #link libriaries
 target_link_libraries(cognitive_vision ${catkin_LIBRARIES})

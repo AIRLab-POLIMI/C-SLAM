@@ -2,11 +2,11 @@
 
 CLASS Rectangle
 	VARIABLES
-		Xmin;
-		Xmax;
-		Ymin;
-		Ymax;
-		FormFactor;
+		xMin;
+		xMax;
+		yMin;
+		yMax;
+		formFactor;
 		color;
 	END_VARIABLES
 END_CLASS
@@ -17,9 +17,9 @@ CLASS Door extends Rectangle IMPORTANT
 		height = High;
 	END_CONSTANTS
 	
-	FormFactor is Narrow;
-	Handle.x is Lateral on(Xmin, Xmax);
-	Handle.y is Centered on(Ymin, Ymax); 
+	formFactor is Narrow;
+	Handle.x is Lateral on(xMin, xMax);
+	Handle.y is Centered on(yMin, yMax); 
 
 END_CLASS
 
@@ -37,8 +37,8 @@ CLASS Handle
 		y;
 	END_VARIABLES
 	
-	x is Lateral on Door(Xmin, Xmax);
-	y is Centered on Door(Ymin, Ymax);
+	x is Lateral on Door(xMin, xMax);
+	y is Centered on Door(yMin, yMax);
 
 END_CLASS
 

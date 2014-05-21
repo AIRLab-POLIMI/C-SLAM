@@ -2,7 +2,7 @@
  * c_vision,
  *
  *
- * Copyright (C) 2013 Davide Tateo
+ * Copyright (C) 2014 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_vision.
@@ -21,33 +21,25 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LINEFILTER_H_
-#define LINEFILTER_H_
+#ifndef OBJECTCLASSIFICATOR_H_
+#define OBJECTCLASSIFICATOR_H_
 
-#include <opencv2/core/core.hpp>
+#include <c_fuzzy/Classification.h>
+#include <string>
+#include <vector>
 
-class LineFilter
+class ObjectClassificator
 {
 public:
-
-	void filter(std::vector<cv::Vec4i>& lines, double roll);
-
-	std::vector<cv::Vec4i> getVerticalLines()
-	{
-		return verticalLines;
-	}
-
-	std::vector<cv::Vec4i> getHorizontalLines()
-	{
-		return horizontalLines;
-	}
+	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
+	void newObject();
+	void addFeature(std::string name, int value);
 
 private:
-	bool sameSlope(double alpha, double beta, double maxDelta);
+	c_fuzzy::Classification& classification;
+	std::vector<c_fuzzy::InputObject>& objects;
+	std::vector<c_fuzzy::InputVariable>* currentVars;
 
-private:
-	std::vector<cv::Vec4i> verticalLines;
-	std::vector<cv::Vec4i> horizontalLines;
 };
 
-#endif /* LINEFILTER_H_ */
+#endif /* OBJECTCLASSIFICATOR_H_ */

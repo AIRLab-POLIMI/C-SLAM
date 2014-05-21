@@ -49,12 +49,12 @@ public:
 
 	void display(cv::Mat& frame);
 
-	void setClusters(std::vector<ObjectCluster>* clusters)
+	void setClusters(const std::vector<ObjectCluster>* clusters)
 	{
 		this->clusters = clusters;
 	}
 
-	void setKeyPoints(std::vector<cv::KeyPoint>* keyPoints)
+	void setKeyPoints(const std::vector<cv::KeyPoint>* keyPoints)
 	{
 		this->keyPoints = keyPoints;
 	}
@@ -64,35 +64,35 @@ public:
 		this->roll = roll;
 	}
 
-	void setVerticalLines(std::vector<cv::Vec4i>* verticalLines)
+	void setVerticalLines(const std::vector<cv::Vec4i>* verticalLines)
 	{
 		this->verticalLines = verticalLines;
 	}
 
-	void setHorizontalLines(std::vector<cv::Vec4i>* horizontalLines)
+	void setHorizontalLines(const std::vector<cv::Vec4i>* horizontalLines)
 	{
 		this->horizontalLines = horizontalLines;
 	}
 
-	void setRectangles(std::vector<std::vector<cv::Point> >* rectangles)
+	void setRectangles(const std::vector<std::vector<cv::Point> >* rectangles)
 	{
 		this->rectangles = rectangles;
 	}
 
-	void setPoles(std::vector<std::vector<cv::Point> >* poles)
+	void setPoles(const std::vector<std::vector<cv::Point> >* poles)
 	{
 		this->poles = poles;
 	}
 
 private:
 	void drawAxis(cv::Mat& input);
-	void displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
-				std::vector<ObjectCluster>& clusters, cv::Mat& frame);
+	void displayClusterResults(const std::vector<cv::KeyPoint>& keyPoints,
+				const std::vector<ObjectCluster>& clusters, cv::Mat& frame);
 	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
 	void displayRectanglesResults(
-				std::vector<std::vector<cv::Point> >& rectangles,
+				const std::vector<std::vector<cv::Point> >& rectangles,
 				cv::Mat& frame);
-	void displayPoleResults(std::vector<std::vector<cv::Point> >& poles,
+	void displayPoleResults(const std::vector<std::vector<cv::Point> >& poles,
 				cv::Mat& frame);
 
 	void createTrackBars(void* featureObject, void* clusterObjetc,
@@ -101,12 +101,12 @@ private:
 private:
 	std::string viewName;
 
-	std::vector<cv::KeyPoint>* keyPoints;
-	std::vector<ObjectCluster>* clusters;
-	std::vector<cv::Vec4i>* verticalLines;
-	std::vector<cv::Vec4i>* horizontalLines;
-	std::vector<std::vector<cv::Point> >* rectangles;
-	std::vector<std::vector<cv::Point> >* poles;
+	const std::vector<cv::KeyPoint>* keyPoints;
+	const std::vector<ObjectCluster>* clusters;
+	const std::vector<cv::Vec4i>* verticalLines;
+	const std::vector<cv::Vec4i>* horizontalLines;
+	const std::vector<std::vector<cv::Point> >* rectangles;
+	const std::vector<std::vector<cv::Point> >* poles;
 	double roll;
 
 };

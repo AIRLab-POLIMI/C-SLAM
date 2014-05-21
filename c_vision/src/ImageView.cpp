@@ -69,8 +69,8 @@ void ImageView::drawAxis(cv::Mat& input)
 
 }
 
-void ImageView::displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
-			std::vector<ObjectCluster>& clusters, cv::Mat& frame)
+void ImageView::displayClusterResults(const std::vector<cv::KeyPoint>& keyPoints,
+			const std::vector<ObjectCluster>& clusters, cv::Mat& frame)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
@@ -82,7 +82,6 @@ void ImageView::displayClusterResults(std::vector<cv::KeyPoint>& keyPoints,
 	/*display clusters*/
 	for (size_t i = 0; i < clusters.size(); i++)
 	{
-
 		clusters[i].draw(frame, Scalar(255, 0, 0));
 	}
 }
@@ -99,13 +98,13 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 
 }
 
-void ImageView::displayRectanglesResults(vector<vector<Point> >& rectangles,
+void ImageView::displayRectanglesResults(const vector<vector<Point> >& rectangles,
 			Mat& frame)
 {
 	drawContours(frame, rectangles, -1, Scalar(0, 255, 0));
 }
 
-void ImageView::displayPoleResults(std::vector<std::vector<cv::Point> >& poles,
+void ImageView::displayPoleResults(const std::vector<std::vector<cv::Point> >& poles,
 			cv::Mat& frame)
 {
 	drawContours(frame, poles, -1, Scalar(255, 255, 0));

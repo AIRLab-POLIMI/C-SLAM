@@ -72,7 +72,7 @@ void ObjectCluster::updateBoundingBox(KeyPoint point)
 
 }
 
-vector<ObjectCluster> DBSCAN::detect(vector<KeyPoint> &keypoints)
+vector<ObjectCluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 {
 	vector<ObjectCluster> clusters;
 	set<int> clustered;
@@ -103,7 +103,7 @@ vector<ObjectCluster> DBSCAN::detect(vector<KeyPoint> &keypoints)
 					if (!visited.count(neighbor[j]))
 					{
 						visited.insert(neighbor[j]);
-						vector<int> newNeighbors = listNeighbors(keypoints,
+						const vector<int>& newNeighbors = listNeighbors(keypoints,
 									keypoints[neighbor[j]]);
 						if (newNeighbors.size() >= minPoints)
 						{
@@ -130,8 +130,8 @@ vector<ObjectCluster> DBSCAN::detect(vector<KeyPoint> &keypoints)
 	return clusters;
 }
 
-vector<int> DBSCAN::listNeighbors(vector<KeyPoint> &keypoints,
-			KeyPoint& keypoint)
+vector<int> DBSCAN::listNeighbors(const vector<KeyPoint>& keypoints,
+			const KeyPoint& keypoint)
 {
 	float dist;
 	vector<int> neighbors;

@@ -39,7 +39,7 @@ public:
 
 	void add(cv::KeyPoint point);
 
-	inline void draw(cv::Mat& frame, cv::Scalar color)
+	inline void draw(cv::Mat& frame, cv::Scalar color) const
 	{
 		cv::rectangle(frame, start, end, color, 2);
 	}
@@ -77,7 +77,7 @@ public:
 				maxDistance(eps), minPoints(minPts)
 	{
 	}
-	std::vector<ObjectCluster> detect(std::vector<cv::KeyPoint> &keypoints);
+	std::vector<ObjectCluster> detect(const std::vector<cv::KeyPoint>& keypoints);
 
 	inline double getMaxDistance() const
 	{
@@ -100,8 +100,8 @@ public:
 	}
 
 private:
-	std::vector<int> listNeighbors(std::vector<cv::KeyPoint> &keypoints,
-				cv::KeyPoint &keypoint);
+	std::vector<int> listNeighbors(const std::vector<cv::KeyPoint>& keypoints,
+				const cv::KeyPoint &keypoint);
 
 private:
 	double maxDistance;

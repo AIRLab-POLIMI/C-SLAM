@@ -41,15 +41,21 @@ public:
 	void classify(c_fuzzy::Classification& serviceCall);
 
 private:
+	void connectToClassificationServer();
+
+private:
+	//Ros management
+	ros::NodeHandle& n;
 	image_transport::ImageTransport it;
 	ros::Subscriber navdataSubscriber;
 	image_transport::Subscriber imageSubscriber;
 	ros::ServiceClient classificationService;
 
+
+	//Data needed to detect objects
 	double rotX, rotY, rotZ;
-
 	CognitiveDetector detector;
-
+	double classifierThreshold;
 };
 
 #endif /* DISPATCHER_H_ */

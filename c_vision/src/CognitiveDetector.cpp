@@ -30,25 +30,41 @@
 using namespace cv;
 using namespace std;
 
-void CognitiveDetector::detect(cv::Mat& frame)
+CognitiveDetector::CognitiveDetector() :
+			featureDetector(cornerP.threshold),
+			clusterDetector(clusterP.maxDistance, clusterP.minPoints),
+			lineDetector(cannyP.apertureSize, houghP.rho, houghP.teta,
+						houghP.threshold, houghP.minLineLenght,
+						houghP.maxLineGap),
+			pitch(0),
+			roll(0),
+			yaw(0),
+			viewer("Detected Image", (void*) &featureDetector,
+						(void*) &clusterDetector, (void*) &lineDetector)
+{
+}
+
+void CognitiveDetector::detect(cv::Mat& frame,
+			ObjectClassificator& classificator)
 {
 	Mat equalizedFrame = preprocessing(frame);
 	vector<Vec4i> lines = lineDetector.detect(equalizedFrame);
 
 	LineFilter filter;
 	filter.filter(lines, roll);
-	vector<Vec4i> verticalLines = filter.getVerticalLines();
-	vector<Vec4i> horizontalLines = filter.getHorizontalLines();
+	const vector<Vec4i>& verticalLines = filter.getVerticalLines();
+	const vector<Vec4i>& horizontalLines = filter.getHorizontalLines();
 
-	vector<KeyPoint> keyPoints = featureDetector.detect(equalizedFrame);
+	const vector<KeyPoint>& keyPoints = featureDetector.detect(equalizedFrame);
 
-	vector<ObjectCluster> clusters = clusterDetector.detect(keyPoints);
+	const vector<ObjectCluster>& clusters = clusterDetector.detect(keyPoints);
 
 	HighLevelDetector highLevelDetector;
 	highLevelDetector.detect(verticalLines, horizontalLines);
 
-	vector<vector<Point> > rectangles = highLevelDetector.getRectangles();
-	vector<vector<Point> > poles = highLevelDetector.getPoles();
+	const vector<vector<Point> >& rectangles =
+				highLevelDetector.getRectangles();
+	const vector<vector<Point> >& poles = highLevelDetector.getPoles();
 
 	//display results
 	viewer.setRoll(roll);
@@ -59,6 +75,68 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	viewer.setRectangles(&rectangles);
 	viewer.setPoles(&poles);
 	viewer.display(frame);
+
+	//send results to the reasoner
+	processRectangles(rectangles, classificator);
+	processPoles(poles, classificator);
+	processClusters(clusters, classificator);
+}
+
+void CognitiveDetector::processRectangles(
+			const vector<vector<Point> >& rectangles,
+			ObjectClassificator& classificator)
+{
+	for (vector<vector<Point> >::const_iterator i = rectangles.begin();
+				i != rectangles.end(); ++i)
+	{
+		classificator.newObject();
+		int xMin, xMax, yMin, yMax;
+		int FormFactor;
+
+		vector<Point>::const_iterator j = i->begin();
+		xMax = xMin = j->x;
+		yMin = yMax = j->y;
+
+		j++;
+
+		for (; j != i->end(); ++j)
+		{
+			xMax = max(j->x, xMax);
+			yMax = max(j->y, yMax);
+			xMin = min(j->x, xMin);
+			yMin = min(j->y, yMin);
+		}
+
+		int deltaX = (xMax - xMin);
+		int deltaY = (yMax - yMin);
+		if (deltaY != 0)
+		{
+			FormFactor = 1000 * deltaX / deltaY;
+			classificator.addFeature("xMax", xMax);
+			classificator.addFeature("yMax", yMax);
+			classificator.addFeature("xMin", xMin);
+			classificator.addFeature("yMin", yMin);
+			classificator.addFeature("formFactor", FormFactor);
+			classificator.addFeature("color", 100); //FIXME levami!!!!
+		}
+
+	}
+}
+
+void CognitiveDetector::processPoles(const vector<vector<Point> >& poles,
+			ObjectClassificator& classificator)
+{
+	for (vector<vector<Point> >::const_iterator it = poles.begin();
+				it != poles.end(); ++it)
+	{
+
+	}
+}
+
+void CognitiveDetector::processClusters(const vector<ObjectCluster>& clusters,
+			ObjectClassificator& classificator)
+{
+
 }
 
 /* Image Processing Methods */

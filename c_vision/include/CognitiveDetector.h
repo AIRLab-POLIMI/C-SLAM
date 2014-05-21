@@ -31,27 +31,16 @@
 #include "HoughDetector.h"
 #include "HighLevelDetector.h"
 #include "DBSCAN.h"
+#include "ObjectClassificator.h"
 
 #include "ImageView.h"
 
 class CognitiveDetector
 {
 public:
-	CognitiveDetector() :
-				featureDetector(cornerP.threshold),
-				clusterDetector(clusterP.maxDistance, clusterP.minPoints),
-				lineDetector(cannyP.apertureSize, houghP.rho, houghP.teta,
-							houghP.threshold, houghP.minLineLenght,
-							houghP.maxLineGap),
-				pitch(0),
-				roll(0),
-				yaw(0),
-				viewer("Detected Image", (void*) &featureDetector,
-							(void*) &clusterDetector, (void*) &lineDetector)
-	{
-	}
+	CognitiveDetector();
 
-	void detect(cv::Mat& image);
+	void detect(cv::Mat& image, ObjectClassificator& classificator);
 
 	inline void setPitch(double pitch)
 	{
@@ -74,7 +63,13 @@ private:
 				std::vector<cv::Vec4i> horizontalLines);
 	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
 	cv::Mat preprocessing(cv::Mat& input);
-
+	void processRectangles(
+				const std::vector<std::vector<cv::Point> >& rectangles,
+				ObjectClassificator& classificator);
+	void processPoles(const std::vector<std::vector<cv::Point> >& poles,
+				ObjectClassificator& classificator);
+	void processClusters(const std::vector<ObjectCluster>& clusters,
+				ObjectClassificator& classificator);
 private:
 	FeatureDetector featureDetector;
 	DBSCAN clusterDetector;

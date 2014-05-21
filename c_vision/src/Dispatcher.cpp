@@ -24,18 +24,19 @@
 #include <iostream>
 
 #include "Dispatcher.h"
+#include "ObjectClassificator.h"
 
 namespace enc = sensor_msgs::image_encodings;
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
-			it(n), rotX(0), rotY(0), rotZ(0)
+			n(n), it(n)
 {
+	classifierThreshold = 0.2; //TODO change magic...
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
-	classificationService = n.serviceClient<c_fuzzy::Classification>(
-				"classification", true);
+	connectToClassificationServer();
 
 }
 
@@ -64,7 +65,11 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	detector.setPitch(rotY);
 	detector.setYaw(rotZ);
 
-	detector.detect(cv_ptr->image);
+	c_fuzzy::Classification serviceCall;
+	ObjectClassificator classificator(serviceCall, classifierThreshold);
+	detector.detect(cv_ptr->image, classificator);
+
+	classify(serviceCall);
 }
 
 void Dispatcher::classify(c_fuzzy::Classification& serviceCall)
@@ -73,4 +78,18 @@ void Dispatcher::classify(c_fuzzy::Classification& serviceCall)
 	{
 		classificationService.call(serviceCall);
 	}
+	else
+	{
+		ROS_ERROR("Service down, waiting reconnection...");
+		classificationService.waitForExistence();
+		connectToClassificationServer();
+	}
+
 }
+
+void Dispatcher::connectToClassificationServer()
+{
+	classificationService = n.serviceClient<c_fuzzy::Classification>(
+				"classification", true);
+}
+

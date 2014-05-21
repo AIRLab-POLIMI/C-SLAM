@@ -30,6 +30,7 @@
 #include "TreeClassifierBuilder.h"
 
 #include <iostream>
+#include <ros/ros.h>
 
 using namespace std;
 using namespace c_fuzzy;

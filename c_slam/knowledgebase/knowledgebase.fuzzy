@@ -1,6 +1,6 @@
 /* Knowledge Base for fuzzy Classifier */
 FUZZIFY_CLASS Rectangle
-	FUZZIFY FormFactor
+	FUZZIFY formFactor
 		Narrow :=  sgt(1);
 	END_FUZZIFY
 	
