@@ -2,8 +2,8 @@
 <launch>
 	<!-- Arguments -->
 	<arg name="camera_source" default="/ardrone" />
-	<arg name="knowledgebase" default="$(find c_slam)/knowledgebase/prova.fuzzy" />
-	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.fuzzy" />
+	<arg name="knowledgebase" default="$(find c_slam)/knowledgebase/prova.kb" />
+	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	
 	<!-- Camera processing -->

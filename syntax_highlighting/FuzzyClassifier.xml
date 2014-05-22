@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE language SYSTEM "language.dtd"> 
+<language name="FuzzyClassifier" version="1.00" kateversion="2.4" section="Sources" extensions="*.fuzzy" > 
+  <highlighting> 
+    <list name="classifier"> 
+      <item>class</item> 
+      <item>end_class</item> 
+      <item>variables</item>
+      <item>end_variables</item>
+      <item>constants</item>
+      <item>end_constants</item>
+      <item>is</item>
+      <item>on</item>
+      <item>match</item>
+      <item>degree</item>
+      <item>extends</item>
+      <item>important</item>
+    </list> 
+   
+   <contexts> 
+	    
+    <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" > 
+	<keyword attribute="Keyword" context="#stay" String="classifier" /> 
+	<DetectChar attribute="String" context="string" char="&quot;" />
+	<Detect2Chars attribute="Comment" context="Commentar 1" char="/" char1="*" beginRegion="Comment" />
+	<Detect2Chars attribute="Comment" context="Commentar 2" char="/" char1="/" beginRegion="Comment" />
+      </context> 
+      
+      <context attribute="String" lineEndContext="#stay" name="string" > 
+	<DetectChar attribute="String" context="#pop" char="&quot;" /> 
+      </context> 
+      
+      <context name="Commentar 1" attribute="Comment" lineEndContext="#stay">
+        <DetectSpaces />
+        <LineContinue attribute="Comment" context="#stay" />
+        <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="Comment" />
+      </context>
+      
+       <context name="Commentar 2" attribute="Comment" lineEndContext="#pop">
+        <DetectSpaces />
+        <LineContinue attribute="Comment" context="#stay" />
+      </context>
+      
+    </contexts> 
+    
+    <itemDatas> 
+      <itemData name="Normal Text" defStyleNum="dsNormal" /> 
+      <itemData name="Keyword" defStyleNum="dsKeyword" /> 
+      <itemData name="String" defStyleNum="dsString" /> 
+      <itemData name="Comment" defStyleNum="dsComment" />
+    </itemDatas> 
+    
+  </highlighting>
+  
+  <general> 
+    
+    <comments> 
+      <comment name="singleLine" start="//"/>
+      <comment name="multiLine" start="/*" end="*/" region="Comment"/>
+    </comments> 
+    
+    <keywords casesensitive="0"/> 
+  </general>
+  
+</language> 

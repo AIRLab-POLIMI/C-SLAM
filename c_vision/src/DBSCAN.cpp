@@ -121,7 +121,7 @@ vector<ObjectCluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 						currentCluster.add(p);
 					}
 				}
-
+				currentCluster.setMassCenter();
 				clusters.push_back(currentCluster);
 			}
 

@@ -44,11 +44,14 @@ public:
 		cv::rectangle(frame, start, end, color, 2);
 	}
 
-	inline cv::KeyPoint getMassCenter()
+	inline void setMassCenter()
 	{
 		massCenter.pt.x /= massCenter.size;
 		massCenter.pt.y /= massCenter.size;
+	}
 
+	inline cv::KeyPoint getMassCenter() const
+	{
 		return massCenter;
 	}
 

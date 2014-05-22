@@ -11,6 +11,13 @@ CLASS Rectangle
 	END_VARIABLES
 END_CLASS
 
+CLASS Cluster
+	VARIABLES
+		x;
+		y;
+	END_VARIABLES
+END_CLASS
+
 CLASS Door extends Rectangle IMPORTANT
 	
 	CONSTANTS
@@ -24,30 +31,22 @@ CLASS Door extends Rectangle IMPORTANT
 END_CLASS
 
 CLASS RedDoor extends Door
-	color is Red;
 END_CLASS
 
-CLASS HappyDoor extends Door
-
-END_CLASS
-
-CLASS Handle
-	VARIABLES
-		x;
-		y;
-	END_VARIABLES
-	
+CLASS Handle extends Cluster	
 	x is Lateral on Door(xMin, xMax);
 	y is Centered on Door(yMin, yMax);
-
 END_CLASS
 
-
-CLASS ConcentricCircle
+CLASS Circle
 	VARIABLES
 		x;
 		y;
+		r;
 	END_VARIABLES
+END_CLASS
+
+CLASS ConcentricCircle extends Circle
 	
 	ConcentricCircle.x match x degree Good;
 	ConcentricCircle.y match y degree Good;	

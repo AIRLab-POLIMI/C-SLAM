@@ -1,4 +1,5 @@
 /* Knowledge Base for fuzzy Classifier */
+
 FUZZIFY_CLASS Rectangle
 	FUZZIFY formFactor
 		Narrow :=  sgt(1);
@@ -23,13 +24,6 @@ FUZZIFY_CLASS Door
 		
 	END_FUZZIFY_PREDICATE	
 	
-END_FUZZIFY_CLASS
-
-
-FUZZIFY_CLASS RedDoor
-END_FUZZIFY_CLASS
-
-FUZZIFY_CLASS HappyDoor
 END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS ConcentricCircle

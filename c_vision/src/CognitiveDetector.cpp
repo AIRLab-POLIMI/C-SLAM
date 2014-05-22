@@ -136,7 +136,18 @@ void CognitiveDetector::processPoles(const vector<vector<Point> >& poles,
 void CognitiveDetector::processClusters(const vector<ObjectCluster>& clusters,
 			ObjectClassificator& classificator)
 {
+	for (vector<ObjectCluster>::const_iterator i = clusters.begin();
+				i != clusters.end(); ++i)
+	{
+		const KeyPoint& massCenter= i->getMassCenter();
+		int x = massCenter.pt.x;
+		int y = massCenter.pt.y;
+		int size = massCenter.size;
 
+		classificator.addFeature("x", x);
+		classificator.addFeature("y", y);
+		classificator.addFeature("size", size);
+	}
 }
 
 /* Image Processing Methods */
