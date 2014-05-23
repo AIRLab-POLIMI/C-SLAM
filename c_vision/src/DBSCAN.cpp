@@ -27,54 +27,10 @@
 using namespace std;
 using namespace cv;
 
-void ObjectCluster::add(KeyPoint point)
+
+vector<Cluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 {
-	updateMassCenter(point);
-	updateBoundingBox(point);
-
-	keyPoints.push_back(point);
-}
-
-void ObjectCluster::updateMassCenter(KeyPoint point)
-{
-	int y = point.pt.y;
-	int x = point.pt.x;
-	float size = point.size;
-
-	massCenter.pt.x += x * size;
-	massCenter.pt.y += y * size;
-
-	massCenter.size += size;
-}
-
-void ObjectCluster::updateBoundingBox(KeyPoint point)
-{
-	int y = point.pt.y;
-	int x = point.pt.x;
-
-	if (keyPoints.size() > 0)
-	{
-
-		start.y = (start.y < y) ? start.y : y;
-		start.x = (start.x < x) ? start.x : x;
-
-		end.y = (end.y > y) ? end.y : y;
-		end.x = (end.x > x) ? end.x : x;
-	}
-	else
-	{
-		start.x = x;
-		start.y = y;
-
-		end.x = x;
-		end.y = y;
-	}
-
-}
-
-vector<ObjectCluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
-{
-	vector<ObjectCluster> clusters;
+	vector<Cluster> clusters;
 	set<int> clustered;
 	set<int> visited;
 
@@ -91,7 +47,7 @@ vector<ObjectCluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 			//create new cluster
 			if (neighbor.size() >= minPoints)
 			{
-				ObjectCluster currentCluster;
+				Cluster currentCluster;
 				KeyPoint pt = keypoints[i];
 				currentCluster.add(pt);
 				clustered.insert(i);
@@ -121,7 +77,7 @@ vector<ObjectCluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 						currentCluster.add(p);
 					}
 				}
-				currentCluster.setMassCenter();
+				currentCluster.setFeature();
 				clusters.push_back(currentCluster);
 			}
 

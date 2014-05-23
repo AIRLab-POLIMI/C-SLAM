@@ -63,13 +63,21 @@ private:
 				std::vector<cv::Vec4i> horizontalLines);
 	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
 	cv::Mat preprocessing(cv::Mat& input);
-	void processRectangles(
-				const std::vector<std::vector<cv::Point> >& rectangles,
-				ObjectClassificator& classificator);
-	void processPoles(const std::vector<std::vector<cv::Point> >& poles,
-				ObjectClassificator& classificator);
-	void processClusters(const std::vector<ObjectCluster>& clusters,
-				ObjectClassificator& classificator);
+
+	template<class T>
+	void processFeatures(const std::vector<T>& features,
+				ObjectClassificator& classificator)
+	{
+		typedef typename std::vector<T> FeatureVector;
+
+		for (typename FeatureVector::const_iterator i = features.begin();
+						i != features.end(); ++i)
+			{
+				const Feature& feature = *i;
+				classificator.addFeature(feature);
+			}
+	}
+
 private:
 	FeatureDetector featureDetector;
 	DBSCAN clusterDetector;

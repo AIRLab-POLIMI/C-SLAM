@@ -49,6 +49,16 @@ void ObjectClassificator::addFeature(string name, int value)
 	InputObject& current = objects.back();
 	InputVariable feature;
 	feature.name = name;
-	feature.value = 0;
+	feature.value = value;
 	currentVars->push_back(feature);
+}
+
+void ObjectClassificator::addFeature(const Feature& feature)
+{
+	newObject();
+	for (FeatureMap::const_iterator i = feature.begin(); i != feature.end();
+				++i)
+	{
+		addFeature(i->first, i->second);
+	}
 }

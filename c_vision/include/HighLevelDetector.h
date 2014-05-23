@@ -27,18 +27,21 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
+#include "Rectangle.h"
+#include "Pole.h"
+
 class HighLevelDetector
 {
 public:
 	void detect(std::vector<cv::Vec4i> verticalLines,
 				std::vector<cv::Vec4i> horizontalLines);
 
-	const std::vector<std::vector<cv::Point> >& getPoles() const
+	const std::vector<Pole>& getPoles() const
 	{
 		return poles;
 	}
 
-	const std::vector<std::vector<cv::Point> >& getRectangles() const
+	const std::vector<Rectangle>& getRectangles() const
 	{
 		return rectangles;
 	}
@@ -53,8 +56,8 @@ private:
 	bool lineBelongToQuadrilateral(double a1, double a2);
 
 private:
-	std::vector<std::vector<cv::Point> > rectangles;
-	std::vector<std::vector<cv::Point> > poles;
+	std::vector<Rectangle> rectangles;
+	std::vector<Pole> poles;
 	static const int polesFormFactor = 20;
 
 };

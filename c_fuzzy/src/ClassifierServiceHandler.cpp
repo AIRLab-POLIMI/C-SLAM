@@ -31,6 +31,7 @@
 
 #include <iostream>
 #include <ros/ros.h>
+#include <ctime>
 
 using namespace std;
 using namespace c_fuzzy;
@@ -54,12 +55,17 @@ bool ClassifierServiceHandler::classificationCallback(
 			Classification::Request& request,
 			Classification::Response& response)
 {
+	ROS_DEBUG_STREAM("Number of objects to classify: " << request.objects.size());
+	clock_t begin = clock();
 	vector<InputObject>& inputs = request.objects;
 	vector<ObjectInstance> objects(inputs.size());
 
 	addInputs(objects, inputs);
 	const InstanceClassification& results = reasoner->run(request.threshold);
 	sendOutputs(results, response);
+	clock_t end = clock();
+	double elapsed_ms = 1000 * double(end - begin) / CLOCKS_PER_SEC;
+	ROS_DEBUG_STREAM("Service takes: " << elapsed_ms << "ms");
 
 	return true;
 }
@@ -86,7 +92,6 @@ void ClassifierServiceHandler::addInputs(vector<ObjectInstance>& objects,
 			instance.properties[j->name] = j->value;
 		}
 
-
 		reasoner->addInstance(&instance);
 	}
 }
@@ -102,7 +107,8 @@ void ClassifierServiceHandler::sendOutputs(
 		ObjectClassification& classification = response.results.back();
 		classification.id = it->first;
 		const ClassificationMap& map = it->second;
-		for (ClassificationMap::const_iterator j = map.begin(); j != map.end(); j++)
+		for (ClassificationMap::const_iterator j = map.begin(); j != map.end();
+					j++)
 		{
 			classification.classifications.push_back(ClassificationOutput());
 			ClassificationOutput& out = classification.classifications.back();

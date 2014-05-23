@@ -8,11 +8,20 @@
 	
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
-		<node name="image_proc" pkg="image_proc" type="image_proc" />
+		<node name="image_proc" 
+	              pkg="image_proc" 
+	              type="image_proc" />
 	</group>
 	
 	<!-- System nodes -->
-	<node name="cognitive_vision" pkg="c_vision" type="cognitive_vision" output="screen"/>
-	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner" args="$(arg knowledgebase) $(arg classifierkb) $(arg classifier)" /> 		
+	<node name="cognitive_vision" 
+	      pkg="c_vision" 
+	      type="cognitive_vision" 
+	      output="screen"/>
+	<node name="c_fuzzy_reasoner" 
+              pkg="c_fuzzy" 
+              type="c_fuzzy_reasoner" 
+              args="$(arg knowledgebase) $(arg classifierkb) $(arg classifier)" 
+              output="screen"/> 		
 
 </launch> 

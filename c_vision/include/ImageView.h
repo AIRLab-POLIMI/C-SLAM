@@ -49,7 +49,7 @@ public:
 
 	void display(cv::Mat& frame);
 
-	void setClusters(const std::vector<ObjectCluster>* clusters)
+	void setClusters(const std::vector<Cluster>* clusters)
 	{
 		this->clusters = clusters;
 	}
@@ -87,7 +87,7 @@ public:
 private:
 	void drawAxis(cv::Mat& input);
 	void displayClusterResults(const std::vector<cv::KeyPoint>& keyPoints,
-				const std::vector<ObjectCluster>& clusters, cv::Mat& frame);
+				const std::vector<Cluster>& clusters, cv::Mat& frame);
 	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
 	void displayRectanglesResults(
 				const std::vector<std::vector<cv::Point> >& rectangles,
@@ -102,7 +102,7 @@ private:
 	std::string viewName;
 
 	const std::vector<cv::KeyPoint>* keyPoints;
-	const std::vector<ObjectCluster>* clusters;
+	const std::vector<Cluster>* clusters;
 	const std::vector<cv::Vec4i>* verticalLines;
 	const std::vector<cv::Vec4i>* horizontalLines;
 	const std::vector<std::vector<cv::Point> >* rectangles;

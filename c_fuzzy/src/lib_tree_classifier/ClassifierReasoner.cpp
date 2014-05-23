@@ -163,7 +163,7 @@ void ClassifierReasoner::trivialClassify(ClassList::iterator current,
 
 }
 
-void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
+inline void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 			ClassList::iterator end, DepLists& deps, ClassificationData& data)
 {
 
@@ -192,7 +192,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 	}
 }
 
-void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
+inline void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 			ClassList::iterator end, DepList::iterator currentDep,
 			DepList::iterator endDep, DepLists& deps, ClassificationData& data)
 {
@@ -233,7 +233,7 @@ void ClassifierReasoner::recursiveClassify(ClassList::iterator current,
 	}
 }
 
-void ClassifierReasoner::classifyInstances(ClassificationData& data)
+inline void ClassifierReasoner::classifyInstances(ClassificationData& data)
 {
 	setupReasoning(data);
 	runReasoning(data);

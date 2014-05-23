@@ -30,9 +30,6 @@ CLASS Door extends Rectangle IMPORTANT
 
 END_CLASS
 
-CLASS RedDoor extends Door
-END_CLASS
-
 CLASS Handle extends Cluster	
 	x is Lateral on Door(xMin, xMax);
 	y is Centered on Door(yMin, yMax);

@@ -70,7 +70,7 @@ void ImageView::drawAxis(cv::Mat& input)
 }
 
 void ImageView::displayClusterResults(const std::vector<cv::KeyPoint>& keyPoints,
-			const std::vector<ObjectCluster>& clusters, cv::Mat& frame)
+			const std::vector<Cluster>& clusters, cv::Mat& frame)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)

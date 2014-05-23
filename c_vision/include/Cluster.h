@@ -21,27 +21,46 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTCLASSIFICATOR_H_
-#define OBJECTCLASSIFICATOR_H_
+#ifndef CLUSTER_H_
+#define CLUSTER_H_
 
 #include "Feature.h"
 
-#include <c_fuzzy/Classification.h>
-#include <string>
-#include <vector>
-
-class ObjectClassificator
+class Cluster: public Feature
 {
 public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
-	void newObject();
-	void addFeature(std::string name, int value);
-	void addFeature(const Feature& feature);
+	Cluster();
+
+	void add(cv::KeyPoint point);
+
+	inline void draw(cv::Mat& frame, cv::Scalar color) const
+	{
+		cv::rectangle(frame, start, end, color, 2);
+	}
+
+	inline cv::KeyPoint getMassCenter() const
+	{
+		return massCenter;
+	}
+
+	inline std::vector<cv::KeyPoint> getKeyPoints()
+	{
+		return keyPoints;
+	}
+
+	virtual void setFeature();
+
 private:
-	c_fuzzy::Classification& classification;
-	std::vector<c_fuzzy::InputObject>& objects;
-	std::vector<c_fuzzy::InputVariable>* currentVars;
+	void updateMassCenter(cv::KeyPoint point);
+	void updateBoundingBox(cv::KeyPoint point);
+
+private:
+	std::vector<cv::KeyPoint> keyPoints;
+	cv::KeyPoint massCenter;
+
+	cv::Point start;
+	cv::Point end;
 
 };
 
-#endif /* OBJECTCLASSIFICATOR_H_ */
+#endif /* CLUSTER_H_ */

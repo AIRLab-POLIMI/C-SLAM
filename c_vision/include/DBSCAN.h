@@ -27,51 +27,7 @@
 #include <vector>
 #include <opencv2/features2d/features2d.hpp>
 
-class ObjectCluster
-{
-public:
-	ObjectCluster()
-	{
-		massCenter.pt.x = 0;
-		massCenter.pt.y = 0;
-		massCenter.size = 0;
-	}
-
-	void add(cv::KeyPoint point);
-
-	inline void draw(cv::Mat& frame, cv::Scalar color) const
-	{
-		cv::rectangle(frame, start, end, color, 2);
-	}
-
-	inline void setMassCenter()
-	{
-		massCenter.pt.x /= massCenter.size;
-		massCenter.pt.y /= massCenter.size;
-	}
-
-	inline cv::KeyPoint getMassCenter() const
-	{
-		return massCenter;
-	}
-
-	inline std::vector<cv::KeyPoint> getKeyPoints()
-	{
-		return keyPoints;
-	}
-
-private:
-	void updateMassCenter(cv::KeyPoint point);
-	void updateBoundingBox(cv::KeyPoint point);
-
-private:
-	std::vector<cv::KeyPoint> keyPoints;
-	cv::KeyPoint massCenter;
-
-	cv::Point start;
-	cv::Point end;
-
-};
+#include "Cluster.h"
 
 class DBSCAN
 {
@@ -80,7 +36,7 @@ public:
 				maxDistance(eps), minPoints(minPts)
 	{
 	}
-	std::vector<ObjectCluster> detect(const std::vector<cv::KeyPoint>& keypoints);
+	std::vector<Cluster> detect(const std::vector<cv::KeyPoint>& keypoints);
 
 	inline double getMaxDistance() const
 	{

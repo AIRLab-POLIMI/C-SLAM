@@ -21,27 +21,42 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTCLASSIFICATOR_H_
-#define OBJECTCLASSIFICATOR_H_
+#ifndef FEATURE_H_
+#define FEATURE_H_
 
-#include "Feature.h"
-
-#include <c_fuzzy/Classification.h>
 #include <string>
-#include <vector>
+#include <map>
 
-class ObjectClassificator
+#include <opencv2/features2d/features2d.hpp>
+
+/**
+ * Base class  of feature that can be detected
+ */
+
+typedef std::map<std::string, int> FeatureMap;
+
+class Feature
 {
 public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
-	void newObject();
-	void addFeature(std::string name, int value);
-	void addFeature(const Feature& feature);
-private:
-	c_fuzzy::Classification& classification;
-	std::vector<c_fuzzy::InputObject>& objects;
-	std::vector<c_fuzzy::InputVariable>* currentVars;
+	inline FeatureMap::const_iterator begin() const
+	{
+		return featureMap.begin();
+	}
+
+	inline FeatureMap::const_iterator end() const
+	{
+		return featureMap.end();
+	}
+
+	virtual void setFeature() = 0;
+
+	virtual ~Feature()
+	{
+	}
+
+protected:
+	FeatureMap featureMap;
 
 };
 
-#endif /* OBJECTCLASSIFICATOR_H_ */
+#endif /* FEATURE_H_ */

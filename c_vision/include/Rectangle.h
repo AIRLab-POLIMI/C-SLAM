@@ -21,27 +21,25 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTCLASSIFICATOR_H_
-#define OBJECTCLASSIFICATOR_H_
+#ifndef RECTANGLE_H_
+#define RECTANGLE_H_
 
 #include "Feature.h"
 
-#include <c_fuzzy/Classification.h>
-#include <string>
-#include <vector>
-
-class ObjectClassificator
+class Rectangle: public Feature
 {
 public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
-	void newObject();
-	void addFeature(std::string name, int value);
-	void addFeature(const Feature& feature);
+	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w);
+
+	virtual void setFeature();
+
+
 private:
-	c_fuzzy::Classification& classification;
-	std::vector<c_fuzzy::InputObject>& objects;
-	std::vector<c_fuzzy::InputVariable>* currentVars;
+	cv::Point x;
+	cv::Point y;
+	cv::Point z;
+	cv::Point w;
 
 };
 
-#endif /* OBJECTCLASSIFICATOR_H_ */
+#endif /* RECTANGLE_H_ */

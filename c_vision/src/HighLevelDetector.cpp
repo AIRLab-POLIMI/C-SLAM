@@ -23,8 +23,6 @@
 
 #include "HighLevelDetector.h"
 
-#include <iostream>
-
 using namespace cv;
 using namespace std;
 
@@ -45,7 +43,6 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 					Vec4i h1 = horizontalLines[j];
 					for (size_t k = j + 1; k < horizontalLines.size(); k++)
 					{
-						vector<Point> rectangle;
 						vector<double> a;
 						vector<double> b;
 
@@ -62,11 +59,8 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 
 						if (isQuadrilateral(a, b))
 						{
-							rectangle.push_back(x);
-							rectangle.push_back(y);
-							rectangle.push_back(z);
-							rectangle.push_back(w);
-
+							Rectangle rectangle(x, y, z, w);
+							rectangle.setFeature();
 							rectangles.push_back(rectangle);
 						}
 
@@ -122,11 +116,8 @@ bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 
 	if (dy / dx > polesFormFactor)
 	{
-		vector<Point> pole;
-		pole.push_back(Point(x1, y1));
-		pole.push_back(Point(x2, y2));
-		pole.push_back(Point(x4, y4));
-		pole.push_back(Point(x3, y3));
+		Pole pole(Point(x1, y1), Point(x2, y2), Point(x3, y3), Point(x4, y4));
+		pole.setFeature();
 		poles.push_back(pole);
 		return true;
 	}

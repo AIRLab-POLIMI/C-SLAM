@@ -21,27 +21,27 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTCLASSIFICATOR_H_
-#define OBJECTCLASSIFICATOR_H_
+#ifndef POLE_H_
+#define POLE_H_
+
+#include <vector>
 
 #include "Feature.h"
 
-#include <c_fuzzy/Classification.h>
-#include <string>
-#include <vector>
-
-class ObjectClassificator
+class Pole: public Feature
 {
+
 public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
-	void newObject();
-	void addFeature(std::string name, int value);
-	void addFeature(const Feature& feature);
+	Pole(cv::Point a1, cv::Point a2, cv::Point b1, cv::Point b2);
+	std::vector<cv::Point> getPointsVector();
+	virtual void setFeature();
+
 private:
-	c_fuzzy::Classification& classification;
-	std::vector<c_fuzzy::InputObject>& objects;
-	std::vector<c_fuzzy::InputVariable>* currentVars;
+	cv::Point a1;
+	cv::Point a2;
+	cv::Point b1;
+	cv::Point b2;
 
 };
 
-#endif /* OBJECTCLASSIFICATOR_H_ */
+#endif /* POLE_H_ */

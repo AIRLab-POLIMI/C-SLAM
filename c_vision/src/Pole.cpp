@@ -21,27 +21,37 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTCLASSIFICATOR_H_
-#define OBJECTCLASSIFICATOR_H_
+#include "Pole.h"
 
-#include "Feature.h"
+using namespace std;
 
-#include <c_fuzzy/Classification.h>
-#include <string>
-#include <vector>
+using namespace cv;
 
-class ObjectClassificator
+Pole::Pole(Point a1, Point a2, Point b1, Point b2) :
+			a1(a1), a2(a2), b1(b1), b2(b2)
 {
-public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
-	void newObject();
-	void addFeature(std::string name, int value);
-	void addFeature(const Feature& feature);
-private:
-	c_fuzzy::Classification& classification;
-	std::vector<c_fuzzy::InputObject>& objects;
-	std::vector<c_fuzzy::InputVariable>* currentVars;
+}
 
-};
+vector<Point> Pole::getPointsVector()
+{
+	std::vector<Point> points;
+	points.push_back(a1);
+	points.push_back(a2);
+	points.push_back(b2);
+	points.push_back(b1);
 
-#endif /* OBJECTCLASSIFICATOR_H_ */
+	return points;
+}
+
+void Pole::setFeature()
+{
+	int deltaX = max(abs(a1.y - b1.y), abs(a2.y - b2.y));
+	int deltaY = max(abs(a1.y - b1.y), abs(a2.y - b2.y));
+	if (deltaY != 0) //TODO is ok???
+	{
+		int FormFactor = 1000 * deltaX / deltaY;
+		featureMap["height"] = deltaY;
+		featureMap["formFactor"] = FormFactor;
+	}
+}
+

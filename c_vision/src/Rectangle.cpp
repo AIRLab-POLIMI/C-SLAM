@@ -21,27 +21,30 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OBJECTCLASSIFICATOR_H_
-#define OBJECTCLASSIFICATOR_H_
+#include "Rectangle.h"
 
-#include "Feature.h"
+using namespace cv;
 
-#include <c_fuzzy/Classification.h>
-#include <string>
-#include <vector>
-
-class ObjectClassificator
+Rectangle::Rectangle(Point x, Point y, Point z, Point w) :
+			x(x), y(y), z(z), w(w)
 {
-public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
-	void newObject();
-	void addFeature(std::string name, int value);
-	void addFeature(const Feature& feature);
-private:
-	c_fuzzy::Classification& classification;
-	std::vector<c_fuzzy::InputObject>& objects;
-	std::vector<c_fuzzy::InputVariable>* currentVars;
+}
 
-};
+void Rectangle::setFeature()
+{
+	int xMin, xMax, yMin, yMax;
+	int FormFactor;
 
-#endif /* OBJECTCLASSIFICATOR_H_ */
+	int deltaX = (xMax - xMin);
+	int deltaY = (yMax - yMin);
+	if (deltaY != 0)
+	{
+		FormFactor = 1000 * deltaX / deltaY;
+		featureMap["xMax"] = xMax;
+		featureMap["yMax"] = yMax;
+		featureMap["xMin"] = xMin;
+		featureMap["yMin"] = yMin;
+		featureMap["formFactor"] = FormFactor;
+		featureMap["color"] = 100; //FIXME levami!!!!
+	}
+}
