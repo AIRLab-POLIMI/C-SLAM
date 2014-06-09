@@ -31,7 +31,6 @@
 #include "HoughDetector.h"
 #include "HighLevelDetector.h"
 #include "DBSCAN.h"
-#include "ObjectClassificator.h"
 
 #include "ImageView.h"
 
@@ -40,7 +39,7 @@ class CognitiveDetector
 public:
 	CognitiveDetector();
 
-	void detect(cv::Mat& image, ObjectClassificator& classificator);
+	void detect(cv::Mat& image);
 
 	inline void setPitch(double pitch)
 	{
@@ -57,39 +56,40 @@ public:
 		this->yaw = yaw;
 	}
 
-private:
-	std::vector<std::vector<cv::Point> > detectRectangles(
-				std::vector<cv::Vec4i> verticalLines,
-				std::vector<cv::Vec4i> horizontalLines);
-	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2);
-	cv::Mat preprocessing(cv::Mat& input);
-
-	template<class T>
-	void processFeatures(const std::vector<T>& features,
-				ObjectClassificator& classificator)
+	std::vector<Cluster>* getClusters() const
 	{
-		typedef typename std::vector<T> FeatureVector;
+		return clusters;
+	}
 
-		for (typename FeatureVector::const_iterator i = features.begin();
-						i != features.end(); ++i)
-			{
-				const Feature& feature = *i;
-				classificator.addFeature(feature);
-			}
+	std::vector<Pole>* getPoles() const
+	{
+		return poles;
+	}
+
+	std::vector<Rectangle>* getRectangles() const
+	{
+		return rectangles;
 	}
 
 private:
+	void preprocessing(cv::Mat& input, cv::Mat& equalizedFrame);
+	void deleteDetections();
+
+private:
+	//detectors
 	FeatureDetector featureDetector;
 	DBSCAN clusterDetector;
 	HoughDetector lineDetector;
 
+	//envirorment data
 	double pitch;
 	double roll;
 	double yaw;
 
-private:
-	ImageView viewer;
-
+	//last detections
+	std::vector<Rectangle>* rectangles;
+	std::vector<Pole>* poles;
+	std::vector<Cluster>* clusters;
 };
 
 #endif /* COGNITIVEDETECTOR_H_ */

@@ -29,7 +29,7 @@
 namespace enc = sensor_msgs::image_encodings;
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
-			n(n), it(n)
+			n(n), it(n), viewer("Detected Image")
 {
 	classifierThreshold = 0.2; //TODO change magic...
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
@@ -61,19 +61,32 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 		return;
 	}
 
+	detect(cv_ptr);
+	classify();
+
+	viewer.setRectangles(detector.getRectangles());
+	viewer.setPoles(detector.getPoles());
+	viewer.setRoll(rotX);
+	viewer.display(cv_ptr->image);
+}
+
+void Dispatcher::detect(const cv_bridge::CvImagePtr& cv_ptr)
+{
 	detector.setRoll(rotX);
 	detector.setPitch(rotY);
 	detector.setYaw(rotZ);
-
-	c_fuzzy::Classification serviceCall;
-	ObjectClassificator classificator(serviceCall, classifierThreshold);
-	detector.detect(cv_ptr->image, classificator);
-
-	classify(serviceCall);
+	detector.detect(cv_ptr->image);
 }
 
-void Dispatcher::classify(c_fuzzy::Classification& serviceCall)
+void Dispatcher::classify()
 {
+	c_fuzzy::Classification serviceCall;
+
+	ObjectClassificator classificator(serviceCall, classifierThreshold);
+	classificator.processFeatures(detector.getRectangles());
+	classificator.processFeatures(detector.getPoles());
+	classificator.processFeatures(detector.getClusters());
+
 	if (classificationService.isValid())
 	{
 		classificationService.call(serviceCall);

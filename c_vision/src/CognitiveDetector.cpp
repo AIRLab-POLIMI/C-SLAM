@@ -35,61 +35,52 @@ CognitiveDetector::CognitiveDetector() :
 			lineDetector(cannyP.apertureSize, houghP.rho, houghP.teta,
 						houghP.threshold, houghP.minLineLenght,
 						houghP.maxLineGap),
-			pitch(0),
-			roll(0),
-			yaw(0),
-			viewer("Detected Image", (void*) &featureDetector,
-						(void*) &clusterDetector, (void*) &lineDetector)
+			pitch(0), roll(0), yaw(0)
 {
+	rectangles = NULL;
+	poles = NULL;
+	clusters = NULL;
 }
 
-void CognitiveDetector::detect(cv::Mat& frame,
-			ObjectClassificator& classificator)
+void CognitiveDetector::detect(cv::Mat& frame)
 {
-	Mat equalizedFrame = preprocessing(frame);
+	//preprocessing
+	Mat equalizedFrame;
+	preprocessing(frame, equalizedFrame);
+
+	//detect lines
 	vector<Vec4i> lines = lineDetector.detect(equalizedFrame);
 
+	//filter lines
 	LineFilter filter;
 	filter.filter(lines, roll);
 	const vector<Vec4i>& verticalLines = filter.getVerticalLines();
 	const vector<Vec4i>& horizontalLines = filter.getHorizontalLines();
 
+	//detect keypoints
 	const vector<KeyPoint>& keyPoints = featureDetector.detect(equalizedFrame);
 
-	const vector<Cluster>& clusters = clusterDetector.detect(keyPoints);
-
+	//detect features
 	HighLevelDetector highLevelDetector;
 	highLevelDetector.detect(verticalLines, horizontalLines);
 
-	const vector<Rectangle>& rectangles = highLevelDetector.getRectangles();
-	const vector<Pole>& poles = highLevelDetector.getPoles();
-
-	//TODO fixare...
-	//display results
-	//viewer.setRoll(roll);
-	//viewer.setKeyPoints(&keyPoints);
-	//viewer.setVerticalLines(&verticalLines);
-	//viewer.setHorizontalLines(&horizontalLines);
-	//viewer.setClusters(&clusters);
-	//viewer.setRectangles(&rectangles);
-	//viewer.setPoles(&poles);
-	//viewer.display(frame);
-
-	//send results to the reasoner
-	processFeatures(rectangles, classificator);
-	processFeatures(poles, classificator);
-	processFeatures(clusters, classificator);
+	rectangles = highLevelDetector.getRectangles();
+	poles = highLevelDetector.getPoles();
+	clusters = clusterDetector.detect(keyPoints);
 }
 
-/* Image Processing Methods */
-
-Mat CognitiveDetector::preprocessing(Mat& input)
+void CognitiveDetector::preprocessing(Mat& input, Mat& equalizedFrame)
 {
-	Mat greyFrame, equalizedFrame;
+	Mat greyFrame;
 
 	cvtColor(input, greyFrame, CV_BGR2GRAY);
 	equalizeHist(greyFrame, equalizedFrame);
+}
 
-	return equalizedFrame;
+void CognitiveDetector::deleteDetections()
+{
+	delete rectangles;
+	delete poles;
+	delete clusters;
 }
 

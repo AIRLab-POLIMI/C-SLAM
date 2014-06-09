@@ -33,15 +33,17 @@
 class HighLevelDetector
 {
 public:
+	HighLevelDetector();
+
 	void detect(std::vector<cv::Vec4i> verticalLines,
 				std::vector<cv::Vec4i> horizontalLines);
 
-	const std::vector<Pole>& getPoles() const
+	inline std::vector<Pole>* getPoles() const
 	{
 		return poles;
 	}
 
-	const std::vector<Rectangle>& getRectangles() const
+	inline std::vector<Rectangle>* getRectangles() const
 	{
 		return rectangles;
 	}
@@ -56,8 +58,8 @@ private:
 	bool lineBelongToQuadrilateral(double a1, double a2);
 
 private:
-	std::vector<Rectangle> rectangles;
-	std::vector<Pole> poles;
+	std::vector<Rectangle>* rectangles;
+	std::vector<Pole>* poles;
 	static const int polesFormFactor = 20;
 
 };

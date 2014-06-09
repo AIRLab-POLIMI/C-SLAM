@@ -30,6 +30,17 @@ Rectangle::Rectangle(Point x, Point y, Point z, Point w) :
 {
 }
 
+vector<Point> Rectangle::getPointsVector()
+{
+	std::vector<Point> points;
+	points.push_back(x);
+	points.push_back(y);
+	points.push_back(z);
+	points.push_back(w);
+
+	return points;
+}
+
 void Rectangle::setFeature()
 {
 	int xMin, xMax, yMin, yMax;

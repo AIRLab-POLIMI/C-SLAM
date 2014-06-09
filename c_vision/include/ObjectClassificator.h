@@ -33,10 +33,29 @@
 class ObjectClassificator
 {
 public:
-	ObjectClassificator(c_fuzzy::Classification& classification, double threshold);
+	ObjectClassificator(c_fuzzy::Classification& classification,
+				double threshold);
+
+	//ClassificationMap getClassificationMap();
+
+	template<class T>
+	void processFeatures(const std::vector<T>* features)
+	{
+		typedef typename std::vector<T> FeatureVector;
+
+		for (typename FeatureVector::const_iterator i = features->begin();
+					i != features->end(); ++i)
+		{
+			const Feature& feature = *i;
+			addFeature(feature);
+		}
+	}
+
+private:
 	void newObject();
 	void addFeature(std::string name, int value);
 	void addFeature(const Feature& feature);
+
 private:
 	c_fuzzy::Classification& classification;
 	std::vector<c_fuzzy::InputObject>& objects;

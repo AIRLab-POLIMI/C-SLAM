@@ -31,6 +31,7 @@
 #include <ardrone_autonomy/Navdata.h>
 #include <c_fuzzy/Classification.h>
 #include "CognitiveDetector.h"
+#include "ImageView.h"
 
 class Dispatcher
 {
@@ -38,10 +39,11 @@ public:
 	Dispatcher(ros::NodeHandle& n);
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
-	void classify(c_fuzzy::Classification& serviceCall);
 
 private:
 	void connectToClassificationServer();
+	void detect(const cv_bridge::CvImagePtr& cv_ptr);
+	void classify();
 
 private:
 	//Ros management
@@ -56,6 +58,9 @@ private:
 	double rotX, rotY, rotZ;
 	CognitiveDetector detector;
 	double classifierThreshold;
+
+	//Data needed to display results
+	ImageView viewer;
 };
 
 #endif /* DISPATCHER_H_ */

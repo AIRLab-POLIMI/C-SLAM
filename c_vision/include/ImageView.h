@@ -29,57 +29,53 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "Cluster.h"
+#include "Rectangle.h"
+#include "Pole.h"
+
 #include "DBSCAN.h"
 
 class ImageView
 {
 public:
-	ImageView(std::string viewName, void* featureObject, void* clusterObjetc,
-				void* lineObject) :
-				viewName(viewName)
-	{
-		cv::namedWindow(viewName);
-		createTrackBars(featureObject, clusterObjetc, lineObject);
-	}
+	ImageView(std::string viewName);
 
-	~ImageView()
-	{
-		cv::destroyWindow(viewName);
-	}
+	~ImageView();
 
 	void display(cv::Mat& frame);
 
-	void setClusters(const std::vector<Cluster>* clusters)
+	inline void setClusters(const std::vector<Cluster>* clusters)
 	{
 		this->clusters = clusters;
 	}
 
-	void setKeyPoints(const std::vector<cv::KeyPoint>* keyPoints)
+	inline void setKeyPoints(const std::vector<cv::KeyPoint>* keyPoints)
 	{
 		this->keyPoints = keyPoints;
 	}
 
-	void setRoll(double roll)
+	inline void setRoll(double roll)
 	{
 		this->roll = roll;
 	}
 
-	void setVerticalLines(const std::vector<cv::Vec4i>* verticalLines)
+	inline void setVerticalLines(const std::vector<cv::Vec4i>* verticalLines)
 	{
 		this->verticalLines = verticalLines;
 	}
 
-	void setHorizontalLines(const std::vector<cv::Vec4i>* horizontalLines)
+	inline void setHorizontalLines(
+				const std::vector<cv::Vec4i>* horizontalLines)
 	{
 		this->horizontalLines = horizontalLines;
 	}
 
-	void setRectangles(const std::vector<std::vector<cv::Point> >* rectangles)
+	inline void setRectangles(const std::vector<Rectangle>* rectangles)
 	{
 		this->rectangles = rectangles;
 	}
 
-	void setPoles(const std::vector<std::vector<cv::Point> >* poles)
+	inline void setPoles(const std::vector<Pole>* poles)
 	{
 		this->poles = poles;
 	}
@@ -89,24 +85,37 @@ private:
 	void displayClusterResults(const std::vector<cv::KeyPoint>& keyPoints,
 				const std::vector<Cluster>& clusters, cv::Mat& frame);
 	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
-	void displayRectanglesResults(
-				const std::vector<std::vector<cv::Point> >& rectangles,
-				cv::Mat& frame);
-	void displayPoleResults(const std::vector<std::vector<cv::Point> >& poles,
-				cv::Mat& frame);
+	void displayRectanglesResults(cv::Mat& frame);
+	void displayPoleResults(cv::Mat& frame);
 
-	void createTrackBars(void* featureObject, void* clusterObjetc,
-				void* lineObject);
+	typedef std::vector<std::vector<cv::Point> > Contours;
+	template<class T>
+	void drawContours(cv::Mat& frame, const std::vector<T>* features)
+	{
+		Contours contours;
+
+		typedef typename std::vector<T> FeatureVector;
+
+		for (typename FeatureVector::const_iterator i = features->begin();
+					i != features->end(); ++i)
+		{
+			contours.push_back(i->getPointsVector());
+		}
+
+		cv::drawContours(frame, contours, -1, cv::Scalar(0, 255, 0)); //FIXME!!!
+	}
 
 private:
 	std::string viewName;
 
 	const std::vector<cv::KeyPoint>* keyPoints;
-	const std::vector<Cluster>* clusters;
 	const std::vector<cv::Vec4i>* verticalLines;
 	const std::vector<cv::Vec4i>* horizontalLines;
-	const std::vector<std::vector<cv::Point> >* rectangles;
-	const std::vector<std::vector<cv::Point> >* poles;
+
+	const std::vector<Cluster>* clusters;
+	const std::vector<Rectangle>* rectangles;
+	const std::vector<Pole>* poles;
+
 	double roll;
 
 };

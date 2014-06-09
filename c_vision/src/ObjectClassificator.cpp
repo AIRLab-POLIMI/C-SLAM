@@ -38,10 +38,10 @@ ObjectClassificator::ObjectClassificator(Classification& classification,
 void ObjectClassificator::newObject()
 {
 	size_t id = objects.size();
-	objects.push_back(InputObject());
-	InputObject& current = objects.back();
+	InputObject current;
 	current.id = id;
 	currentVars = &current.variables;
+	objects.push_back(current);
 }
 
 void ObjectClassificator::addFeature(string name, int value)
@@ -62,3 +62,18 @@ void ObjectClassificator::addFeature(const Feature& feature)
 		addFeature(i->first, i->second);
 	}
 }
+
+/*
+ClassificationMap ObjectClassificator::getClassificationMap()
+{
+	ClassificationMap map;
+
+	vector<ObjectClassification>& results = classification.response.results;
+	for (vector<ObjectClassification>::iterator it = results.begin();
+				it != results.end(); it++)
+	{
+		//TODO complete
+	}
+
+	return map;
+}*/

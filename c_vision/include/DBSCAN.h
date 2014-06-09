@@ -36,7 +36,8 @@ public:
 				maxDistance(eps), minPoints(minPts)
 	{
 	}
-	std::vector<Cluster> detect(const std::vector<cv::KeyPoint>& keypoints);
+
+	std::vector<Cluster>* detect(const std::vector<cv::KeyPoint>& keypoints);
 
 	inline double getMaxDistance() const
 	{
@@ -65,6 +66,7 @@ private:
 private:
 	double maxDistance;
 	int minPoints;
+
 
 };
 

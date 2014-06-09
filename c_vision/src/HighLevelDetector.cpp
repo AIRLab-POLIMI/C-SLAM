@@ -26,6 +26,12 @@
 using namespace cv;
 using namespace std;
 
+HighLevelDetector::HighLevelDetector()
+{
+	rectangles = new std::vector<Rectangle>();
+	poles = new std::vector<Pole>();
+}
+
 void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 			std::vector<cv::Vec4i> horizontalLines)
 {
@@ -61,7 +67,7 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
 						{
 							Rectangle rectangle(x, y, z, w);
 							rectangle.setFeature();
-							rectangles.push_back(rectangle);
+							rectangles->push_back(rectangle);
 						}
 
 					}
@@ -118,7 +124,7 @@ bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 	{
 		Pole pole(Point(x1, y1), Point(x2, y2), Point(x3, y3), Point(x4, y4));
 		pole.setFeature();
-		poles.push_back(pole);
+		poles->push_back(pole);
 		return true;
 	}
 

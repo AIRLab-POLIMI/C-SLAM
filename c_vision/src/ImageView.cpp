@@ -23,28 +23,45 @@
 
 #include "ImageView.h"
 
-#include "Callbacks.h"
-#include "DefaultParameters.h"
-
 #include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
 using namespace cv;
 
-void ImageView::display(cv::Mat& frame)
+ImageView::ImageView(std::string viewName) :
+			viewName(viewName)
 {
-	displayClusterResults(*keyPoints, *clusters, frame);
+	cv::namedWindow(viewName);
+	keyPoints = NULL;
+	clusters = NULL;
+	verticalLines = NULL;
+	horizontalLines = NULL;
+	rectangles = NULL;
+	poles = NULL;
+	roll = 0;
+}
+
+void ImageView::display(Mat& frame)
+{
+	//displayClusterResults(*keyPoints, *clusters, frame);
 	//displayLineResults(*verticalLines, frame);
 	//displayLineResults(*horizontalLines, frame);
-	displayRectanglesResults(*rectangles, frame);
-	displayPoleResults(*poles, frame);
+	if (rectangles)
+		displayRectanglesResults(frame);
+	if (poles)
+		displayPoleResults(frame);
 	drawAxis(frame);
 
 	imshow(viewName, frame);
 	cvWaitKey(60);
 }
 
-void ImageView::drawAxis(cv::Mat& input)
+ImageView::~ImageView()
+{
+	cv::destroyWindow(viewName);
+}
+
+void ImageView::drawAxis(Mat& input)
 {
 	Point center, y1, y2, z1, z2;
 	center.x = input.cols / 2;
@@ -69,13 +86,14 @@ void ImageView::drawAxis(cv::Mat& input)
 
 }
 
-void ImageView::displayClusterResults(const std::vector<cv::KeyPoint>& keyPoints,
-			const std::vector<Cluster>& clusters, cv::Mat& frame)
+void ImageView::displayClusterResults(
+			const std::vector<KeyPoint>& keyPoints,
+			const std::vector<Cluster>& clusters, Mat& frame)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
-		const cv::KeyPoint& kp = keyPoints[i];
+		const KeyPoint& kp = keyPoints[i];
 		circle(frame, kp.pt, 2, Scalar(0, 0, 255));
 	}
 
@@ -98,43 +116,14 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 
 }
 
-void ImageView::displayRectanglesResults(const vector<vector<Point> >& rectangles,
-			Mat& frame)
+void ImageView::displayRectanglesResults(Mat& frame)
 {
-	drawContours(frame, rectangles, -1, Scalar(0, 255, 0));
+	drawContours(rectangles);
 }
 
-void ImageView::displayPoleResults(const std::vector<std::vector<cv::Point> >& poles,
-			cv::Mat& frame)
+void ImageView::displayPoleResults(Mat& frame)
 {
-	drawContours(frame, poles, -1, Scalar(255, 255, 0));
-}
-
-void ImageView::createTrackBars(void* featureObject, void* clusterObjetc,
-			void* lineObject)
-{
-	//controls for corners
-	cv::createTrackbar("threshold", viewName, NULL, 300, thresholdCorner,
-				featureObject);
-	cv::setTrackbarPos("threshold", viewName, cornerP.threshold);
-
-	//control for clustering
-	cv::createTrackbar("minPoints", viewName, NULL, 20, minPointsCluster,
-				clusterObjetc);
-	cv::setTrackbarPos("minPoints", viewName, clusterP.minPoints);
-	cv::createTrackbar("distance", viewName, NULL, 100, maxDistanceCluster,
-				clusterObjetc);
-	cv::setTrackbarPos("distance", viewName, clusterP.maxDistance);
-
-	//controls for line
-	cv::createTrackbar("pThreshold", viewName, NULL, 150, thresholdHoughP,
-				lineObject);
-	cv::setTrackbarPos("pThreshold", viewName, houghP.threshold);
-	cv::createTrackbar("minLineLenght", viewName, NULL, 150,
-				minLineLengthHoughP, lineObject);
-	cv::setTrackbarPos("minLineLenght", viewName, houghP.minLineLenght);
-	cv::createTrackbar("maxLineGap", viewName, NULL, 50, maxLineGapHoughP,
-				lineObject);
-	cv::setTrackbarPos("maxLineGap", viewName, houghP.maxLineGap);
-
+	Contours contours;
+	getContours(contours, rectangles);
+	drawContours(frame, contours, -1, Scalar(0, 255, 0));
 }

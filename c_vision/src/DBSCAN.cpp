@@ -27,10 +27,10 @@
 using namespace std;
 using namespace cv;
 
-
-vector<Cluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
+std::vector<Cluster>* DBSCAN::detect(const vector<KeyPoint>& keypoints)
 {
-	vector<Cluster> clusters;
+	vector<Cluster>* clustersPointer = new vector<Cluster>();
+	vector<Cluster>& clusters = *clustersPointer;
 	set<int> clustered;
 	set<int> visited;
 
@@ -59,8 +59,8 @@ vector<Cluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 					if (!visited.count(neighbor[j]))
 					{
 						visited.insert(neighbor[j]);
-						const vector<int>& newNeighbors = listNeighbors(keypoints,
-									keypoints[neighbor[j]]);
+						const vector<int>& newNeighbors = listNeighbors(
+									keypoints, keypoints[neighbor[j]]);
 						if (newNeighbors.size() >= minPoints)
 						{
 							neighbor.insert(neighbor.end(),
@@ -83,7 +83,8 @@ vector<Cluster> DBSCAN::detect(const vector<KeyPoint>& keypoints)
 
 		}
 	}
-	return clusters;
+
+	return clustersPointer;
 }
 
 vector<int> DBSCAN::listNeighbors(const vector<KeyPoint>& keypoints,

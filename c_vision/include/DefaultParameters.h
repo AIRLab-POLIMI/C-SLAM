@@ -27,8 +27,8 @@
 static struct FeatureParam
 {
 	static const int threshold = 30;
-	static const int windowSize = 40;
-	static const int clusterMinSize = 40;
+	//static const int windowSize = 40;
+	//static const int clusterMinSize = 40;
 	static const int noiseBarrier = 40;
 	static const int objectWindow = 100;
 	static const int objectMinSize = 300;
