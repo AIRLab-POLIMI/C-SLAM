@@ -86,3 +86,8 @@ void Cluster::setFeature()
 	featureMap["y"] = massCenter.pt.y;
 	featureMap["size"] = massCenter.size;
 }
+
+void Cluster::draw(Mat& frame, Scalar color) const
+{
+	rectangle(frame, start, end, color, 2);
+}

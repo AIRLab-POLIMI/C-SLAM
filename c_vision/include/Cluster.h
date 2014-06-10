@@ -33,10 +33,7 @@ public:
 
 	void add(cv::KeyPoint point);
 
-	inline void draw(cv::Mat& frame, cv::Scalar color) const
-	{
-		cv::rectangle(frame, start, end, color, 2);
-	}
+	void draw(cv::Mat& frame, cv::Scalar color) const;
 
 	inline cv::KeyPoint getMassCenter() const
 	{

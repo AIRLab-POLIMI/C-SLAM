@@ -64,6 +64,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	detect(cv_ptr);
 	classify();
 
+	viewer.setClusters(detector.getClusters());
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
 	viewer.setRoll(rotX);

@@ -71,9 +71,10 @@ public:
 		return rectangles;
 	}
 
+	void deleteDetections();
+
 private:
 	void preprocessing(cv::Mat& input, cv::Mat& equalizedFrame);
-	void deleteDetections();
 
 private:
 	//detectors

@@ -35,13 +35,16 @@ ObjectClassificator::ObjectClassificator(Classification& classification,
 	currentVars = NULL;
 }
 
-void ObjectClassificator::newObject()
+void ObjectClassificator::newObject(Feature& feature)
 {
 	size_t id = objects.size();
-	InputObject current;
+	objects.push_back(InputObject());
+
+	InputObject& current = objects.back();
 	current.id = id;
 	currentVars = &current.variables;
-	objects.push_back(current);
+
+	featureMap[id] = &feature;
 }
 
 void ObjectClassificator::addFeature(string name, int value)
@@ -53,9 +56,9 @@ void ObjectClassificator::addFeature(string name, int value)
 	currentVars->push_back(feature);
 }
 
-void ObjectClassificator::addFeature(const Feature& feature)
+void ObjectClassificator::addFeature(Feature& feature)
 {
-	newObject();
+	newObject(feature);
 	for (FeatureMap::const_iterator i = feature.begin(); i != feature.end();
 				++i)
 	{
@@ -63,17 +66,23 @@ void ObjectClassificator::addFeature(const Feature& feature)
 	}
 }
 
-/*
-ClassificationMap ObjectClassificator::getClassificationMap()
+void ObjectClassificator::labelFeatures()
 {
-	ClassificationMap map;
-
 	vector<ObjectClassification>& results = classification.response.results;
-	for (vector<ObjectClassification>::iterator it = results.begin();
-				it != results.end(); it++)
+
+	for (vector<ObjectClassification>::iterator i = results.begin();
+				i != results.end(); ++i)
 	{
-		//TODO complete
+		Feature& feature = *featureMap[i->id];
+
+		vector<ClassificationOutput>& outputs = i->classifications;
+
+		for(vector<ClassificationOutput>::iterator j = outputs.begin();
+					j != outputs.end(); ++j)
+		{
+			feature.addClassification(j->className, j->membership);
+		}
 	}
 
-	return map;
-}*/
+}
+

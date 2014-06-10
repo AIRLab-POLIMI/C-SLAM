@@ -36,17 +36,13 @@ vector<Vec4i> HoughDetector::detect(Mat& input)
 	double high_thres = cv::threshold(input, canny, 0, 255,
 				CV_THRESH_BINARY + CV_THRESH_OTSU);
 	double low_thres = high_thres * 0.75;
+	Canny(input, canny, low_thres, high_thres, apertureSize);
 
-	erode(input, eroded, Mat());
-	Canny(eroded, canny, low_thres, high_thres, apertureSize);
+	imshow("Canny", canny);
 
 	vector<Vec4i> lines;
 
 	HoughLinesP(canny, lines, rho, theta, threshold, minLineLength, maxLineGap);
-
-	//add the upper and lower line
-	lines.push_back(Vec4i(0, 0, input.rows, 0));
-	lines.push_back(Vec4i(0, input.cols, input.rows, input.cols));
 
 	return lines;
 

@@ -34,10 +34,12 @@
  */
 
 typedef std::map<std::string, int> FeatureMap;
+typedef std::map<std::string, double> ClassificationMap;
 
 class Feature
 {
 public:
+
 	inline FeatureMap::const_iterator begin() const
 	{
 		return featureMap.begin();
@@ -48,6 +50,21 @@ public:
 		return featureMap.end();
 	}
 
+	inline void addClassification(std::string classification, double truthValue)
+	{
+		classifications[classification] = truthValue;
+	}
+
+	inline ClassificationMap::const_iterator beginClass() const
+	{
+		return classifications.begin();
+	}
+
+	inline ClassificationMap::const_iterator endClass() const
+	{
+		return classifications.end();
+	}
+
 	virtual void setFeature() = 0;
 
 	virtual ~Feature()
@@ -56,6 +73,7 @@ public:
 
 protected:
 	FeatureMap featureMap;
+	ClassificationMap classifications;
 
 };
 

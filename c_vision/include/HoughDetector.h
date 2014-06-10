@@ -25,6 +25,7 @@
 #define HOUGHDETECTOR_H_
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 class HoughDetector
 {
@@ -35,6 +36,7 @@ public:
 				threshold(threshold), minLineLength(minLineLenght),
 				maxLineGap(maxLineGap)
 	{
+		cv::namedWindow("Canny");
 	}
 
 	std::vector<cv::Vec4i> detect(cv::Mat& input);

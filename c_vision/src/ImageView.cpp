@@ -23,8 +23,6 @@
 
 #include "ImageView.h"
 
-#include <opencv2/imgproc/imgproc.hpp>
-
 using namespace std;
 using namespace cv;
 
@@ -46,10 +44,12 @@ void ImageView::display(Mat& frame)
 	//displayClusterResults(*keyPoints, *clusters, frame);
 	//displayLineResults(*verticalLines, frame);
 	//displayLineResults(*horizontalLines, frame);
+	if (clusters)
+		displayClustersResults(frame);
 	if (rectangles)
 		displayRectanglesResults(frame);
 	if (poles)
-		displayPoleResults(frame);
+		displayPolesResults(frame);
 	drawAxis(frame);
 
 	imshow(viewName, frame);
@@ -86,9 +86,8 @@ void ImageView::drawAxis(Mat& input)
 
 }
 
-void ImageView::displayClusterResults(
-			const std::vector<KeyPoint>& keyPoints,
-			const std::vector<Cluster>& clusters, Mat& frame)
+void ImageView::displayKeypointsResults(const std::vector<KeyPoint>& keyPoints,
+			Mat& frame)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
@@ -97,11 +96,6 @@ void ImageView::displayClusterResults(
 		circle(frame, kp.pt, 2, Scalar(0, 0, 255));
 	}
 
-	/*display clusters*/
-	for (size_t i = 0; i < clusters.size(); i++)
-	{
-		clusters[i].draw(frame, Scalar(255, 0, 0));
-	}
 }
 
 void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
@@ -118,12 +112,20 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 
 void ImageView::displayRectanglesResults(Mat& frame)
 {
-	drawContours(rectangles);
+	drawContours(frame, rectangles, Scalar(0, 255, 0));
 }
 
-void ImageView::displayPoleResults(Mat& frame)
+void ImageView::displayPolesResults(Mat& frame)
 {
-	Contours contours;
-	getContours(contours, rectangles);
-	drawContours(frame, contours, -1, Scalar(0, 255, 0));
+	drawContours(frame, poles, Scalar(0, 0, 255));
+}
+
+void ImageView::displayClustersResults(Mat& frame)
+{
+	/*display clusters*/
+	for (vector<Cluster>::iterator it = clusters->begin();
+				it != clusters->end(); ++it)
+	{
+		it->draw(frame, Scalar(255, 0, 0));
+	}
 }
