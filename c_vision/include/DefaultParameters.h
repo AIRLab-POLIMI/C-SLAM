@@ -24,11 +24,12 @@
 #ifndef DEFAULTPARAMETERS_H_
 #define DEFAULTPARAMETERS_H_
 
+#include <ros/ros.h>
+#include <opencv2/core/core.hpp>
+
 static struct FeatureParam
 {
 	static const int threshold = 30;
-	//static const int windowSize = 40;
-	//static const int clusterMinSize = 40;
 	static const int noiseBarrier = 40;
 	static const int objectWindow = 100;
 	static const int objectMinSize = 300;
@@ -45,20 +46,44 @@ static struct LineParam
 	static const double maxDelta = 25.0;
 } lineP;
 
-static struct CannyParam
-{
-	static const int minCanny = 80;
-	static const int maxCanny = 200;
-	static const int apertureSize = 3;
-} cannyP;
-
 static struct HougParam
 {
 	static const int rho = 1;
 	static const double teta = CV_PI / 180;
+	static const int apertureSize = 3;
 	static const int threshold = 90;
 	static const int minLineLenght = 120;
 	static const int maxLineGap = 30;
 } houghP;
+
+struct CannyParam
+{
+	double alpha;
+};
+
+class ParameterServer
+{
+
+public:
+	ParameterServer(ros::NodeHandle& n);
+	CannyParam& getCannyParams();
+	HougParam& getHoughParams();
+	LineParam& getLineParams();
+	DBScanParam& getDBScanParams();
+	FeatureParam& getFeatureParams();
+
+private:
+	ros::NodeHandle& n;
+
+	CannyParam canny;
+	HougParam hough;
+	LineParam lines;
+	DBScanParam dbscan;
+	FeatureParam features;
+
+private:
+
+	void getCanny();
+};
 
 #endif /* DEFAULTPARAMETERS_H_ */

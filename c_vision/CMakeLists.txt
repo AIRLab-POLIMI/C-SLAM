@@ -10,7 +10,8 @@ catkin_package()
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 #build the recognition node
-add_executable(cognitive_vision src/Cluster.cpp
+add_executable(cognitive_vision src/ParameterServer.cpp
+                                src/Cluster.cpp
                                 src/CognitiveDetector.cpp
                                 src/DBSCAN.cpp
                                 src/Dispatcher.cpp  

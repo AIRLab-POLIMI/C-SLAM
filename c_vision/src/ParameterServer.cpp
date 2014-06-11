@@ -2,7 +2,7 @@
  * c_vision,
  *
  *
- * Copyright (C) 2013 Davide Tateo
+ * Copyright (C) 2014 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_vision.
@@ -21,29 +21,44 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "HoughDetector.h"
+#include "DefaultParameters.h"
 
-#include <opencv2/imgproc/imgproc.hpp>
-
-using namespace std;
-using namespace cv;
-
-vector<Vec4i> HoughDetector::detect(Mat& input)
+ParameterServer::ParameterServer(ros::NodeHandle& n) :
+			n(n)
 {
-
-	Mat canny, eroded;
-
-	double high_thres = cv::threshold(input, canny, 0, 255,
-				CV_THRESH_BINARY + CV_THRESH_OTSU);
-	double low_thres = high_thres * 0.5;
-	Canny(input, canny, low_thres, high_thres, apertureSize);
-
-	imshow("Canny", canny);
-
-	vector<Vec4i> lines;
-
-	HoughLinesP(canny, lines, rho, theta, threshold, minLineLength, maxLineGap);
-
-	return lines;
-
+	getCanny();
 }
+
+CannyParam& ParameterServer::getCannyParams()
+{
+	return canny;
+}
+
+HougParam& ParameterServer::getHoughParams()
+{
+	return hough;
+}
+
+DBScanParam& ParameterServer::getDBScanParams()
+{
+	return dbscan;
+}
+
+FeatureParam& ParameterServer::getFeatureParams()
+{
+	return features;
+}
+
+LineParam& ParameterServer::getLineParams()
+{
+	return lines;
+}
+
+void ParameterServer::getCanny()
+{
+	if(n.getParamCached("canny/alpha", canny.alpha))
+		ROS_INFO("canny alpha parameter setted");
+	else
+		ROS_WARN("canny alpha parameter not setted");
+}
+

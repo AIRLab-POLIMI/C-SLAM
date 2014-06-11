@@ -6,6 +6,7 @@
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	
+	
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
 		<node name="image_proc" 
@@ -17,7 +18,9 @@
 	<node name="cognitive_vision" 
 	      pkg="c_vision" 
 	      type="cognitive_vision" 
-	      output="screen"/>
+	      output="screen">
+		<param name="canny/alpha" value="0.6" />
+	</node>	
 	<node name="c_fuzzy_reasoner" 
               pkg="c_fuzzy" 
               type="c_fuzzy_reasoner" 
