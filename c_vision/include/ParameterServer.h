@@ -60,7 +60,7 @@ class ParameterServer
 
 public:
 	ParameterServer(ros::NodeHandle& n);
-	void updateParameters();
+	void updateParameters(const ros::TimerEvent& event);
 
 
 	inline CannyParam& getCannyParams()

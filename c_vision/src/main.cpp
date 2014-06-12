@@ -36,15 +36,6 @@ int main(int argc, char *argv[])
 	ParameterServer parameterServer(nh);
 	Dispatcher dispatcher(n, parameterServer);
 
-	ros::Rate looprate(1);
-
-	while (ros::ok())
-	{
-		parameterServer.updateParameters();
-		ros::spinOnce();
-		looprate.sleep();
-	}
-
 	ros::spin();
 
 }

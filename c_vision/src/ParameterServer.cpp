@@ -32,9 +32,12 @@ ParameterServer::ParameterServer(ros::NodeHandle& n) :
 	getHough();
 	getCluster();
 	getClassifier();
+
+	ros::Timer timer = n.createTimer(ros::Duration(1),
+				&ParameterServer::updateParameters, this);
 }
 
-void ParameterServer::updateParameters()
+void ParameterServer::updateParameters(const ros::TimerEvent& event)
 {
 	//update Canny parameters
 	n.getParamCached("canny/alpha", canny.alpha);
@@ -60,7 +63,8 @@ void ParameterServer::updateParameters()
 
 void ParameterServer::getCanny()
 {
-	if (n.getParamCached("canny/alpha", canny.alpha))
+	if (n.getParamCached("canny/alpha", canny.alpha)
+				&& n.getParamCached("canny/apertureSize", canny.apertureSize))
 		ROS_INFO("canny parameters setted");
 	else
 		ROS_WARN("canny parameters not setted");
