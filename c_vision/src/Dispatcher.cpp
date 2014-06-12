@@ -63,12 +63,8 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 
 	detect(cv_ptr);
 	classify();
+	display(cv_ptr);
 
-	viewer.setClusters(detector.getClusters());
-	viewer.setRectangles(detector.getRectangles());
-	viewer.setPoles(detector.getPoles());
-	viewer.setRoll(rotX);
-	viewer.display(cv_ptr->image);
 }
 
 void Dispatcher::detect(const cv_bridge::CvImagePtr& cv_ptr)
@@ -99,6 +95,15 @@ void Dispatcher::classify()
 		connectToClassificationServer();
 	}
 
+}
+
+void Dispatcher::display(const cv_bridge::CvImagePtr& cv_ptr)
+{
+	viewer.setClusters(detector.getClusters());
+	viewer.setRectangles(detector.getRectangles());
+	viewer.setPoles(detector.getPoles());
+	viewer.setRoll(rotX);
+	viewer.display(cv_ptr->image);
 }
 
 void Dispatcher::connectToClassificationServer()

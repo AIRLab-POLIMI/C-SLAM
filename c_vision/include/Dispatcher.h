@@ -47,6 +47,7 @@ private:
 	void connectToClassificationServer();
 	void detect(const cv_bridge::CvImagePtr& cv_ptr);
 	void classify();
+	void display(const cv_bridge::CvImagePtr& cv_ptr);
 
 private:
 	//Ros management
