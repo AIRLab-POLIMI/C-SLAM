@@ -21,30 +21,36 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ros/ros.h>
+#include "LineDetector.h"
 
-#include "Dispatcher.h"
+#include <opencv2/imgproc/imgproc.hpp>
 
+using namespace std;
 using namespace cv;
 
-int main(int argc, char *argv[])
+LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP) :
+			cannyP(cannyP), houghP(houghP)
 {
-	ros::init(argc, argv, "cognitive_vision");
-	ros::NodeHandle n;
-	ros::NodeHandle nh("~");
+	cv::namedWindow("Canny");
+}
 
-	ParameterServer parameterServer(nh);
-	Dispatcher dispatcher(n, parameterServer);
+vector<Vec4i> LineDetector::detect(Mat& input)
+{
 
-	ros::Rate looprate(1);
+	Mat canny, eroded;
 
-	while (ros::ok())
-	{
-		parameterServer.updateParameters();
-		ros::spinOnce();
-		looprate.sleep();
-	}
+	double high_thres = cv::threshold(input, canny, 0, 255,
+				CV_THRESH_BINARY + CV_THRESH_OTSU);
+	double low_thres = high_thres * cannyP.alpha;
+	Canny(input, canny, low_thres, high_thres, cannyP.apertureSize);
 
-	ros::spin();
+	imshow("Canny", canny);
+
+	vector<Vec4i> lines;
+
+	HoughLinesP(canny, lines, houghP.rho, houghP.teta, houghP.threshold,
+				houghP.minLineLenght, houghP.maxLineGap);
+
+	return lines;
 
 }

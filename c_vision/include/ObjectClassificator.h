@@ -26,6 +26,8 @@
 
 #include "Feature.h"
 
+#include "ParameterServer.h"
+
 #include <c_fuzzy/Classification.h>
 #include <string>
 #include <vector>
@@ -34,7 +36,7 @@ class ObjectClassificator
 {
 public:
 	ObjectClassificator(c_fuzzy::Classification& classification,
-				double threshold);
+				ClassifierParam& params);
 
 	void labelFeatures();
 

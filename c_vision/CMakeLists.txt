@@ -15,9 +15,9 @@ add_executable(cognitive_vision src/ParameterServer.cpp
                                 src/CognitiveDetector.cpp
                                 src/DBSCAN.cpp
                                 src/Dispatcher.cpp  
-                                src/FeatureDetector.cpp
+                                src/ClusterDetector.cpp
                                 src/HighLevelDetector.cpp
-                                src/HoughDetector.cpp 
+                                src/LineDetector.cpp 
                                 src/ImageView.cpp 
                                 src/LineFilter.cpp
                                 src/main.cpp

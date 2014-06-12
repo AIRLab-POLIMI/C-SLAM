@@ -28,10 +28,10 @@
 
 namespace enc = sensor_msgs::image_encodings;
 
-Dispatcher::Dispatcher(ros::NodeHandle& n) :
-			n(n), it(n), viewer("Detected Image")
+Dispatcher::Dispatcher(ros::NodeHandle& n, ParameterServer& parameterServer) :
+			n(n), it(n), detector(parameterServer), viewer("Detected Image"),
+			classifierParam(parameterServer.getClassifierParams())
 {
-	classifierThreshold = 0.2; //TODO change magic...
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
@@ -83,7 +83,7 @@ void Dispatcher::classify()
 {
 	c_fuzzy::Classification serviceCall;
 
-	ObjectClassificator classificator(serviceCall, classifierThreshold);
+	ObjectClassificator classificator(serviceCall, classifierParam);
 	classificator.processFeatures(detector.getRectangles());
 	classificator.processFeatures(detector.getPoles());
 	classificator.processFeatures(detector.getClusters());

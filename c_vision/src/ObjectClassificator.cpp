@@ -27,11 +27,11 @@ using namespace c_fuzzy;
 using namespace std;
 
 ObjectClassificator::ObjectClassificator(Classification& classification,
-			double threshold) :
+			ClassifierParam& params) :
 			classification(classification),
 			objects(classification.request.objects)
 {
-	classification.request.threshold = threshold;
+	classification.request.threshold = params.threshold;
 	currentVars = NULL;
 }
 

@@ -29,12 +29,10 @@
 using namespace cv;
 using namespace std;
 
-CognitiveDetector::CognitiveDetector() :
-			featureDetector(cornerP.threshold),
-			clusterDetector(clusterP.maxDistance, clusterP.minPoints),
-			lineDetector(houghP.apertureSize, houghP.rho, houghP.teta,
-						houghP.threshold, houghP.minLineLenght,
-						houghP.maxLineGap),
+CognitiveDetector::CognitiveDetector(ParameterServer& parameters) :
+			clusterDetector(parameters.getDBScanParams()),
+			lineDetector(parameters.getCannyParams(),
+						parameters.getHoughParams()),
 			pitch(0), roll(0), yaw(0)
 {
 	rectangles = NULL;
@@ -57,16 +55,13 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	const vector<Vec4i>& verticalLines = filter.getVerticalLines();
 	const vector<Vec4i>& horizontalLines = filter.getHorizontalLines();
 
-	//detect keypoints
-	const vector<KeyPoint>& keyPoints = featureDetector.detect(equalizedFrame);
-
 	//detect features
 	HighLevelDetector highLevelDetector;
 	highLevelDetector.detect(verticalLines, horizontalLines);
 
 	rectangles = highLevelDetector.getRectangles();
 	poles = highLevelDetector.getPoles();
-	clusters = clusterDetector.detect(keyPoints);
+	clusters = clusterDetector.detect(equalizedFrame);
 }
 
 void CognitiveDetector::preprocessing(Mat& input, Mat& equalizedFrame)

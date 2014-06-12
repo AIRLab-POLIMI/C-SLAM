@@ -21,36 +21,18 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FEATUREDETECTOR_H_
-#define FEATUREDETECTOR_H_
+#include <opencv2/imgproc/imgproc.hpp>
+#include "ClusterDetector.h"
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/features2d/features2d.hpp>
-
-class FeatureDetector
+ClusterDetector::ClusterDetector(ClusterParam& params) :
+			params(params), clustering(params.maxDistance, params.minPoints)
 {
-public:
-	FeatureDetector(int threshold) :
-				threshold(threshold)
-	{
-	}
+}
 
-	std::vector<cv::KeyPoint> detect(cv::Mat& input);
+std::vector<Cluster>* ClusterDetector::detect(cv::Mat& input)
+{
+	std::vector<cv::KeyPoint> keyPoints;
 
-	//getters and setters
-	inline int getThreshold() const
-	{
-		return threshold;
-	}
-
-	inline void setThreshold(int threshold)
-	{
-		this->threshold = threshold;
-	}
-
-private:
-	int threshold;
-
-};
-
-#endif /* FEATUREDETECTOR_H_ */
+	FAST(input, keyPoints, params.threshold);
+	return clustering.detect(keyPoints);
+}

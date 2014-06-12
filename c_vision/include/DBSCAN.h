@@ -32,40 +32,16 @@
 class DBSCAN
 {
 public:
-	DBSCAN(double eps, int minPts) :
-				maxDistance(eps), minPoints(minPts)
-	{
-	}
-
+	DBSCAN(double& eps, int& minPts);
 	std::vector<Cluster>* detect(const std::vector<cv::KeyPoint>& keypoints);
-
-	inline double getMaxDistance() const
-	{
-		return maxDistance;
-	}
-
-	inline void setMaxDistance(double eps)
-	{
-		this->maxDistance = eps;
-	}
-
-	inline int getMinPoints() const
-	{
-		return minPoints;
-	}
-
-	inline void setMinPoints(int minPts)
-	{
-		this->minPoints = minPts;
-	}
 
 private:
 	std::vector<int> listNeighbors(const std::vector<cv::KeyPoint>& keypoints,
 				const cv::KeyPoint &keypoint);
 
 private:
-	double maxDistance;
-	int minPoints;
+	double& maxDistance;
+	int& minPoints;
 
 
 };

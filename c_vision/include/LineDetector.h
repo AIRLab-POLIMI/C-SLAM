@@ -21,15 +21,23 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include "FeatureDetector.h"
+#ifndef LINEDETECTOR_H_
+#define LINEDETECTOR_H_
 
-std::vector<cv::KeyPoint> FeatureDetector::detect(cv::Mat& input)
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include "ParameterServer.h"
+
+class LineDetector
 {
-	std::vector<cv::KeyPoint> keyPoints;
+public:
+	LineDetector(CannyParam& cannyP, HoughParam& houghP);
+	std::vector<cv::Vec4i> detect(cv::Mat& input);
 
-	FAST(input, keyPoints, threshold);
+private:
+	CannyParam& cannyP;
+	HoughParam& houghP;
+};
 
-	return keyPoints;
-
-}
+#endif /* LINEDETECTOR_H_ */

@@ -21,44 +21,84 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DefaultParameters.h"
+#include "ParameterServer.h"
+
+#include <angles/angles.h>
 
 ParameterServer::ParameterServer(ros::NodeHandle& n) :
 			n(n)
 {
 	getCanny();
+	getHough();
+	getCluster();
+	getClassifier();
 }
 
-CannyParam& ParameterServer::getCannyParams()
+void ParameterServer::updateParameters()
 {
-	return canny;
-}
+	//update Canny parameters
+	n.getParamCached("canny/alpha", canny.alpha);
+	n.getParamCached("canny/apertureSize", canny.apertureSize);
 
-HougParam& ParameterServer::getHoughParams()
-{
-	return hough;
-}
+	//update cluster parameters
+	n.getParamCached("cluster/threshold", cluster.threshold);
+	n.getParamCached("cluster/minPoints", cluster.minPoints);
+	n.getParamCached("cluster/maxDistance", cluster.maxDistance);
 
-DBScanParam& ParameterServer::getDBScanParams()
-{
-	return dbscan;
-}
+	//update hough parameters
+	double tetaDegrees;
+	n.getParamCached("hough/rho", hough.rho);
+	n.getParamCached("hough/teta", tetaDegrees);
+	hough.teta = angles::from_degrees(tetaDegrees);
+	n.getParamCached("hough/threshold", hough.threshold);
+	n.getParamCached("hough/minLineLenght", hough.minLineLenght);
+	n.getParamCached("hough/maxLineGap", hough.maxLineGap);
 
-FeatureParam& ParameterServer::getFeatureParams()
-{
-	return features;
-}
-
-LineParam& ParameterServer::getLineParams()
-{
-	return lines;
+	//update classifiers parameters
+	n.getParamCached("classifier/threshold", classifier.threshold);
 }
 
 void ParameterServer::getCanny()
 {
-	if(n.getParamCached("canny/alpha", canny.alpha))
-		ROS_INFO("canny alpha parameter setted");
+	if (n.getParamCached("canny/alpha", canny.alpha))
+		ROS_INFO("canny parameters setted");
 	else
-		ROS_WARN("canny alpha parameter not setted");
+		ROS_WARN("canny parameters not setted");
 }
 
+void ParameterServer::getHough()
+{
+	double tetaDegrees;
+	if (n.getParamCached("hough/rho", hough.rho)
+				&& n.getParamCached("hough/teta", tetaDegrees)
+				&& n.getParamCached("hough/threshold", hough.threshold)
+				&& n.getParamCached("hough/minLineLenght", hough.minLineLenght)
+				&& n.getParamCached("hough/maxLineGap", hough.maxLineGap))
+	{
+		hough.teta = angles::from_degrees(tetaDegrees);
+		ROS_INFO("hough parameters setted");
+	}
+
+	else
+		ROS_WARN("hough parameters not setted");
+
+}
+
+void ParameterServer::getClassifier()
+{
+	if (n.getParamCached("classifier/threshold", classifier.threshold))
+		ROS_INFO("classifier parameters setted");
+	else
+		ROS_WARN("classifier parameters not setted");
+
+}
+
+void ParameterServer::getCluster()
+{
+	if (n.getParamCached("cluster/threshold", cluster.threshold)
+				&& n.getParamCached("cluster/minPoints", cluster.minPoints)
+				&& n.getParamCached("cluster/maxDistance", cluster.maxDistance))
+		ROS_INFO("cluster parameters setted");
+	else
+		ROS_WARN("cluster parameters not setted");
+}

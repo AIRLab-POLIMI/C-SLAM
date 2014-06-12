@@ -26,18 +26,17 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "DefaultParameters.h"
-#include "FeatureDetector.h"
-#include "HoughDetector.h"
+#include "ParameterServer.h"
+#include "ClusterDetector.h"
+#include "LineDetector.h"
 #include "HighLevelDetector.h"
-#include "DBSCAN.h"
 
 #include "ImageView.h"
 
 class CognitiveDetector
 {
 public:
-	CognitiveDetector();
+	CognitiveDetector(ParameterServer& parameters);
 
 	void detect(cv::Mat& image);
 
@@ -78,9 +77,8 @@ private:
 
 private:
 	//detectors
-	FeatureDetector featureDetector;
-	DBSCAN clusterDetector;
-	HoughDetector lineDetector;
+	ClusterDetector clusterDetector;
+	LineDetector lineDetector;
 
 	//envirorment data
 	double pitch;

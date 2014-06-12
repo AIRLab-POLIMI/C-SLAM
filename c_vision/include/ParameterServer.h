@@ -21,44 +21,38 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEFAULTPARAMETERS_H_
-#define DEFAULTPARAMETERS_H_
+#ifndef PARAMETERSERVER_H_
+#define PARAMETERSERVER_H_
 
 #include <ros/ros.h>
 #include <opencv2/core/core.hpp>
 
-static struct FeatureParam
-{
-	static const int threshold = 30;
-	static const int noiseBarrier = 40;
-	static const int objectWindow = 100;
-	static const int objectMinSize = 300;
-} cornerP;
 
-static struct DBScanParam
+struct ClusterParam
 {
-	static const int minPoints = 4;
-	static const double maxDistance = 15;
-} clusterP;
-
-static struct LineParam
-{
-	static const double maxDelta = 25.0;
-} lineP;
-
-static struct HougParam
-{
-	static const int rho = 1;
-	static const double teta = CV_PI / 180;
-	static const int apertureSize = 3;
-	static const int threshold = 90;
-	static const int minLineLenght = 120;
-	static const int maxLineGap = 30;
-} houghP;
+	int threshold;
+	int minPoints;
+	double maxDistance;
+};
 
 struct CannyParam
 {
 	double alpha;
+	int apertureSize;
+};
+
+struct HoughParam
+{
+	int rho;
+	double teta;
+	int threshold;
+	int minLineLenght;
+	int maxLineGap;
+};
+
+struct ClassifierParam
+{
+	double threshold;
 };
 
 class ParameterServer
@@ -66,24 +60,43 @@ class ParameterServer
 
 public:
 	ParameterServer(ros::NodeHandle& n);
-	CannyParam& getCannyParams();
-	HougParam& getHoughParams();
-	LineParam& getLineParams();
-	DBScanParam& getDBScanParams();
-	FeatureParam& getFeatureParams();
+	void updateParameters();
+
+
+	inline CannyParam& getCannyParams()
+	{
+		return canny;
+	}
+
+	inline HoughParam& getHoughParams()
+	{
+		return hough;
+	}
+
+	inline ClusterParam& getDBScanParams()
+	{
+		return cluster;
+	}
+
+	inline ClassifierParam& getClassifierParams()
+	{
+		return classifier;
+	}
 
 private:
 	ros::NodeHandle& n;
 
 	CannyParam canny;
-	HougParam hough;
-	LineParam lines;
-	DBScanParam dbscan;
-	FeatureParam features;
+	HoughParam hough;
+	ClusterParam cluster;
+	ClassifierParam classifier;
 
 private:
 
 	void getCanny();
+	void getHough();
+	void getClassifier();
+	void getCluster();
 };
 
-#endif /* DEFAULTPARAMETERS_H_ */
+#endif /* PARAMETERSERVER_H_ */

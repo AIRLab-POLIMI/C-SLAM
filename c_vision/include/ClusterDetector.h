@@ -21,29 +21,26 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "HoughDetector.h"
+#ifndef FEATUREDETECTOR_H_
+#define FEATUREDETECTOR_H_
 
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
 
-using namespace std;
-using namespace cv;
 
-vector<Vec4i> HoughDetector::detect(Mat& input)
+#include "DBSCAN.h"
+#include "ParameterServer.h"
+
+class ClusterDetector
 {
+public:
+	ClusterDetector(ClusterParam& params);
+	std::vector<Cluster>* detect(cv::Mat& input);
 
-	Mat canny, eroded;
+private:
+	ClusterParam& params;
+	DBSCAN clustering;
 
-	double high_thres = cv::threshold(input, canny, 0, 255,
-				CV_THRESH_BINARY + CV_THRESH_OTSU);
-	double low_thres = high_thres * 0.5;
-	Canny(input, canny, low_thres, high_thres, apertureSize);
+};
 
-	imshow("Canny", canny);
-
-	vector<Vec4i> lines;
-
-	HoughLinesP(canny, lines, rho, theta, threshold, minLineLength, maxLineGap);
-
-	return lines;
-
-}
+#endif /* FEATUREDETECTOR_H_ */

@@ -30,13 +30,16 @@
 #include <sensor_msgs/image_encodings.h>
 #include <ardrone_autonomy/Navdata.h>
 #include <c_fuzzy/Classification.h>
+
+#include "ParameterServer.h"
 #include "CognitiveDetector.h"
 #include "ImageView.h"
+
 
 class Dispatcher
 {
 public:
-	Dispatcher(ros::NodeHandle& n);
+	Dispatcher(ros::NodeHandle& n, ParameterServer& parameterServer);
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 
@@ -57,10 +60,12 @@ private:
 	//Data needed to detect objects
 	double rotX, rotY, rotZ;
 	CognitiveDetector detector;
-	double classifierThreshold;
 
 	//Data needed to display results
 	ImageView viewer;
+
+	//parameters
+	ClassifierParam& classifierParam;
 };
 
 #endif /* DISPATCHER_H_ */

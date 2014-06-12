@@ -27,6 +27,11 @@
 using namespace std;
 using namespace cv;
 
+DBSCAN::DBSCAN(double& eps, int& minPts) :
+			maxDistance(eps), minPoints(minPts)
+{
+}
+
 std::vector<Cluster>* DBSCAN::detect(const vector<KeyPoint>& keypoints)
 {
 	vector<Cluster>* clustersPointer = new vector<Cluster>();
