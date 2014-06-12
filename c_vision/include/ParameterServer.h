@@ -85,6 +85,7 @@ public:
 
 private:
 	ros::NodeHandle& n;
+	ros::Timer parameterTimer;
 
 	CannyParam canny;
 	HoughParam hough;

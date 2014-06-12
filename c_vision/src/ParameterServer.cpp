@@ -33,7 +33,7 @@ ParameterServer::ParameterServer(ros::NodeHandle& n) :
 	getCluster();
 	getClassifier();
 
-	ros::Timer timer = n.createTimer(ros::Duration(1),
+	parameterTimer = n.createTimer(ros::Duration(1),
 				&ParameterServer::updateParameters, this);
 }
 
