@@ -43,7 +43,7 @@ public:
 	}
 
 private:
-	bool sameSlope(double alpha, double beta, double maxDelta);
+	bool sameSlope(double line, double reference, double maxDelta);
 
 private:
 	std::vector<cv::Vec4i> verticalLines;

@@ -42,7 +42,7 @@ vector<Vec4i> LineDetector::detect(Mat& input)
 	double high_thres = cv::threshold(input, canny, 0, 255,
 				CV_THRESH_BINARY + CV_THRESH_OTSU);
 	double low_thres = high_thres * cannyP.alpha;
-	Canny(input, canny, low_thres, high_thres, cannyP.apertureSize);
+	Canny(input, canny, low_thres, high_thres, cannyP.apertureSize, true);
 
 	imshow("Canny", canny);
 

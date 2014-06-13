@@ -27,6 +27,7 @@
 #include <iostream>
 
 #include <angles/angles.h>
+#include <ros/ros.h>
 
 using namespace angles;
 
@@ -38,11 +39,12 @@ bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 
 void LineFilter::filter(vector<Vec4i>& lines, double roll)
 {
-	const double delta_max_vertical = from_degrees(5); //5 degrees of error
-	const double delta_max_horizontal = from_degrees(5); //5 degrees of error
+	const double delta_max_vertical = from_degrees(10.0); //5 degrees of error
+	const double delta_max_horizontal = from_degrees(10.0); //5 degrees of error
 
 	const double orizontal_line = from_degrees(roll);
-	const double vertical_line = from_degrees(orizontal_line + 90);
+	const double vertical_line = from_degrees(roll + 90);
+
 
 	for (size_t i = 0; i < lines.size(); i++)
 	{
@@ -52,15 +54,19 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 
 		double alpha_line = atan2(dy, dx);
 
-		if (shortest_angular_distance(alpha_line, orizontal_line)
-					< delta_max_vertical)
+		//e' orizzontale
+		if (sameSlope(alpha_line, orizontal_line, delta_max_horizontal))
 		{
-			verticalLines.push_back(lines[i]);
-		}
-		else if (shortest_angular_distance(alpha_line, vertical_line)
-					< delta_max_vertical)
-		{
+			ROS_DEBUG_STREAM(
+						"linea: " << to_degrees(alpha_line) << " orizzontale: " << roll << " distanza: " << to_degrees(shortest_angular_distance(alpha_line, orizontal_line)));
 			horizontalLines.push_back(lines[i]);
+		}
+		//e' verticale
+		else if (sameSlope(alpha_line, vertical_line, delta_max_vertical))
+		{
+			ROS_DEBUG_STREAM(
+						"linea: " << to_degrees(alpha_line) << " verticale: " << roll + 90 << " distanza: " << to_degrees(shortest_angular_distance(alpha_line, vertical_line)));
+			verticalLines.push_back(lines[i]);
 		}
 	}
 
@@ -68,6 +74,19 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 	sort(horizontalLines.begin(), horizontalLines.end(), isHighestLine);
 
 }
+
+bool LineFilter::sameSlope(double line, double reference, double maxDelta)
+{
+	double delta = shortest_angular_distance(line,reference);
+	bool sameSlope0 = delta < maxDelta && delta > -maxDelta;
+
+	double delta180 = shortest_angular_distance(line,reference + from_degrees(180));
+	bool sameSlope180 = delta180 < maxDelta && delta180 > -maxDelta;
+
+	return sameSlope0 || sameSlope180;
+}
+
+
 
 bool isHighestLine(Vec4i i, Vec4i j)
 {
