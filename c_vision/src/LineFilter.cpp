@@ -40,7 +40,7 @@ bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 void LineFilter::filter(vector<Vec4i>& lines, double roll)
 {
 	const double delta_max_vertical = from_degrees(5.0); //5 degrees of error
-	const double delta_max_horizontal = from_degrees(10.0); //5 degrees of error
+	const double delta_max_horizontal = from_degrees(10.0); //10 degrees of error
 
 	const double horizontal_line = from_degrees(roll);
 	const double vertical_line = from_degrees(roll + 90);

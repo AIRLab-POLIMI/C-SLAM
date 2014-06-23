@@ -42,6 +42,11 @@ Dispatcher::Dispatcher(ros::NodeHandle& n, ParameterServer& parameterServer) :
 
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
+	/*
+	 *	X axis outgoing from the drone camera, opposite convention wrt ardrone autonomy driver
+	 *	Z axis upside
+	 *	Y axis to the left (TODO check)
+	 */
 	rotX = -navdata.rotX;
 	rotY = navdata.rotY;
 	rotZ = navdata.rotZ;
