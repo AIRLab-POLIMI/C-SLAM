@@ -39,10 +39,10 @@ bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
 
 void LineFilter::filter(vector<Vec4i>& lines, double roll)
 {
-	const double delta_max_vertical = from_degrees(10.0); //5 degrees of error
+	const double delta_max_vertical = from_degrees(5.0); //5 degrees of error
 	const double delta_max_horizontal = from_degrees(10.0); //5 degrees of error
 
-	const double orizontal_line = from_degrees(roll);
+	const double horizontal_line = from_degrees(roll);
 	const double vertical_line = from_degrees(roll + 90);
 
 
@@ -55,10 +55,10 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 		double alpha_line = atan2(dy, dx);
 
 		//e' orizzontale
-		if (sameSlope(alpha_line, orizontal_line, delta_max_horizontal))
+		if (sameSlope(alpha_line, horizontal_line, delta_max_horizontal))
 		{
 			ROS_DEBUG_STREAM(
-						"linea: " << to_degrees(alpha_line) << " orizzontale: " << roll << " distanza: " << to_degrees(shortest_angular_distance(alpha_line, orizontal_line)));
+						"linea: " << to_degrees(alpha_line) << " orizzontale: " << roll << " distanza: " << to_degrees(shortest_angular_distance(alpha_line, horizontal_line)));
 			horizontalLines.push_back(lines[i]);
 		}
 		//e' verticale
@@ -77,16 +77,9 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 
 bool LineFilter::sameSlope(double line, double reference, double maxDelta)
 {
-	double delta = shortest_angular_distance(line,reference);
-	bool sameSlope0 = delta < maxDelta && delta > -maxDelta;
-
-	double delta180 = shortest_angular_distance(line,reference + from_degrees(180));
-	bool sameSlope180 = delta180 < maxDelta && delta180 > -maxDelta;
-
-	return sameSlope0 || sameSlope180;
+	double delta = abs(shortest_angular_distance(line,reference));
+	return delta < maxDelta ||  delta > from_degrees(180) - maxDelta;
 }
-
-
 
 bool isHighestLine(Vec4i i, Vec4i j)
 {

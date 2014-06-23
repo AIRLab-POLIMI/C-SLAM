@@ -42,7 +42,7 @@ Dispatcher::Dispatcher(ros::NodeHandle& n, ParameterServer& parameterServer) :
 
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
-	rotX = navdata.rotX;
+	rotX = -navdata.rotX;
 	rotY = navdata.rotY;
 	rotZ = navdata.rotZ;
 }
