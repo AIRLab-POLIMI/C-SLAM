@@ -29,15 +29,16 @@
 class LineFilter
 {
 public:
+	LineFilter();
 
 	void filter(std::vector<cv::Vec4i>& lines, double roll);
 
-	std::vector<cv::Vec4i> getVerticalLines()
+	std::vector<cv::Vec4i>* getVerticalLines()
 	{
 		return verticalLines;
 	}
 
-	std::vector<cv::Vec4i> getHorizontalLines()
+	std::vector<cv::Vec4i>* getHorizontalLines()
 	{
 		return horizontalLines;
 	}
@@ -45,9 +46,12 @@ public:
 private:
 	bool sameSlope(double line, double reference, double maxDelta);
 
+	static bool isHighestLine(cv::Vec4i i, cv::Vec4i j);
+	static bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
+
 private:
-	std::vector<cv::Vec4i> verticalLines;
-	std::vector<cv::Vec4i> horizontalLines;
+	std::vector<cv::Vec4i>* verticalLines;
+	std::vector<cv::Vec4i>* horizontalLines;
 };
 
 #endif /* LINEFILTER_H_ */

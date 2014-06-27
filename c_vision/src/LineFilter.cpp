@@ -34,8 +34,11 @@ using namespace angles;
 using namespace cv;
 using namespace std;
 
-bool isHighestLine(cv::Vec4i i, cv::Vec4i j);
-bool isLeftmostLine(cv::Vec4i i, cv::Vec4i j);
+LineFilter::LineFilter()
+{
+	verticalLines = new vector<Vec4i>();
+	horizontalLines = new vector<Vec4i>();
+}
 
 void LineFilter::filter(vector<Vec4i>& lines, double roll)
 {
@@ -59,19 +62,19 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 		{
 			ROS_DEBUG_STREAM(
 						"linea: " << to_degrees(alpha_line) << " orizzontale: " << roll << " distanza: " << to_degrees(shortest_angular_distance(alpha_line, horizontal_line)));
-			horizontalLines.push_back(lines[i]);
+			horizontalLines->push_back(lines[i]);
 		}
 		//e' verticale
 		else if (sameSlope(alpha_line, vertical_line, delta_max_vertical))
 		{
 			ROS_DEBUG_STREAM(
 						"linea: " << to_degrees(alpha_line) << " verticale: " << roll + 90 << " distanza: " << to_degrees(shortest_angular_distance(alpha_line, vertical_line)));
-			verticalLines.push_back(lines[i]);
+			verticalLines->push_back(lines[i]);
 		}
 	}
 
-	sort(verticalLines.begin(), verticalLines.end(), isLeftmostLine);
-	sort(horizontalLines.begin(), horizontalLines.end(), isHighestLine);
+	sort(verticalLines->begin(), verticalLines->end(), isLeftmostLine);
+	sort(horizontalLines->begin(), horizontalLines->end(), isHighestLine);
 
 }
 
@@ -81,12 +84,12 @@ bool LineFilter::sameSlope(double line, double reference, double maxDelta)
 	return delta < maxDelta ||  delta > from_degrees(180) - maxDelta;
 }
 
-bool isHighestLine(Vec4i i, Vec4i j)
+bool LineFilter::isHighestLine(Vec4i i, Vec4i j)
 {
 	return (i[1] > j[1]) && (i[3] > j[3]);
 }
 
-bool isLeftmostLine(Vec4i i, Vec4i j)
+bool LineFilter::isLeftmostLine(Vec4i i, Vec4i j)
 {
 	return (i[0] < j[0]) && (i[2] < j[2]);
 }

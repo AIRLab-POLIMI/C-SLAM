@@ -89,6 +89,9 @@ private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
 	std::vector<Cluster>* clusters;
+
+	std::vector<cv::Vec4i>* verticalLines;
+	std::vector<cv::Vec4i>* horizontalLines;
 };
 
 #endif /* COGNITIVEDETECTOR_H_ */

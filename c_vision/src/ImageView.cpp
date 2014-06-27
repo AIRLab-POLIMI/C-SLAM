@@ -42,8 +42,10 @@ ImageView::ImageView(std::string viewName) :
 void ImageView::display(Mat& frame)
 {
 	//displayClusterResults(*keyPoints, *clusters, frame);
-	//displayLineResults(*verticalLines, frame);
-	//displayLineResults(*horizontalLines, frame);
+	if (verticalLines)
+		displayLineResults(*verticalLines, frame);
+	if (horizontalLines)
+		displayLineResults(*horizontalLines, frame);
 	if (clusters)
 		displayClustersResults(frame);
 	if (rectangles)

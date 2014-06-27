@@ -24,7 +24,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "CognitiveDetector.h"
-#include "LineFilter.h"
 
 using namespace cv;
 using namespace std;
@@ -38,6 +37,10 @@ CognitiveDetector::CognitiveDetector(ParameterServer& parameters) :
 	rectangles = NULL;
 	poles = NULL;
 	clusters = NULL;
+
+	horizontalLines = NULL;
+	verticalLines = NULL;
+
 }
 
 void CognitiveDetector::detect(cv::Mat& frame)
@@ -47,17 +50,13 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	preprocessing(frame, equalizedFrame);
 
 	//detect lines
-	vector<Vec4i> lines = lineDetector.detect(equalizedFrame);
-
-	//filter lines
-	LineFilter filter;
-	filter.filter(lines, roll);
-	const vector<Vec4i>& verticalLines = filter.getVerticalLines();
-	const vector<Vec4i>& horizontalLines = filter.getHorizontalLines();
+	lineDetector.detect(equalizedFrame, roll);
+	verticalLines = lineDetector.getVerticalLines();
+	horizontalLines = lineDetector.getHorizontalLines();
 
 	//detect features
 	HighLevelDetector highLevelDetector;
-	highLevelDetector.detect(verticalLines, horizontalLines);
+	highLevelDetector.detect(*verticalLines, *horizontalLines);
 
 	rectangles = highLevelDetector.getRectangles();
 	poles = highLevelDetector.getPoles();
@@ -77,5 +76,8 @@ void CognitiveDetector::deleteDetections()
 	delete rectangles;
 	delete poles;
 	delete clusters;
+
+	delete verticalLines;
+	delete horizontalLines;
 }
 

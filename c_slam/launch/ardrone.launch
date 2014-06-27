@@ -8,7 +8,7 @@
 		<param name="altitude_max" value="3000" />		<!-- in millimeters = 3 meters = 9' -->
 		<param name="altitude_min" value="50" />		<!-- in millimeters = 5cm = 2" -->
 		<param name="euler_angle_max" value="0.1" />	<!-- maximum allowable body angle in radians = 5 degrees -->
-		<param name="control_vz_max" value="200" />		<!-- maximum z velocity in mm/sec = 0.2m/sec -->
+		<param name="control_vz_max" value="500" />		<!-- maximum z velocity in mm/sec = 0.2m/sec -->
 		<param name="control_yaw" value="0.7" />		<!-- maximum rotation rate in radians/sec = 40 degrees per second (1/9 rev/sec) -->
 	</node>
 
@@ -20,8 +20,8 @@
 	<node name="joystick_controller" pkg="ardrone_tutorials" type="joystick_controller.py" output="screen" required="true">
 		<!-- Configures the joystick button mapping -->
 		<param name="ButtonEmergency"	value="9" />
-		<param name="ButtonLand"	value="2" />
-		<param name="ButtonTakeoff"	value="0" />
+		<param name="ButtonLand"		value="2" />
+		<param name="ButtonTakeoff"		value="0" />
 
 		<!-- Configures the joystick axis mapping -->
 		<param name="AxisRoll"			value="0" />

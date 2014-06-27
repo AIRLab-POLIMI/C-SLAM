@@ -109,6 +109,8 @@ void Dispatcher::display(const cv_bridge::CvImagePtr& cv_ptr)
 	viewer.setPoles(detector.getPoles());
 	viewer.setRoll(rotX);
 	viewer.display(cv_ptr->image);
+
+	detector.deleteDetections();
 }
 
 void Dispatcher::connectToClassificationServer()

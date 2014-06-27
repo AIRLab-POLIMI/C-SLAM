@@ -32,49 +32,48 @@ HighLevelDetector::HighLevelDetector()
 	poles = new std::vector<Pole>();
 }
 
-void HighLevelDetector::detect(std::vector<cv::Vec4i> verticalLines,
-			std::vector<cv::Vec4i> horizontalLines)
+void HighLevelDetector::detect(std::vector<cv::Vec4i>& verticalLines,
+			std::vector<cv::Vec4i>& horizontalLines)
 {
-	if (!verticalLines.empty() && !horizontalLines.empty())
-		for (size_t i = 0; i + 1 < verticalLines.size(); i++)
-		{	//i+1 instead size-1 to avoid integer overflow
-			Vec4i v1 = verticalLines[i];
-			Vec4i v2 = verticalLines[i + 1];
-			//find possible poles
-			if (!findPoles(v1, v2))
+	for (size_t i = 0; i + 1 < verticalLines.size(); i++)
+	{	//i+1 instead size-1 to avoid integer overflow
+		Vec4i v1 = verticalLines[i];
+		Vec4i v2 = verticalLines[i + 1];
+		//find possible poles
+		if (!findPoles(v1, v2))
+		{
+			//else find possible squares
+			for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
 			{
-				//else find possible squares
-				for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
+				Vec4i h1 = horizontalLines[j];
+				for (size_t k = j + 1; k < horizontalLines.size(); k++)
 				{
-					Vec4i h1 = horizontalLines[j];
-					for (size_t k = j + 1; k < horizontalLines.size(); k++)
+					vector<double> a;
+					vector<double> b;
+
+					a.resize(4);
+					b.resize(4);
+
+					Vec4i h2 = horizontalLines[k];
+					Point x, y, z, w;
+
+					x = findInterceptions(h1, v1, a[0], b[0]);
+					y = findInterceptions(h1, v2, a[1], b[1]);
+					z = findInterceptions(h2, v2, a[2], b[2]);
+					w = findInterceptions(h2, v1, a[3], b[3]);
+
+					if (isQuadrilateral(a, b))
 					{
-						vector<double> a;
-						vector<double> b;
-
-						a.resize(4);
-						b.resize(4);
-
-						Vec4i h2 = horizontalLines[k];
-						Point x, y, z, w;
-
-						x = findInterceptions(h1, v1, a[0], b[0]);
-						y = findInterceptions(h1, v2, a[1], b[1]);
-						z = findInterceptions(h2, v2, a[2], b[2]);
-						w = findInterceptions(h2, v1, a[3], b[3]);
-
-						if (isQuadrilateral(a, b))
-						{
-							Rectangle rectangle(x, y, z, w);
-							rectangle.setFeature();
-							rectangles->push_back(rectangle);
-						}
-
+						Rectangle rectangle(x, y, z, w);
+						rectangle.setFeature();
+						rectangles->push_back(rectangle);
 					}
+
 				}
 			}
-
 		}
+
+	}
 
 }
 

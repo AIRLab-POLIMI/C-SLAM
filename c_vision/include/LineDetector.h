@@ -28,16 +28,36 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "ParameterServer.h"
+#include "ImageView.h"
 
 class LineDetector
 {
 public:
 	LineDetector(CannyParam& cannyP, HoughParam& houghP);
-	std::vector<cv::Vec4i> detect(cv::Mat& input);
+	void detect(cv::Mat& input, double roll);
+
+	std::vector<cv::Vec4i>* getVerticalLines()
+	{
+		return verticalLines;
+	}
+
+	std::vector<cv::Vec4i>* getHorizontalLines()
+	{
+		return horizontalLines;
+	}
+
+private:
+	void thinningIteration(cv::Mat& im, int iter);
+	void thinning(cv::Mat& im, int maxIterations);
 
 private:
 	CannyParam& cannyP;
 	HoughParam& houghP;
+
+	std::vector<cv::Vec4i>* verticalLines;
+	std::vector<cv::Vec4i>* horizontalLines;
+
+	ImageView viewer;
 };
 
 #endif /* LINEDETECTOR_H_ */

@@ -35,8 +35,8 @@ class HighLevelDetector
 public:
 	HighLevelDetector();
 
-	void detect(std::vector<cv::Vec4i> verticalLines,
-				std::vector<cv::Vec4i> horizontalLines);
+	void detect(std::vector<cv::Vec4i>& verticalLines,
+				std::vector<cv::Vec4i>& horizontalLines);
 
 	inline std::vector<Pole>* getPoles() const
 	{
