@@ -50,6 +50,12 @@ struct HoughParam
 	int maxLineGap;
 };
 
+struct LFilterParam
+{
+	double maxDeltaVertical;
+	double maxDeltaHorizontal;
+};
+
 struct ClassifierParam
 {
 	double threshold;
@@ -83,6 +89,11 @@ public:
 		return classifier;
 	}
 
+	inline LFilterParam& getLFiltrerParams()
+	{
+		return lineFilter;
+	}
+
 private:
 	ros::NodeHandle& n;
 	ros::Timer parameterTimer;
@@ -91,6 +102,7 @@ private:
 	HoughParam hough;
 	ClusterParam cluster;
 	ClassifierParam classifier;
+	LFilterParam lineFilter;
 
 private:
 
@@ -98,6 +110,7 @@ private:
 	void getHough();
 	void getClassifier();
 	void getCluster();
+	void getLFilter();
 };
 
 #endif /* PARAMETERSERVER_H_ */

@@ -143,27 +143,18 @@ inline void HighLevelDetector::getPointsCoordinates(cv::Vec4i l, int& x1,
 
 bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 {
-	int interceptionCounter = 0;
 	int segmentCounter = 0;
-
-	for (size_t i = 0; i < a.size() && i < b.size(); i++)
-	{
-		interceptionCounter += (-0.1 <= a[i]) && (a[i] <= 1.1);
-		interceptionCounter += (-0.1 <= b[i]) && (b[i] <= 1.1);
-	}
 
 	segmentCounter += lineBelongToQuadrilateral(a[0], a[1]);
 	segmentCounter += lineBelongToQuadrilateral(a[2], a[3]);
 	segmentCounter += lineBelongToQuadrilateral(b[0], b[1]);
 	segmentCounter += lineBelongToQuadrilateral(b[2], b[3]);
 
-	return (interceptionCounter > 3) && (segmentCounter == 4);
-
+	return segmentCounter == 4;
 }
 
 bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
 {
-	double a = a1 * a2;
-	return (a < 0) || ((a1 > 0) && (a < 1));
+	return (a1 >= -0.2) && (a2 <= 1.2);
 }
 

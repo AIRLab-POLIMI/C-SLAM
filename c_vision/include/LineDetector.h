@@ -33,7 +33,7 @@
 class LineDetector
 {
 public:
-	LineDetector(CannyParam& cannyP, HoughParam& houghP);
+	LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam& filterP);
 	void detect(cv::Mat& input, double roll);
 
 	std::vector<cv::Vec4i>* getVerticalLines()
@@ -47,12 +47,9 @@ public:
 	}
 
 private:
-	void thinningIteration(cv::Mat& im, int iter);
-	void thinning(cv::Mat& im, int maxIterations);
-
-private:
 	CannyParam& cannyP;
 	HoughParam& houghP;
+	LFilterParam& filterP;
 
 	std::vector<cv::Vec4i>* verticalLines;
 	std::vector<cv::Vec4i>* horizontalLines;

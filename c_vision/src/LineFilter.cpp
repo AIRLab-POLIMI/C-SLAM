@@ -34,7 +34,8 @@ using namespace angles;
 using namespace cv;
 using namespace std;
 
-LineFilter::LineFilter()
+LineFilter::LineFilter(LFilterParam& filterP) :
+			filterP(filterP)
 {
 	verticalLines = new vector<Vec4i>();
 	horizontalLines = new vector<Vec4i>();
@@ -42,12 +43,12 @@ LineFilter::LineFilter()
 
 void LineFilter::filter(vector<Vec4i>& lines, double roll)
 {
-	const double delta_max_vertical = from_degrees(5.0); //5 degrees of error
-	const double delta_max_horizontal = from_degrees(15.0); //15 degrees of error
+	const double delta_max_vertical = from_degrees(filterP.maxDeltaVertical);
+	const double delta_max_horizontal = from_degrees(
+				filterP.maxDeltaHorizontal);
 
 	const double horizontal_line = from_degrees(roll);
 	const double vertical_line = from_degrees(roll + 90);
-
 
 	for (size_t i = 0; i < lines.size(); i++)
 	{
@@ -80,8 +81,8 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 
 bool LineFilter::sameSlope(double line, double reference, double maxDelta)
 {
-	double delta = abs(shortest_angular_distance(line,reference));
-	return delta < maxDelta ||  delta > from_degrees(180) - maxDelta;
+	double delta = abs(shortest_angular_distance(line, reference));
+	return delta < maxDelta || delta > from_degrees(180) - maxDelta;
 }
 
 bool LineFilter::isHighestLine(Vec4i i, Vec4i j)

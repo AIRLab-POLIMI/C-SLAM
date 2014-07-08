@@ -30,8 +30,8 @@
 using namespace std;
 using namespace cv;
 
-LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP) :
-			cannyP(cannyP), houghP(houghP), viewer("Canny")
+LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam& filterP) :
+			cannyP(cannyP), houghP(houghP), filterP(filterP), viewer("Canny")
 {
 	horizontalLines = NULL;
 	verticalLines = NULL;
@@ -55,7 +55,7 @@ void LineDetector::detect(Mat& input, double roll)
 				houghP.minLineLenght, houghP.maxLineGap);
 
 	/* Filter Lines */
-	LineFilter filter;
+	LineFilter filter(filterP);
 	filter.filter(lines, roll);
 	verticalLines = filter.getVerticalLines();
 	horizontalLines = filter.getHorizontalLines();

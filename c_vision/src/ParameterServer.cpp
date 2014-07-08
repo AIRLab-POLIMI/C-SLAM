@@ -32,6 +32,7 @@ ParameterServer::ParameterServer(ros::NodeHandle& n) :
 	getHough();
 	getCluster();
 	getClassifier();
+	getLFilter();
 
 	parameterTimer = n.createTimer(ros::Duration(1),
 				&ParameterServer::updateParameters, this);
@@ -59,6 +60,10 @@ void ParameterServer::updateParameters(const ros::TimerEvent& event)
 
 	//update classifiers parameters
 	n.getParamCached("classifier/threshold", classifier.threshold);
+
+	//update line filter parameters
+	n.getParamCached("filter/maxDeltaHorizontal", lineFilter.maxDeltaHorizontal);
+	n.getParamCached("filter/maxDeltaVertical", lineFilter.maxDeltaVertical);
 }
 
 void ParameterServer::getCanny()
@@ -105,4 +110,13 @@ void ParameterServer::getCluster()
 		ROS_INFO("cluster parameters setted");
 	else
 		ROS_WARN("cluster parameters not setted");
+}
+
+void ParameterServer::getLFilter()
+{
+	if (n.getParamCached("filter/maxDeltaHorizontal", lineFilter.maxDeltaHorizontal)
+					&& n.getParamCached("filter/maxDeltaVertical", lineFilter.maxDeltaVertical))
+			ROS_INFO("Line Filter parameters setted");
+		else
+			ROS_WARN("Line Filter parameters not setted");
 }

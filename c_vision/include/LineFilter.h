@@ -26,10 +26,12 @@
 
 #include <opencv2/core/core.hpp>
 
+#include "ParameterServer.h"
+
 class LineFilter
 {
 public:
-	LineFilter();
+	LineFilter(LFilterParam& filterP);
 
 	void filter(std::vector<cv::Vec4i>& lines, double roll);
 
@@ -52,6 +54,8 @@ private:
 private:
 	std::vector<cv::Vec4i>* verticalLines;
 	std::vector<cv::Vec4i>* horizontalLines;
+
+	LFilterParam& filterP;
 };
 
 #endif /* LINEFILTER_H_ */
