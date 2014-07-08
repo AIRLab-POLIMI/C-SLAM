@@ -39,11 +39,14 @@ LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP) :
 
 void LineDetector::detect(Mat& input, double roll)
 {
-	Mat canny;
+	Mat canny, filtered;
 
-	double high_thres = threshold(input, canny, 0, 255,
+	double high_thres = 0.8*threshold(input, canny, 0, 255,
 				CV_THRESH_BINARY + CV_THRESH_OTSU);
 	double low_thres = high_thres * cannyP.alpha;
+
+	//medianBlur(input, filtered, 5);
+
 	Canny(input, canny, low_thres, high_thres, cannyP.apertureSize, true);
 
 	vector<Vec4i> lines;
