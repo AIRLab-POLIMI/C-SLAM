@@ -31,7 +31,7 @@
 		<param name="hough/maxLineGap" value="15" />
 		
 		<!-- line filter params -->
-		<param name="filter/maxDeltaHorizontal" value="15" />
+		<param name="filter/maxDeltaHorizontal" value="10" />
 		<param name="filter/maxDeltaVertical" value="5" />
 		
 		<!-- cluster params -->

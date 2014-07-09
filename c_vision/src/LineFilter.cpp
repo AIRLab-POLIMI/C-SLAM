@@ -87,7 +87,7 @@ bool LineFilter::sameSlope(double line, double reference, double maxDelta)
 
 bool LineFilter::isHighestLine(Vec4i i, Vec4i j)
 {
-	return (i[1] > j[1]) && (i[3] > j[3]);
+	return (i[1] < j[1]) && (i[3] < j[3]);
 }
 
 bool LineFilter::isLeftmostLine(Vec4i i, Vec4i j)

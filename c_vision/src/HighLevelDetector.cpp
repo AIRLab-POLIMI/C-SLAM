@@ -48,19 +48,16 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 				Vec4i h1 = horizontalLines[j];
 				for (size_t k = j + 1; k < horizontalLines.size(); k++)
 				{
-					vector<double> a;
-					vector<double> b;
-
-					a.resize(4);
-					b.resize(4);
+					vector<double> a(4);
+					vector<double> b(4);
 
 					Vec4i h2 = horizontalLines[k];
 					Point x, y, z, w;
 
-					x = findInterceptions(h1, v1, a[0], b[0]);
-					y = findInterceptions(h1, v2, a[1], b[1]);
-					z = findInterceptions(h2, v2, a[2], b[2]);
-					w = findInterceptions(h2, v1, a[3], b[3]);
+					x = findInterception(h1, v1, a[0], b[0]);
+					y = findInterception(h1, v2, a[1], b[1]);
+					z = findInterception(h2, v2, a[2], b[2]);
+					w = findInterception(h2, v1, a[3], b[3]);
 
 					if (isQuadrilateral(a, b))
 					{
@@ -77,7 +74,23 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 
 }
 
-Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2, double& a,
+void HighLevelDetector::normalizeLines(int& x1, int& y1, int& x2, int& y2,
+			int& x3, int& y3, int& x4, int& y4)
+{
+	if (x1 > x2)
+	{
+		swap(x1, x2);
+		swap(y1, y2);
+	}
+
+	if (y3 > y4)
+	{
+		swap(x3, x4);
+		swap(y3, y4);
+	}
+}
+
+Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 			double& b)
 {
 	int x1, x2, x3, x4;
@@ -85,6 +98,8 @@ Point HighLevelDetector::findInterceptions(Vec4i l1, Vec4i l2, double& a,
 
 	getPointsCoordinates(l1, x1, y1, x2, y2);
 	getPointsCoordinates(l2, x3, y3, x4, y4);
+
+	normalizeLines(x1, y1, x2, y2, x3, y3, x4, y4);
 
 	double an = -(x2 * (y4 - y3) + x3 * (y2 - y4) + x4 * (y3 - y2));
 	double ad = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
@@ -146,15 +161,15 @@ bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 	int segmentCounter = 0;
 
 	segmentCounter += lineBelongToQuadrilateral(a[0], a[1]);
-	segmentCounter += lineBelongToQuadrilateral(a[2], a[3]);
+	segmentCounter += lineBelongToQuadrilateral(a[3], a[2]);
 	segmentCounter += lineBelongToQuadrilateral(b[0], b[1]);
-	segmentCounter += lineBelongToQuadrilateral(b[2], b[3]);
+	segmentCounter += lineBelongToQuadrilateral(b[3], b[2]);
 
 	return segmentCounter == 4;
 }
 
 bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
 {
-	return (a1 >= -0.2) && (a2 <= 1.2);
+	return (a1 >= -0.05) && (a2 <= 1.05);
 }
 

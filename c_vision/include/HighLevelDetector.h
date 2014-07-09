@@ -51,11 +51,13 @@ public:
 private:
 	inline void getPointsCoordinates(cv::Vec4i l, int& x1, int& y1, int& x2,
 				int& y2);
-	cv::Point findInterceptions(cv::Vec4i l1, cv::Vec4i l2, double& a,
+	cv::Point findInterception(cv::Vec4i l1, cv::Vec4i l2, double& a,
 				double& b);
 	bool findPoles(cv::Vec4i l1, cv::Vec4i l2);
 	bool isQuadrilateral(std::vector<double> a, std::vector<double> b);
 	bool lineBelongToQuadrilateral(double a1, double a2);
+	void normalizeLines(int& x1, int& y1, int& x2, int& y2, int& x3, int& y3,
+				int& x4, int& y4);
 
 private:
 	std::vector<Rectangle>* rectangles;
