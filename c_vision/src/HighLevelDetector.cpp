@@ -93,50 +93,48 @@ void HighLevelDetector::normalizeLines(int& x1, int& y1, int& x2, int& y2,
 Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 			double& b)
 {
-	int x1, x2, x3, x4;
-	int y1, y2, y3, y4;
+	Vec3d p0, p1, p2, p3;
+	Vec3d hl, vl;
+	Vec3d p;
 
-	getPointsCoordinates(l1, x1, y1, x2, y2);
-	getPointsCoordinates(l2, x3, y3, x4, y4);
+	//get the homogeneus coordinates
+	getPointsCoordinates(l1, p0, p1);
+	getPointsCoordinates(l2, p2, p3);
 
-	normalizeLines(x1, y1, x2, y2, x3, y3, x4, y4);
+	//get the lines and the interception point
+	hl = p0.cross(p1);
+	hl = hl / norm(hl);
 
-	double an = -(x2 * (y4 - y3) + x3 * (y2 - y4) + x4 * (y3 - y2));
-	double ad = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
-				+ x3 * (y1 - y2));
+	vl = p2.cross(p3);
+	vl = vl / norm(vl);
 
-	a = an / ad;
+	p = hl.cross(vl);
+	p = p / p[2];
 
-	double bn = (x1 * (y4 - y2) + x2 * (y1 - y4) + x4 * (y2 - y1));
-	double bd = (x1 * (y4 - y3) + x2 * (y3 - y4) + x4 * (y2 - y1)
-				+ x3 * (y1 - y2));
+	//Calculate the linear combination parameters
+	a = (p[0] - p0[0]) / (p1[0] - p0[0]);
+	b = (p[0] - p2[0]) / (p3[0] - p2[0]);
 
-	b = bn / bd;
-
-	int x = a * x1 + (1 - a) * x2;
-	int y = a * y1 + (1 - a) * y2;
-
-	return Point(x, y);
+	return Point(p[0], p[1]);
 
 }
 
 bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 {
-	int x1, x2, x3, x4;
-	int y1, y2, y3, y4;
-
 	double dx, dy;
 
-	getPointsCoordinates(l1, x1, y1, x2, y2);
-	getPointsCoordinates(l2, x3, y3, x4, y4);
+	Point p0, p1, p2, p3;
+
+	getPointsCoordinates(l1, p0, p1);
+	getPointsCoordinates(l2, p2, p3);
 
 	//calculate the average dx and dy
-	dx = max(abs(x1 - x3), abs(x2 - x4));
-	dy = max(abs(y1 - y2), abs(y3 - y4));
+	dx = max(abs(p0.x - p2.x), abs(p1.x - p3.x));
+	dy = max(abs(p0.y - p1.y), abs(p2.y - p3.y));
 
 	if (dy / dx > polesFormFactor)
 	{
-		Pole pole(Point(x1, y1), Point(x2, y2), Point(x3, y3), Point(x4, y4));
+		Pole pole(p0, p1, p2, p3);
 		pole.setFeature();
 		poles->push_back(pole);
 		return true;
@@ -146,14 +144,16 @@ bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 
 }
 
-inline void HighLevelDetector::getPointsCoordinates(cv::Vec4i l, int& x1,
-			int& y1, int& x2, int& y2)
+inline void HighLevelDetector::getPointsCoordinates(Vec4i l, Point& i, Point& j)
 {
-	x1 = l[0];
-	y1 = l[1];
+	i = Point(l[0], l[1]);
+	j = Point(l[2], l[3]);
+}
 
-	x2 = l[2];
-	y2 = l[3];
+inline void HighLevelDetector::getPointsCoordinates(Vec4i l, Vec3d& i, Vec3d& j)
+{
+	i = Vec3d(l[0], l[1], 1);
+	j = Vec3d(l[2], l[3], 1);
 }
 
 bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
@@ -170,6 +170,8 @@ bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 
 bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
 {
-	return (a1 >= -0.05) && (a2 <= 1.05);
+	const double low = -0.5;
+	const double high = 1.5;
+	return (a1 >= low) && (a1 <= high) && (a2 >= low) && (a2 <= high);
 }
 

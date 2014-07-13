@@ -1,0 +1,22 @@
+<package>
+	<name>c_tracking</name>
+	<version>1.0.0</version>
+	<description>
+		c_tracking, tracking node for cognitive slam
+	</description>
+	<maintainer email="davide.tateo@mail.polimi.it">Davide Tateo</maintainer>
+	<license>GPLv3</license>
+
+	<author>Davide Tateo</author>
+	<url>http://ros.org/wiki/c_tracking</url>
+
+	<build_depend>roscpp</build_depend>
+	
+	<build_depend>opencv2</build_depend>
+	<build_depend>cv_bridge</build_depend>
+	
+	<build_depend>image_transport</build_depend>
+	<build_depend>ardrone_autonomy</build_depend>
+
+	<buildtool_depend>catkin</buildtool_depend>
+</package>

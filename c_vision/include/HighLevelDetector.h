@@ -26,6 +26,7 @@
 
 #include <vector>
 #include <opencv2/core/core.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 
 #include "Rectangle.h"
 #include "Pole.h"
@@ -49,8 +50,8 @@ public:
 	}
 
 private:
-	inline void getPointsCoordinates(cv::Vec4i l, int& x1, int& y1, int& x2,
-				int& y2);
+	inline void getPointsCoordinates(cv::Vec4i l, cv::Point& i, cv::Point& j);
+	inline void getPointsCoordinates(cv::Vec4i l, cv::Vec3d& i, cv::Vec3d& j);
 	cv::Point findInterception(cv::Vec4i l1, cv::Vec4i l2, double& a,
 				double& b);
 	bool findPoles(cv::Vec4i l1, cv::Vec4i l2);
@@ -58,6 +59,7 @@ private:
 	bool lineBelongToQuadrilateral(double a1, double a2);
 	void normalizeLines(int& x1, int& y1, int& x2, int& y2, int& x3, int& y3,
 				int& x4, int& y4);
+	cv::Vec3d& getNearestPoint(const cv::Vec3d& p, cv::Vec3d p1, cv::Vec3d p2);
 
 private:
 	std::vector<Rectangle>* rectangles;
