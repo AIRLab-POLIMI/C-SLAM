@@ -21,15 +21,40 @@
  *  along with c_tracking.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Dispatcher.h"
+#ifndef DISPATCHER_H_
+#define DISPATCHER_H_
 
-int main(int argc, char *argv[])
+#include <ros/ros.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <ardrone_autonomy/Navdata.h>
+#include "CMT.h"
+
+class Dispatcher
 {
-	ros::init(argc, argv, "cognitive_tracking");
-	ros::NodeHandle n;
+public:
+	Dispatcher(ros::NodeHandle& n);
+	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
+	void handleImage(const sensor_msgs::ImageConstPtr& msg);
+	void handleObject();
 
-	Dispatcher dispatcher(n);
+private:
+	void trackImage();
 
-	ros::spin();
+private:
+	//Ros management
+	ros::NodeHandle& n;
+	image_transport::ImageTransport it;
+	ros::Subscriber navdataSubscriber;
+	image_transport::Subscriber imageSubscriber;
 
-}
+	//Tracks
+	std::vector<CMT> tracks;
+
+	//Odometry Data
+	double rotX, rotY, rotZ;
+};
+
+
+#endif /* DISPATCHER_H_ */

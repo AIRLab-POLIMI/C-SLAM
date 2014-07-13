@@ -113,7 +113,7 @@ Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 
 	//Calculate the linear combination parameters
 	a = (p[0] - p0[0]) / (p1[0] - p0[0]);
-	b = (p[0] - p2[0]) / (p3[0] - p2[0]);
+	b = (p[1] - p2[1]) / (p3[1] - p2[1]);
 
 	return Point(p[0], p[1]);
 

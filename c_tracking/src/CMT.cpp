@@ -33,23 +33,9 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#if __cplusplus < 201103L //test if c++11
+#include <limits>
 
-    #include <limits>
 
-    #ifndef NAN
-    //may not be correct on all compilator, DON'T USE the flag FFAST-MATH
-
-        #define NAN std::numeric_limits<float>::quiet_NaN()
-
-        template <T>
-        bool is_nan(T d)
-        {
-          return d != d;
-        }
-    #endif
-
-#endif
 
 void inout_rect(const std::vector<cv::KeyPoint>& keypoints, cv::Point2f topleft, cv::Point2f bottomright, std::vector<cv::KeyPoint>& in, std::vector<cv::KeyPoint>& out)
 {
@@ -133,7 +119,7 @@ CMT::CMT()
     hasResult = false;
 }
 
-void CMT::initialise(cv::Mat im_gray0, cv::Point2f topleft, cv::Point2f bottomright)
+void CMT::initialize(cv::Mat im_gray0, cv::Point2f topleft, cv::Point2f bottomright)
 {
 
     //Initialise detector, descriptor, matcher
@@ -555,15 +541,15 @@ void CMT::processFrame(cv::Mat im_gray)
 
         //Convert distances to confidences, do not weight
         std::vector<float> combined;
-        for(int i = 0; i < matches.size(); i++)
-            combined.push_back(1 - matches[i].distance / descriptorLength);
+        for(int j = 0; j < matches.size(); j++)
+            combined.push_back(1 - matches[j].distance / descriptorLength);
 
         std::vector<int>& classes = classesDatabase;
 
         //Sort in descending order
         std::vector<PairFloat> sorted_conf;
-        for(int i = 0; i < combined.size(); i++)
-            sorted_conf.push_back(std::make_pair(combined[i], i));
+        for(int j = 0; j < combined.size(); j++)
+            sorted_conf.push_back(std::make_pair(combined[j], j));
         std::sort(&sorted_conf[0], &sorted_conf[0]+sorted_conf.size(), comparatorPairDesc<float>);
 
         //Get best and second best index
