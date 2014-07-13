@@ -50,6 +50,7 @@ private:
 	image_transport::Subscriber imageSubscriber;
 
 	//Tracks
+public:
 	std::vector<CMT> tracks;
 
 	//Odometry Data

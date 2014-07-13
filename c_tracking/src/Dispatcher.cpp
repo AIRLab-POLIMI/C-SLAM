@@ -61,6 +61,13 @@ void mouseHandler(int event, int x, int y, int flags, void* param)
         select_flag = 1;
         cv::imshow(src_window, img2);
         callback = true;
+
+        CMT cmt;
+        cv::Mat gray;
+        cvtColor(frame, gray, CV_BGR2GRAY);
+        cmt.initialize(gray, point1, point2);
+        Dispatcher& D = *(Dispatcher*) param;
+        D.tracks.push_back(cmt);
     }
 }
 
@@ -72,6 +79,8 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 			&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;
+	cv::namedWindow(src_window,CV_WINDOW_AUTOSIZE);
+	 cv::setMouseCallback(src_window,mouseHandler, this);
 
 }
 
