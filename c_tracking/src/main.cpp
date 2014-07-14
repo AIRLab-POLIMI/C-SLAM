@@ -31,5 +31,4 @@ int main(int argc, char *argv[])
 	Dispatcher dispatcher(n);
 
 	ros::spin();
-
 }

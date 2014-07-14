@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, delmottea
+ * Copyright (c) 2014, delmottea, Davide Tateo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,14 +32,59 @@
 #define CMT_H
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/features2d/features2d.hpp>
+
+struct InitializationData
+{
+	//Object keypoints and features
+	std::vector<cv::KeyPoint> selected_keypoints;
+	cv::Mat selected_features;
+
+	//background keypoints and features
+	std::vector<cv::KeyPoint> background_keypoints;
+	cv::Mat background_features;
+
+	//initial bounding box
+	cv::Point2f topleft;
+	cv::Point2f bottomright;
+};
+
+class CMTFeatureExtractor
+{
+public:
+	CMTFeatureExtractor();
+	void detect(cv::Mat im_gray);
+	void discriminateKeyPoints(cv::Mat im_gray, InitializationData& data);
+
+	inline std::vector<cv::KeyPoint>& getKeypoints()
+	{
+		return keypoints;
+	}
+
+	inline cv::Mat& getFeatures()
+	{
+		return features;
+	}
+
+private:
+	void inout_rect(const std::vector<cv::KeyPoint>& keypoints,
+				cv::Point2f topleft, cv::Point2f bottomright,
+				std::vector<cv::KeyPoint>& in, std::vector<cv::KeyPoint>& out);
+
+private:
+	//algorithms
+	cv::Ptr<cv::FeatureDetector> detector;
+	cv::Ptr<cv::DescriptorExtractor> descriptorExtractor;
+
+	//extracted data
+	std::vector<cv::KeyPoint> keypoints;
+	cv::Mat features;
+
+};
 
 class CMT
 {
 public:
-	std::string detectorType;
-	std::string descriptorType;
-	std::string matcherType;
+
 	int descriptorLength;
 	int thrOutlier;
 	float thrConf;
@@ -47,10 +92,6 @@ public:
 
 	bool estimateScale;
 	bool estimateRotation;
-
-	cv::Ptr<cv::FeatureDetector> detector;
-	cv::Ptr<cv::DescriptorExtractor> descriptorExtractor;
-	cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
 
 	cv::Mat selectedFeatures;
 	std::vector<int> selectedClasses;
@@ -66,7 +107,6 @@ public:
 	cv::Point2f bottomLeft;
 
 	cv::Rect_<float> boundingbox;
-	bool hasResult;
 
 	cv::Point2f centerToTopLeft;
 	cv::Point2f centerToTopRight;
@@ -86,28 +126,24 @@ public:
 	std::vector<std::pair<cv::KeyPoint, int> > outliers;
 
 	CMT();
-	void initialize(cv::Mat im_gray0, cv::Point2f topleft,
-				cv::Point2f bottomright);
+	void initialize(cv::Mat im_gray0, InitializationData& data);
+	void processFrame(cv::Mat im_gray, std::vector<cv::KeyPoint>& keypoints,
+				cv::Mat& features);
+
+private:
+	void track(cv::Mat im_gray,
+				const std::vector<std::pair<cv::KeyPoint, int> >& keypointsIN,
+				std::vector<std::pair<cv::KeyPoint, int> >& keypointsTracked,
+				std::vector<unsigned char>& status, int THR_FB = 20);
+
 	void estimate(const std::vector<std::pair<cv::KeyPoint, int> >& keypointsIN,
 				cv::Point2f& center, float& scaleEstimate, float& medRot,
 				std::vector<std::pair<cv::KeyPoint, int> >& keypoints);
-	void processFrame(cv::Mat im_gray);
+
+private:
+	//algorithms
+	cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
+
 };
 
-class Cluster
-{
-public:
-	int first, second; //cluster id
-	float dist;
-	int num;
-};
-
-void inout_rect(const std::vector<cv::KeyPoint>& keypoints, cv::Point2f topleft,
-			cv::Point2f bottomright, std::vector<cv::KeyPoint>& in,
-			std::vector<cv::KeyPoint>& out);
-void track(cv::Mat im_prev, cv::Mat im_gray,
-			const std::vector<std::pair<cv::KeyPoint, int> >& keypointsIN,
-			std::vector<std::pair<cv::KeyPoint, int> >& keypointsTracked,
-			std::vector<unsigned char>& status, int THR_FB = 20);
-cv::Point2f rotate(cv::Point2f p, float rad);
 #endif // CMT_H

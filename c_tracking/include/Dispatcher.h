@@ -50,7 +50,8 @@ private:
 	image_transport::Subscriber imageSubscriber;
 
 	//Tracks
-public:
+public: //TODO levami
+	CMTFeatureExtractor featureExtractor;
 	std::vector<CMT> tracks;
 
 	//Odometry Data

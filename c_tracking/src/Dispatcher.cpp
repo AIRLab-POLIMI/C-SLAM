@@ -55,17 +55,27 @@ void mouseHandler(int event, int x, int y, int flags, void* param)
 
 	if (event == CV_EVENT_LBUTTONUP && drag)
 	{
+		Dispatcher& D = *(Dispatcher*) param;
+
 		cv::Mat img2 = frame.clone();
 		point2 = cv::Point(x, y);
 		drag = 0;
 		cv::imshow(src_window, img2);
 
-		CMT cmt;
 		cv::Mat gray;
 		cvtColor(frame, gray, CV_BGR2GRAY);
-		cmt.initialize(gray, point1, point2);
-		Dispatcher& D = *(Dispatcher*) param;
+
+		//setup initialization data
+		InitializationData data;
+		data.topleft = point1;
+		data.bottomright = point2;
+		D.featureExtractor.discriminateKeyPoints(gray, data);
+
+		//setup tracker
+		CMT cmt;
+		cmt.initialize(gray, data);
 		D.tracks.push_back(cmt);
+
 		input = false;
 	}
 }
@@ -78,6 +88,7 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;
+
 	cv::namedWindow(src_window, CV_WINDOW_AUTOSIZE);
 	cv::setMouseCallback(src_window, mouseHandler, this);
 
@@ -119,10 +130,16 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 		return;
 	}
 
+	//extract features
+	featureExtractor.detect(cv_ptr->image);
+	std::vector<cv::KeyPoint>& keypoints = featureExtractor.getKeypoints();
+	cv::Mat& features = featureExtractor.getFeatures();
+
+	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
 		CMT& cmt = tracks[i];
-		cmt.processFrame(cv_ptr->image);
+		cmt.processFrame(cv_ptr->image, keypoints, features);
 		cv::line(frame, cmt.topLeft, cmt.topRight, cv::Scalar(255, 255, 255));
 		cv::line(frame, cmt.topRight, cmt.bottomRight,
 					cv::Scalar(255, 255, 255));

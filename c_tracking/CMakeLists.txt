@@ -11,6 +11,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 #build the recognition node
 add_executable(cognitive_tracker src/CMT.cpp
+                                 src/CMTUtils.cpp
                                  src/main.cpp
                                  src/Dispatcher.cpp)
 
