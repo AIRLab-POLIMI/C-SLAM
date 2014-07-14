@@ -27,60 +27,59 @@
 
 namespace enc = sensor_msgs::image_encodings;
 
-
-int drag = 0, select_flag = 0;
-
 cv::Point point1, point2;
-bool callback = false;
 std::string src_window = "frame";
 cv::Mat frame;
 
+bool input = false;
+
 void mouseHandler(int event, int x, int y, int flags, void* param)
 {
-    if (event == CV_EVENT_LBUTTONDOWN && !drag && !select_flag)
-    {
-        /* left button clicked. ROI selection begins */
-        point1 = cv::Point(x, y);
-        drag = 1;
-    }
+	static int drag = 0;
+	if (event == CV_EVENT_LBUTTONDOWN && !drag)
+	{
+		/* left button clicked. ROI selection begins */
+		point1 = cv::Point(x, y);
+		drag = 1;
+		input = true;
+	}
 
-    if (event == CV_EVENT_MOUSEMOVE && drag && !select_flag)
-    {
-        /* mouse dragged. ROI being selected */
-        cv::Mat img1 = frame.clone();
-        point2 = cv::Point(x, y);
-        cv::rectangle(img1, point1, point2, CV_RGB(255, 0, 0), 3, 8, 0);
-        cv::imshow(src_window, img1);
-    }
+	if (event == CV_EVENT_MOUSEMOVE && drag)
+	{
+		/* mouse dragged. ROI being selected */
+		cv::Mat img1 = frame.clone();
+		point2 = cv::Point(x, y);
+		cv::rectangle(img1, point1, point2, CV_RGB(255, 0, 0), 3, 8, 0);
+		cv::imshow(src_window, img1);
+	}
 
-    if (event == CV_EVENT_LBUTTONUP && drag && !select_flag)
-    {
-        cv::Mat img2 = frame.clone();
-        point2 = cv::Point(x, y);
-        drag = 0;
-        select_flag = 1;
-        cv::imshow(src_window, img2);
-        callback = true;
+	if (event == CV_EVENT_LBUTTONUP && drag)
+	{
+		cv::Mat img2 = frame.clone();
+		point2 = cv::Point(x, y);
+		drag = 0;
+		cv::imshow(src_window, img2);
 
-        CMT cmt;
-        cv::Mat gray;
-        cvtColor(frame, gray, CV_BGR2GRAY);
-        cmt.initialize(gray, point1, point2);
-        Dispatcher& D = *(Dispatcher*) param;
-        D.tracks.push_back(cmt);
-    }
+		CMT cmt;
+		cv::Mat gray;
+		cvtColor(frame, gray, CV_BGR2GRAY);
+		cmt.initialize(gray, point1, point2);
+		Dispatcher& D = *(Dispatcher*) param;
+		D.tracks.push_back(cmt);
+		input = false;
+	}
 }
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
-		n(n), it(n)
+			n(n), it(n)
 {
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
-			&Dispatcher::handleNavdata, this);
+				&Dispatcher::handleNavdata, this);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
-			&Dispatcher::handleImage, this);
+				&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;
-	cv::namedWindow(src_window,CV_WINDOW_AUTOSIZE);
-	 cv::setMouseCallback(src_window,mouseHandler, this);
+	cv::namedWindow(src_window, CV_WINDOW_AUTOSIZE);
+	cv::setMouseCallback(src_window, mouseHandler, this);
 
 }
 
@@ -102,6 +101,12 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	cv_bridge::CvImagePtr cv_ptr, cv_ptr_color;
 	cv::Mat color;
 
+	if (input)
+	{
+		cv::waitKey(50);
+		return;
+	}
+
 	try
 	{
 		cv_ptr = cv_bridge::toCvCopy(msg, enc::MONO8);
@@ -118,14 +123,12 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	{
 		CMT& cmt = tracks[i];
 		cmt.processFrame(cv_ptr->image);
-		cv::line(frame, cmt.topLeft, cmt.topRight,
-				cv::Scalar(255, 255, 255));
+		cv::line(frame, cmt.topLeft, cmt.topRight, cv::Scalar(255, 255, 255));
 		cv::line(frame, cmt.topRight, cmt.bottomRight,
-				cv::Scalar(255, 255, 255));
+					cv::Scalar(255, 255, 255));
 		cv::line(frame, cmt.bottomRight, cmt.bottomLeft,
-				cv::Scalar(255, 255, 255));
-		cv::line(frame, cmt.bottomLeft, cmt.topLeft,
-				cv::Scalar(255, 255, 255));
+					cv::Scalar(255, 255, 255));
+		cv::line(frame, cmt.bottomLeft, cmt.topLeft, cv::Scalar(255, 255, 255));
 	}
 
 	cv::imshow(src_window, frame);
