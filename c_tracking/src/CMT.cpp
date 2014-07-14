@@ -35,6 +35,8 @@
 
 #include <limits>
 
+#include <angles/angles.h>
+
 void inout_rect(const std::vector<cv::KeyPoint>& keypoints, cv::Point2f topleft,
 			cv::Point2f bottomright, std::vector<cv::KeyPoint>& in,
 			std::vector<cv::KeyPoint>& out)
@@ -258,15 +260,6 @@ bool comparatorPairDesc(const std::pair<T, int>& l, const std::pair<T, int>& r)
 }
 
 template<typename T>
-T sign(T t)
-{
-	if (t == 0)
-		return T(0);
-	else
-		return (t < 0) ? T(-1) : T(1);
-}
-
-template<typename T>
 T median(std::vector<T> list)
 {
 	T val;
@@ -480,10 +473,7 @@ void CMT::estimate(
 				//Compute angle
 				float angle = atan2(p.y, p.x);
 				float origAngle = angles[class_ind1[i]][class_ind2[i]];
-				float angleDiff = angle - origAngle;
-				//Fix long way angles
-				if (fabs(angleDiff) > CV_PI)
-					angleDiff -= sign(angleDiff) * 2 * CV_PI;
+				float angleDiff = angles::shortest_angular_distance(origAngle, angle);
 				angleDiffs.push_back(angleDiff);
 			}
 			scaleEstimate = median(scaleChange);
