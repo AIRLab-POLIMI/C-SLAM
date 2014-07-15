@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014, delmottea, Davide Tateo
+ * Copyright (c) 2014, delmottea
+ * Copyright (c) 2014, Davide Tateo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,9 +44,8 @@ struct InitializationData
 	std::vector<cv::KeyPoint> background_keypoints;
 	cv::Mat background_features;
 
-	//initial bounding box
-	cv::Point2f topleft;
-	cv::Point2f bottomright;
+	//initial polygon
+	std::vector<cv::Point2f> polygon;
 };
 
 class CMTFeatureExtractor
@@ -66,8 +66,8 @@ public:
 	}
 
 private:
-	void inout_rect(const std::vector<cv::KeyPoint>& keypoints,
-				cv::Point2f topleft, cv::Point2f bottomright,
+	void insidePolygon(const std::vector<cv::KeyPoint>& keypoints,
+				std::vector<cv::Point2f>& polygon,
 				std::vector<cv::KeyPoint>& in, std::vector<cv::KeyPoint>& out);
 
 private:
@@ -101,18 +101,6 @@ public:
 	std::vector<std::vector<float> > squareForm;
 	std::vector<std::vector<float> > angles;
 
-	cv::Point2f topLeft;
-	cv::Point2f topRight;
-	cv::Point2f bottomRight;
-	cv::Point2f bottomLeft;
-
-	cv::Rect_<float> boundingbox;
-
-	cv::Point2f centerToTopLeft;
-	cv::Point2f centerToTopRight;
-	cv::Point2f centerToBottomRight;
-	cv::Point2f centerToBottomLeft;
-
 	std::vector<cv::Point2f> springs;
 
 	cv::Mat im_prev;
@@ -125,10 +113,16 @@ public:
 
 	std::vector<std::pair<cv::KeyPoint, int> > outliers;
 
+public:
 	CMT();
 	void initialize(cv::Mat im_gray0, InitializationData& data);
 	void processFrame(cv::Mat im_gray, std::vector<cv::KeyPoint>& keypoints,
 				cv::Mat& features);
+
+	inline const std::vector<cv::Point2f>& getTrackedPolygon() const
+	{
+		return trackedPolygon;
+	}
 
 private:
 	void track(cv::Mat im_gray,
@@ -140,10 +134,17 @@ private:
 				cv::Point2f& center, float& scaleEstimate, float& medRot,
 				std::vector<std::pair<cv::KeyPoint, int> >& keypoints);
 
+	void computeBoundingBox(const cv::Mat& im_gray, const cv::Point2f& center,
+				float rotationEstimate, float scaleEstimate);
+
 private:
 	//algorithms
 	cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
+	static const int minimumFraction = 3; //10;
 
+	//Polygon coordinates
+	std::vector<cv::Point2f> relativePolygon;
+	std::vector<cv::Point2f> trackedPolygon;
 };
 
 #endif // CMT_H

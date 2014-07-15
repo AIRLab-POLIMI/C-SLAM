@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014, delmottea, Davide Tateo
+ * Copyright (c) 2014, delmottea
+ * Copyright (c) 2014, Davide Tateo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -24,10 +24,11 @@
 #include "Dispatcher.h"
 
 #include <string>
+#include <angles/angles.h>
 
 namespace enc = sensor_msgs::image_encodings;
 
-cv::Point point1, point2;
+std::vector<cv::Point2f> polygon;
 std::string src_window = "frame";
 cv::Mat frame;
 
@@ -35,31 +36,27 @@ bool input = false;
 
 void mouseHandler(int event, int x, int y, int flags, void* param)
 {
-	static int drag = 0;
-	if (event == CV_EVENT_LBUTTONDOWN && !drag)
+	Dispatcher& D = *(Dispatcher*) param;
+
+	if (event == CV_EVENT_LBUTTONDOWN)
 	{
 		/* left button clicked. ROI selection begins */
-		point1 = cv::Point(x, y);
-		drag = 1;
+		polygon.push_back(cv::Point2f(x, y));
 		input = true;
-	}
-
-	if (event == CV_EVENT_MOUSEMOVE && drag)
-	{
-		/* mouse dragged. ROI being selected */
-		cv::Mat img1 = frame.clone();
-		point2 = cv::Point(x, y);
-		cv::rectangle(img1, point1, point2, CV_RGB(255, 0, 0), 3, 8, 0);
-		cv::imshow(src_window, img1);
-	}
-
-	if (event == CV_EVENT_LBUTTONUP && drag)
-	{
-		Dispatcher& D = *(Dispatcher*) param;
 
 		cv::Mat img2 = frame.clone();
-		point2 = cv::Point(x, y);
-		drag = 0;
+
+		for (int j = 0; j + 1 < polygon.size(); j++)
+			cv::line(img2, polygon[j], polygon[j + 1],
+						cv::Scalar(255, 255, 255));
+
+		cv::imshow(src_window, img2);
+
+	}
+
+	if (event == CV_EVENT_RBUTTONDOWN)
+	{
+		cv::Mat img2 = frame.clone();
 		cv::imshow(src_window, img2);
 
 		cv::Mat gray;
@@ -67,8 +64,9 @@ void mouseHandler(int event, int x, int y, int flags, void* param)
 
 		//setup initialization data
 		InitializationData data;
-		data.topleft = point1;
-		data.bottomright = point2;
+		//TODO
+		data.polygon = polygon;
+		polygon.clear();
 		D.featureExtractor.discriminateKeyPoints(gray, data);
 
 		//setup tracker
@@ -108,7 +106,7 @@ void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
-
+	double currentRot = rotX;
 	cv_bridge::CvImagePtr cv_ptr, cv_ptr_color;
 	cv::Mat color;
 
@@ -135,18 +133,22 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	std::vector<cv::KeyPoint>& keypoints = featureExtractor.getKeypoints();
 	cv::Mat& features = featureExtractor.getFeatures();
 
+	std::vector<std::vector<cv::Point2f> > contours;
+
 	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
 		CMT& cmt = tracks[i];
 		cmt.processFrame(cv_ptr->image, keypoints, features);
-		cv::line(frame, cmt.topLeft, cmt.topRight, cv::Scalar(255, 255, 255));
-		cv::line(frame, cmt.topRight, cmt.bottomRight,
-					cv::Scalar(255, 255, 255));
-		cv::line(frame, cmt.bottomRight, cmt.bottomLeft,
-					cv::Scalar(255, 255, 255));
-		cv::line(frame, cmt.bottomLeft, cmt.topLeft, cv::Scalar(255, 255, 255));
+		const std::vector<cv::Point2f>& polygon = cmt.getTrackedPolygon();
+		contours.push_back(polygon);
+
+		for (int j = 0; j < cmt.trackedKeypoints.size(); j++)
+			cv::circle(frame, cmt.trackedKeypoints[j].first.pt, 3,
+						cv::Scalar(255, 255, 255));
 	}
+
+	cv::drawContours(frame, contours, -1, cv::Scalar(255, 255, 255));
 
 	cv::imshow(src_window, frame);
 	cv::waitKey(1);

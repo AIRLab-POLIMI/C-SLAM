@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014, delmottea, Davide Tateo
+ * Copyright (c) 2014, delmottea
+ * Copyright (c) 2014, Davide Tateo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +46,7 @@ CMTFeatureExtractor::CMTFeatureExtractor()
 
 	//Initialise detector, descriptor, matcher
 	detector = Algorithm::create<FeatureDetector>(detectorType.c_str());
+	detector->set("thres", 20);
 	descriptorExtractor = Algorithm::create<DescriptorExtractor>(
 				descriptorType.c_str());
 }
@@ -59,8 +61,8 @@ void CMTFeatureExtractor::discriminateKeyPoints(Mat im_gray,
 			InitializationData& data)
 {
 	//Remember keypoints that are in the rectangle as selected keypoints
-	inout_rect(keypoints, data.topleft, data.bottomright,
-				data.selected_keypoints, data.background_keypoints);
+	insidePolygon(keypoints, data.polygon, data.selected_keypoints,
+				data.background_keypoints);
 	descriptorExtractor->compute(im_gray, data.selected_keypoints,
 				data.selected_features);
 
@@ -75,15 +77,13 @@ void CMTFeatureExtractor::discriminateKeyPoints(Mat im_gray,
 				data.background_features);
 }
 
-void CMTFeatureExtractor::inout_rect(const vector<KeyPoint>& keypoints,
-			Point2f topleft, Point2f bottomright, vector<KeyPoint>& in,
+void CMTFeatureExtractor::insidePolygon(const vector<KeyPoint>& keypoints,
+			vector<Point2f>& polygon, vector<KeyPoint>& in,
 			vector<KeyPoint>& out)
 {
 	for (int i = 0; i < keypoints.size(); i++)
 	{
-		if (keypoints[i].pt.x > topleft.x && keypoints[i].pt.y > topleft.y
-					&& keypoints[i].pt.x < bottomright.x
-					&& keypoints[i].pt.y < bottomright.y)
+		if (pointPolygonTest(polygon, keypoints[i].pt, false) >= 0)
 			in.push_back(keypoints[i]);
 		else
 			out.push_back(keypoints[i]);
@@ -171,13 +171,10 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 	center *= (1.0 / selected_keypoints.size());
 
 	//Remember the rectangle coordinates relative to the center
-	Point2f& topleft = data.topleft;
-	Point2f& bottomright = data.bottomright;
+	vector<Point2f>& polygon = data.polygon;
 
-	centerToTopLeft = topleft - center;
-	centerToTopRight = Point2f(bottomright.x, topleft.y) - center;
-	centerToBottomRight = bottomright - center;
-	centerToBottomLeft = Point2f(topleft.x, bottomright.y) - center;
+	for (int i = 0; i < polygon.size(); i++)
+		relativePolygon.push_back(polygon[i] - center);
 
 	//Calculate springs of each keypoint
 	springs = vector<Point2f>();
@@ -343,43 +340,31 @@ void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 	}
 
 	//Update object state estimate
+	computeBoundingBox(im_gray, center, rotationEstimate, scaleEstimate);
+}
+
+void CMT::computeBoundingBox(const Mat& im_gray, const Point2f& center,
+			float rotationEstimate, float scaleEstimate)
+{
+	//Update object state estimate
 	vector<pair<KeyPoint, int> > activeKeypointsBefore = activeKeypoints;
 	im_prev = im_gray;
-	topLeft = Point2f(NAN, NAN);
-	topRight = Point2f(NAN, NAN);
-	bottomLeft = Point2f(NAN, NAN);
-	bottomRight = Point2f(NAN, NAN);
-
-	boundingbox = Rect_<float>(NAN, NAN, NAN, NAN);
-
+	trackedPolygon.clear();
 	if (!(isnan(center.x) | isnan(center.y))
-				&& activeKeypoints.size() > nbInitialKeypoints / 10)
+				&& activeKeypoints.size()
+							> nbInitialKeypoints / minimumFraction)
 	{
-
-		topLeft = center
-					+ scaleEstimate * rotate(centerToTopLeft, rotationEstimate);
-		topRight = center
-					+ scaleEstimate
-								* rotate(centerToTopRight, rotationEstimate);
-		bottomLeft = center
-					+ scaleEstimate
-								* rotate(centerToBottomLeft, rotationEstimate);
-		bottomRight = center
-					+ scaleEstimate
-								* rotate(centerToBottomRight, rotationEstimate);
-
-		float minx = min(min(topLeft.x, topRight.x),
-					min(bottomRight.x, bottomLeft.x));
-		float miny = min(min(topLeft.y, topRight.y),
-					min(bottomRight.y, bottomLeft.y));
-		float maxx = max(max(topLeft.x, topRight.x),
-					max(bottomRight.x, bottomLeft.x));
-		float maxy = max(max(topLeft.y, topRight.y),
-					max(bottomRight.y, bottomLeft.y));
-
-		boundingbox = Rect_<float>(minx, miny, maxx - minx, maxy - miny);
+		for (int i = 0; i < relativePolygon.size(); i++)
+		{
+			Point2f point = center
+						+ scaleEstimate
+									* rotate(relativePolygon[i],
+												rotationEstimate);
+			trackedPolygon.push_back(point);
+		}
 	}
 }
+
 void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 			Point2f& center, float& scaleEstimate, float& medRot,
 			vector<pair<KeyPoint, int> >& keypoints)
