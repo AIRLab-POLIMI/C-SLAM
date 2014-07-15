@@ -41,6 +41,8 @@ public:
 
 private:
 	void trackImage();
+	void drawPolygon(cv::Mat& frame, const std::vector<cv::Point2f>& contour,
+				cv::Scalar colour);
 
 private:
 	//Ros management
@@ -50,13 +52,13 @@ private:
 	image_transport::Subscriber imageSubscriber;
 
 	//Tracks
-public: //TODO levami
+public:
+	//TODO levami
 	CMTFeatureExtractor featureExtractor;
 	std::vector<CMT> tracks;
 
 	//Odometry Data
 	double rotX, rotY, rotZ;
 };
-
 
 #endif /* DISPATCHER_H_ */

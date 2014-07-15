@@ -133,24 +133,33 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	std::vector<cv::KeyPoint>& keypoints = featureExtractor.getKeypoints();
 	cv::Mat& features = featureExtractor.getFeatures();
 
-	std::vector<std::vector<cv::Point2f> > contours;
-
 	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
 		CMT& cmt = tracks[i];
 		cmt.processFrame(cv_ptr->image, keypoints, features);
 		const std::vector<cv::Point2f>& polygon = cmt.getTrackedPolygon();
-		contours.push_back(polygon);
+		drawPolygon(frame, polygon, cv::Scalar(255, 255, 255));
 
 		for (int j = 0; j < cmt.trackedKeypoints.size(); j++)
 			cv::circle(frame, cmt.trackedKeypoints[j].first.pt, 3,
 						cv::Scalar(255, 255, 255));
 	}
 
-	cv::drawContours(frame, contours, -1, cv::Scalar(255, 255, 255));
-
 	cv::imshow(src_window, frame);
 	cv::waitKey(1);
 
+}
+
+void Dispatcher::drawPolygon(cv::Mat& frame,
+			const std::vector<cv::Point2f>& polygon, cv::Scalar colour)
+{
+	for (int i = 0; i + 1 < polygon.size(); i++)
+		cv::line(frame, polygon[i], polygon[i + 1], cv::Scalar(255, 255, 255));
+
+	if (polygon.size() > 2)
+	{
+		cv::line(frame, polygon[0], polygon[polygon.size() - 1],
+					cv::Scalar(255, 255, 255));
+	}
 }
