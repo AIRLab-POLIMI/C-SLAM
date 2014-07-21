@@ -59,7 +59,7 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 
 	//get the features
 	selectedFeatures = data.selected_features;
-	Mat background_features = data.background_features;
+	Mat& background_features = data.background_features;
 
 	//Assign each keypoint a class starting from 1, background is 0
 	selectedClasses = vector<int>();
@@ -174,7 +174,7 @@ void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 		vector<int>& classes = classesDatabase;
 
 		//Sort in descending order
-		vector<PairFloat> sorted_conf;
+		vector<pair<float, int> > sorted_conf;
 		for (int j = 0; j < combined.size(); j++)
 			sorted_conf.push_back(make_pair(combined[j], j));
 		sort(&sorted_conf[0], &sorted_conf[0] + sorted_conf.size(),
@@ -232,7 +232,7 @@ void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 			vector<int>& classes = selectedClasses;
 
 			//Sort in descending order
-			vector<PairFloat> sorted_conf;
+			vector<pair<float, int> > sorted_conf;
 			for (int i = 0; i < combined.size(); i++)
 				sorted_conf.push_back(make_pair(combined[i], i));
 			sort(&sorted_conf[0], &sorted_conf[0] + sorted_conf.size(),
@@ -322,7 +322,7 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 	if (keypointsIN.size() > 1)
 	{
 		//sort
-		vector<PairInt> list;
+		vector<pair<int, int> > list;
 		for (int i = 0; i < keypointsIN.size(); i++)
 			list.push_back(make_pair(keypointsIN[i].second, i));
 		sort(&list[0], &list[0] + list.size(), comparatorPair<int>);
@@ -340,6 +340,7 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 					ind2.push_back(j);
 				}
 			}
+
 		if (ind1.size() > 0)
 		{
 			vector<int> class_ind1;
@@ -416,7 +417,8 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 			center = Point2f(0, 0);
 			for (int i = 0; i < newVotes.size(); i++)
 				center += newVotes[i];
-			center *= (1.0 / newVotes.size());
+
+			center *= 1.0 / newVotes.size();
 		}
 	}
 }

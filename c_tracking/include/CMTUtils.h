@@ -26,9 +26,6 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 
-typedef std::pair<int, int> PairInt;
-typedef std::pair<float, int> PairFloat;
-
 struct Cluster
 {
 	int first, second; //cluster id
