@@ -24,71 +24,24 @@
 #include "Dispatcher.h"
 
 #include <string>
+#include <stdexcept>
 #include <angles/angles.h>
 
 namespace enc = sensor_msgs::image_encodings;
-
-std::vector<cv::Point2f> polygon;
-std::string src_window = "frame";
-cv::Mat frame;
-
-bool input = false;
-
-void mouseHandler(int event, int x, int y, int flags, void* param)
-{
-	Dispatcher& D = *(Dispatcher*) param;
-
-	if (event == CV_EVENT_LBUTTONDOWN)
-	{
-		/* left button clicked. ROI selection begins */
-		polygon.push_back(cv::Point2f(x, y));
-		input = true;
-
-		cv::Mat img2 = frame.clone();
-
-		for (int j = 0; j + 1 < polygon.size(); j++)
-			cv::line(img2, polygon[j], polygon[j + 1],
-						cv::Scalar(255, 255, 255));
-
-		cv::imshow(src_window, img2);
-
-	}
-
-	if (event == CV_EVENT_RBUTTONDOWN)
-	{
-		cv::Mat img2 = frame.clone();
-		cv::imshow(src_window, img2);
-
-		cv::Mat gray;
-		cvtColor(frame, gray, CV_BGR2GRAY);
-
-		//setup initialization data
-		InitializationData data;
-		//TODO
-		data.polygon = polygon;
-		polygon.clear();
-		D.featureExtractor.discriminateKeyPoints(gray, data);
-
-		//setup tracker
-		CMT cmt;
-		cmt.initialize(gray, data);
-		D.tracks.push_back(cmt);
-
-		input = false;
-	}
-}
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
 			n(n), it(n)
 {
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
+	toTrackSubscriber = n.subscribe("/to_track", 1,
+				&Dispatcher::handleObjectTrackRequest, this);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;
+	src_window = "Cognitive Tracking";
 
 	cv::namedWindow(src_window, CV_WINDOW_AUTOSIZE);
-	cv::setMouseCallback(src_window, mouseHandler, this);
 
 }
 
@@ -107,20 +60,14 @@ void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
 	double currentRot = rotX;
-	cv_bridge::CvImagePtr cv_ptr, cv_ptr_color;
-	cv::Mat color;
-
-	if (input)
-	{
-		cv::waitKey(50);
-		return;
-	}
+	cv_bridge::CvImagePtr cv_ptr_color;
+	cv::Mat coloredImage;
 
 	try
 	{
 		cv_ptr = cv_bridge::toCvCopy(msg, enc::MONO8);
 		cv_ptr_color = cv_bridge::toCvCopy(msg, enc::BGR8);
-		frame = cv_ptr_color->image;
+		coloredImage = cv_ptr_color->image;
 
 	} catch (cv_bridge::Exception& e)
 	{
@@ -139,16 +86,51 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 		CMT& cmt = tracks[i];
 		cmt.processFrame(cv_ptr->image, keypoints, features);
 		const std::vector<cv::Point2f>& polygon = cmt.getTrackedPolygon();
-		drawPolygon(frame, polygon, cv::Scalar(255, 255, 255));
+		drawPolygon(coloredImage, polygon, cv::Scalar(255, 255, 255));
 
-		for (int j = 0; j < cmt.trackedKeypoints.size(); j++)
-			cv::circle(frame, cmt.trackedKeypoints[j].first.pt, 3,
-						cv::Scalar(255, 255, 255));
+		const std::vector<std::pair<cv::KeyPoint, int> >& trackedKeypoints =
+					cmt.getTrackedKeypoints();
+		const std::vector<std::pair<cv::KeyPoint, int> >& activeKeypoints =
+					cmt.getActiveKeypoints();
+
+		drawKeypoints(coloredImage, trackedKeypoints, cv::Scalar(255, 255, 255));
+		drawKeypoints(coloredImage, activeKeypoints, cv::Scalar(255, 0, 0));
 	}
 
-	cv::imshow(src_window, frame);
+	cv::imshow(src_window, coloredImage);
 	cv::waitKey(1);
 
+}
+
+void Dispatcher::handleObjectTrackRequest(
+			const c_tracking::NamedPolygon& polygonMessage)
+{
+	try
+	{
+		InitializationData data;
+		getPolygon(polygonMessage, data.polygon);
+		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
+
+		//setup tracker
+		CMT cmt;
+		cmt.initialize(cv_ptr->image, data);
+		tracks.push_back(cmt);
+
+	} catch (std::runtime_error& e)
+	{
+		ROS_WARN("No Keypoints in the selected object, abort tracking");
+	}
+}
+
+void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
+			std::vector<cv::Point2f>& polygon)
+{
+	const geometry_msgs::Polygon& p = polygonMessage.polygon;
+	for (int i = 0; i < p.points.size(); i++)
+	{
+		geometry_msgs::Point32 point = p.points[i];
+		polygon.push_back(cv::Point2f(point.x, point.y));
+	}
 }
 
 void Dispatcher::drawPolygon(cv::Mat& frame,
@@ -163,3 +145,11 @@ void Dispatcher::drawPolygon(cv::Mat& frame,
 					cv::Scalar(255, 255, 255));
 	}
 }
+
+void Dispatcher::drawKeypoints(cv::Mat& frame,
+			const std::vector<std::pair<cv::KeyPoint, int> >& keypoints, cv::Scalar color)
+{
+	for (int j = 0; j < keypoints.size(); j++)
+		cv::circle(frame, keypoints[j].first.pt, 3, color);
+}
+

@@ -21,16 +21,21 @@
  *  along with c_tracking.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Dispatcher.h"
+#ifndef INITIALIZATIONDATA_H_
+#define INITIALIZATIONDATA_H_
 
-int main(int argc, char *argv[])
+struct InitializationData
 {
-	ros::init(argc, argv, "cognitive_tracking");
-	ros::NodeHandle n;
+	//Object keypoints and features
+	std::vector<cv::KeyPoint> selected_keypoints;
+	cv::Mat selected_features;
 
-	ROS_INFO("Tracking node started");
+	//background keypoints and features
+	std::vector<cv::KeyPoint> background_keypoints;
+	cv::Mat background_features;
 
-	Dispatcher dispatcher(n);
+	//initial polygon
+	std::vector<cv::Point2f> polygon;
+};
 
-	ros::spin();
-}
+#endif /* INITIALIZATIONDATA_H_ */

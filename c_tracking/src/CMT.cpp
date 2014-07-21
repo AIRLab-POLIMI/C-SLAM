@@ -1,37 +1,31 @@
 /*
- * Copyright (c) 2014, delmottea
- * Copyright (c) 2014, Davide Tateo
- * All rights reserved.
+ * c_tracking,
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
+ * Copyright (C) 2014 Davide Tateo
+ * Versione 1.0
  *
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * This file is part of c_tracking.
  *
- * * Neither the name of the {organization} nor the names of its
- *   contributors may be used to endorse or promote products derived from
- *   this software without specific prior written permission.
+ * c_tracking is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * c_tracking is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with c_tracking.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  based on https://github.com/delmottea/libCMT/
  */
 
 #include "CMT.h"
 
-#include <cmath>
+#include <stdexcept>
 #include <angles/angles.h>
 
 #include "CMTUtils.h"
@@ -39,70 +33,22 @@
 using namespace std;
 using namespace cv;
 
-CMTFeatureExtractor::CMTFeatureExtractor()
-{
-	std::string detectorType = "Feature2D.BRISK";
-	std::string descriptorType = "Feature2D.BRISK";
-
-	//Initialise detector, descriptor, matcher
-	detector = Algorithm::create<FeatureDetector>(detectorType.c_str());
-	detector->set("thres", 20);
-	descriptorExtractor = Algorithm::create<DescriptorExtractor>(
-				descriptorType.c_str());
-}
-
-void CMTFeatureExtractor::detect(Mat im_gray)
-{
-	detector->detect(im_gray, keypoints);
-	descriptorExtractor->compute(im_gray, keypoints, features);
-}
-
-void CMTFeatureExtractor::discriminateKeyPoints(Mat im_gray,
-			InitializationData& data)
-{
-	//Remember keypoints that are in the rectangle as selected keypoints
-	insidePolygon(keypoints, data.polygon, data.selected_keypoints,
-				data.background_keypoints);
-	descriptorExtractor->compute(im_gray, data.selected_keypoints,
-				data.selected_features);
-
-	if (data.selected_keypoints.size() == 0)
-	{
-		//TODO eccezione
-		return;
-	}
-
-	//Remember keypoints that are not in the rectangle as background keypoints
-	descriptorExtractor->compute(im_gray, data.background_keypoints,
-				data.background_features);
-}
-
-void CMTFeatureExtractor::insidePolygon(const vector<KeyPoint>& keypoints,
-			vector<Point2f>& polygon, vector<KeyPoint>& in,
-			vector<KeyPoint>& out)
-{
-	for (int i = 0; i < keypoints.size(); i++)
-	{
-		if (pointPolygonTest(polygon, keypoints[i].pt, false) >= 0)
-			in.push_back(keypoints[i]);
-		else
-			out.push_back(keypoints[i]);
-	}
-}
-
 CMT::CMT()
 {
+	descriptorLength = 512;
 	thrOutlier = 20;
 	thrConf = 0.75;
 	thrRatio = 0.8;
-	descriptorLength = 512;
+	minimumKeypontsFraction = 3;
+
 	estimateScale = true;
 	estimateRotation = true;
+
 	nbInitialKeypoints = 0;
 
 	//initialize matcher
 	std::string matcherType = "BruteForce-Hamming";
-	descriptorMatcher = DescriptorMatcher::create(matcherType.c_str());
+	descriptorMatcher = DescriptorMatcher::create(matcherType);
 }
 
 void CMT::initialize(Mat im_gray0, InitializationData& data)
@@ -352,7 +298,7 @@ void CMT::computeBoundingBox(const Mat& im_gray, const Point2f& center,
 	trackedPolygon.clear();
 	if (!(isnan(center.x) | isnan(center.y))
 				&& activeKeypoints.size()
-							> nbInitialKeypoints / minimumFraction)
+							> nbInitialKeypoints / minimumKeypontsFraction)
 	{
 		for (int i = 0; i < relativePolygon.size(); i++)
 		{
@@ -432,7 +378,8 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 			medRot = median(angleDiffs);
 			if (!estimateRotation)
 				medRot = 0;
-			votes = vector<Point2f>();
+
+			std::vector<cv::Point2f> votes;
 			for (int i = 0; i < keypoints.size(); i++)
 				votes.push_back(
 							keypoints[i].first.pt

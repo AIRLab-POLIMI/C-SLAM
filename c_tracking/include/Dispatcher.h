@@ -29,7 +29,11 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <ardrone_autonomy/Navdata.h>
+
+#include <c_tracking/NamedPolygon.h>
+
 #include "CMT.h"
+#include "CMTFeatureExtractor.h"
 
 class Dispatcher
 {
@@ -37,28 +41,38 @@ public:
 	Dispatcher(ros::NodeHandle& n);
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
-	void handleObject();
+	void handleObjectTrackRequest(
+				const c_tracking::NamedPolygon& polygonMessage);
 
 private:
-	void trackImage();
+	void getPolygon(const c_tracking::NamedPolygon& polygonMessage,
+				std::vector<cv::Point2f>& polygon);
 	void drawPolygon(cv::Mat& frame, const std::vector<cv::Point2f>& contour,
 				cv::Scalar colour);
+	void drawKeypoints(cv::Mat& frame,
+				const std::vector<std::pair<cv::KeyPoint, int> >& keypoints,
+				cv::Scalar color);
 
 private:
 	//Ros management
 	ros::NodeHandle& n;
 	image_transport::ImageTransport it;
 	ros::Subscriber navdataSubscriber;
+	ros::Subscriber toTrackSubscriber;
 	image_transport::Subscriber imageSubscriber;
 
+	//Last image pointer
+	cv_bridge::CvImagePtr cv_ptr;
+
 	//Tracks
-public:
-	//TODO levami
 	CMTFeatureExtractor featureExtractor;
 	std::vector<CMT> tracks;
 
 	//Odometry Data
 	double rotX, rotY, rotZ;
+
+	//display
+	std::string src_window;
 };
 
 #endif /* DISPATCHER_H_ */
