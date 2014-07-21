@@ -1,0 +1,23 @@
+<!-- Launch file to run the test tracking system -->
+<launch>
+	<!-- Arguments -->
+	<arg name="camera_source" default="/ardrone" />
+	
+	<!-- Camera processing -->
+	<group ns="$(arg camera_source)">
+		<node name="image_proc" 
+	              pkg="image_proc" 
+	              type="image_proc" />
+	</group>
+	
+	<!-- System nodes -->
+	<node name="cognitive_tracker" 
+		  pkg="c_tracking" 
+	      type="cognitive_tracker" 
+	      output="screen" />
+	      
+	<node name="object_selector" 
+		  pkg="c_tracking" 
+	      type="object_selector" 
+	      output="screen" />
+</launch>

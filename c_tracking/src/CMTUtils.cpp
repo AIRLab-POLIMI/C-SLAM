@@ -25,6 +25,8 @@
 
 #include "CMTUtils.h"
 
+#include <algorithm>
+
 using namespace std;
 using namespace cv;
 
@@ -36,7 +38,6 @@ Point2f rotate(Point2f p, float rad)
 	float c = cos(rad);
 	return Point2f(c * p.x - s * p.y, s * p.x + c * p.y);
 }
-
 
 float findMinSymetric(const vector<vector<float> >& dist,
 			const vector<bool>& used, int limit, int &i, int &j)
@@ -178,20 +179,16 @@ vector<int> fcluster(const vector<Cluster>& clusters, float threshold)
 	return data;
 }
 
-//TODO fare in n*log(n)
-vector<bool> in1d(const vector<int>& a, const vector<int>& b)
+
+vector<bool> in1d(vector<int>& a, vector<int>& b)
 {
+	sort(b.begin(), b.end());
 	vector<bool> result;
 	for (int i = 0; i < a.size(); i++)
 	{
-		bool found = false;
-		for (int j = 0; j < b.size(); j++)
-			if (a[i] == b[j])
-			{
-				found = true;
-				break;
-			}
+		bool found = binary_search(b.begin(), b.end(), a[i]);
 		result.push_back(found);
 	}
+
 	return result;
 }

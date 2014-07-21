@@ -66,13 +66,9 @@ T median(std::vector<T> list)
 }
 
 cv::Point2f rotate(cv::Point2f p, float rad);
-float findMinSymetric(const std::vector<std::vector<float> >& dist,
-			const std::vector<bool>& used, int limit, int &i, int &j);
 std::vector<Cluster> linkage(const std::vector<cv::Point2f>& list);
-void fcluster_rec(std::vector<int>& data, const std::vector<Cluster>& clusters,
-			float threshold, const Cluster& currentCluster, int& binId);
 std::vector<int> binCount(const std::vector<int>& T);
 int argmax(const std::vector<int>& list);
 std::vector<int> fcluster(const std::vector<Cluster>& clusters, float threshold);
-std::vector<bool> in1d(const std::vector<int>& a, const std::vector<int>& b);
+std::vector<bool> in1d(std::vector<int>& a, std::vector<int>& b);
 

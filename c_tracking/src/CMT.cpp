@@ -101,10 +101,9 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 		vector<float> lineAngle;
 		for (int j = 0; j < selected_keypoints.size(); j++)
 		{
-			float dx = selected_keypoints[j].pt.x - selected_keypoints[i].pt.x;
-			float dy = selected_keypoints[j].pt.y - selected_keypoints[i].pt.y;
-			lineSquare.push_back(sqrt(dx * dx + dy * dy));
-			lineAngle.push_back(atan2(dy, dx));
+			Point2f delta = selected_keypoints[j].pt - selected_keypoints[i].pt;
+			lineSquare.push_back(norm(delta));
+			lineAngle.push_back(atan2(delta.y, delta.x));
 		}
 		squareForm.push_back(lineSquare);
 		angles.push_back(lineAngle);
@@ -276,7 +275,7 @@ void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 			vector<int> associated_classes;
 			for (int i = 0; i < activeKeypoints.size(); i++)
 				associated_classes.push_back(activeKeypoints[i].second);
-			vector<bool> notmissing = in1d(tracked_classes, associated_classes);
+			const vector<bool>& notmissing = in1d(tracked_classes, associated_classes);
 			for (int i = 0; i < trackedKeypoints.size(); i++)
 				if (!notmissing[i])
 					activeKeypoints.push_back(trackedKeypoints[i]);
@@ -453,8 +452,7 @@ void CMT::track(Mat im_gray, const vector<pair<KeyPoint, int> >& keypointsIN,
 		//Calculate forward-backward error
 		for (int i = 0; i < pts.size(); i++)
 		{
-			Point2f v = pts_back[i] - pts[i];
-			fb_err.push_back(sqrt(v.dot(v)));
+			fb_err.push_back(norm(pts_back[i] - pts[i]));
 		}
 
 		//Set status depending on fb_err and lk error
