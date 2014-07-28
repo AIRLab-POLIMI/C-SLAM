@@ -23,7 +23,6 @@
  *  based on https://github.com/delmottea/libCMT/
  */
 
-
 #ifndef CMT_H
 #define CMT_H
 
@@ -35,7 +34,7 @@ class CMT
 
 public:
 	CMT();
-	void initialize(cv::Mat im_gray0, InitializationData& data);
+	virtual void initialize(cv::Mat im_gray0, InitializationData& data);
 	void processFrame(cv::Mat im_gray, std::vector<cv::KeyPoint>& keypoints,
 				cv::Mat& features);
 
@@ -54,15 +53,12 @@ public:
 		return activeKeypoints;
 	}
 
-private:
-	void track(cv::Mat im_gray,
-				const std::vector<std::pair<cv::KeyPoint, int> >& keypointsIN,
-				std::vector<std::pair<cv::KeyPoint, int> >& keypointsTracked,
-				std::vector<unsigned char>& status, int THR_FB = 20);
+	virtual ~CMT();
 
-	void estimate(const std::vector<std::pair<cv::KeyPoint, int> >& keypointsIN,
-				cv::Point2f& center, float& scaleEstimate, float& medRot,
-				std::vector<std::pair<cv::KeyPoint, int> >& keypoints);
+private:
+	void track(cv::Mat im_gray, int THR_FB = 20);
+
+	void estimate(cv::Point2f& center, float& scaleEstimate, float& medRot);
 
 	void computeBoundingBox(const cv::Mat& im_gray, const cv::Point2f& center,
 				float rotationEstimate, float scaleEstimate);
@@ -96,7 +92,7 @@ private:
 	cv::Mat im_prev;
 	std::vector<std::pair<cv::KeyPoint, int> > activeKeypoints;
 	std::vector<std::pair<cv::KeyPoint, int> > trackedKeypoints;
-	int nbInitialKeypoints;
+	int initialKeypointsNumber;
 
 	//Polygon coordinates
 	std::vector<cv::Point2f> relativePolygon;

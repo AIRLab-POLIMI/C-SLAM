@@ -44,7 +44,7 @@ CMT::CMT()
 	estimateScale = true;
 	estimateRotation = true;
 
-	nbInitialKeypoints = 0;
+	initialKeypointsNumber = 0;
 
 	//initialize matcher
 	std::string matcherType = "BruteForce-Hamming";
@@ -61,40 +61,24 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 	selectedFeatures = data.selected_features;
 	Mat& background_features = data.background_features;
 
-	//Assign each keypoint a class starting from 1, background is 0
+	//Assign each keypoint a class starting from 1 (background is 0)
 	selectedClasses = vector<int>();
 	for (int i = 1; i <= selected_keypoints.size(); i++)
 		selectedClasses.push_back(i);
-	vector<int> backgroundClasses;
-	for (int i = 0; i < background_keypoints.size(); i++)
-		backgroundClasses.push_back(0);
 
 	//Stack background features and selected features into database
-	featuresDatabase = Mat(background_features.rows + selectedFeatures.rows,
+	featuresDatabase = Mat(0,
 				max(background_features.cols, selectedFeatures.cols),
 				background_features.type());
-	if (background_features.cols > 0)
-		background_features.copyTo(
-					featuresDatabase(
-								Rect(0, 0, background_features.cols,
-											background_features.rows)));
-	if (selectedFeatures.cols > 0)
-		selectedFeatures.copyTo(
-					featuresDatabase(
-								Rect(0, background_features.rows,
-											selectedFeatures.cols,
-											selectedFeatures.rows)));
+	featuresDatabase.push_back(background_features);
+	featuresDatabase.push_back(selectedFeatures);
 
 	//Same for classes
-	classesDatabase = vector<int>();
-	for (int i = 0; i < backgroundClasses.size(); i++)
-		classesDatabase.push_back(backgroundClasses[i]);
-	for (int i = 0; i < selectedClasses.size(); i++)
-		classesDatabase.push_back(selectedClasses[i]);
+	classesDatabase.resize(background_keypoints.size(), 0);
+	classesDatabase.insert(classesDatabase.end(), selectedClasses.begin(),
+				selectedClasses.end());
 
 	//Get all distances between selected keypoints in squareform and get all angles between selected keypoints
-	squareForm = vector<vector<float> >();
-	angles = vector<vector<float> >();
 	for (int i = 0; i < selected_keypoints.size(); i++)
 	{
 		vector<float> lineSquare;
@@ -130,31 +114,28 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 	im_prev = im_gray0.clone();
 
 	//Make keypoints 'active' keypoints
-	activeKeypoints = vector<pair<KeyPoint, int> >();
 	for (int i = 0; i < selected_keypoints.size(); i++)
 		activeKeypoints.push_back(
 					make_pair(selected_keypoints[i], selectedClasses[i]));
 
 	//Remember number of initial keypoints
-	nbInitialKeypoints = selected_keypoints.size();
+	initialKeypointsNumber = selected_keypoints.size();
 }
 
 void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 {
-	trackedKeypoints = vector<pair<KeyPoint, int> >();
-	vector<unsigned char> status;
-	track(im_gray, activeKeypoints, trackedKeypoints, status);
+	track(im_gray);
 
+
+	//estimate center, sclae and rotation
 	Point2f center;
 	float scaleEstimate;
 	float rotationEstimate;
-	vector<pair<KeyPoint, int> > trackedKeypoints2;
-	estimate(trackedKeypoints, center, scaleEstimate, rotationEstimate,
-				trackedKeypoints2);
-	trackedKeypoints = trackedKeypoints2;
+
+	estimate(center, scaleEstimate, rotationEstimate);
 
 	//Create list of active keypoints
-	activeKeypoints = vector<pair<KeyPoint, int> >();
+	activeKeypoints.clear();
 
 	//For each keypoint and its descriptor
 	for (int i = 0; i < keypoints.size(); i++)
@@ -275,7 +256,8 @@ void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 			vector<int> associated_classes;
 			for (int i = 0; i < activeKeypoints.size(); i++)
 				associated_classes.push_back(activeKeypoints[i].second);
-			const vector<bool>& notmissing = in1d(tracked_classes, associated_classes);
+			const vector<bool>& notmissing = in1d(tracked_classes,
+						associated_classes);
 			for (int i = 0; i < trackedKeypoints.size(); i++)
 				if (!notmissing[i])
 					activeKeypoints.push_back(trackedKeypoints[i]);
@@ -288,6 +270,10 @@ void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
 	computeBoundingBox(im_gray, center, rotationEstimate, scaleEstimate);
 }
 
+CMT::~CMT()
+{
+}
+
 void CMT::computeBoundingBox(const Mat& im_gray, const Point2f& center,
 			float rotationEstimate, float scaleEstimate)
 {
@@ -297,7 +283,7 @@ void CMT::computeBoundingBox(const Mat& im_gray, const Point2f& center,
 	trackedPolygon.clear();
 	if (!(isnan(center.x) | isnan(center.y))
 				&& activeKeypoints.size()
-							> nbInitialKeypoints / minimumKeypontsFraction)
+							> initialKeypointsNumber / minimumKeypontsFraction)
 	{
 		for (int i = 0; i < relativePolygon.size(); i++)
 		{
@@ -310,24 +296,24 @@ void CMT::computeBoundingBox(const Mat& im_gray, const Point2f& center,
 	}
 }
 
-void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
-			Point2f& center, float& scaleEstimate, float& medRot,
-			vector<pair<KeyPoint, int> >& keypoints)
+void CMT::estimate(Point2f& center, float& scaleEstimate, float& medRot)
 {
 	center = Point2f(NAN, NAN);
 	scaleEstimate = NAN;
 	medRot = NAN;
 
+	vector<pair<KeyPoint, int> > keypoints;
+
 	//At least 2 keypoints are needed for scale
-	if (keypointsIN.size() > 1)
+	if (trackedKeypoints.size() > 1)
 	{
 		//sort
 		vector<pair<int, int> > list;
-		for (int i = 0; i < keypointsIN.size(); i++)
-			list.push_back(make_pair(keypointsIN[i].second, i));
+		for (int i = 0; i < trackedKeypoints.size(); i++)
+			list.push_back(make_pair(trackedKeypoints[i].second, i));
 		sort(&list[0], &list[0] + list.size(), comparatorPair<int>);
 		for (int i = 0; i < list.size(); i++)
-			keypoints.push_back(keypointsIN[list[i].second]);
+			keypoints.push_back(trackedKeypoints[list[i].second]);
 
 		vector<int> ind1;
 		vector<int> ind2;
@@ -362,7 +348,7 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 				Point2f p = pts_ind2[i].pt - pts_ind1[i].pt;
 				//This distance might be 0 for some combinations,
 				//as it can happen that there is more than one keypoint at a single location
-				float dist = sqrt(p.dot(p));
+				float dist = norm(p);
 				float origDist = squareForm[class_ind1[i]][class_ind2[i]];
 				scaleChange.push_back(dist / origDist);
 				//Compute angle
@@ -412,7 +398,8 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 					newVotes.push_back(votes[i]);
 				}
 			}
-			keypoints = newKeypoints;
+
+			trackedKeypoints = newKeypoints;
 
 			center = Point2f(0, 0);
 			for (int i = 0; i < newVotes.size(); i++)
@@ -423,15 +410,16 @@ void CMT::estimate(const vector<pair<KeyPoint, int> >& keypointsIN,
 	}
 }
 
-void CMT::track(Mat im_gray, const vector<pair<KeyPoint, int> >& keypointsIN,
-			vector<pair<KeyPoint, int> >& keypointsTracked,
-			vector<unsigned char>& status, int THR_FB)
+void CMT::track(Mat im_gray, int THR_FB)
 {
+
+	trackedKeypoints.clear();
+
 	//Status of tracked keypoint - True means successfully tracked
-	status = vector<unsigned char>();
+	vector<unsigned char> status;
 
 	//If at least one keypoint is active
-	if (keypointsIN.size() > 0)
+	if (activeKeypoints.size() > 0)
 	{
 		vector<Point2f> pts;
 		vector<Point2f> pts_back;
@@ -440,10 +428,10 @@ void CMT::track(Mat im_gray, const vector<pair<KeyPoint, int> >& keypointsIN,
 		vector<float> err;
 		vector<float> err_back;
 		vector<float> fb_err;
-		for (int i = 0; i < keypointsIN.size(); i++)
+		for (int i = 0; i < activeKeypoints.size(); i++)
 			pts.push_back(
-						Point2f(keypointsIN[i].first.pt.x,
-									keypointsIN[i].first.pt.y));
+						Point2f(activeKeypoints[i].first.pt.x,
+									activeKeypoints[i].first.pt.y));
 
 		//Calculate forward optical flow for prev_location
 		calcOpticalFlowPyrLK(im_prev, im_gray, pts, nextPts, status, err);
@@ -461,16 +449,14 @@ void CMT::track(Mat im_gray, const vector<pair<KeyPoint, int> >& keypointsIN,
 		for (int i = 0; i < status.size(); i++)
 			status[i] = fb_err[i] <= THR_FB & status[i];
 
-		keypointsTracked = vector<pair<KeyPoint, int> >();
 		for (int i = 0; i < pts.size(); i++)
 		{
-			pair<KeyPoint, int> p = keypointsIN[i];
+			pair<KeyPoint, int> p = activeKeypoints[i];
 			if (status[i])
 				p.first.pt = nextPts[i];
-			keypointsTracked.push_back(p);
+			trackedKeypoints.push_back(p);
 		}
 	}
-	else
-		keypointsTracked = vector<pair<KeyPoint, int> >();
+
 }
 
