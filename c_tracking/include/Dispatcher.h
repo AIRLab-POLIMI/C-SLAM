@@ -26,13 +26,14 @@
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
+#include <image_geometry/pinhole_camera_model.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <ardrone_autonomy/Navdata.h>
 
 #include <c_tracking/NamedPolygon.h>
 
-#include "CMT.h"
+#include "MappingTracker.h"
 #include "CMTFeatureExtractor.h"
 
 class Dispatcher
@@ -40,7 +41,8 @@ class Dispatcher
 public:
 	Dispatcher(ros::NodeHandle& n);
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
-	void handleImage(const sensor_msgs::ImageConstPtr& msg);
+	void handleImage(const sensor_msgs::ImageConstPtr& msg,
+				const sensor_msgs::CameraInfoConstPtr& info_msg);
 	void handleObjectTrackRequest(
 				const c_tracking::NamedPolygon& polygonMessage);
 
@@ -59,14 +61,17 @@ private:
 	image_transport::ImageTransport it;
 	ros::Subscriber navdataSubscriber;
 	ros::Subscriber toTrackSubscriber;
-	image_transport::Subscriber imageSubscriber;
+	image_transport::CameraSubscriber imageSubscriber;
+
+	//camera model data
+	image_geometry::PinholeCameraModel cameraModel;
 
 	//Last image pointer
 	cv_bridge::CvImagePtr cv_ptr;
 
 	//Tracks
 	CMTFeatureExtractor featureExtractor;
-	std::vector<CMT> tracks;
+	std::vector<MappingTracker> tracks;
 
 	//Odometry Data
 	double rotX, rotY, rotZ;

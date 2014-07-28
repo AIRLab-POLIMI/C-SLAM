@@ -36,7 +36,7 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 				&Dispatcher::handleNavdata, this);
 	toTrackSubscriber = n.subscribe("/to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);
-	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
+	imageSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;
 	src_window = "Cognitive Tracking";
@@ -57,8 +57,11 @@ void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 	rotZ = navdata.rotZ;
 }
 
-void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
+void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
+			const sensor_msgs::CameraInfoConstPtr& info_msg)
 {
+	cameraModel.fromCameraInfo(info_msg);
+
 	double currentRot = rotX;
 	cv_bridge::CvImagePtr cv_ptr_color;
 	cv::Mat coloredImage;
@@ -83,17 +86,20 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
-		CMT& cmt = tracks[i];
-		cmt.processFrame(cv_ptr->image, keypoints, features);
-		const std::vector<cv::Point2f>& polygon = cmt.getTrackedPolygon();
+		MappingTracker& track = tracks[i];
+		track.processFrame(cv_ptr->image, keypoints, features);
+		cameraModel.fullIntrinsicMatrix();
+		track.mapObject(coloredImage, cameraModel.fullIntrinsicMatrix());
+		const std::vector<cv::Point2f>& polygon = track.getTrackedPolygon();
 		drawPolygon(coloredImage, polygon, cv::Scalar(255, 255, 255));
 
 		const std::vector<std::pair<cv::KeyPoint, int> >& trackedKeypoints =
-					cmt.getTrackedKeypoints();
+					track.getTrackedKeypoints();
 		const std::vector<std::pair<cv::KeyPoint, int> >& activeKeypoints =
-					cmt.getActiveKeypoints();
+					track.getActiveKeypoints();
 
-		drawKeypoints(coloredImage, trackedKeypoints, cv::Scalar(255, 255, 255));
+		drawKeypoints(coloredImage, trackedKeypoints,
+					cv::Scalar(255, 255, 255));
 		drawKeypoints(coloredImage, activeKeypoints, cv::Scalar(255, 0, 0));
 	}
 
@@ -112,7 +118,7 @@ void Dispatcher::handleObjectTrackRequest(
 		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
 
 		//setup tracker
-		CMT cmt;
+		MappingTracker cmt;
 		cmt.initialize(cv_ptr->image, data);
 		tracks.push_back(cmt);
 
@@ -147,7 +153,8 @@ void Dispatcher::drawPolygon(cv::Mat& frame,
 }
 
 void Dispatcher::drawKeypoints(cv::Mat& frame,
-			const std::vector<std::pair<cv::KeyPoint, int> >& keypoints, cv::Scalar color)
+			const std::vector<std::pair<cv::KeyPoint, int> >& keypoints,
+			cv::Scalar color)
 {
 	for (int j = 0; j < keypoints.size(); j++)
 		cv::circle(frame, keypoints[j].first.pt, 3, color);

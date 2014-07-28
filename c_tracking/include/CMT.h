@@ -34,8 +34,8 @@ class CMT
 
 public:
 	CMT();
-	virtual void initialize(cv::Mat im_gray0, InitializationData& data);
-	void processFrame(cv::Mat im_gray, std::vector<cv::KeyPoint>& keypoints,
+	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
+	virtual void processFrame(const cv::Mat& im_gray, std::vector<cv::KeyPoint>& keypoints,
 				cv::Mat& features);
 
 	inline const std::vector<cv::Point2f>& getTrackedPolygon() const
@@ -56,7 +56,7 @@ public:
 	virtual ~CMT();
 
 private:
-	void track(cv::Mat im_gray, int THR_FB = 20);
+	void track(const cv::Mat& im_gray, int THR_FB = 20);
 
 	void estimate(cv::Point2f& center, float& scaleEstimate, float& medRot);
 

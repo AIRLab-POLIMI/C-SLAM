@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8.3)
 find_package(catkin REQUIRED COMPONENTS roscpp 
                                         cv_bridge 
                                         image_transport
+                                        image_geometry
                                         geometry_msgs
                                         message_generation)
 find_package(OpenCV REQUIRED)
@@ -27,8 +28,9 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 add_executable(cognitive_tracker src/CMT.cpp
                                  src/CMTFeatureExtractor.cpp
                                  src/CMTUtils.cpp
-                                 src/main.cpp
-                                 src/Dispatcher.cpp)
+                                 src/MappingTracker.cpp
+                                 src/Dispatcher.cpp
+                                 src/main.cpp)
                                  
 #link libriaries
 target_link_libraries(cognitive_tracker ${catkin_LIBRARIES})

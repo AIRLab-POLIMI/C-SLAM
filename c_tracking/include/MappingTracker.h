@@ -26,17 +26,20 @@
 
 #include "CMT.h"
 
-class MappingTracker : CMT
+class MappingTracker: public CMT
 {
 public:
 	MappingTracker();
-	virtual void initialize(cv::Mat im_gray0, InitializationData& data);
+	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
+	void mapObject(cv::Mat& image, const cv::Mat_<double>& K);
+	void decomposeEssentialMat(cv::InputArray _E, cv::OutputArray _R1,
+				cv::OutputArray _R2, cv::OutputArray _t);
 
 private:
 	std::vector<cv::KeyPoint> mappedKeyPoints;
 	bool objectMapped;
+	double minDistance;
 
 };
-
 
 #endif /* MAPPINGTRACKER_H_ */

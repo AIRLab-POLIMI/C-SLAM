@@ -51,7 +51,7 @@ CMT::CMT()
 	descriptorMatcher = DescriptorMatcher::create(matcherType);
 }
 
-void CMT::initialize(Mat im_gray0, InitializationData& data)
+void CMT::initialize(const Mat& im_gray0, InitializationData& data)
 {
 	//get the keypoints
 	vector<KeyPoint>& selected_keypoints = data.selected_keypoints;
@@ -62,7 +62,6 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 	Mat& background_features = data.background_features;
 
 	//Assign each keypoint a class starting from 1 (background is 0)
-	selectedClasses = vector<int>();
 	for (int i = 1; i <= selected_keypoints.size(); i++)
 		selectedClasses.push_back(i);
 
@@ -122,12 +121,12 @@ void CMT::initialize(Mat im_gray0, InitializationData& data)
 	initialKeypointsNumber = selected_keypoints.size();
 }
 
-void CMT::processFrame(Mat im_gray, vector<KeyPoint>& keypoints, Mat& features)
+void CMT::processFrame(const Mat& im_gray, vector<KeyPoint>& keypoints, Mat& features)
 {
 	track(im_gray);
 
 
-	//estimate center, sclae and rotation
+	//estimate center, scale and rotation
 	Point2f center;
 	float scaleEstimate;
 	float rotationEstimate;
@@ -410,7 +409,7 @@ void CMT::estimate(Point2f& center, float& scaleEstimate, float& medRot)
 	}
 }
 
-void CMT::track(Mat im_gray, int THR_FB)
+void CMT::track(const Mat& im_gray, int THR_FB)
 {
 
 	trackedKeypoints.clear();
