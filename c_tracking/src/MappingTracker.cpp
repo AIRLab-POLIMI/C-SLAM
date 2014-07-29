@@ -39,43 +39,81 @@ void MappingTracker::initialize(const Mat& im_gray0, InitializationData& data)
 	CMT::initialize(im_gray0, data);
 }
 
-void MappingTracker::mapObject(Mat& image, const Mat_<double>& K)
+double MappingTracker::matchKeyPoints(
+			const vector<pair<KeyPoint, int> >& matches,
+			vector<Point2f>& points1, vector<Point2f>& points2, Mat& image)
+{
+	double averageDistance = 0;
+
+	size_t size = matches.size();
+	for (int i = 0; i < size; i++)
+	{
+		int matchIndex = matches[i].second;
+		const Point2f& matchPoint = matches[i].first.pt;
+		const Point2f& basePoint = mappedKeyPoints[matchIndex].pt;
+		points1.push_back(basePoint);
+		points2.push_back(matchPoint);
+		line(image, matchPoint, basePoint, Scalar(0, 0, 255));
+		averageDistance += norm(matchPoint - basePoint);
+	}
+
+	return averageDistance / size;
+
+}
+
+void MappingTracker::reconstructPoints(const Mat_<double>& K, RobotPose pose,
+			const vector<Point2f>& points1, const vector<Point2f>& points2)
+{
+	vector<Point2f> normalizedPoints1;
+	vector<Point2f> normalizedPoints2;
+	Mat outlierMask;
+	//compute essential matrix
+	Mat F = findFundamentalMat(points1, points2, FM_RANSAC, 3., 0.99,
+				outlierMask);
+	Mat E = K.t() * F * K;
+	//compute normalized points
+	undistortPoints(points1, normalizedPoints1, K, Mat());
+	undistortPoints(points2, normalizedPoints2, K, Mat());
+	//find relative pose
+	Mat R;
+	Mat t;
+	recoverPose(E, normalizedPoints1, normalizedPoints2, R, t, 1.0,
+				Point2d(0, 0), outlierMask);
+
+	//compute two camera matrices
+	Mat P0, P1;
+	pose.computeCameraMatrices(P0, P1, R, t);
+
+	//Find the 3d shape of object keypoints
+	Mat points3D;
+	triangulatePoints(P0, P1, normalizedPoints1, normalizedPoints2, points3D);
+	points3D.row(0) /= points3D.row(3);
+	points3D.row(1) /= points3D.row(3);
+	points3D.row(2) /= points3D.row(3);
+	points3D.row(3) /= points3D.row(3);
+
+	//TODO map the keypoints
+
+}
+
+void MappingTracker::mapObject(Mat& image, const Mat_<double>& K,
+			RobotPose pose)
 {
 	if (!objectMapped)
 	{
 		const vector<pair<KeyPoint, int> >& matches =
 					this->getActiveKeypoints();
 
-		size_t size = matches.size();
-		double averageDistance = 0;
-
-		if (size > 8)
+		if (matches.size() > 8)
 		{
 			vector<Point2f> points1;
 			vector<Point2f> points2;
 
-			for (int i = 0; i < size; i++)
-			{
-				int matchIndex = matches[i].second;
-				const Point2f& matchPoint = matches[i].first.pt;
-				const Point2f& basePoint = mappedKeyPoints[matchIndex].pt;
-
-				points1.push_back(basePoint);
-				points2.push_back(matchPoint);
-
-				line(image, matchPoint, basePoint, Scalar(0, 0, 255));
-
-				averageDistance += norm(matchPoint - basePoint);
-			}
-
-			averageDistance /= size;
-
+			double averageDistance = matchKeyPoints(matches, points1, points2,
+						image);
 			if (averageDistance > minDistance)
 			{
-
-				//TODO mapping... or save data to do mapping...
-				Mat F = findFundamentalMat(points1, points2);
-				Mat E = K.t() * F * K;
+				reconstructPoints(K, pose, points1, points2);
 				objectMapped = true;
 			}
 
@@ -110,5 +148,164 @@ void MappingTracker::decomposeEssentialMat(InputArray _E, OutputArray _R1,
 	R1.copyTo(_R1);
 	R2.copyTo(_R2);
 	t.copyTo(_t);
+}
+
+//FIXME Opencv3 function, to delete when opencv3 will be relased
+int MappingTracker::recoverPose(InputArray E, InputArray _points1,
+			InputArray _points2, OutputArray _R, OutputArray _t, double focal,
+			Point2d pp, InputOutputArray _mask)
+{
+	Mat points1, points2;
+	_points1.getMat().copyTo(points1);
+	_points2.getMat().copyTo(points2);
+
+	int npoints = points1.checkVector(2);
+	CV_Assert(
+				npoints >= 0 && points2.checkVector(2) == npoints
+							&& points1.type() == points2.type());
+
+	if (points1.channels() > 1)
+	{
+		points1 = points1.reshape(1, npoints);
+		points2 = points2.reshape(1, npoints);
+	}
+	points1.convertTo(points1, CV_64F);
+	points2.convertTo(points2, CV_64F);
+
+	points1.col(0) = (points1.col(0) - pp.x) / focal;
+	points2.col(0) = (points2.col(0) - pp.x) / focal;
+	points1.col(1) = (points1.col(1) - pp.y) / focal;
+	points2.col(1) = (points2.col(1) - pp.y) / focal;
+
+	points1 = points1.t();
+	points2 = points2.t();
+
+	Mat R1, R2, t;
+	decomposeEssentialMat(E, R1, R2, t);
+	Mat P0 = Mat::eye(3, 4, R1.type());
+	Mat P1(3, 4, R1.type()), P2(3, 4, R1.type()), P3(3, 4, R1.type()), P4(3, 4,
+				R1.type());
+	P1(Range::all(), Range(0, 3)) = R1 * 1.0;
+	P1.col(3) = t * 1.0;
+	P2(Range::all(), Range(0, 3)) = R2 * 1.0;
+	P2.col(3) = t * 1.0;
+	P3(Range::all(), Range(0, 3)) = R1 * 1.0;
+	P3.col(3) = -t * 1.0;
+	P4(Range::all(), Range(0, 3)) = R2 * 1.0;
+	P4.col(3) = -t * 1.0;
+
+	// Do the cheirality check.
+	// Notice here a threshold dist is used to filter
+	// out far away points (i.e. infinite points) since
+	// there depth may vary between postive and negtive.
+	double dist = 50.0;
+	Mat Q;
+	triangulatePoints(P0, P1, points1, points2, Q);
+	Mat mask1 = Q.row(2).mul(Q.row(3)) > 0;
+	Q.row(0) /= Q.row(3);
+	Q.row(1) /= Q.row(3);
+	Q.row(2) /= Q.row(3);
+	Q.row(3) /= Q.row(3);
+	mask1 = (Q.row(2) < dist) & mask1;
+	Q = P1 * Q;
+	mask1 = (Q.row(2) > 0) & mask1;
+	mask1 = (Q.row(2) < dist) & mask1;
+
+	triangulatePoints(P0, P2, points1, points2, Q);
+	Mat mask2 = Q.row(2).mul(Q.row(3)) > 0;
+	Q.row(0) /= Q.row(3);
+	Q.row(1) /= Q.row(3);
+	Q.row(2) /= Q.row(3);
+	Q.row(3) /= Q.row(3);
+	mask2 = (Q.row(2) < dist) & mask2;
+	Q = P2 * Q;
+	mask2 = (Q.row(2) > 0) & mask2;
+	mask2 = (Q.row(2) < dist) & mask2;
+
+	triangulatePoints(P0, P3, points1, points2, Q);
+	Mat mask3 = Q.row(2).mul(Q.row(3)) > 0;
+	Q.row(0) /= Q.row(3);
+	Q.row(1) /= Q.row(3);
+	Q.row(2) /= Q.row(3);
+	Q.row(3) /= Q.row(3);
+	mask3 = (Q.row(2) < dist) & mask3;
+	Q = P3 * Q;
+	mask3 = (Q.row(2) > 0) & mask3;
+	mask3 = (Q.row(2) < dist) & mask3;
+
+	triangulatePoints(P0, P4, points1, points2, Q);
+	Mat mask4 = Q.row(2).mul(Q.row(3)) > 0;
+	Q.row(0) /= Q.row(3);
+	Q.row(1) /= Q.row(3);
+	Q.row(2) /= Q.row(3);
+	Q.row(3) /= Q.row(3);
+	mask4 = (Q.row(2) < dist) & mask4;
+	Q = P4 * Q;
+	mask4 = (Q.row(2) > 0) & mask4;
+	mask4 = (Q.row(2) < dist) & mask4;
+
+	mask1 = mask1.t();
+	mask2 = mask2.t();
+	mask3 = mask3.t();
+	mask4 = mask4.t();
+
+	// If _mask is given, then use it to filter outliers.
+	if (!_mask.empty())
+	{
+		Mat mask = _mask.getMat();
+		CV_Assert(mask.size() == mask1.size());
+		bitwise_and(mask, mask1, mask1);
+		bitwise_and(mask, mask2, mask2);
+		bitwise_and(mask, mask3, mask3);
+		bitwise_and(mask, mask4, mask4);
+	}
+	if (_mask.empty() && _mask.needed())
+	{
+		_mask.create(mask1.size(), CV_8U);
+	}
+
+	CV_Assert(_R.needed() && _t.needed());
+	_R.create(3, 3, R1.type());
+	_t.create(3, 1, t.type());
+
+	int good1 = countNonZero(mask1);
+	int good2 = countNonZero(mask2);
+	int good3 = countNonZero(mask3);
+	int good4 = countNonZero(mask4);
+
+	if (good1 >= good2 && good1 >= good3 && good1 >= good4)
+	{
+		R1.copyTo(_R);
+		t.copyTo(_t);
+		if (_mask.needed())
+			mask1.copyTo(_mask);
+		return good1;
+	}
+	else if (good2 >= good1 && good2 >= good3 && good2 >= good4)
+	{
+		R2.copyTo(_R);
+		t.copyTo(_t);
+		if (_mask.needed())
+			mask2.copyTo(_mask);
+		return good2;
+	}
+	else if (good3 >= good1 && good3 >= good2 && good3 >= good4)
+	{
+		t = -t;
+		R1.copyTo(_R);
+		t.copyTo(_t);
+		if (_mask.needed())
+			mask3.copyTo(_mask);
+		return good3;
+	}
+	else
+	{
+		t = -t;
+		R2.copyTo(_R);
+		t.copyTo(_t);
+		if (_mask.needed())
+			mask4.copyTo(_mask);
+		return good4;
+	}
 }
 

@@ -29,6 +29,7 @@ add_executable(cognitive_tracker src/CMT.cpp
                                  src/CMTFeatureExtractor.cpp
                                  src/CMTUtils.cpp
                                  src/MappingTracker.cpp
+                                 src/RobotPose.cpp
                                  src/Dispatcher.cpp
                                  src/main.cpp)
                                  

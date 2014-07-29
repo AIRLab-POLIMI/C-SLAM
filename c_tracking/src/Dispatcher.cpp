@@ -42,7 +42,6 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	src_window = "Cognitive Tracking";
 
 	cv::namedWindow(src_window, CV_WINDOW_AUTOSIZE);
-
 }
 
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
@@ -88,8 +87,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 	{
 		MappingTracker& track = tracks[i];
 		track.processFrame(cv_ptr->image, keypoints, features);
-		cameraModel.fullIntrinsicMatrix();
-		track.mapObject(coloredImage, cameraModel.fullIntrinsicMatrix());
+		track.mapObject(coloredImage, cameraModel.fullIntrinsicMatrix(), pose);
 		const std::vector<cv::Point2f>& polygon = track.getTrackedPolygon();
 		drawPolygon(coloredImage, polygon, cv::Scalar(255, 255, 255));
 
