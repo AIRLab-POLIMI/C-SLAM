@@ -48,7 +48,7 @@ double MappingTracker::matchKeyPoints(
 	size_t size = matches.size();
 	for (int i = 0; i < size; i++)
 	{
-		int matchIndex = matches[i].second;
+		int matchIndex = matches[i].second - 1; //class 0 is background
 		const Point2f& matchPoint = matches[i].first.pt;
 		const Point2f& basePoint = mappedKeyPoints[matchIndex].pt;
 		points1.push_back(basePoint);
