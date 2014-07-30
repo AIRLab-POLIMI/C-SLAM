@@ -25,6 +25,8 @@
 #define ROBOTPOSE_H_
 
 #include <opencv2/opencv.hpp>
+#include <tf/transform_broadcaster.h>
+#include <string>
 
 class RobotPose
 {
@@ -32,6 +34,9 @@ public:
 	RobotPose();
 	void computeCameraMatrices(cv::Mat& P0, cv::Mat& P1, const cv::Mat& R,
 				const cv::Mat& t);
+	void addObjectPose(cv::Mat& R, cv::Mat& t);
+
+	void updateRobotPose(std::string camera_frame);
 
 private:
 	void writeCameraMatrix(cv::Mat& P, const cv::Mat& R, const cv::Mat& t);
@@ -39,9 +44,16 @@ private:
 private:
 	bool known;
 
+	//pose estimated wrt object
+	std::vector<cv::Mat> rotationList;
+	std::vector<cv::Mat> translationList;
+
 	//Current Pose
-	cv::Mat Rc;
-	cv::Mat tc;
+	cv::Mat_<float> Rc;
+	cv::Mat_<float> tc;
+
+	//Tf broadcaster
+	tf::TransformBroadcaster br;
 
 };
 

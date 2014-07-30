@@ -39,6 +39,69 @@ void MappingTracker::initialize(const Mat& im_gray0, InitializationData& data)
 	CMT::initialize(im_gray0, data);
 }
 
+void MappingTracker::mapObject(Mat& image, const Mat_<double>& K,
+			RobotPose& pose)
+{
+	if (!objectMapped)
+	{
+		const vector<pair<KeyPoint, int> >& matches =
+					this->getActiveKeypoints();
+
+		if (matches.size() > 8)
+		{
+			vector<Point2f> points1;
+			vector<Point2f> points2;
+
+			double averageDistance = matchKeyPoints(matches, points1, points2,
+						image);
+			if (averageDistance > minDistance)
+			{
+				reconstructPoints(matches, K, pose, points1, points2);
+				objectMapped = true;
+			}
+
+		}
+
+	}
+}
+
+void MappingTracker::localizeFromObject(const Mat_<double>& K, RobotPose& pose)
+{
+	if (found())
+	{
+		const vector<pair<KeyPoint, int> >& matches =
+					this->getActiveKeypoints();
+		vector<Point3f> objectPoints;
+		vector<Point2f> imagePoints;
+
+		matchReconstructed(matches, imagePoints, objectPoints);
+
+		cv::Mat rvec, t;
+		solvePnP(objectPoints, imagePoints, K, Mat(), rvec, t);
+
+		cv::Mat R;
+		cv::Rodrigues(rvec, R); // R is 3x3
+
+		R = R.t();  // rotation of inverse
+		t = -R * t; // translation of inverse
+	}
+}
+
+void MappingTracker::matchReconstructed(
+			const vector<pair<KeyPoint, int> >& matches,
+			vector<Point2f>& imagePoints, vector<Point3f>& objectPoints)
+{
+	for (int i = 0; i < matches.size(); i++)
+	{
+		int index = matches[i].second - 1;
+		if (reconstructedMap.count(index))
+		{
+			imagePoints.push_back(matches[i].first.pt);
+			objectPoints.push_back(reconstructedMap[index]);
+		}
+	}
+}
+
 double MappingTracker::matchKeyPoints(
 			const vector<pair<KeyPoint, int> >& matches,
 			vector<Point2f>& points1, vector<Point2f>& points2, Mat& image)
@@ -61,16 +124,20 @@ double MappingTracker::matchKeyPoints(
 
 }
 
-void MappingTracker::reconstructPoints(const Mat_<double>& K, RobotPose pose,
-			const vector<Point2f>& points1, const vector<Point2f>& points2)
+void MappingTracker::reconstructPoints(
+			const vector<pair<KeyPoint, int> >& matches, const Mat_<double>& K,
+			RobotPose pose, const vector<Point2f>& points1,
+			const vector<Point2f>& points2)
 {
 	vector<Point2f> normalizedPoints1;
 	vector<Point2f> normalizedPoints2;
 	Mat outlierMask;
+
 	//compute essential matrix
 	Mat F = findFundamentalMat(points1, points2, FM_RANSAC, 3., 0.99,
 				outlierMask);
 	Mat E = K.t() * F * K;
+
 	//compute normalized points
 	undistortPoints(points1, normalizedPoints1, K, Mat());
 	undistortPoints(points2, normalizedPoints2, K, Mat());
@@ -85,41 +152,23 @@ void MappingTracker::reconstructPoints(const Mat_<double>& K, RobotPose pose,
 	pose.computeCameraMatrices(P0, P1, R, t);
 
 	//Find the 3d shape of object keypoints
-	Mat points3D;
+	Mat_<float> points3D;
 	triangulatePoints(P0, P1, normalizedPoints1, normalizedPoints2, points3D);
 	points3D.row(0) /= points3D.row(3);
 	points3D.row(1) /= points3D.row(3);
 	points3D.row(2) /= points3D.row(3);
 	points3D.row(3) /= points3D.row(3);
 
-	//TODO map the keypoints
-
-}
-
-void MappingTracker::mapObject(Mat& image, const Mat_<double>& K,
-			RobotPose pose)
-{
-	if (!objectMapped)
+	for (int i = 0; i < matches.size(); i++)
 	{
-		const vector<pair<KeyPoint, int> >& matches =
-					this->getActiveKeypoints();
-
-		if (matches.size() > 8)
+		if (outlierMask.at<int>(i, 0))
 		{
-			vector<Point2f> points1;
-			vector<Point2f> points2;
-
-			double averageDistance = matchKeyPoints(matches, points1, points2,
-						image);
-			if (averageDistance > minDistance)
-			{
-				reconstructPoints(K, pose, points1, points2);
-				objectMapped = true;
-			}
-
+			int index = matches[i].second - 1;
+			reconstructedMap[index] = Point3d(points3D(i, 0), points3D(i, 1),
+						points3D(i, 2));
 		}
-
 	}
+
 }
 
 //FIXME Opencv3 function, to delete when opencv3 will be relased

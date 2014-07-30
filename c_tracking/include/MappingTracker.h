@@ -27,19 +27,30 @@
 #include "CMT.h"
 #include "RobotPose.h"
 
+#include <map>
+
 class MappingTracker: public CMT
 {
 public:
 	MappingTracker();
 	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
-	void mapObject(cv::Mat& image, const cv::Mat_<double>& K, RobotPose pose);
+	void mapObject(cv::Mat& image, const cv::Mat_<double>& K, RobotPose& pose);
+	void localizeFromObject(const cv::Mat_<double>& K, RobotPose& pose);
 
 private:
 	double matchKeyPoints(
 				const std::vector<std::pair<cv::KeyPoint, int> >& matches,
 				std::vector<cv::Point2f>& points1,
 				std::vector<cv::Point2f>& points2, cv::Mat& image);
-	void reconstructPoints(const cv::Mat_<double>& K, RobotPose pose,
+
+	void matchReconstructed(
+				const std::vector<std::pair<cv::KeyPoint, int> >& matches,
+				std::vector<cv::Point2f>& imagePoints,
+				std::vector<cv::Point3f>& objectPoints);
+
+	void reconstructPoints(
+				const std::vector<std::pair<cv::KeyPoint, int> >& matches,
+				const cv::Mat_<double>& K, RobotPose pose,
 				const std::vector<cv::Point2f>& points1,
 				const std::vector<cv::Point2f>& points2);
 
@@ -54,6 +65,7 @@ private:
 
 private:
 	std::vector<cv::KeyPoint> mappedKeyPoints;
+	std::map<int, cv::Point3d> reconstructedMap;
 	bool objectMapped;
 	double minDistance;
 

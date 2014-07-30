@@ -5,7 +5,8 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         image_transport
                                         image_geometry
                                         geometry_msgs
-                                        message_generation)
+                                        message_generation
+                                        tf)
 find_package(OpenCV REQUIRED)
 
 project(c_tracking)

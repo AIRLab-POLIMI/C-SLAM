@@ -38,6 +38,11 @@ public:
 	virtual void processFrame(const cv::Mat& im_gray, std::vector<cv::KeyPoint>& keypoints,
 				cv::Mat& features);
 
+	inline bool found() const
+	{
+		return !(isnan(objCenter.x) || isnan(objCenter.y));
+	}
+
 	inline const std::vector<cv::Point2f>& getTrackedPolygon() const
 	{
 		return trackedPolygon;
@@ -95,6 +100,7 @@ private:
 	int initialKeypointsNumber;
 
 	//Polygon coordinates
+	cv::Point2f objCenter;
 	std::vector<cv::Point2f> relativePolygon;
 	std::vector<cv::Point2f> trackedPolygon;
 

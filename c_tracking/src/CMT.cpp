@@ -119,12 +119,15 @@ void CMT::initialize(const Mat& im_gray0, InitializationData& data)
 
 	//Remember number of initial keypoints
 	initialKeypointsNumber = selected_keypoints.size();
+
+	//save the center
+	objCenter = center;
 }
 
-void CMT::processFrame(const Mat& im_gray, vector<KeyPoint>& keypoints, Mat& features)
+void CMT::processFrame(const Mat& im_gray, vector<KeyPoint>& keypoints,
+			Mat& features)
 {
 	track(im_gray);
-
 
 	//estimate center, scale and rotation
 	Point2f center;
@@ -267,6 +270,9 @@ void CMT::processFrame(const Mat& im_gray, vector<KeyPoint>& keypoints, Mat& fea
 
 	//Update object state estimate
 	computeBoundingBox(im_gray, center, rotationEstimate, scaleEstimate);
+
+	//save the center
+	objCenter = center;
 }
 
 CMT::~CMT()

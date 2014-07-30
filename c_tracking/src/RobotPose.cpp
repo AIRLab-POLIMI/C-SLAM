@@ -46,3 +46,45 @@ void RobotPose::writeCameraMatrix(Mat& P, const Mat& R, const Mat& t)
 	P(Range::all(), Range(0, 3)) = R;
 	P.col(3) = t;
 }
+
+void RobotPose::addObjectPose(Mat& R, Mat& t)
+{
+	rotationList.push_back(R);
+	translationList.push_back(t);
+}
+
+void RobotPose::updateRobotPose(std::string camera_frame)
+{
+
+	size_t size = rotationList.size();
+
+	if (size > 0)
+	{
+		tc = translationList[0];
+		for (int i = 1; i < size; i++)
+		{
+			tc += translationList[i];
+		}
+
+		tc *= 1.0 / size;
+
+		//TODO cambiare
+		Rc = rotationList[0];
+
+		//clear pose lists
+		rotationList.clear();
+		translationList.clear();
+	}
+
+	tf::Transform transform;
+	transform.setOrigin(tf::Vector3(tc(0, 0), tc(1, 0), tc(2, 0)));
+	tf::Matrix3x3 Rtf( //
+				Rc(0, 0), Rc(0, 1), Rc(0, 2), //
+				Rc(1, 0), Rc(1, 1), Rc(1, 2), //
+				Rc(2, 0), Rc(2, 1), Rc(2, 2));
+	transform.setBasis(Rtf);
+
+	br.sendTransform(
+				tf::StampedTransform(transform, ros::Time::now(), "map",
+							camera_frame));
+}
