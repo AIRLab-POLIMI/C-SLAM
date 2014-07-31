@@ -40,14 +40,21 @@ void MappingTracker::initialize(const Mat& im_gray0, InitializationData& data)
 }
 
 void MappingTracker::mapObject(Mat& image, const Mat_<double>& K,
-			RobotPose& pose)
+			RobotPose& pose, WorldMap& map)
 {
-	if (!objectMapped)
-	{
-		const vector<pair<KeyPoint, int> >& matches =
-					this->getActiveKeypoints();
 
-		if (matches.size() > 8)
+	const vector<pair<KeyPoint, int> >& matches = this->getActiveKeypoints();
+
+	size_t size = matches.size();
+
+	if (objectMapped && size > 4)
+	{
+		localizeFromObject(K, pose);
+	}
+	else
+	{
+
+		if (size > 8)
 		{
 			vector<Point2f> points1;
 			vector<Point2f> points2;
@@ -56,7 +63,7 @@ void MappingTracker::mapObject(Mat& image, const Mat_<double>& K,
 						image);
 			if (averageDistance > minDistance)
 			{
-				reconstructPoints(matches, K, pose, points1, points2);
+				reconstructPoints(map, matches, K, pose, points1, points2);
 				objectMapped = true;
 			}
 
@@ -77,13 +84,16 @@ void MappingTracker::localizeFromObject(const Mat_<double>& K, RobotPose& pose)
 		matchReconstructed(matches, imagePoints, objectPoints);
 
 		cv::Mat rvec, t;
-		solvePnP(objectPoints, imagePoints, K, Mat(), rvec, t);
+		solvePnPRansac(objectPoints, imagePoints, K, Mat(), rvec, t, false,
+					200);
 
 		cv::Mat R;
 		cv::Rodrigues(rvec, R); // R is 3x3
 
 		R = R.t();  // rotation of inverse
 		t = -R * t; // translation of inverse
+
+		pose.addObjectPose(R, t);
 	}
 }
 
@@ -124,7 +134,7 @@ double MappingTracker::matchKeyPoints(
 
 }
 
-void MappingTracker::reconstructPoints(
+void MappingTracker::reconstructPoints(WorldMap& map,
 			const vector<pair<KeyPoint, int> >& matches, const Mat_<double>& K,
 			RobotPose pose, const vector<Point2f>& points1,
 			const vector<Point2f>& points2)
@@ -159,15 +169,20 @@ void MappingTracker::reconstructPoints(
 	points3D.row(2) /= points3D.row(3);
 	points3D.row(3) /= points3D.row(3);
 
+	vector<Point3d> pointCloud;
+
 	for (int i = 0; i < matches.size(); i++)
 	{
 		if (outlierMask.at<int>(i, 0))
 		{
 			int index = matches[i].second - 1;
-			reconstructedMap[index] = Point3d(points3D(i, 0), points3D(i, 1),
-						points3D(i, 2));
+			Point3d p(points3D(i, 0), points3D(i, 1), points3D(i, 2));
+			reconstructedMap[index] = p;
+			pointCloud.push_back(p);
 		}
 	}
+
+	map.addObject(pointCloud);
 
 }
 

@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         message_generation
                                         tf)
 find_package(OpenCV REQUIRED)
+find_package(PCL REQUIRED)
 
 project(c_tracking)
 
@@ -23,7 +24,8 @@ generate_messages(
 
 catkin_package(CATKIN_DEPENDS message_runtime)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS}
+							${PCL_INCLUDE_DIRS})
 
 #build the tracking node
 add_executable(cognitive_tracker src/CMT.cpp
@@ -31,6 +33,7 @@ add_executable(cognitive_tracker src/CMT.cpp
                                  src/CMTUtils.cpp
                                  src/MappingTracker.cpp
                                  src/RobotPose.cpp
+                                 src/WorldMap.cpp
                                  src/Dispatcher.cpp
                                  src/main.cpp)
                                  

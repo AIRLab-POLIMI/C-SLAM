@@ -27,6 +27,8 @@
 #include "CMT.h"
 #include "RobotPose.h"
 
+#include "WorldMap.h"
+
 #include <map>
 
 class MappingTracker: public CMT
@@ -34,7 +36,8 @@ class MappingTracker: public CMT
 public:
 	MappingTracker();
 	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
-	void mapObject(cv::Mat& image, const cv::Mat_<double>& K, RobotPose& pose);
+	void mapObject(cv::Mat& image, const cv::Mat_<double>& K, RobotPose& pose,
+				WorldMap& map);
 	void localizeFromObject(const cv::Mat_<double>& K, RobotPose& pose);
 
 private:
@@ -48,7 +51,7 @@ private:
 				std::vector<cv::Point2f>& imagePoints,
 				std::vector<cv::Point3f>& objectPoints);
 
-	void reconstructPoints(
+	void reconstructPoints(WorldMap& map,
 				const std::vector<std::pair<cv::KeyPoint, int> >& matches,
 				const cv::Mat_<double>& K, RobotPose pose,
 				const std::vector<cv::Point2f>& points1,

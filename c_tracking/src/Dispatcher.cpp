@@ -30,7 +30,7 @@
 namespace enc = sensor_msgs::image_encodings;
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
-			n(n), it(n)
+			n(n), it(n), map(n)
 {
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
@@ -87,7 +87,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 	{
 		MappingTracker& track = tracks[i];
 		track.processFrame(cv_ptr->image, keypoints, features);
-		track.mapObject(coloredImage, cameraModel.fullIntrinsicMatrix(), pose);
+		track.mapObject(coloredImage, cameraModel.fullIntrinsicMatrix(), pose, map);
 		const std::vector<cv::Point2f>& polygon = track.getTrackedPolygon();
 		drawPolygon(coloredImage, polygon, cv::Scalar(255, 255, 255));
 
@@ -100,6 +100,8 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 					cv::Scalar(255, 255, 255));
 		drawKeypoints(coloredImage, activeKeypoints, cv::Scalar(255, 0, 0));
 	}
+
+	pose.updateRobotPose(cameraModel.tfFrame());
 
 	cv::imshow(src_window, coloredImage);
 	cv::waitKey(1);

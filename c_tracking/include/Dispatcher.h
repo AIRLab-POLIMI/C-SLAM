@@ -34,6 +34,7 @@
 #include <c_tracking/NamedPolygon.h>
 
 #include "RobotPose.h"
+#include "WorldMap.h"
 #include "MappingTracker.h"
 #include "CMTFeatureExtractor.h"
 
@@ -74,8 +75,9 @@ private:
 	CMTFeatureExtractor featureExtractor;
 	std::vector<MappingTracker> tracks;
 
-	//robot Pose
+	//robot Pose and map
 	RobotPose pose;
+	WorldMap map;
 
 	//Odometry Data
 	double rotX, rotY, rotZ;

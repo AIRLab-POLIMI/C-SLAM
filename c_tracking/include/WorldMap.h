@@ -21,41 +21,24 @@
  *  along with c_tracking.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROBOTPOSE_H_
-#define ROBOTPOSE_H_
+#ifndef WORLDMAP_H_
+#define WORLDMAP_H_
 
+#include <vector>
 #include <opencv2/opencv.hpp>
-#include <tf/transform_broadcaster.h>
-#include <string>
+#include <ros/ros.h>
 
-class RobotPose
+class WorldMap
 {
 public:
-	RobotPose();
-	void computeCameraMatrices(cv::Mat& P0, cv::Mat& P1, const cv::Mat& R,
-				const cv::Mat& t);
-	void addObjectPose(cv::Mat& R, cv::Mat& t);
-
-	void updateRobotPose(std::string camera_frame);
+	WorldMap(ros::NodeHandle& n);
+	void addObject(std::vector<cv::Point3d>& objectPoints);
 
 private:
-	void writeCameraMatrix(cv::Mat& P, const cv::Mat& R, const cv::Mat& t);
-	void sendTransform(const std::string& camera_frame);
+	ros::Publisher mapPublisher;
 
-private:
-	bool known;
-
-	//pose estimated wrt object
-	std::vector<cv::Mat> rotationList;
-	std::vector<cv::Mat> translationList;
-
-	//Current Pose
-	cv::Mat_<double> Rc;
-	cv::Mat_<double> tc;
-
-	//Tf broadcaster
-	tf::TransformBroadcaster br;
 
 };
 
-#endif /* ROBOTPOSE_H_ */
+
+#endif /* WORLDMAP_H_ */
