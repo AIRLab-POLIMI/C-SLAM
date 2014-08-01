@@ -22,6 +22,7 @@
 	<build_depend>image_transport</build_depend>
 	<build_depend>ardrone_autonomy</build_depend>
 	<build_depend>c_fuzzy</build_depend>
+	<build_depend>c_tracking</build_depend>
 
 	<buildtool_depend>catkin</buildtool_depend>
 </package>

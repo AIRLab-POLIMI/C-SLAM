@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         geometry_msgs
                                         message_generation
                                         tf)
+                                        
 find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
 
@@ -35,7 +36,8 @@ add_executable(cognitive_tracker src/CMT.cpp
                                  src/RobotPose.cpp
                                  src/WorldMap.cpp
                                  src/Dispatcher.cpp
-                                 src/main.cpp)
+                                 src/main.cpp
+                                 src/opencv3.cpp)
                                  
 #link libriaries
 target_link_libraries(cognitive_tracker ${catkin_LIBRARIES})

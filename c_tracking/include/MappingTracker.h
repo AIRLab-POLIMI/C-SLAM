@@ -58,15 +58,6 @@ private:
 				const std::vector<cv::Point2f>& points2);
 
 private:
-	//Opencv3 function, use original ones when they come out
-	void decomposeEssentialMat(cv::InputArray _E, cv::OutputArray _R1,
-				cv::OutputArray _R2, cv::OutputArray _t);
-	int recoverPose(cv::InputArray E, cv::InputArray _points1,
-				cv::InputArray _points2, cv::OutputArray _R, cv::OutputArray _t,
-				double focal = 1.0, cv::Point2d pp = cv::Point2d(0, 0),
-				cv::InputOutputArray _mask = cv::noArray());
-
-private:
 	std::vector<cv::KeyPoint> mappedKeyPoints;
 	std::map<int, cv::Point3d> reconstructedMap;
 	bool objectMapped;
