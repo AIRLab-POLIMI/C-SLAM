@@ -142,4 +142,7 @@ target_link_libraries(${PROJECT_NAME}_reasoner
                       tree_classifier 
                       ${catkin_LIBRARIES})
 
+#add dependency to generated messages
+add_dependencies(${PROJECT_NAME}_reasoner ${PROJECT_NAME}_generate_messages_cpp)
+
 endif()
