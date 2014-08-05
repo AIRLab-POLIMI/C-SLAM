@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         image_transport
                                         image_geometry
                                         geometry_msgs
+                                        sensor_msgs
                                         message_generation
                                         tf)
                                         
@@ -16,11 +17,13 @@ project(c_tracking)
 add_message_files(
   FILES
   NamedPolygon.msg
+  TrackedObject.msg
 )
 
 generate_messages(
   DEPENDENCIES
   geometry_msgs
+  sensor_msgs
 )
 
 catkin_package(CATKIN_DEPENDS message_runtime)

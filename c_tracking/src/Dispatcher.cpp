@@ -28,6 +28,8 @@
 #include <angles/angles.h>
 
 namespace enc = sensor_msgs::image_encodings;
+using namespace std;
+using namespace cv;
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
 			n(n), it(n), map(n)
@@ -36,12 +38,13 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 				&Dispatcher::handleNavdata, this);
 	toTrackSubscriber = n.subscribe("/to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);
+	trackPublisher = n.advertise<c_tracking::TrackedObject>("/tracks", 1000);
 	imageSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;
 	src_window = "Cognitive Tracking";
 
-	cv::namedWindow(src_window, CV_WINDOW_AUTOSIZE);
+	namedWindow(src_window, CV_WINDOW_AUTOSIZE);
 }
 
 void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
@@ -63,7 +66,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 
 	double currentRot = rotX;
 	cv_bridge::CvImagePtr cv_ptr_color;
-	cv::Mat coloredImage;
+	Mat coloredImage;
 
 	try
 	{
@@ -71,7 +74,8 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 		cv_ptr_color = cv_bridge::toCvCopy(msg, enc::BGR8);
 		coloredImage = cv_ptr_color->image;
 
-	} catch (cv_bridge::Exception& e)
+	}
+	catch (cv_bridge::Exception& e)
 	{
 		ROS_ERROR("cv_bridge exception: %s", e.what());
 		return;
@@ -79,32 +83,34 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 
 	//extract features
 	featureExtractor.detect(cv_ptr->image);
-	std::vector<cv::KeyPoint>& keypoints = featureExtractor.getKeypoints();
-	cv::Mat& features = featureExtractor.getFeatures();
+	vector<KeyPoint>& keypoints = featureExtractor.getKeypoints();
+	Mat& features = featureExtractor.getFeatures();
 
 	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
-		MappingTracker& track = tracks[i];
-		track.processFrame(cv_ptr->image, keypoints, features);
-		track.mapObject(coloredImage, cameraModel.fullIntrinsicMatrix(), pose, map);
-		const std::vector<cv::Point2f>& polygon = track.getTrackedPolygon();
-		drawPolygon(coloredImage, polygon, cv::Scalar(255, 255, 255));
+		CMT& track = tracks[i];
+		Mat& grayImage = cv_ptr->image;
+		track.processFrame(grayImage, keypoints, features);
 
-		const std::vector<std::pair<cv::KeyPoint, int> >& trackedKeypoints =
-					track.getTrackedKeypoints();
-		const std::vector<std::pair<cv::KeyPoint, int> >& activeKeypoints =
-					track.getActiveKeypoints();
+		if (track.found())
+		{
+			//extract roi
+			const vector<Point2f>& polygon = track.getTrackedPolygon();
+			const Rect& roi = findRoi(polygon, grayImage);
 
-		drawKeypoints(coloredImage, trackedKeypoints,
-					cv::Scalar(255, 255, 255));
-		drawKeypoints(coloredImage, activeKeypoints, cv::Scalar(255, 0, 0));
+			//send results
+			publishTrack(polygon, roi);
+
+			//draw results
+			drawResults(coloredImage, roi, track);
+		}
 	}
 
 	pose.updateRobotPose(cameraModel.tfFrame());
 
-	cv::imshow(src_window, coloredImage);
-	cv::waitKey(1);
+	imshow(src_window, coloredImage);
+	waitKey(1);
 
 }
 
@@ -118,45 +124,142 @@ void Dispatcher::handleObjectTrackRequest(
 		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
 
 		//setup tracker
-		MappingTracker cmt;
+		CMT cmt;
 		cmt.initialize(cv_ptr->image, data);
 		tracks.push_back(cmt);
 
-	} catch (std::runtime_error& e)
+	}
+	catch (runtime_error& e)
 	{
 		ROS_WARN("No Keypoints in the selected object, abort tracking");
 	}
 }
 
 void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
-			std::vector<cv::Point2f>& polygon)
+			vector<Point2f>& polygon)
 {
 	const geometry_msgs::Polygon& p = polygonMessage.polygon;
 	for (int i = 0; i < p.points.size(); i++)
 	{
 		geometry_msgs::Point32 point = p.points[i];
-		polygon.push_back(cv::Point2f(point.x, point.y));
+		polygon.push_back(Point2f(point.x, point.y));
 	}
 }
 
-void Dispatcher::drawPolygon(cv::Mat& frame,
-			const std::vector<cv::Point2f>& polygon, cv::Scalar colour)
+void Dispatcher::publishTrack(const std::vector<cv::Point2f>& polygon, const cv::Rect& roi)
+{
+	c_tracking::TrackedObject message;
+	for(int i = 0; i < polygon.size(); i++)
+	{
+		geometry_msgs::Point32 point;
+		point.x = polygon[i].x;
+		point.y = polygon[i].y;
+		point.z = 0;
+		message.polygon.points.push_back(point);
+	}
+
+	message.roi.x_offset = roi.x;
+	message.roi.y_offset = roi.y;
+	message.roi.width = roi.width;
+	message.roi.height = roi.height;
+
+	trackPublisher.publish(message);
+}
+
+Rect Dispatcher::findRoi(const vector<Point2f>& polygon, Mat& image)
+{
+
+	const Point2f& p = polygon[1];
+	float xMax = 0;
+	float yMax = 0;
+	float xMin = image.cols;
+	float yMin = image.rows;
+
+	for (int i = 0; i < polygon.size(); i++)
+	{
+		xMax = max(xMax, polygon[i].x);
+		yMax = max(yMax, polygon[i].y);
+		xMin = min(xMin, polygon[i].x);
+		yMin = min(yMin, polygon[i].y);
+	}
+
+	float x = max(xMin, 0.0f);
+	float y = max(yMin, 0.0f);
+	float X = min(xMax, (float) image.cols);
+	float Y = min(yMax, (float) image.rows);
+	float w = max(0.0f, X - x);
+	float h = max(0.0f, Y - y);
+
+	return Rect(x, y, w, h);
+}
+
+void Dispatcher::drawResults(Mat& coloredImage, const Rect& roi, CMT& track)
+{
+	const vector<pair<KeyPoint, int> >& trackedKeypoints =
+				track.getTrackedKeypoints();
+	const vector<pair<KeyPoint, int> >& activeKeypoints =
+				track.getActiveKeypoints();
+	const vector<Point2f>& polygon = track.getTrackedPolygon();
+
+	rectangle(coloredImage, roi, Scalar(255, 255, 255));
+	drawPolygon(coloredImage, polygon, Scalar(255, 255, 255));
+	drawKeypoints(coloredImage, trackedKeypoints, Scalar(255, 255, 255));
+	drawKeypoints(coloredImage, activeKeypoints, Scalar(255, 0, 0));
+}
+
+void Dispatcher::drawPolygon(Mat& frame, const vector<Point2f>& polygon,
+			Scalar colour)
 {
 	for (int i = 0; i + 1 < polygon.size(); i++)
-		cv::line(frame, polygon[i], polygon[i + 1], cv::Scalar(255, 255, 255));
+		line(frame, polygon[i], polygon[i + 1], Scalar(255, 255, 255));
 
 	if (polygon.size() > 2)
 	{
-		cv::line(frame, polygon[0], polygon[polygon.size() - 1],
-					cv::Scalar(255, 255, 255));
+		line(frame, polygon[0], polygon[polygon.size() - 1],
+					Scalar(255, 255, 255));
 	}
 }
 
-void Dispatcher::drawKeypoints(cv::Mat& frame,
-			const std::vector<std::pair<cv::KeyPoint, int> >& keypoints,
-			cv::Scalar color)
+void Dispatcher::drawKeypoints(Mat& frame,
+			const vector<pair<KeyPoint, int> >& keypoints, Scalar color)
 {
 	for (int j = 0; j < keypoints.size(); j++)
-		cv::circle(frame, keypoints[j].first.pt, 3, color);
+		circle(frame, keypoints[j].first.pt, 3, color);
 }
 
+/*void Dispatcher::computeVertices(Mat& objectImage)
+ {
+ if (objectImage.rows * objectImage.cols > 0)
+ {
+ Mat canny;
+
+ vector<vector<Point> > contours;
+ vector<Vec4i> hierarchy;
+
+ double high_thres = 0.25*threshold(objectImage, canny, 0, 255,
+ CV_THRESH_BINARY + CV_THRESH_OTSU);
+ double low_thres = high_thres * 0.5;
+
+ Canny(objectImage, canny, low_thres, high_thres, 3, true);
+
+ Mat colored;
+ cvtColor(canny, colored, CV_GRAY2BGR);
+
+ vector<Vec4i> lines;
+
+ HoughLinesP(canny, lines, 1, CV_PI / 180, 20, 40, 10);
+
+ for (size_t i = 0; i < lines.size(); i++)
+ {
+ line(colored, Point(lines[i][0], lines[i][1]),
+ Point(lines[i][2], lines[i][3]),
+ Scalar(0, 0, 255), 3, 8);
+ }
+
+ for (int i = 0; i < contours.size(); i++)
+ {
+ drawContours(colored, contours, i, Scalar(255, 0, 0), 2, 8,
+ hierarchy, 0, Point());
+ }
+ }
+ }*/

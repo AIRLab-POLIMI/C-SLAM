@@ -32,11 +32,17 @@ class RobotPose
 {
 public:
 	RobotPose();
+
 	void computeCameraMatrices(cv::Mat& P0, cv::Mat& P1, const cv::Mat& R,
 				const cv::Mat& t);
 	void addObjectPose(cv::Mat& R, cv::Mat& t);
 
 	void updateRobotPose(std::string camera_frame);
+
+	inline bool isKnown()
+	{
+		return known;
+	}
 
 private:
 	void writeCameraMatrix(cv::Mat& P, const cv::Mat& R, const cv::Mat& t);
