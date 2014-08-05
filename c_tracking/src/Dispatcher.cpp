@@ -36,9 +36,9 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 {
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
 				&Dispatcher::handleNavdata, this);
-	toTrackSubscriber = n.subscribe("/to_track", 1,
+	toTrackSubscriber = n.subscribe("to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);
-	trackPublisher = n.advertise<c_tracking::TrackedObject>("/tracks", 1000);
+	trackPublisher = n.advertise<c_tracking::TrackedObject>("tracks", 1000);
 	imageSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 	rotX = rotY = rotZ = 0;

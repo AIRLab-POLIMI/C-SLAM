@@ -50,3 +50,10 @@ add_executable(object_selector src/ObjectSelector.cpp)
 
 #link libriaries
 target_link_libraries(object_selector ${catkin_LIBRARIES})
+
+#add dependency to generated messages
+add_dependencies(cognitive_tracker ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(object_selector ${PROJECT_NAME}_generate_messages_cpp)
+
+#avoid tf warnings
+add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)

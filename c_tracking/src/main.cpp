@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
 	ros::init(argc, argv, "cognitive_tracking");
 	ros::NodeHandle n;
 
-	ROS_INFO("Tracking node started");
-
 	Dispatcher dispatcher(n);
+
+	ROS_INFO("Tracking node started");
 
 	ros::spin();
 }
