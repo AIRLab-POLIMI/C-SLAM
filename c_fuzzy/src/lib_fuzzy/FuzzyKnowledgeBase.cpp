@@ -91,9 +91,11 @@ Node* FuzzyKnowledgeBase::getPredicateInstance(string& nameSpace,
 
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
 {
-	delete variables;
+	//FIXME memory leak. uncomment when fixed copy of shared variables and rules
+	//the problem comes out when using superclass namespace table and predicates
+	//delete variables;
 	delete predicates;
-	deleteRules();
+	//deleteRules();
 	delete knowledgeBase;
 }
 

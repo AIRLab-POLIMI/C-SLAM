@@ -87,6 +87,7 @@ void RuleBuilder::fixNameSpace(FuzzyClass& fuzzyClass)
 
 		NamespaceTable& table = knowledgeBase.getNamespaceTable();
 
+		//FIXME needs copy, crash when deallocating memory
 		knowledgeBase.addDomains(className, *table[superClassName]);
 	}
 }
