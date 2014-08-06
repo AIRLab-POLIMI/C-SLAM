@@ -31,6 +31,7 @@ class Rectangle: public Feature
 public:
 	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w);
 	std::vector<cv::Point> getPointsVector();
+	virtual cv::Point getCenter();
 	virtual void setFeature();
 
 

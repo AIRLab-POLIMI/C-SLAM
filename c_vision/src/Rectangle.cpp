@@ -23,7 +23,10 @@
 
 #include "Rectangle.h"
 
+#include <opencv2/opencv.hpp>
+
 using namespace cv;
+using namespace std;
 
 Rectangle::Rectangle(Point x, Point y, Point z, Point w) :
 			x(x), y(y), z(z), w(w)
@@ -41,21 +44,30 @@ vector<Point> Rectangle::getPointsVector()
 	return points;
 }
 
+Point Rectangle::getCenter()
+{
+	return (x + y + z + w) * 0.25;
+}
+
 void Rectangle::setFeature()
 {
-	int xMin, xMax, yMin, yMax;
+	int xMin = std::min(x.x, w.x);
+	int xMax = std::max(y.x, z.x);
+	int yMin = std::min(x.x, w.x);
+	int yMax = std::min(x.x, w.x);
 	int FormFactor;
 
-	int deltaX = (xMax - xMin);
-	int deltaY = (yMax - yMin);
-	if (deltaY != 0)
+	//TODO rectification?
+	int deltaX = std::max(norm(x - y), norm(w - z));
+	int deltaY = std::max(norm(x - w), norm(y - z));
+	if (deltaX != 0)
 	{
-		FormFactor = 1000 * deltaX / deltaY;
+		FormFactor = 1000 * deltaY / deltaX;
 		featureMap["xMax"] = xMax;
 		featureMap["yMax"] = yMax;
 		featureMap["xMin"] = xMin;
 		featureMap["yMin"] = yMin;
 		featureMap["formFactor"] = FormFactor;
-		featureMap["color"] = 100; //FIXME levami!!!!
+		featureMap["area"] = contourArea(getPointsVector());
 	}
 }

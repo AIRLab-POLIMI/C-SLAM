@@ -34,6 +34,8 @@ class Pole: public Feature
 public:
 	Pole(cv::Point a1, cv::Point a2, cv::Point b1, cv::Point b2);
 	std::vector<cv::Point> getPointsVector();
+
+	virtual cv::Point getCenter();
 	virtual void setFeature();
 
 private:

@@ -7,7 +7,7 @@ CLASS Rectangle
 		yMin;
 		yMax;
 		formFactor;
-		color;
+		area;
 	END_VARIABLES
 END_CLASS
 
@@ -18,6 +18,21 @@ CLASS Cluster
 	END_VARIABLES
 END_CLASS
 
+CLASS WhiteBoard extends Rectangle
+	area is Big;
+	formFactor is Wide;
+END_CLASS
+
+CLASS Cabinet extends Rectangle
+	area is Huge;
+	formFactor is Medium;
+END_CLASS
+
+CLASS CabinetDoor extends Rectangle
+	area is VeryBig;
+	formFactor is Narrow;
+END_CLASS
+
 CLASS Door extends Rectangle IMPORTANT
 	
 	CONSTANTS
@@ -25,8 +40,9 @@ CLASS Door extends Rectangle IMPORTANT
 	END_CONSTANTS
 	
 	formFactor is Narrow;
+	area is VeryBig;
 	Handle.x is Lateral on(xMin, xMax);
-	Handle.y is Centered on(yMin, yMax); 
+	Handle.y is Centered on(yMin, yMax);
 
 END_CLASS
 

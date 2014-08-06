@@ -22,6 +22,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 
 #include "Dispatcher.h"
 #include "ObjectClassificator.h"
@@ -86,8 +87,9 @@ void Dispatcher::classify()
 
 	ObjectClassificator classificator(serviceCall, classifierParam);
 	classificator.processFeatures(detector.getRectangles());
-	classificator.processFeatures(detector.getPoles());
-	classificator.processFeatures(detector.getClusters());
+	//TODO no cluster detection...
+	//classificator.processFeatures(detector.getPoles());
+	//classificator.processFeatures(detector.getClusters());
 
 	if (classificationService.isValid())
 	{
@@ -99,6 +101,8 @@ void Dispatcher::classify()
 		classificationService.waitForExistence();
 		connectToClassificationServer();
 	}
+
+	classificator.labelFeatures();
 
 }
 

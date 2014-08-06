@@ -41,7 +41,6 @@ ImageView::ImageView(std::string viewName) :
 
 void ImageView::display(Mat& frame)
 {
-	//displayClusterResults(*keyPoints, *clusters, frame);
 	if (verticalLines)
 		displayLineResults(*verticalLines, frame);
 	if (horizontalLines)
@@ -55,7 +54,7 @@ void ImageView::display(Mat& frame)
 	drawAxis(frame);
 
 	imshow(viewName, frame);
-	cvWaitKey(60);
+	cvWaitKey(1);
 }
 
 ImageView::~ImageView()
@@ -115,6 +114,24 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 void ImageView::displayRectanglesResults(Mat& frame)
 {
 	drawContours(frame, rectangles, Scalar(0, 255, 0));
+
+	for (vector<Rectangle>::iterator i = rectangles->begin();
+				i != rectangles->end(); ++i)
+	{
+		Feature& feature = *i;
+
+		std::stringstream ss;
+
+		for (ClassificationMap::const_iterator j = feature.beginClass();
+					j != feature.endClass(); ++j)
+		{
+			if(j->first != "Rectangle")
+			ss << j->first << "(" << j->second << ")   ";
+		}
+
+		putText(frame, ss.str(), feature.getCenter(), FONT_HERSHEY_SIMPLEX, 0.4,
+					Scalar(0, 255, 0));
+	}
 }
 
 void ImageView::displayPolesResults(Mat& frame)

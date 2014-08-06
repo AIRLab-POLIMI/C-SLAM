@@ -65,6 +65,7 @@ public:
 		return classifications.end();
 	}
 
+	virtual cv::Point getCenter() = 0;
 	virtual void setFeature() = 0;
 
 	virtual ~Feature()

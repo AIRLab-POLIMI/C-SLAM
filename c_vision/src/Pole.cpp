@@ -43,13 +43,18 @@ vector<Point> Pole::getPointsVector()
 	return points;
 }
 
+Point Pole::getCenter()
+{
+	return 0.25 * (a1 + a2 + b1 + b2);
+}
+
 void Pole::setFeature()
 {
 	int deltaX = max(abs(a1.y - b1.y), abs(a2.y - b2.y));
 	int deltaY = max(abs(a1.y - b1.y), abs(a2.y - b2.y));
-	if (deltaY != 0) //TODO is ok???
+	if (deltaX != 0) //TODO is ok???
 	{
-		int FormFactor = 1000 * deltaX / deltaY;
+		int FormFactor = 1000 * deltaY / deltaX;
 		featureMap["height"] = deltaY;
 		featureMap["formFactor"] = FormFactor;
 	}

@@ -35,6 +35,9 @@ public:
 
 	void draw(cv::Mat& frame, cv::Scalar color) const;
 
+	virtual cv::Point getCenter();
+
+
 	inline cv::KeyPoint getMassCenter() const
 	{
 		return massCenter;

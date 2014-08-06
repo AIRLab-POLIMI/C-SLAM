@@ -40,6 +40,11 @@ void Cluster::add(KeyPoint point)
 	keyPoints.push_back(point);
 }
 
+Point Cluster::getCenter()
+{
+	return massCenter.pt;
+}
+
 void Cluster::updateMassCenter(KeyPoint point)
 {
 	int y = point.pt.y;

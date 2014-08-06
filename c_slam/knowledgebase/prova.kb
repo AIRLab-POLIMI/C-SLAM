@@ -1,14 +1,14 @@
 /* Dichiarazione delle MF per gli input */
 FUZZIFY Input
-	Near := tol(100,200);
-	Medium := tra(100,200,300,400);
-	Far := tor(300,400);
+	Near := tol(100, 200);
+	Medium := tra(100, 200, 300, 400);
+	Far := tor(300, 400);
 END_FUZZIFY
 
 FUZZIFY Prova
-	Near := tol(100,200);
-	Medium := tra(100,200,300,400);
-	Far := tor(300,400);
+	Near := tol(100, 200);
+	Medium := tra(100, 200, 300, 400);
+	Far := tor(300, 400);
 END_FUZZIFY
 
 /* Dichiarazione delle MF per gli output */

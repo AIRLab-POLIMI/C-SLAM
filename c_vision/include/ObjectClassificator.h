@@ -53,6 +53,16 @@ public:
 		}
 	}
 
+	inline std::map<size_t, Feature*>::iterator begin()
+	{
+		return featureMap.begin();
+	}
+
+	inline std::map<size_t, Feature*>::iterator end()
+	{
+		return featureMap.end();
+	}
+
 private:
 	void newObject(Feature& feature);
 	void addFeature(std::string name, int value);

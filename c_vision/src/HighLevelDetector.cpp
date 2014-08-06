@@ -74,22 +74,6 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 
 }
 
-void HighLevelDetector::normalizeLines(int& x1, int& y1, int& x2, int& y2,
-			int& x3, int& y3, int& x4, int& y4)
-{
-	if (x1 > x2)
-	{
-		swap(x1, x2);
-		swap(y1, y2);
-	}
-
-	if (y3 > y4)
-	{
-		swap(x3, x4);
-		swap(y3, y4);
-	}
-}
-
 Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 			double& b)
 {

@@ -2,12 +2,25 @@
 
 FUZZIFY_CLASS Rectangle
 	FUZZIFY formFactor
-		Narrow :=  sgt(1);
+		Narrow := tra(2100, 2200, 2600, 3000);
+		Medium := tra(900, 1000, 2100, 2200); 
+		Wide := tra(890, 900, 910, 920);
 	END_FUZZIFY
 	
-	FUZZIFY color
-		Red := tol(10, 20);
+	FUZZIFY area
+		Big := tor(5000, 5500);
+		VeryBig := tor(6000, 9000);
+		Huge := tor(9000, 10000);
 	END_FUZZIFY
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS Cabinet
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS CabinetDoor
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS WhiteBoard
 END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS Door
@@ -17,9 +30,9 @@ FUZZIFY_CLASS Door
 		Centered := (?x is Centered);
 		
 		FUZZIFY ?x
-			Left :=  tol(30, 40);
-			Centered :=  tra(30, 40, 60, 80);
-			Right :=  tor(60, 80);
+			Left := tol(30, 40);
+			Centered := tra(30, 40, 60, 80);
+			Right := tor(60, 80);
 		END_FUZZIFY
 		
 	END_FUZZIFY_PREDICATE	
