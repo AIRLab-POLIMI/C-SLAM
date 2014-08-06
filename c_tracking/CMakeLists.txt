@@ -35,7 +35,6 @@ include_directories(include ${catkin_INCLUDE_DIRS}
 add_executable(cognitive_tracker src/CMT.cpp
                                  src/CMTFeatureExtractor.cpp
                                  src/CMTUtils.cpp
-                                 src/MappingTracker.cpp
                                  src/RobotPose.cpp
                                  src/WorldMap.cpp
                                  src/Dispatcher.cpp
