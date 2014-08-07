@@ -32,10 +32,8 @@ using namespace std;
 using namespace cv;
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
-			n(n), it(n), map(n)
+			n(n), it(n)
 {
-	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
-				&Dispatcher::handleNavdata, this);
 	toTrackSubscriber = n.subscribe("to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);
 	trackPublisher = n.advertise<c_tracking::TrackedObject>("tracks", 1000);
@@ -107,8 +105,6 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 		}
 	}
 
-	pose.updateRobotPose(cameraModel.tfFrame());
-
 	imshow(src_window, coloredImage);
 	waitKey(1);
 
@@ -117,6 +113,10 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 void Dispatcher::handleObjectTrackRequest(
 			const c_tracking::NamedPolygon& polygonMessage)
 {
+	//if an image does not exist, return
+	if(cv_ptr.use_count() == 0)
+		return;
+
 	try
 	{
 		InitializationData data;
@@ -139,17 +139,30 @@ void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
 			vector<Point2f>& polygon)
 {
 	const geometry_msgs::Polygon& p = polygonMessage.polygon;
+	Point2f c(0, 0);
 	for (int i = 0; i < p.points.size(); i++)
 	{
 		geometry_msgs::Point32 point = p.points[i];
-		polygon.push_back(Point2f(point.x, point.y));
+		Point2f cp(point.x, point.y);
+		polygon.push_back(cp);
+		c += cp;
+	}
+
+	c *= 1.0 / polygon.size();
+
+	//scale polygon
+	for (int i = 0; i < polygon.size(); i++)
+	{
+		Point2f& cp = polygon[i];
+		cp = (1.1 * (cp - c)) + c;
 	}
 }
 
-void Dispatcher::publishTrack(const std::vector<cv::Point2f>& polygon, const cv::Rect& roi)
+void Dispatcher::publishTrack(const std::vector<cv::Point2f>& polygon,
+			const cv::Rect& roi)
 {
 	c_tracking::TrackedObject message;
-	for(int i = 0; i < polygon.size(); i++)
+	for (int i = 0; i < polygon.size(); i++)
 	{
 		geometry_msgs::Point32 point;
 		point.x = polygon[i].x;
@@ -226,40 +239,3 @@ void Dispatcher::drawKeypoints(Mat& frame,
 	for (int j = 0; j < keypoints.size(); j++)
 		circle(frame, keypoints[j].first.pt, 3, color);
 }
-
-/*void Dispatcher::computeVertices(Mat& objectImage)
- {
- if (objectImage.rows * objectImage.cols > 0)
- {
- Mat canny;
-
- vector<vector<Point> > contours;
- vector<Vec4i> hierarchy;
-
- double high_thres = 0.25*threshold(objectImage, canny, 0, 255,
- CV_THRESH_BINARY + CV_THRESH_OTSU);
- double low_thres = high_thres * 0.5;
-
- Canny(objectImage, canny, low_thres, high_thres, 3, true);
-
- Mat colored;
- cvtColor(canny, colored, CV_GRAY2BGR);
-
- vector<Vec4i> lines;
-
- HoughLinesP(canny, lines, 1, CV_PI / 180, 20, 40, 10);
-
- for (size_t i = 0; i < lines.size(); i++)
- {
- line(colored, Point(lines[i][0], lines[i][1]),
- Point(lines[i][2], lines[i][3]),
- Scalar(0, 0, 255), 3, 8);
- }
-
- for (int i = 0; i < contours.size(); i++)
- {
- drawContours(colored, contours, i, Scalar(255, 0, 0), 2, 8,
- hierarchy, 0, Point());
- }
- }
- }*/

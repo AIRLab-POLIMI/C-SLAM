@@ -35,11 +35,8 @@ include_directories(include ${catkin_INCLUDE_DIRS}
 add_executable(cognitive_tracker src/CMT.cpp
                                  src/CMTFeatureExtractor.cpp
                                  src/CMTUtils.cpp
-                                 src/RobotPose.cpp
-                                 src/WorldMap.cpp
                                  src/Dispatcher.cpp
-                                 src/main.cpp
-                                 src/opencv3.cpp)
+                                 src/main.cpp)
                                  
 #link libriaries
 target_link_libraries(cognitive_tracker ${catkin_LIBRARIES})

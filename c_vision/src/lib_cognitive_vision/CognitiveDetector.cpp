@@ -35,21 +35,53 @@ CognitiveDetector::CognitiveDetector(ParameterServer& parameters) :
 						parameters.getLFiltrerParams()),
 			pitch(0), roll(0), yaw(0)
 {
-	rectangles = NULL;
-	poles = NULL;
-	clusters = NULL;
-
-	horizontalLines = NULL;
-	verticalLines = NULL;
-
+	setToNull();
 }
 
-void CognitiveDetector::detect(cv::Mat& frame)
+void CognitiveDetector::detect(cv::Mat& image)
 {
 	//preprocessing
-	Mat equalizedFrame;
-	preprocessing(frame, equalizedFrame);
+	Mat equalizedFrame, grayFrame;
+	preprocessing(image, equalizedFrame, grayFrame);
 
+	detectRectanglesAndPoles(equalizedFrame);
+	clusters = clusterDetector.detect(grayFrame);
+}
+
+void CognitiveDetector::detectRectangles(cv::Mat& image)
+{
+	Mat equalizedFrame, grayFrame;
+	preprocessing(image, equalizedFrame, grayFrame);
+
+	detectRectanglesAndPoles(equalizedFrame);
+}
+
+void CognitiveDetector::deleteDetections()
+{
+	if (rectangles && poles)
+	{
+		delete rectangles;
+		delete poles;
+
+		delete verticalLines;
+		delete horizontalLines;
+	}
+
+	if (clusters)
+		delete clusters;
+
+	setToNull();
+}
+
+void CognitiveDetector::preprocessing(Mat& input, Mat& equalizedFrame,
+			Mat& grayFrame)
+{
+	cvtColor(input, grayFrame, CV_BGR2GRAY);
+	equalizeHist(grayFrame, equalizedFrame);
+}
+
+void CognitiveDetector::detectRectanglesAndPoles(Mat& equalizedFrame)
+{
 	//detect lines
 	lineDetector.detect(equalizedFrame, roll);
 	verticalLines = lineDetector.getVerticalLines();
@@ -58,27 +90,16 @@ void CognitiveDetector::detect(cv::Mat& frame)
 	//detect features
 	HighLevelDetector highLevelDetector;
 	highLevelDetector.detect(*verticalLines, *horizontalLines);
-
 	rectangles = highLevelDetector.getRectangles();
 	poles = highLevelDetector.getPoles();
-	clusters = clusterDetector.detect(equalizedFrame);
 }
 
-void CognitiveDetector::preprocessing(Mat& input, Mat& equalizedFrame)
+void CognitiveDetector::setToNull()
 {
-	Mat greyFrame;
-
-	cvtColor(input, greyFrame, CV_BGR2GRAY);
-	equalizeHist(greyFrame, equalizedFrame);
-}
-
-void CognitiveDetector::deleteDetections()
-{
-	delete rectangles;
-	delete poles;
-	delete clusters;
-
-	delete verticalLines;
-	delete horizontalLines;
+	rectangles = NULL;
+	poles = NULL;
+	clusters = NULL;
+	horizontalLines = NULL;
+	verticalLines = NULL;
 }
 

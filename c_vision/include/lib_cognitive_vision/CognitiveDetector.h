@@ -39,6 +39,7 @@ public:
 	CognitiveDetector(ParameterServer& parameters);
 
 	void detect(cv::Mat& image);
+	void detectRectangles(cv::Mat& image);
 
 	inline void setPitch(double pitch)
 	{
@@ -73,7 +74,9 @@ public:
 	void deleteDetections();
 
 private:
-	void preprocessing(cv::Mat& input, cv::Mat& equalizedFrame);
+	void preprocessing(cv::Mat& input, cv::Mat& equalizedFrame, cv::Mat& grayFrame);
+	void detectRectanglesAndPoles(cv::Mat& equalizedFrame);
+	void setToNull();
 
 private:
 	//detectors

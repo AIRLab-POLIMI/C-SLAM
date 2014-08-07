@@ -77,12 +77,27 @@ void ObjectClassificator::labelFeatures()
 
 		vector<ClassificationOutput>& outputs = i->classifications;
 
-		for(vector<ClassificationOutput>::iterator j = outputs.begin();
+		for (vector<ClassificationOutput>::iterator j = outputs.begin();
 					j != outputs.end(); ++j)
 		{
 			feature.addClassification(j->className, j->membership);
 		}
 	}
 
+}
+
+vector<vector<cv::Point> > ObjectClassificator::getGoodFeatures()
+{
+	vector<vector<cv::Point> > good;
+
+	for (map<size_t, Feature*>::iterator it = featureMap.begin();
+				it != featureMap.end(); ++it)
+	{
+		Feature& feature = *it->second;
+		if(feature.isInteresting())
+			good.push_back(feature.getPointsVector());
+	}
+
+	return good;
 }
 

@@ -65,6 +65,12 @@ public:
 		return classifications.end();
 	}
 
+	inline bool isInteresting()
+	{
+		return featureMap.size() > 1;
+	}
+
+	virtual std::vector<cv::Point> getPointsVector() = 0;
 	virtual cv::Point getCenter() = 0;
 	virtual void setFeature() = 0;
 

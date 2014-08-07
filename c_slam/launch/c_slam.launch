@@ -15,9 +15,9 @@
 	</group>
 	
 	<!-- System nodes -->
-	<node name="cognitive_vision" 
+	<node name="c_vision_detector" 
 	      pkg="c_vision" 
-	      type="cognitive_vision" 
+	      type="c_vision_detector" 
 	      output="screen">
 	    <!-- canny params -->
 		<param name="canny/alpha" value="0.2" />

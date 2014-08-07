@@ -23,7 +23,7 @@
 
 #include <ros/ros.h>
 
-#include "Dispatcher.h"
+#include "DetectorLogic.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	ros::NodeHandle nh("~");
 
 	ParameterServer parameterServer(nh);
-	Dispatcher dispatcher(n, parameterServer);
+	DetectorLogic dispatcher(n, parameterServer);
 
 	ros::spin();
 

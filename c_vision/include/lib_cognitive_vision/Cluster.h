@@ -21,29 +21,47 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef POLE_H_
-#define POLE_H_
-
-#include <vector>
+#ifndef CLUSTER_H_
+#define CLUSTER_H_
 
 #include "Feature.h"
 
-class Pole: public Feature
+class Cluster: public Feature
 {
-
 public:
-	Pole(cv::Point a1, cv::Point a2, cv::Point b1, cv::Point b2);
-	std::vector<cv::Point> getPointsVector();
+	Cluster();
+
+	void add(cv::KeyPoint point);
+
+	void draw(cv::Mat& frame, cv::Scalar color) const;
 
 	virtual cv::Point getCenter();
+
+
+	inline cv::KeyPoint getMassCenter() const
+	{
+		return massCenter;
+	}
+
+	inline std::vector<cv::KeyPoint> getKeyPoints()
+	{
+		return keyPoints;
+	}
+
+	virtual std::vector<cv::Point> getPointsVector();
 	virtual void setFeature();
 
 private:
-	cv::Point a1;
-	cv::Point a2;
-	cv::Point b1;
-	cv::Point b2;
+	void updateMassCenter(cv::KeyPoint point);
+	void updateBoundingBox(cv::KeyPoint point);
+
+private:
+	std::vector<cv::KeyPoint> keyPoints;
+	cv::KeyPoint massCenter;
+
+	cv::Point start;
+	cv::Point end;
 
 };
 
-#endif /* POLE_H_ */
+#endif /* CLUSTER_H_ */

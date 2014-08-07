@@ -21,27 +21,33 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <sstream>
-
-#include "Dispatcher.h"
+#include "DetectorLogic.h"
 #include "ObjectClassificator.h"
+
+#include <c_tracking/NamedPolygon.h>
 
 namespace enc = sensor_msgs::image_encodings;
 
-Dispatcher::Dispatcher(ros::NodeHandle& n, ParameterServer& parameterServer) :
+using namespace std;
+using namespace cv;
+
+DetectorLogic::DetectorLogic(ros::NodeHandle& n,
+			ParameterServer& parameterServer) :
 			n(n), it(n), detector(parameterServer), viewer("Detected Image"),
 			classifierParam(parameterServer.getClassifierParams())
 {
 	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
-				&Dispatcher::handleNavdata, this);
+				&DetectorLogic::handleNavdata, this);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
-				&Dispatcher::handleImage, this);
+				&DetectorLogic::handleImage, this);
+
+	detectionPublisher = n.advertise<c_tracking::NamedPolygon>("to_track", 10);
+
 	connectToClassificationServer();
 
 }
 
-void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
+void DetectorLogic::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 {
 	/*
 	 *	X axis outgoing from the drone camera, opposite convention wrt ardrone autonomy driver
@@ -53,7 +59,7 @@ void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 	rotZ = navdata.rotZ;
 }
 
-void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
+void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
 
 	cv_bridge::CvImagePtr cv_ptr;
@@ -73,23 +79,20 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 
 }
 
-void Dispatcher::detect(const cv_bridge::CvImagePtr& cv_ptr)
+void DetectorLogic::detect(const cv_bridge::CvImagePtr& cv_ptr)
 {
 	detector.setRoll(rotX);
 	detector.setPitch(rotY);
 	detector.setYaw(rotZ);
-	detector.detect(cv_ptr->image);
+	detector.detectRectangles(cv_ptr->image);
 }
 
-void Dispatcher::classify()
+void DetectorLogic::classify()
 {
 	c_fuzzy::Classification serviceCall;
 
 	ObjectClassificator classificator(serviceCall, classifierParam);
 	classificator.processFeatures(detector.getRectangles());
-	//TODO no cluster detection...
-	//classificator.processFeatures(detector.getPoles());
-	//classificator.processFeatures(detector.getClusters());
 
 	if (classificationService.isValid())
 	{
@@ -104,9 +107,35 @@ void Dispatcher::classify()
 
 	classificator.labelFeatures();
 
+	const vector<vector<Point> >& features = classificator.getGoodFeatures();
+
+	sendFeatures(features);
+
 }
 
-void Dispatcher::display(const cv_bridge::CvImagePtr& cv_ptr)
+void DetectorLogic::sendFeatures(const vector<vector<Point> >& features)
+{
+	for (vector<vector<Point> >::const_iterator i = features.begin();
+				i != features.end(); ++i)
+	{
+		const vector<Point>& polygon = *i;
+
+		c_tracking::NamedPolygon message;
+		for (int i = 0; i < polygon.size(); i++)
+		{
+			geometry_msgs::Point32 point;
+			point.x = polygon[i].x;
+			point.y = polygon[i].y;
+			point.z = 0;
+
+			message.polygon.points.push_back(point);
+		}
+
+		detectionPublisher.publish(message);
+	}
+}
+
+void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
 {
 	viewer.setClusters(detector.getClusters());
 	viewer.setRectangles(detector.getRectangles());
@@ -117,7 +146,7 @@ void Dispatcher::display(const cv_bridge::CvImagePtr& cv_ptr)
 	detector.deleteDetections();
 }
 
-void Dispatcher::connectToClassificationServer()
+void DetectorLogic::connectToClassificationServer()
 {
 	classificationService = n.serviceClient<c_fuzzy::Classification>(
 				"classification", true);

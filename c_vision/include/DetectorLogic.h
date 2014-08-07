@@ -21,8 +21,8 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DISPATCHER_H_
-#define DISPATCHER_H_
+#ifndef DETECTORLOGIC_H_
+#define DETECTORLOGIC_H_
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
@@ -35,11 +35,10 @@
 #include "CognitiveDetector.h"
 #include "ImageView.h"
 
-
-class Dispatcher
+class DetectorLogic
 {
 public:
-	Dispatcher(ros::NodeHandle& n, ParameterServer& parameterServer);
+	DetectorLogic(ros::NodeHandle& n, ParameterServer& parameterServer);
 	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 
@@ -48,15 +47,18 @@ private:
 	void detect(const cv_bridge::CvImagePtr& cv_ptr);
 	void classify();
 	void display(const cv_bridge::CvImagePtr& cv_ptr);
+	void sendFeatures(const std::vector<std::vector<cv::Point> >& features);
 
 private:
 	//Ros management
 	ros::NodeHandle& n;
 	image_transport::ImageTransport it;
+
 	ros::Subscriber navdataSubscriber;
 	image_transport::Subscriber imageSubscriber;
 	ros::ServiceClient classificationService;
 
+	ros::Publisher detectionPublisher;
 
 	//Data needed to detect objects
 	double rotX, rotY, rotZ;
@@ -69,4 +71,4 @@ private:
 	ClassifierParam& classifierParam;
 };
 
-#endif /* DISPATCHER_H_ */
+#endif /* DETECTORLOGIC_H_ */

@@ -82,12 +82,20 @@ void Cluster::updateBoundingBox(KeyPoint point)
 
 }
 
+std::vector<cv::Point> Cluster::getPointsVector()
+{
+	std::vector<cv::Point> points;
+	points.push_back(start);
+	points.push_back(end); //TODO compute correct square?
+	return points;
+}
+
 void Cluster::setFeature()
 {
 	massCenter.pt.x /= massCenter.size;
 	massCenter.pt.y /= massCenter.size;
 
-	featureMap["x"] =  massCenter.pt.x;
+	featureMap["x"] = massCenter.pt.x;
 	featureMap["y"] = massCenter.pt.y;
 	featureMap["size"] = massCenter.size;
 }

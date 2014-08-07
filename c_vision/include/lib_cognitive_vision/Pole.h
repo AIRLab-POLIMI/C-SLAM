@@ -21,26 +21,29 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RECTANGLE_H_
-#define RECTANGLE_H_
+#ifndef POLE_H_
+#define POLE_H_
+
+#include <vector>
 
 #include "Feature.h"
 
-class Rectangle: public Feature
+class Pole: public Feature
 {
+
 public:
-	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w);
-	std::vector<cv::Point> getPointsVector();
+	Pole(cv::Point a1, cv::Point a2, cv::Point b1, cv::Point b2);
+	virtual std::vector<cv::Point> getPointsVector();
+
 	virtual cv::Point getCenter();
 	virtual void setFeature();
 
-
 private:
-	cv::Point x;
-	cv::Point y;
-	cv::Point z;
-	cv::Point w;
+	cv::Point a1;
+	cv::Point a2;
+	cv::Point b1;
+	cv::Point b2;
 
 };
 
-#endif /* RECTANGLE_H_ */
+#endif /* POLE_H_ */

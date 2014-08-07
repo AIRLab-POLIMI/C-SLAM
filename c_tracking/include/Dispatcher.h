@@ -34,8 +34,6 @@
 #include <c_tracking/NamedPolygon.h>
 #include <c_tracking/TrackedObject.h>
 
-#include "RobotPose.h"
-#include "WorldMap.h"
 #include "CMT.h"
 #include "CMTFeatureExtractor.h"
 
@@ -50,9 +48,10 @@ public:
 				const c_tracking::NamedPolygon& polygonMessage);
 
 private:
-	void publishTrack(const std::vector<cv::Point2f>& polygon, const cv::Rect& roi);
+	void publishTrack(const std::vector<cv::Point2f>& polygon,
+				const cv::Rect& roi);
 	void getPolygon(const c_tracking::NamedPolygon& polygonMessage,
-					std::vector<cv::Point2f>& polygon);
+				std::vector<cv::Point2f>& polygon);
 	cv::Rect findRoi(const std::vector<cv::Point2f>& polygon, cv::Mat& image);
 
 private:
@@ -66,9 +65,8 @@ private:
 private:
 	//Ros management
 	ros::NodeHandle& n;
-
 	image_transport::ImageTransport it;
-	ros::Subscriber navdataSubscriber;
+
 	ros::Subscriber toTrackSubscriber;
 	image_transport::CameraSubscriber imageSubscriber;
 
@@ -83,10 +81,6 @@ private:
 	//Tracks
 	CMTFeatureExtractor featureExtractor;
 	std::vector<CMT> tracks;
-
-	//robot Pose and map
-	RobotPose pose;
-	WorldMap map;
 
 	//Odometry Data
 	double rotX, rotY, rotZ;

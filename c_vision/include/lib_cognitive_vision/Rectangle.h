@@ -21,46 +21,26 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLUSTER_H_
-#define CLUSTER_H_
+#ifndef RECTANGLE_H_
+#define RECTANGLE_H_
 
 #include "Feature.h"
 
-class Cluster: public Feature
+class Rectangle: public Feature
 {
 public:
-	Cluster();
-
-	void add(cv::KeyPoint point);
-
-	void draw(cv::Mat& frame, cv::Scalar color) const;
-
+	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w);
+	virtual std::vector<cv::Point> getPointsVector();
 	virtual cv::Point getCenter();
-
-
-	inline cv::KeyPoint getMassCenter() const
-	{
-		return massCenter;
-	}
-
-	inline std::vector<cv::KeyPoint> getKeyPoints()
-	{
-		return keyPoints;
-	}
-
 	virtual void setFeature();
 
-private:
-	void updateMassCenter(cv::KeyPoint point);
-	void updateBoundingBox(cv::KeyPoint point);
 
 private:
-	std::vector<cv::KeyPoint> keyPoints;
-	cv::KeyPoint massCenter;
-
-	cv::Point start;
-	cv::Point end;
+	cv::Point x;
+	cv::Point y;
+	cv::Point z;
+	cv::Point w;
 
 };
 
-#endif /* CLUSTER_H_ */
+#endif /* RECTANGLE_H_ */

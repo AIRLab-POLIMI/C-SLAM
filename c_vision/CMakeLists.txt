@@ -7,23 +7,40 @@ project(c_vision)
 
 catkin_package()
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include 
+					include/lib_cognitive_vision
+					${catkin_INCLUDE_DIRS})
+					
+set(LIB_VISION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_cognitive_vision)
+
+
+#build the cognitive vision library
+add_library(cognitive_vision STATIC
+			${LIB_VISION_SOURCE_DIR}/ParameterServer.cpp
+            ${LIB_VISION_SOURCE_DIR}/Cluster.cpp
+			${LIB_VISION_SOURCE_DIR}/CognitiveDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/DBSCAN.cpp
+            ${LIB_VISION_SOURCE_DIR}/ClusterDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/HighLevelDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/LineDetector.cpp 
+			${LIB_VISION_SOURCE_DIR}/ImageView.cpp 
+			${LIB_VISION_SOURCE_DIR}/LineFilter.cpp
+			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp
+			${LIB_VISION_SOURCE_DIR}/Pole.cpp
+			${LIB_VISION_SOURCE_DIR}/Rectangle.cpp)
 
 #build the recognition node
-add_executable(cognitive_vision src/ParameterServer.cpp
-                                src/Cluster.cpp
-                                src/CognitiveDetector.cpp
-                                src/DBSCAN.cpp
-                                src/Dispatcher.cpp  
-                                src/ClusterDetector.cpp
-                                src/HighLevelDetector.cpp
-                                src/LineDetector.cpp 
-                                src/ImageView.cpp 
-                                src/LineFilter.cpp
-                                src/main.cpp
-                                src/ObjectClassificator.cpp
-                                src/Pole.cpp
-                                src/Rectangle.cpp)
+add_executable(c_vision_detector src/DetectorLogic.cpp 
+                                 src/Detector.cpp)
+                                 
+#build the mapping and localization node
+add_executable(c_vision_slam src/SLAM.cpp)
 
-#link libriaries
-target_link_libraries(cognitive_vision ${catkin_LIBRARIES})
+#link libraries
+target_link_libraries(c_vision_detector cognitive_vision 
+					  					${catkin_LIBRARIES})
+					  					
+target_link_libraries(c_vision_slam cognitive_vision 
+					  				${catkin_LIBRARIES})
+					  					
+					  					
