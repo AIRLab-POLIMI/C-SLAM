@@ -61,7 +61,7 @@ private:
 private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
-	static const int polesFormFactor = 20;
+	static const int polesFormFactor = 6;
 
 };
 

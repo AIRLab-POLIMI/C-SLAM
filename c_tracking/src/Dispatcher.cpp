@@ -74,7 +74,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
-		CMT& track = tracks[i];
+		Track& track = tracks[i];
 		Mat& grayImage = cv_ptr->image;
 		track.processFrame(grayImage, keypoints, features);
 
@@ -115,9 +115,10 @@ void Dispatcher::handleObjectTrackRequest(
 
 		//setup tracker
 		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
-		CMT cmt;
-		cmt.initialize(cv_ptr->image, data);
-		tracks.push_back(cmt);
+		Track track;
+		track.initialize(cv_ptr->image, data);
+		track.setLabel(polygonMessage.polygonLabel);
+		tracks.push_back(track);
 
 	}
 	catch (runtime_error& e)
@@ -128,9 +129,9 @@ void Dispatcher::handleObjectTrackRequest(
 
 bool Dispatcher::isTrackedObject(vector<Point2f>& polygon, Point2f& massCenter)
 {
-	for (vector<CMT>::iterator it = tracks.begin(); it != tracks.end(); ++it)
+	for (vector<Track>::iterator it = tracks.begin(); it != tracks.end(); ++it)
 	{
-		CMT& track = *it;
+		Track& track = *it;
 		if (isSameObject(track, polygon, massCenter))
 		{
 			return true;
@@ -140,23 +141,22 @@ bool Dispatcher::isTrackedObject(vector<Point2f>& polygon, Point2f& massCenter)
 	return false;
 }
 
-bool Dispatcher::isSameObject(CMT& track, std::vector<cv::Point2f>& polygon,
-			cv::Point2f& massCenter)
+bool Dispatcher::isSameObject(Track& track, vector<Point2f>& polygon,
+			Point2f& massCenter)
 {
-	try
-	{
-		bool insideTrack = pointPolygonTest(track.getTrackedPolygon(),
-					massCenter, false) >= 0;
-		bool insideObject = pointPolygonTest(polygon, track.getObjectCenter(),
-					false) >= 0;
-
-		return insideTrack || insideObject;
-	}
-	catch (Exception& e)
-	{
-		ROS_WARN("Bad polygon");
+	if (!track.found())
 		return false;
-	}
+
+	const vector<Point2f>& trackedPolygon = track.getTrackedPolygon();
+	const Point2f& trackedCenter = track.getObjectCenter();
+
+	if (trackedPolygon.size() < 3)
+		return false;
+
+	bool insideTrack = pointPolygonTest(trackedPolygon, massCenter, false) >= 0;
+	bool insideObject = pointPolygonTest(polygon, trackedCenter, false) >= 0;
+
+	return insideTrack || insideObject;
 }
 
 void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
@@ -174,7 +174,7 @@ void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
 
 	massCenter *= 1.0 / polygon.size();
 
-//scale polygon
+	//scale polygon
 	for (int i = 0; i < polygon.size(); i++)
 	{
 		Point2f& cp = polygon[i];
@@ -230,7 +230,7 @@ Rect Dispatcher::findRoi(const vector<Point2f>& polygon, Mat& image)
 	return Rect(x, y, w, h);
 }
 
-void Dispatcher::drawResults(Mat& coloredImage, const Rect& roi, CMT& track)
+void Dispatcher::drawResults(Mat& coloredImage, const Rect& roi, Track& track)
 {
 	const vector<pair<KeyPoint, int> >& trackedKeypoints =
 				track.getTrackedKeypoints();
@@ -242,6 +242,8 @@ void Dispatcher::drawResults(Mat& coloredImage, const Rect& roi, CMT& track)
 	drawPolygon(coloredImage, polygon, Scalar(255, 255, 255));
 	drawKeypoints(coloredImage, trackedKeypoints, Scalar(255, 255, 255));
 	drawKeypoints(coloredImage, activeKeypoints, Scalar(255, 0, 0));
+	putText(coloredImage, track.getLabel(), track.getObjectCenter(),
+				FONT_HERSHEY_SIMPLEX, 0.4, Scalar(255, 255, 255));
 }
 
 void Dispatcher::drawPolygon(Mat& frame, const vector<Point2f>& polygon,

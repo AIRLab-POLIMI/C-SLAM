@@ -107,20 +107,24 @@ void DetectorLogic::classify()
 
 	classificator.labelFeatures();
 
-	const vector<vector<Point> >& features = classificator.getGoodFeatures();
+	const vector<pair<vector<Point>, string> >& features = classificator.getGoodFeatures();
 
 	sendFeatures(features);
 
 }
 
-void DetectorLogic::sendFeatures(const vector<vector<Point> >& features)
+void DetectorLogic::sendFeatures(const vector<pair<vector<Point>, string> >& features)
 {
-	for (vector<vector<Point> >::const_iterator i = features.begin();
+	for (vector<pair<vector<Point>, string> >::const_iterator i = features.begin();
 				i != features.end(); ++i)
 	{
-		const vector<Point>& polygon = *i;
+		const vector<Point>& polygon = i->first;
+		const string& name = i->second;
 
 		c_tracking::NamedPolygon message;
+
+		message.polygonLabel = name;
+
 		for (int i = 0; i < polygon.size(); i++)
 		{
 			geometry_msgs::Point32 point;

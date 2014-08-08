@@ -113,8 +113,8 @@ bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 	getPointsCoordinates(l2, p2, p3);
 
 	//calculate the average dx and dy
-	dx = max(abs(p0.x - p2.x), abs(p1.x - p3.x));
-	dy = max(abs(p0.y - p1.y), abs(p2.y - p3.y));
+	dx = max(norm(p0 - p2), norm(p1 - p3));
+	dy = max(norm(p0 - p1), norm(p2 - p3));
 
 	if (dy / dx > polesFormFactor)
 	{
@@ -154,8 +154,8 @@ bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 
 bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
 {
-	const double low = -0.5;
-	const double high = 1.5;
+	const double low = -0.45;
+	const double high = 1.45;
 	return (a1 >= low) && (a1 <= high) && (a2 >= low) && (a2 <= high);
 }
 

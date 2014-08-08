@@ -86,16 +86,18 @@ void ObjectClassificator::labelFeatures()
 
 }
 
-vector<vector<cv::Point> > ObjectClassificator::getGoodFeatures()
+vector<pair<vector<cv::Point>, string> > ObjectClassificator::getGoodFeatures()
 {
-	vector<vector<cv::Point> > good;
+	vector<pair<vector<cv::Point>, string> > good;
 
 	for (map<size_t, Feature*>::iterator it = featureMap.begin();
 				it != featureMap.end(); ++it)
 	{
 		Feature& feature = *it->second;
-		if(feature.isInteresting())
-			good.push_back(feature.getPointsVector());
+		if (feature.isInteresting())
+			good.push_back(
+						std::make_pair(feature.getPointsVector(),
+									feature.featureName()));
 	}
 
 	return good;

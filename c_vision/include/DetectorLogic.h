@@ -47,7 +47,8 @@ private:
 	void detect(const cv_bridge::CvImagePtr& cv_ptr);
 	void classify();
 	void display(const cv_bridge::CvImagePtr& cv_ptr);
-	void sendFeatures(const std::vector<std::vector<cv::Point> >& features);
+	void sendFeatures(
+				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features);
 
 private:
 	//Ros management

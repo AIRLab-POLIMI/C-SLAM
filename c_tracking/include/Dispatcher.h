@@ -34,7 +34,7 @@
 #include <c_tracking/NamedPolygon.h>
 #include <c_tracking/TrackedObject.h>
 
-#include "CMT.h"
+#include "Track.h"
 #include "CMTFeatureExtractor.h"
 
 class Dispatcher
@@ -55,11 +55,11 @@ private:
 	cv::Rect findRoi(const std::vector<cv::Point2f>& polygon, cv::Mat& image);
 
 private:
-	bool isSameObject(CMT& track, std::vector<cv::Point2f>& polygon,
+	bool isSameObject(Track& track, std::vector<cv::Point2f>& polygon,
 				cv::Point2f& massCenter);
 	bool isTrackedObject(std::vector<cv::Point2f>& polygon,
 				cv::Point2f& massCenter);
-	void drawResults(cv::Mat& coloredImage, const cv::Rect& roi, CMT& track);
+	void drawResults(cv::Mat& coloredImage, const cv::Rect& roi, Track& track);
 	void drawPolygon(cv::Mat& frame, const std::vector<cv::Point2f>& contour,
 				cv::Scalar colour);
 	void drawKeypoints(cv::Mat& frame,
@@ -84,7 +84,7 @@ private:
 
 	//Tracks
 	CMTFeatureExtractor featureExtractor;
-	std::vector<CMT> tracks;
+	std::vector<Track> tracks;
 
 	//display
 	std::string src_window;

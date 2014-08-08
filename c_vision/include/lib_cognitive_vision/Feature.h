@@ -26,6 +26,7 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 
 #include <opencv2/features2d/features2d.hpp>
 
@@ -67,7 +68,33 @@ public:
 
 	inline bool isInteresting()
 	{
-		return featureMap.size() > 1;
+		return classifications.size() > 1;
+	}
+
+	inline std::string featureName()
+	{
+		std::string name;
+		double max = 0;
+
+		for (ClassificationMap::const_iterator it = beginClass();
+					it != endClass(); ++it)
+		{
+			double val = it->second;
+			const std::string& className = it->first;
+
+			if(notBaseClass(className) && val > max)
+			{
+				max = val;
+				name = className;
+			}
+		}
+
+		return name;
+	}
+
+	inline bool notBaseClass(const std::string& name)
+	{
+		return name != "Rectangle" && name != "Cluster" && name != "Pole";
 	}
 
 	virtual std::vector<cv::Point> getPointsVector() = 0;

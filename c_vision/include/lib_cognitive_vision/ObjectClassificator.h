@@ -40,7 +40,7 @@ public:
 
 	void labelFeatures();
 
-	std::vector<std::vector<cv::Point> > getGoodFeatures();
+	std::vector<std::pair<std::vector<cv::Point>, std::string> > getGoodFeatures();
 
 	template<class T>
 	void processFeatures(std::vector<T>* features)
