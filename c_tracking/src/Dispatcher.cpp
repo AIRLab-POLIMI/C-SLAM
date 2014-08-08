@@ -39,22 +39,10 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	trackPublisher = n.advertise<c_tracking::TrackedObject>("tracks", 1000);
 	imageSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
-	rotX = rotY = rotZ = 0;
+
 	src_window = "Cognitive Tracking";
 
 	namedWindow(src_window, CV_WINDOW_AUTOSIZE);
-}
-
-void Dispatcher::handleNavdata(const ardrone_autonomy::Navdata& navdata)
-{
-	/*
-	 *	X axis outgoing from the drone camera, opposite convention wrt ardrone autonomy driver
-	 *	Z axis upside
-	 *	Y axis to the left (TODO check)
-	 */
-	rotX = -navdata.rotX;
-	rotY = navdata.rotY;
-	rotZ = navdata.rotZ;
 }
 
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
@@ -62,7 +50,6 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg,
 {
 	cameraModel.fromCameraInfo(info_msg);
 
-	double currentRot = rotX;
 	cv_bridge::CvImagePtr cv_ptr_color;
 	Mat coloredImage;
 
@@ -114,16 +101,20 @@ void Dispatcher::handleObjectTrackRequest(
 			const c_tracking::NamedPolygon& polygonMessage)
 {
 	//if an image does not exist, return
-	if(cv_ptr.use_count() == 0)
+	if (cv_ptr.use_count() == 0)
 		return;
 
 	try
 	{
 		InitializationData data;
-		getPolygon(polygonMessage, data.polygon);
-		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
+		Point2f massCenter;
+		getPolygon(polygonMessage, data.polygon, massCenter);
+
+		if (isTrackedObject(data.polygon, massCenter))
+			return;
 
 		//setup tracker
+		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
 		CMT cmt;
 		cmt.initialize(cv_ptr->image, data);
 		tracks.push_back(cmt);
@@ -135,26 +126,59 @@ void Dispatcher::handleObjectTrackRequest(
 	}
 }
 
+bool Dispatcher::isTrackedObject(vector<Point2f>& polygon, Point2f& massCenter)
+{
+	for (vector<CMT>::iterator it = tracks.begin(); it != tracks.end(); ++it)
+	{
+		CMT& track = *it;
+		if (isSameObject(track, polygon, massCenter))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Dispatcher::isSameObject(CMT& track, std::vector<cv::Point2f>& polygon,
+			cv::Point2f& massCenter)
+{
+	try
+	{
+		bool insideTrack = pointPolygonTest(track.getTrackedPolygon(),
+					massCenter, false) >= 0;
+		bool insideObject = pointPolygonTest(polygon, track.getObjectCenter(),
+					false) >= 0;
+
+		return insideTrack || insideObject;
+	}
+	catch (Exception& e)
+	{
+		ROS_WARN("Bad polygon");
+		return false;
+	}
+}
+
 void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
-			vector<Point2f>& polygon)
+			vector<Point2f>& polygon, Point2f& massCenter)
 {
 	const geometry_msgs::Polygon& p = polygonMessage.polygon;
-	Point2f c(0, 0);
+
 	for (int i = 0; i < p.points.size(); i++)
 	{
 		geometry_msgs::Point32 point = p.points[i];
 		Point2f cp(point.x, point.y);
 		polygon.push_back(cp);
-		c += cp;
+		massCenter += cp;
 	}
 
-	c *= 1.0 / polygon.size();
+	massCenter *= 1.0 / polygon.size();
 
-	//scale polygon
+//scale polygon
 	for (int i = 0; i < polygon.size(); i++)
 	{
 		Point2f& cp = polygon[i];
-		cp = (1.1 * (cp - c)) + c;
+		cp = (1.1 * (cp - massCenter)) + massCenter;
 	}
 }
 

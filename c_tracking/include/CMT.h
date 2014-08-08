@@ -58,6 +58,11 @@ public:
 		return activeKeypoints;
 	}
 
+	inline const cv::Point2f& getObjectCenter() const
+	{
+		return objCenter;
+	}
+
 	virtual ~CMT();
 
 private:

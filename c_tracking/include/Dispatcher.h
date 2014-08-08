@@ -51,10 +51,14 @@ private:
 	void publishTrack(const std::vector<cv::Point2f>& polygon,
 				const cv::Rect& roi);
 	void getPolygon(const c_tracking::NamedPolygon& polygonMessage,
-				std::vector<cv::Point2f>& polygon);
+				std::vector<cv::Point2f>& polygon, cv::Point2f& massCenter);
 	cv::Rect findRoi(const std::vector<cv::Point2f>& polygon, cv::Mat& image);
 
 private:
+	bool isSameObject(CMT& track, std::vector<cv::Point2f>& polygon,
+				cv::Point2f& massCenter);
+	bool isTrackedObject(std::vector<cv::Point2f>& polygon,
+				cv::Point2f& massCenter);
 	void drawResults(cv::Mat& coloredImage, const cv::Rect& roi, CMT& track);
 	void drawPolygon(cv::Mat& frame, const std::vector<cv::Point2f>& contour,
 				cv::Scalar colour);
@@ -81,9 +85,6 @@ private:
 	//Tracks
 	CMTFeatureExtractor featureExtractor;
 	std::vector<CMT> tracks;
-
-	//Odometry Data
-	double rotX, rotY, rotZ;
 
 	//display
 	std::string src_window;
