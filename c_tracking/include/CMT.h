@@ -35,12 +35,13 @@ class CMT
 public:
 	CMT();
 	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
-	virtual void processFrame(const cv::Mat& im_gray, std::vector<cv::KeyPoint>& keypoints,
-				cv::Mat& features);
+	virtual void processFrame(const cv::Mat& im_gray,
+				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features);
 
 	inline bool found() const
 	{
-		return !(isnan(objCenter.x) || isnan(objCenter.y));
+		return !(isnan(objCenter.x) || isnan(objCenter.y))
+					&& trackedPolygon.size() > 0;
 	}
 
 	inline const std::vector<cv::Point2f>& getTrackedPolygon() const

@@ -26,6 +26,7 @@
 
 #include <image_transport/image_transport.h>
 #include <image_transport/camera_subscriber.h>
+#include <cv_bridge/cv_bridge.h>
 #include <message_filters/cache.h>
 #include <image_geometry/pinhole_camera_model.h>
 #include <c_tracking/TrackedObject.h>
@@ -39,6 +40,14 @@ public:
 	void handleCamera(const sensor_msgs::ImageConstPtr& msg,
 				const sensor_msgs::CameraInfoConstPtr& info_msg);
 	void handleTrack(const c_tracking::TrackedObject& track);
+
+private:
+	void getImageData(const c_tracking::TrackedObject& track,
+				cv_bridge::CvImagePtr& cv_ptr,
+				cv_bridge::CvImagePtr& cv_ptr_color,
+				image_geometry::PinholeCameraModel& cameraModel);
+	void getRoi(const c_tracking::TrackedObject& track, cv::Mat& input,
+				cv::Rect& roi, cv::Mat& image);
 
 private:
 	//Ros management

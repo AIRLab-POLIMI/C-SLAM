@@ -452,14 +452,16 @@ void CMT::track(const Mat& im_gray, int THR_FB)
 
 		//Set status depending on fb_err and lk error
 		for (int i = 0; i < status.size(); i++)
-			status[i] = fb_err[i] <= THR_FB & status[i];
+			status[i] = fb_err[i] <= THR_FB && status[i];
 
 		for (int i = 0; i < pts.size(); i++)
 		{
 			pair<KeyPoint, int> p = activeKeypoints[i];
-			if (status[i])
+			if (status[i]) //TODO error
+			{
 				p.first.pt = nextPts[i];
-			trackedKeypoints.push_back(p);
+				trackedKeypoints.push_back(p);
+			}
 		}
 	}
 

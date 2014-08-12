@@ -61,22 +61,20 @@ void DetectorLogic::handleNavdata(const ardrone_autonomy::Navdata& navdata)
 
 void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
-
-	cv_bridge::CvImagePtr cv_ptr;
 	try
 	{
+		cv_bridge::CvImagePtr cv_ptr;
 		cv_ptr = cv_bridge::toCvCopy(msg, enc::BGR8);
+
+		detect(cv_ptr);
+		classify();
+		display(cv_ptr);
+
 	}
 	catch (cv_bridge::Exception& e)
 	{
 		ROS_ERROR("cv_bridge exception: %s", e.what());
-		return;
 	}
-
-	detect(cv_ptr);
-	classify();
-	display(cv_ptr);
-
 }
 
 void DetectorLogic::detect(const cv_bridge::CvImagePtr& cv_ptr)
@@ -107,16 +105,18 @@ void DetectorLogic::classify()
 
 	classificator.labelFeatures();
 
-	const vector<pair<vector<Point>, string> >& features = classificator.getGoodFeatures();
+	const vector<pair<vector<Point>, string> >& features =
+				classificator.getGoodFeatures();
 
 	sendFeatures(features);
 
 }
 
-void DetectorLogic::sendFeatures(const vector<pair<vector<Point>, string> >& features)
+void DetectorLogic::sendFeatures(
+			const vector<pair<vector<Point>, string> >& features)
 {
-	for (vector<pair<vector<Point>, string> >::const_iterator i = features.begin();
-				i != features.end(); ++i)
+	for (vector<pair<vector<Point>, string> >::const_iterator i =
+				features.begin(); i != features.end(); ++i)
 	{
 		const vector<Point>& polygon = i->first;
 		const string& name = i->second;
