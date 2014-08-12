@@ -39,10 +39,15 @@ class FuzzyClass
 public:
 	FuzzyClass(std::string name, FuzzyClass* superClass,
 				VariableList* variables, ConstantList* constants,
-				FuzzyFeatureList* features, bool important) :
+				FuzzyFeatureList* features, bool hidden) :
 				name(name), superClass(superClass), variables(variables),
-				constants(constants), features(features), important(important)
+				constants(constants), features(features), hidden(hidden)
 	{
+	}
+
+	inline bool isHidden()
+	{
+		return hidden;
 	}
 
 	inline bool isTrivial()
@@ -107,7 +112,7 @@ private:
 	VariableList* variables;
 	ConstantList* constants;
 	FuzzyFeatureList* features;
-	bool important;
+	bool hidden;
 };
 
 #endif /* FUZZYCLASS_H_ */

@@ -11,18 +11,12 @@
 	<url>http://ros.org/wiki/c_tracking</url>
 
 	<build_depend>roscpp</build_depend>
-	
 	<build_depend>opencv2</build_depend>
 	<build_depend>cv_bridge</build_depend>
-	
 	<build_depend>image_transport</build_depend>
-	<build_depend>image_geometry</build_depend>
-	<build_depend>ardrone_autonomy</build_depend>
-	
 	<build_depend>tf</build_depend>
-	
 	<build_depend>message_generation</build_depend>
-    
+  
     <run_depend>message_runtime</run_depend>
 
 	<buildtool_depend>catkin</buildtool_depend>

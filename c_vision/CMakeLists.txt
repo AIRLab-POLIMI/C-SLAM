@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-find_package(catkin REQUIRED COMPONENTS roscpp cv_bridge image_transport)
+find_package(catkin REQUIRED COMPONENTS roscpp 
+										cv_bridge 
+										image_transport
+										image_geometry)
 find_package(OpenCV REQUIRED)
 
 project(c_vision)
@@ -34,7 +37,8 @@ add_executable(c_vision_detector src/DetectorLogic.cpp
                                  src/Detector.cpp)
                                  
 #build the mapping and localization node
-add_executable(c_vision_slam src/SLAM.cpp)
+add_executable(c_vision_slam src/SLAM.cpp
+							 src/SLAMLogic.cpp)
 
 #link libraries
 target_link_libraries(c_vision_detector cognitive_vision 
@@ -42,5 +46,8 @@ target_link_libraries(c_vision_detector cognitive_vision
 					  					
 target_link_libraries(c_vision_slam cognitive_vision 
 					  				${catkin_LIBRARIES})
+					  				
+#avoid tf and filters warnings
+add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
 					  					
 					  					

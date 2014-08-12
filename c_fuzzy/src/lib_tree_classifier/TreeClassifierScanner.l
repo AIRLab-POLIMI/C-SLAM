@@ -69,7 +69,7 @@ UNDERSCORE [_]
 "end_variables"|"END_VARIABLES"  { return tc::TreeClassifierParser::make_END_VARIABLES(loc); }
 "constants"|"CONSTANTS"  { return tc::TreeClassifierParser::make_CONSTANTS(loc); }
 "end_constants"|"END_CONSTANTS"  { return tc::TreeClassifierParser::make_END_CONSTANTS(loc); }
-"important"|"IMPORTANT" { return tc::TreeClassifierParser::make_IMPORTANT(loc); }
+"hidden"|"HIDDEN" { return tc::TreeClassifierParser::make_HIDDEN(loc); }
 "extends"|"EXTENDS" { return tc::TreeClassifierParser::make_EXTENDS(loc); }
 "=" { return tc::TreeClassifierParser::make_EQUAL(loc); }
 "," { return tc::TreeClassifierParser::make_COMMA(loc); }

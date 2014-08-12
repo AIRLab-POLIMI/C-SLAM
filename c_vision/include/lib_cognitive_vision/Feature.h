@@ -68,7 +68,7 @@ public:
 
 	inline bool isInteresting()
 	{
-		return classifications.size() > 1;
+		return classifications.size() > 0;
 	}
 
 	inline std::string featureName()
@@ -82,7 +82,7 @@ public:
 			double val = it->second;
 			const std::string& className = it->first;
 
-			if(notBaseClass(className) && val > max)
+			if(val > max)
 			{
 				max = val;
 				name = className;
@@ -90,11 +90,6 @@ public:
 		}
 
 		return name;
-	}
-
-	inline bool notBaseClass(const std::string& name)
-	{
-		return name != "Rectangle" && name != "Cluster" && name != "Pole";
 	}
 
 	virtual std::vector<cv::Point> getPointsVector() = 0;

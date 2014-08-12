@@ -68,6 +68,8 @@ InstanceClassification ClassifierReasoner::run(double threshold)
 	table.clear();
 	inputs.clear();
 
+	deleteHidden(results);
+
 	return results;
 }
 
@@ -140,15 +142,16 @@ void ClassifierReasoner::classify(ClassList& classList, DepLists& deps,
 	ClassList::iterator end = classList.end();
 
 	if (begin != end && begin->second->isTrivial())
-		trivialClassify(begin, end, deps, data);
+		trivialClassify(begin, data);
 	else
 		recursiveClassify(begin, end, deps, data);
 }
 
 void ClassifierReasoner::trivialClassify(ClassList::iterator current,
-			ClassList::iterator end, DepLists& deps, ClassificationData& data)
+			ClassificationData& data)
 {
 	string className = current->first;
+	FuzzyClass* fuzzyClass = current->second;
 	ObjectList candidates = data.candidates[className];
 
 	for (ObjectList::iterator i = candidates.begin(); i != candidates.end();
@@ -157,7 +160,7 @@ void ClassifierReasoner::trivialClassify(ClassList::iterator current,
 		ObjectInstance* instance = *i;
 		ClassificationMap& instanceClassifications = data.results[instance->id];
 		instanceClassifications[className] = getMembershipLevel(instance->id,
-					className, 1.0, data);
+					fuzzyClass, 1.0, data);
 		table[className].insert(instance);
 	}
 
@@ -284,16 +287,17 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 								|| instanceClassifications[className]
 											< truthValue))
 		{
+			FuzzyClass* fuzzyClass = classifier.getClass(className);
 			instanceClassifications[className] = getMembershipLevel(
-						instance->id, className, truthValue, data);
+						instance->id, fuzzyClass, truthValue, data);
 			table[className].insert(instance);
 		}
 
 	}
 }
 
-double ClassifierReasoner::getMembershipLevel(size_t id, FuzzyClass* fuzzyClass, double level,
-			ClassificationData& data)
+double ClassifierReasoner::getMembershipLevel(size_t id, FuzzyClass* fuzzyClass,
+			double level, ClassificationData& data)
 {
 	const string& superClass = fuzzyClass->getSuperClassName();
 
@@ -308,10 +312,22 @@ double ClassifierReasoner::getMembershipLevel(size_t id, FuzzyClass* fuzzyClass,
 	}
 }
 
-double ClassifierReasoner::getMembershipLevel(size_t id, string& className,
-			double level, ClassificationData& data)
+void ClassifierReasoner::deleteHidden(InstanceClassification& results)
 {
-	return getMembershipLevel(id, classifier.getClass(className), level, data);
+	for (InstanceClassification::iterator i = results.begin();
+				i != results.end(); ++i)
+	{
+		ClassificationMap& classifications = i->second;
+		for (ClassificationMap::iterator j = classifications.begin();
+					j != classifications.end();)
+		{
+			FuzzyClass* fuzzyClass = classifier.getClass(j->first);
+			if (fuzzyClass->isHidden())
+				classifications.erase(j++);
+			else
+				++j;
+		}
+	}
 }
 
 bool ClassifierReasoner::hasBeenConsidered(ObjectInstance* instance,

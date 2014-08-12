@@ -273,7 +273,7 @@ namespace tc {
         value.move< VariableList* > (that.value);
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         value.move< bool > (that.value);
         break;
 
@@ -330,7 +330,7 @@ namespace tc {
         value.copy< VariableList* > (that.value);
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         value.copy< bool > (that.value);
         break;
 
@@ -603,7 +603,7 @@ namespace tc {
         yylhs.value.build< VariableList* > ();
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         yylhs.value.build< bool > ();
         break;
 
@@ -1279,11 +1279,11 @@ namespace tc {
   {
   "END", "error", "$undefined", "ID", "VAR_ID", "IS", "MATCH", "ON",
   "DEGREE", "CLASS", "VARIABLES", "END_VARIABLES", "CONSTANTS",
-  "END_CONSTANTS", "END_CLASS", "EXTENDS", "IMPORTANT", "PERIOD",
-  "SEMICOLON", "COMMA", "LPAR", "RPAR", "EQUAL", "$accept",
-  "fuzzyClassifiers", "fuzzyClass", "fuzzySuperclass", "importantFlag",
-  "fuzzyClassElements", "constants", "constantList", "variables",
-  "variableList", "fuzzyFeatures", "fuzzyFeature", "fuzzySimpleFeature",
+  "END_CONSTANTS", "END_CLASS", "EXTENDS", "HIDDEN", "PERIOD", "SEMICOLON",
+  "COMMA", "LPAR", "RPAR", "EQUAL", "$accept", "fuzzyClassifiers",
+  "fuzzyClass", "fuzzySuperclass", "hiddenFlag", "fuzzyClassElements",
+  "constants", "constantList", "variables", "variableList",
+  "fuzzyFeatures", "fuzzyFeature", "fuzzySimpleFeature",
   "fuzzySimpleRelation", "fuzzyComplexRelation", "fuzzyInverseRelation",
   "fuzzyConstraint", "fuzzyDegree", "var", YY_NULLPTR
   };

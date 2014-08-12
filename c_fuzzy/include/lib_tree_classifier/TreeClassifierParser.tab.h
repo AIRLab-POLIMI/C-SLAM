@@ -295,7 +295,7 @@ namespace tc {
       // variableList
       char dummy5[sizeof(VariableList*)];
 
-      // importantFlag
+      // hiddenFlag
       char dummy6[sizeof(bool)];
 
       // ID
@@ -347,7 +347,7 @@ namespace tc {
         END_CONSTANTS = 268,
         END_CLASS = 269,
         EXTENDS = 270,
-        IMPORTANT = 271,
+        HIDDEN = 271,
         PERIOD = 272,
         SEMICOLON = 273,
         COMMA = 274,
@@ -520,7 +520,7 @@ namespace tc {
 
     static inline
     symbol_type
-    make_IMPORTANT (const location_type& l);
+    make_HIDDEN (const location_type& l);
 
     static inline
     symbol_type
@@ -854,7 +854,7 @@ namespace tc {
         value.copy< VariableList* > (other.value);
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         value.copy< bool > (other.value);
         break;
 
@@ -913,7 +913,7 @@ namespace tc {
         value.copy< VariableList* > (v);
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         value.copy< bool > (v);
         break;
 
@@ -1042,7 +1042,7 @@ namespace tc {
         value.template destroy< VariableList* > ();
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         value.template destroy< bool > ();
         break;
 
@@ -1098,7 +1098,7 @@ namespace tc {
         value.move< VariableList* > (s.value);
         break;
 
-      case 27: // importantFlag
+      case 27: // hiddenFlag
         value.move< bool > (s.value);
         break;
 
@@ -1258,9 +1258,9 @@ namespace tc {
   }
 
    TreeClassifierParser ::symbol_type
-   TreeClassifierParser ::make_IMPORTANT (const location_type& l)
+   TreeClassifierParser ::make_HIDDEN (const location_type& l)
   {
-    return symbol_type (token::IMPORTANT, l);
+    return symbol_type (token::HIDDEN, l);
   }
 
    TreeClassifierParser ::symbol_type

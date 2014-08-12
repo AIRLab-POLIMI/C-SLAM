@@ -60,7 +60,7 @@ public:
 	FuzzyFeature* buildInverseRelation(std::vector<std::string>& labelList);
 	void buildClass(std::string name, std::string superClassName,
 			VariableList* variables, ConstantList* constants,
-			FuzzyFeatureList* featureList, bool important);
+			FuzzyFeatureList* featureList, bool hidden);
 
 private:
 	void checkConsistency();

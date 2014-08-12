@@ -190,7 +190,7 @@ FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 
 void TreeClassifierBuilder::buildClass(string name, string superClassName,
 			VariableList* variables, ConstantList* constants,
-			FuzzyFeatureList* featureList, bool important)
+			FuzzyFeatureList* featureList, bool hidden)
 {
 	variables = eventuallyInitialize(variables);
 	constants = eventuallyInitialize(constants);
@@ -201,7 +201,7 @@ void TreeClassifierBuilder::buildClass(string name, string superClassName,
 
 	checkSuperClass(name, superClassName, superClass);
 	FuzzyClass* fuzzyClass = new FuzzyClass(name, superClass, variables,
-				constants, featureList, important);
+				constants, featureList, hidden);
 	classifier->addClass(fuzzyClass);
 }
 

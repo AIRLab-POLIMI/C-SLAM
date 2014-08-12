@@ -26,7 +26,6 @@
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
-#include <image_geometry/pinhole_camera_model.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <ardrone_autonomy/Navdata.h>
@@ -41,15 +40,13 @@ class Dispatcher
 {
 public:
 	Dispatcher(ros::NodeHandle& n);
-	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
-	void handleImage(const sensor_msgs::ImageConstPtr& msg,
-				const sensor_msgs::CameraInfoConstPtr& info_msg);
+	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 	void handleObjectTrackRequest(
 				const c_tracking::NamedPolygon& polygonMessage);
 
 private:
 	void publishTrack(const std::vector<cv::Point2f>& polygon,
-				const cv::Rect& roi);
+				const cv::Rect& roi, ros::Time stamp);
 	void getPolygon(const c_tracking::NamedPolygon& polygonMessage,
 				std::vector<cv::Point2f>& polygon, cv::Point2f& massCenter);
 	cv::Rect findRoi(const std::vector<cv::Point2f>& polygon, cv::Mat& image);
@@ -68,16 +65,10 @@ private:
 
 private:
 	//Ros management
-	ros::NodeHandle& n;
 	image_transport::ImageTransport it;
-
+	image_transport::Subscriber imageSubscriber;
 	ros::Subscriber toTrackSubscriber;
-	image_transport::CameraSubscriber imageSubscriber;
-
 	ros::Publisher trackPublisher;
-
-	//camera model data
-	image_geometry::PinholeCameraModel cameraModel;
 
 	//Last image pointer
 	cv_bridge::CvImagePtr cv_ptr;

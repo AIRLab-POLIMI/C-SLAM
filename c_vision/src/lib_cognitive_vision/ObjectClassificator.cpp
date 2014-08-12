@@ -96,7 +96,7 @@ vector<pair<vector<cv::Point>, string> > ObjectClassificator::getGoodFeatures()
 		Feature& feature = *it->second;
 		if (feature.isInteresting())
 			good.push_back(
-						std::make_pair(feature.getPointsVector(),
+						make_pair(feature.getPointsVector(),
 									feature.featureName()));
 	}
 

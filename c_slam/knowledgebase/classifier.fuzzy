@@ -1,6 +1,6 @@
 /* Test classifier */
 
-CLASS Rectangle
+CLASS Rectangle HIDDEN
 	VARIABLES
 		xMin;
 		xMax;
@@ -11,7 +11,7 @@ CLASS Rectangle
 	END_VARIABLES
 END_CLASS
 
-CLASS Cluster
+CLASS Cluster HIDDEN
 	VARIABLES
 		x;
 		y;
@@ -33,7 +33,7 @@ CLASS CabinetDoor extends Rectangle
 	formFactor is Narrow;
 END_CLASS
 
-CLASS Door extends Rectangle IMPORTANT
+CLASS Door extends Rectangle
 	
 	CONSTANTS
 		height = High;

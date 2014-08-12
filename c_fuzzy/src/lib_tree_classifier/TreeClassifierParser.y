@@ -57,7 +57,7 @@
 %token END_CONSTANTS
 %token END_CLASS
 %token EXTENDS
-%token IMPORTANT
+%token HIDDEN
 
 %token PERIOD
 %token SEMICOLON
@@ -66,7 +66,7 @@
 %token RPAR
 %token EQUAL
 
-%type <bool> importantFlag
+%type <bool> hiddenFlag
 %type <std::string> var
 %type <std::string> fuzzySuperclass fuzzyConstraint fuzzyDegree
 %type <FuzzyFeatureData> fuzzyFeature;
@@ -83,7 +83,7 @@ fuzzyClassifiers	: fuzzyClass fuzzyClassifiers
 			| fuzzyClass
 			;
 
-fuzzyClass		: CLASS ID fuzzySuperclass importantFlag fuzzyClassElements fuzzyFeatures END_CLASS
+fuzzyClass		: CLASS ID fuzzySuperclass hiddenFlag fuzzyClassElements fuzzyFeatures END_CLASS
 			{
 				builder.buildClass($2, $3, $5.first, $5.second, $6, $4);
 			}
@@ -99,7 +99,7 @@ fuzzySuperclass		: EXTENDS ID
 			}
 			;
 
-importantFlag		: IMPORTANT 
+hiddenFlag		: HIDDEN 
 			{
 				$$ = true;
 			}

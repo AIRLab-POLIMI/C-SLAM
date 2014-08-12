@@ -61,8 +61,7 @@ private:
 	//classification
 	void classify(ClassList& classList, DepLists& deps,
 				ObjectListMap& candidates, InstanceClassification& results);
-	void trivialClassify(ClassList::iterator current, ClassList::iterator end,
-				DepLists& deps, ClassificationData& data);
+	void trivialClassify(ClassList::iterator current, ClassificationData& data);
 	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
 				DepLists& deps, ClassificationData& data);
 	void recursiveClassify(ClassList::iterator current, ClassList::iterator end,
@@ -72,9 +71,10 @@ private:
 	void setupReasoning(ClassificationData& data);
 	void runReasoning(ClassificationData& data);
 	double getMembershipLevel(size_t id, FuzzyClass* fuzzyClass, double level,
-					ClassificationData& data);
-	double getMembershipLevel(size_t id, std::string& className, double level,
 				ClassificationData& data);
+
+	//Flag management
+	void deleteHidden(InstanceClassification& results);
 
 	//tabu list management
 	bool hasBeenConsidered(ObjectInstance* instance, ClassificationData& data);
