@@ -457,7 +457,7 @@ void CMT::track(const Mat& im_gray, int THR_FB)
 		for (int i = 0; i < pts.size(); i++)
 		{
 			pair<KeyPoint, int> p = activeKeypoints[i];
-			if (status[i]) //TODO error
+			if (status[i])
 			{
 				p.first.pt = nextPts[i];
 				trackedKeypoints.push_back(p);
