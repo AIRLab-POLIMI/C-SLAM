@@ -47,7 +47,7 @@ private:
 				cv_bridge::CvImagePtr& cv_ptr_color,
 				image_geometry::PinholeCameraModel& cameraModel);
 	void getRoi(const c_tracking::TrackedObject& track, cv::Mat& input,
-				cv::Rect& roi, cv::Mat& image);
+				cv::Rect& roi, cv::Mat& image, cv::Mat& mask);
 
 private:
 	//Ros management

@@ -80,8 +80,6 @@ void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 void DetectorLogic::detect(const cv_bridge::CvImagePtr& cv_ptr)
 {
 	detector.setRoll(rotX);
-	detector.setPitch(rotY);
-	detector.setYaw(rotZ);
 	detector.detectRectangles(cv_ptr->image);
 }
 

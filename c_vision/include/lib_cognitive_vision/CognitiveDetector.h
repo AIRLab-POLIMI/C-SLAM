@@ -41,19 +41,9 @@ public:
 	void detect(cv::Mat& image);
 	void detectRectangles(cv::Mat& image);
 
-	inline void setPitch(double pitch)
-	{
-		this->pitch = pitch;
-	}
-
 	inline void setRoll(double roll)
 	{
 		this->roll = roll;
-	}
-
-	inline void setYaw(double yaw)
-	{
-		this->yaw = yaw;
 	}
 
 	std::vector<Cluster>* getClusters() const
@@ -84,9 +74,7 @@ private:
 	LineDetector lineDetector;
 
 	//envirorment data
-	double pitch;
 	double roll;
-	double yaw;
 
 	//last detections
 	std::vector<Rectangle>* rectangles;

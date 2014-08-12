@@ -32,9 +32,9 @@ CognitiveDetector::CognitiveDetector(ParameterServer& parameters) :
 			clusterDetector(parameters.getDBScanParams()),
 			lineDetector(parameters.getCannyParams(),
 						parameters.getHoughParams(),
-						parameters.getLFiltrerParams()),
-			pitch(0), roll(0), yaw(0)
+						parameters.getLFiltrerParams())
 {
+	roll = 0;
 	setToNull();
 }
 

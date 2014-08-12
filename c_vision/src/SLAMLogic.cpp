@@ -42,6 +42,7 @@ SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
 				&SLAMLogic::handleCamera, this);
 	trackSubscriber = n.subscribe("tracks", 100, &SLAMLogic::handleTrack, this);
 	namedWindow("test", CV_WINDOW_AUTOSIZE);
+	namedWindow("canny", CV_WINDOW_AUTOSIZE);
 }
 
 void SLAMLogic::handleCamera(const ImageConstPtr& msg,
@@ -53,7 +54,7 @@ void SLAMLogic::handleCamera(const ImageConstPtr& msg,
 
 void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 {
-	Mat coloredImage, objectImage;
+	Mat objectImage, mask;
 	Rect roi;
 	CvImagePtr cv_ptr, cv_ptr_color;
 	PinholeCameraModel cameraModel;
@@ -61,8 +62,8 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 	try
 	{
 		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
-		coloredImage = cv_ptr_color->image;
-		getRoi(track, coloredImage, roi, objectImage);
+		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
+
 		imshow("test", objectImage);
 		waitKey(1);
 	}
@@ -94,7 +95,7 @@ void SLAMLogic::getImageData(const c_tracking::TrackedObject& track,
 }
 
 void SLAMLogic::getRoi(const c_tracking::TrackedObject& track, Mat& input,
-			Rect& roi, Mat& image)
+			Rect& roi, Mat& image, Mat& mask)
 {
 	vector<Point> polygon;
 
@@ -111,13 +112,10 @@ void SLAMLogic::getRoi(const c_tracking::TrackedObject& track, Mat& input,
 	}
 
 	//get the roi
-	Mat tmp;
-	tmp = input(roi);
+	image = input(roi);
 
 	//create the mask and apply it
-	Mat mask(tmp.size(), CV_8UC1);
+	mask = Mat(image.size(), CV_8UC1);
 	mask.setTo(0);
 	fillConvexPoly(mask, polygon, 255, 8, 0);
-	tmp.copyTo(image, mask);
-
 }
