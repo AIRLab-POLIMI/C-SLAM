@@ -33,11 +33,13 @@ add_library(cognitive_vision STATIC
 			${LIB_VISION_SOURCE_DIR}/Rectangle.cpp)
 
 #build the recognition node
-add_executable(c_vision_detector src/DetectorLogic.cpp 
+add_executable(c_vision_detector src/BaseLogic.cpp
+								 src/DetectorLogic.cpp 
                                  src/Detector.cpp)
                                  
 #build the mapping and localization node
-add_executable(c_vision_slam src/SLAM.cpp
+add_executable(c_vision_slam src/BaseLogic.cpp
+						     src/SLAM.cpp
 							 src/SLAMLogic.cpp)
 
 #link libraries

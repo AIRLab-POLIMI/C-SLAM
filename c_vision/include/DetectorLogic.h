@@ -24,26 +24,23 @@
 #ifndef DETECTORLOGIC_H_
 #define DETECTORLOGIC_H_
 
-#include <ros/ros.h>
-#include <image_transport/image_transport.h>
+#include "BaseLogic.h"
+
+
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
-#include <ardrone_autonomy/Navdata.h>
-#include <c_fuzzy/Classification.h>
 
 #include "ParameterServer.h"
 #include "CognitiveDetector.h"
 #include "ImageView.h"
 
-class DetectorLogic
+class DetectorLogic : public BaseLogic
 {
 public:
 	DetectorLogic(ros::NodeHandle& n, ParameterServer& parameterServer);
-	void handleNavdata(const ardrone_autonomy::Navdata& navdata);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 
 private:
-	void connectToClassificationServer();
 	void detect(const cv_bridge::CvImagePtr& cv_ptr);
 	void classify();
 	void display(const cv_bridge::CvImagePtr& cv_ptr);
@@ -52,17 +49,9 @@ private:
 
 private:
 	//Ros management
-	ros::NodeHandle& n;
-	image_transport::ImageTransport it;
-
-	ros::Subscriber navdataSubscriber;
-	image_transport::Subscriber imageSubscriber;
-	ros::ServiceClient classificationService;
-
 	ros::Publisher detectionPublisher;
 
 	//Data needed to detect objects
-	double rotX, rotY, rotZ;
 	CognitiveDetector detector;
 
 	//Data needed to display results

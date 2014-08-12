@@ -43,7 +43,8 @@ public:
 
 	inline void setRoll(double roll)
 	{
-		this->roll = roll;
+		//The - is due to the different coordinate system from image and world
+		this->roll = -roll;
 	}
 
 	std::vector<Cluster>* getClusters() const

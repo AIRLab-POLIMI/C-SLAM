@@ -26,6 +26,7 @@
 
 #include <c_tracking/NamedPolygon.h>
 
+
 namespace enc = sensor_msgs::image_encodings;
 
 using namespace std;
@@ -33,30 +34,13 @@ using namespace cv;
 
 DetectorLogic::DetectorLogic(ros::NodeHandle& n,
 			ParameterServer& parameterServer) :
-			n(n), it(n), detector(parameterServer), viewer("Detected Image"),
+			BaseLogic(n), detector(parameterServer), viewer("Detected Image"),
 			classifierParam(parameterServer.getClassifierParams())
 {
-	navdataSubscriber = n.subscribe("/ardrone/navdata", 1,
-				&DetectorLogic::handleNavdata, this);
+	rotX = 0;
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
-
 	detectionPublisher = n.advertise<c_tracking::NamedPolygon>("to_track", 10);
-
-	connectToClassificationServer();
-
-}
-
-void DetectorLogic::handleNavdata(const ardrone_autonomy::Navdata& navdata)
-{
-	/*
-	 *	X axis outgoing from the drone camera, opposite convention wrt ardrone autonomy driver
-	 *	Z axis upside
-	 *	Y axis to the left (TODO check)
-	 */
-	rotX = -navdata.rotX;
-	rotY = navdata.rotY;
-	rotZ = navdata.rotZ;
 }
 
 void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
@@ -73,7 +57,7 @@ void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	}
 	catch (cv_bridge::Exception& e)
 	{
-		ROS_ERROR("cv_bridge exception: %s", e.what());
+		ROS_ERROR_STREAM("cv_bridge exception: " << e.what());
 	}
 }
 
@@ -147,10 +131,3 @@ void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
 
 	detector.deleteDetections();
 }
-
-void DetectorLogic::connectToClassificationServer()
-{
-	classificationService = n.serviceClient<c_fuzzy::Classification>(
-				"classification", true);
-}
-
