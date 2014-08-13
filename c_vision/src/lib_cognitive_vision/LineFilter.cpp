@@ -47,8 +47,8 @@ void LineFilter::filter(vector<Vec4i>& lines, double roll)
 	const double delta_max_horizontal = from_degrees(
 				filterP.maxDeltaHorizontal);
 
-	const double horizontal_line = from_degrees(roll);
-	const double vertical_line = from_degrees(roll + 90);
+	const double horizontal_line = roll;
+	const double vertical_line = roll + from_degrees(90);
 
 	for (size_t i = 0; i < lines.size(); i++)
 	{

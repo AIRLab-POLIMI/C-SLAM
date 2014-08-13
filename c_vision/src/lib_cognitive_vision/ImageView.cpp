@@ -68,8 +68,8 @@ void ImageView::drawAxis(Mat& input)
 	center.x = input.cols / 2;
 	center.y = input.rows / 2;
 
-	double offset1 = 50 * sin(roll * M_PI / 180.0);
-	double offset2 = 50 * cos(roll * M_PI / 180.0);
+	double offset1 = 50 * sin(roll);
+	double offset2 = 50 * cos(roll);
 
 	y1.x = center.x + offset2;
 	y1.y = center.y - offset1;
