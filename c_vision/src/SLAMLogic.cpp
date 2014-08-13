@@ -36,7 +36,7 @@ using namespace std;
 namespace enc = sensor_msgs::image_encodings;
 
 SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
-			it(n), infoCache(15), imageCache(15)
+			BaseLogic(n), infoCache(15), imageCache(15)
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&SLAMLogic::handleCamera, this);
@@ -114,7 +114,7 @@ void SLAMLogic::getRoi(const c_tracking::TrackedObject& track, Mat& input,
 	//get the roi
 	image = input(roi);
 
-	//create the mask and apply it
+	//create the mask
 	mask = Mat(image.size(), CV_8UC1);
 	mask.setTo(0);
 	fillConvexPoly(mask, polygon, 255, 8, 0);

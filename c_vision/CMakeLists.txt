@@ -12,9 +12,11 @@ catkin_package()
 
 include_directories(include 
 					include/lib_cognitive_vision
+					include/lib_metric_rectification
 					${catkin_INCLUDE_DIRS})
 					
 set(LIB_VISION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_cognitive_vision)
+set(LIB_RECTIFICATION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_metric_rectification)
 
 
 #build the cognitive vision library
@@ -31,6 +33,11 @@ add_library(cognitive_vision STATIC
 			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp
 			${LIB_VISION_SOURCE_DIR}/Pole.cpp
 			${LIB_VISION_SOURCE_DIR}/Rectangle.cpp)
+			
+#build the metric rectification library
+add_library(metric_rectification STATIC
+			${LIB_RECTIFICATION_SOURCE_DIR}/MetricRectification.cpp)
+			
 
 #build the recognition node
 add_executable(c_vision_detector src/BaseLogic.cpp

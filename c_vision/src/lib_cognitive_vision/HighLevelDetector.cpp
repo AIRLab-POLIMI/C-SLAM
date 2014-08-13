@@ -96,8 +96,12 @@ Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 	p = p / p[2];
 
 	//Calculate the linear combination parameters
-	a = (p[0] - p0[0]) / (p1[0] - p0[0]);
-	b = (p[1] - p2[1]) / (p3[1] - p2[1]);
+	double xnear, xfar;
+	double ynear, yfar;
+	orderPoints(p[0], p0[0], p1[0], xnear, xfar);
+	orderPoints(p[1], p2[1], p3[1], ynear, yfar);
+	a = (p[0] - xfar) / (xnear - xfar);
+	b = (p[1] - yfar) / (ynear - yfar);
 
 	return Point(p[0], p[1]);
 
@@ -154,8 +158,23 @@ bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 
 bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
 {
-	const double low = -0.45;
-	const double high = 1.45;
+	const double low = 0.6;
+	const double high = 1.4;
 	return (a1 >= low) && (a1 <= high) && (a2 >= low) && (a2 <= high);
+}
+
+void HighLevelDetector::orderPoints(double p, double p1, double p2,
+			double& pnear, double& pfar)
+{
+	if (abs(p - p1) > abs(p - p2))
+	{
+		pfar = p1;
+		pnear = p2;
+	}
+	else
+	{
+		pfar = p2;
+		pnear = p1;
+	}
 }
 

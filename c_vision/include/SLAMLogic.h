@@ -24,6 +24,8 @@
 #ifndef SLAMLOGIC_H_
 #define SLAMLOGIC_H_
 
+#include "BaseLogic.h"
+
 #include <image_transport/image_transport.h>
 #include <image_transport/camera_subscriber.h>
 #include <cv_bridge/cv_bridge.h>
@@ -33,7 +35,7 @@
 
 #include "ParameterServer.h"
 
-class SLAMLogic
+class SLAMLogic : public BaseLogic
 {
 public:
 	SLAMLogic(ros::NodeHandle n, ParameterServer& parameters);
@@ -51,7 +53,6 @@ private:
 
 private:
 	//Ros management
-	image_transport::ImageTransport it;
 	image_transport::CameraSubscriber cameraSubscriber;
 
 	message_filters::Cache<sensor_msgs::CameraInfo> infoCache;
