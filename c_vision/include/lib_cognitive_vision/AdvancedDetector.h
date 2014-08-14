@@ -2,7 +2,7 @@
  * c_vision,
  *
  *
- * Copyright (C) 2013 Davide Tateo
+ * Copyright (C) 2014 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_vision.
@@ -21,40 +21,35 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LINEDETECTOR_H_
-#define LINEDETECTOR_H_
+#ifndef ADVANCEDDETECTOR_H_
+#define ADVANCEDDETECTOR_H_
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include "BasicDetector.h"
 
-#include "ParameterServer.h"
-#include "ImageView.h"
+#include "ClusterDetector.h"
 
-class LineDetector
+class AdvancedDetector : public BasicDetector
 {
 public:
-	LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam& filterP);
-	void detect(cv::Mat& input, double roll, const cv::Mat& mask = cv::Mat());
+	AdvancedDetector(ParameterServer& parameters);
 
-	std::vector<cv::Vec4i>* getVerticalLines()
-	{
-		return verticalLines;
-	}
+	void detect(cv::Mat& image, cv::Mat& mask);
 
-	std::vector<cv::Vec4i>* getHorizontalLines()
+	virtual void deleteDetections();
+
+	std::vector<Cluster>* getClusters() const
 	{
-		return horizontalLines;
+		return clusters;
 	}
 
 private:
-	CannyParam& cannyP;
-	HoughParam& houghP;
-	LFilterParam& filterP;
+	//detectors
+	ClusterDetector clusterDetector;
 
-	std::vector<cv::Vec4i>* verticalLines;
-	std::vector<cv::Vec4i>* horizontalLines;
+	//last detections
+	std::vector<Cluster>* clusters;
 
-	ImageView viewer;
 };
 
-#endif /* LINEDETECTOR_H_ */
+
+#endif /* ADVANCEDDETECTOR_H_ */

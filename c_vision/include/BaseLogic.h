@@ -29,14 +29,17 @@
 #include <sensor_msgs/Imu.h>
 #include <c_fuzzy/Classification.h>
 
+#include "ParameterServer.h"
+
 class BaseLogic
 {
 public:
-	BaseLogic(ros::NodeHandle& n);
+	BaseLogic(ros::NodeHandle& n, ParameterServer& parameters);
 	void handleImu(const sensor_msgs::Imu& imu);
 
 protected:
 	void connectToClassificationServer();
+	void callClassificationService(c_fuzzy::Classification& serviceCall);
 
 protected:
 	//Ros management
@@ -49,6 +52,9 @@ protected:
 
 	//envirorment data
 	double rotX;
+
+	//parameters
+	ClassifierParam& classifierParam;
 };
 
 

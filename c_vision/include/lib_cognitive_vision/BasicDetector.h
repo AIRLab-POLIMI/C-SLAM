@@ -2,7 +2,7 @@
  * c_vision,
  *
  *
- * Copyright (C) 2013 Davide Tateo
+ * Copyright (C) 2014 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_vision.
@@ -21,35 +21,24 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COGNITIVEDETECTOR_H_
-#define COGNITIVEDETECTOR_H_
+#ifndef BASICDETECTOR_H_
+#define BASICDETECTOR_H_
+
+#include "LineDetector.h"
 
 #include <opencv2/core/core.hpp>
 
-#include "ParameterServer.h"
-#include "ClusterDetector.h"
-#include "LineDetector.h"
-#include "HighLevelDetector.h"
 
-#include "ImageView.h"
-
-class CognitiveDetector
+class BasicDetector
 {
 public:
-	CognitiveDetector(ParameterServer& parameters);
-
-	void detect(cv::Mat& image);
-	void detectRectangles(cv::Mat& image);
+	BasicDetector(ParameterServer& parameters);
+	virtual void deleteDetections();
 
 	inline void setRoll(double roll)
 	{
 		//The - is due to the different coordinate system from image and world
 		this->roll = -roll;
-	}
-
-	std::vector<Cluster>* getClusters() const
-	{
-		return clusters;
 	}
 
 	std::vector<Pole>* getPoles() const
@@ -62,28 +51,25 @@ public:
 		return rectangles;
 	}
 
-	void deleteDetections();
+	virtual ~BasicDetector();
 
-private:
-	void preprocessing(cv::Mat& input, cv::Mat& equalizedFrame, cv::Mat& grayFrame);
-	void detectRectanglesAndPoles(cv::Mat& equalizedFrame);
-	void setToNull();
+protected:
+	void detectLines(cv::Mat& image, const cv::Mat& mask = cv::Mat());
+	void detectQuadrilaterals();
 
 private:
 	//detectors
-	ClusterDetector clusterDetector;
 	LineDetector lineDetector;
 
 	//envirorment data
 	double roll;
 
-	//last detections
-	std::vector<Rectangle>* rectangles;
-	std::vector<Pole>* poles;
-	std::vector<Cluster>* clusters;
-
+protected:
 	std::vector<cv::Vec4i>* verticalLines;
 	std::vector<cv::Vec4i>* horizontalLines;
+
+	std::vector<Rectangle>* rectangles;
+	std::vector<Pole>* poles;
 };
 
-#endif /* COGNITIVEDETECTOR_H_ */
+#endif /* BASICDETECTOR_H_ */

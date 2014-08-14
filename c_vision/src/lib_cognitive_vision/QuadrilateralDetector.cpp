@@ -21,18 +21,18 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "HighLevelDetector.h"
+#include "QuadrilateralDetector.h"
 
 using namespace cv;
 using namespace std;
 
-HighLevelDetector::HighLevelDetector()
+QuadrilateralDetector::QuadrilateralDetector()
 {
 	rectangles = new std::vector<Rectangle>();
 	poles = new std::vector<Pole>();
 }
 
-void HighLevelDetector::detect(std::vector<cv::Vec4i>& verticalLines,
+void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 			std::vector<cv::Vec4i>& horizontalLines)
 {
 	for (size_t i = 0; i + 1 < verticalLines.size(); i++)
@@ -74,7 +74,7 @@ void HighLevelDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 
 }
 
-Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
+Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 			double& b)
 {
 	Vec3d p0, p1, p2, p3;
@@ -100,14 +100,14 @@ Point HighLevelDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 	double ynear, yfar;
 	orderPoints(p[0], p0[0], p1[0], xnear, xfar);
 	orderPoints(p[1], p2[1], p3[1], ynear, yfar);
-	a = (p[0] - xfar) / (xnear - xfar);
-	b = (p[1] - yfar) / (ynear - yfar);
+	a = (p[0] - xnear) / (xfar - xnear);
+	b = (p[1] - ynear) / (yfar - ynear);
 
 	return Point(p[0], p[1]);
 
 }
 
-bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
+bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 {
 	double dx, dy;
 
@@ -132,19 +132,19 @@ bool HighLevelDetector::findPoles(Vec4i l1, Vec4i l2)
 
 }
 
-inline void HighLevelDetector::getPointsCoordinates(Vec4i l, Point& i, Point& j)
+inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i, Point& j)
 {
 	i = Point(l[0], l[1]);
 	j = Point(l[2], l[3]);
 }
 
-inline void HighLevelDetector::getPointsCoordinates(Vec4i l, Vec3d& i, Vec3d& j)
+inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Vec3d& i, Vec3d& j)
 {
 	i = Vec3d(l[0], l[1], 1);
 	j = Vec3d(l[2], l[3], 1);
 }
 
-bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
+bool QuadrilateralDetector::isQuadrilateral(vector<double> a, vector<double> b)
 {
 	int segmentCounter = 0;
 
@@ -156,14 +156,13 @@ bool HighLevelDetector::isQuadrilateral(vector<double> a, vector<double> b)
 	return segmentCounter == 4;
 }
 
-bool HighLevelDetector::lineBelongToQuadrilateral(double a1, double a2)
+bool QuadrilateralDetector::lineBelongToQuadrilateral(double a1, double a2)
 {
-	const double low = 0.6;
-	const double high = 1.4;
-	return (a1 >= low) && (a1 <= high) && (a2 >= low) && (a2 <= high);
+	const double threshold = 0.4;
+	return abs(a1) < threshold && abs(a2) < threshold;
 }
 
-void HighLevelDetector::orderPoints(double p, double p1, double p2,
+void QuadrilateralDetector::orderPoints(double p, double p1, double p2,
 			double& pnear, double& pfar)
 {
 	if (abs(p - p1) > abs(p - p2))

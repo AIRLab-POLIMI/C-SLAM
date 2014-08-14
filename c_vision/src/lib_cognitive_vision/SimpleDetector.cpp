@@ -21,40 +21,33 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DETECTORLOGIC_H_
-#define DETECTORLOGIC_H_
-
-#include "BaseLogic.h"
-
-
-#include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/image_encodings.h>
-
 #include "SimpleDetector.h"
-#include "ImageView.h"
 
-class DetectorLogic : public BaseLogic
+using namespace cv;
+using namespace std;
+
+SimpleDetector::SimpleDetector(ParameterServer& parameters) :
+			BasicDetector(parameters)
 {
-public:
-	DetectorLogic(ros::NodeHandle& n, ParameterServer& parameterServer);
-	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 
-private:
-	void detect(const cv_bridge::CvImagePtr& cv_ptr);
-	void classify();
-	void display(const cv_bridge::CvImagePtr& cv_ptr);
-	void sendFeatures(
-				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features);
+}
 
-private:
-	//Ros management
-	ros::Publisher detectionPublisher;
+void SimpleDetector::detect(cv::Mat& image)
+{
+	//preprocessing
+	Mat equalizedFrame;
+	preprocessing(image, equalizedFrame);
 
-	//Data needed to detect objects
-	SimpleDetector detector;
+	//detect lines
+	detectLines(equalizedFrame);
 
-	//Data needed to display results
-	ImageView viewer;
-};
+	//detect features
+	detectQuadrilaterals();
+}
 
-#endif /* DETECTORLOGIC_H_ */
+void SimpleDetector::preprocessing(Mat& input, Mat& equalizedFrame)
+{
+	Mat grayFrame;
+	cvtColor(input, grayFrame, CV_BGR2GRAY);
+	equalizeHist(grayFrame, equalizedFrame);
+}

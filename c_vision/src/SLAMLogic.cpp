@@ -26,6 +26,9 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "AdvancedDetector.h"
+#include "ObjectClassificator.h"
+
 using namespace ros;
 using namespace sensor_msgs;
 using namespace image_geometry;
@@ -36,13 +39,12 @@ using namespace std;
 namespace enc = sensor_msgs::image_encodings;
 
 SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
-			BaseLogic(n), infoCache(15), imageCache(15)
+			BaseLogic(n, parameters), infoCache(15), imageCache(15),
+			detector(parameters), viewer("ROI")
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&SLAMLogic::handleCamera, this);
 	trackSubscriber = n.subscribe("tracks", 100, &SLAMLogic::handleTrack, this);
-	namedWindow("test", CV_WINDOW_AUTOSIZE);
-	namedWindow("canny", CV_WINDOW_AUTOSIZE);
 }
 
 void SLAMLogic::handleCamera(const ImageConstPtr& msg,
@@ -63,9 +65,9 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 	{
 		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
-
-		imshow("test", objectImage);
-		waitKey(1);
+		detect(objectImage, mask);
+		//classify();
+		display(objectImage);
 	}
 	catch (cv_bridge::Exception& e)
 	{
@@ -75,6 +77,44 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 	{
 		ROS_WARN(e.what());
 	}
+}
+
+void SLAMLogic::detect(Mat& image, Mat& mask)
+{
+	Mat greyFrame;
+
+
+	detector.setRoll(rotX);
+	detector.detect(image, mask);
+}
+
+void SLAMLogic::classify()
+{
+	c_fuzzy::Classification serviceCall;
+
+	ObjectClassificator classificator(serviceCall, classifierParam);
+	classificator.processFeatures(detector.getRectangles());
+
+	callClassificationService(serviceCall);
+
+	classificator.labelFeatures();
+
+	const vector<pair<vector<Point>, string> >& features =
+				classificator.getGoodFeatures();
+
+	//sendFeatures(features);
+
+}
+
+void SLAMLogic::display(Mat& image)
+{
+	viewer.setRectangles(detector.getRectangles());
+	viewer.setPoles(detector.getPoles());
+	viewer.setClusters(detector.getClusters());
+	viewer.setRoll(rotX);
+	viewer.display(image);
+
+	detector.deleteDetections();
 }
 
 void SLAMLogic::getImageData(const c_tracking::TrackedObject& track,

@@ -34,14 +34,20 @@
 #include <c_tracking/TrackedObject.h>
 
 #include "ParameterServer.h"
+#include "AdvancedDetector.h"
 
-class SLAMLogic : public BaseLogic
+class SLAMLogic: public BaseLogic
 {
 public:
 	SLAMLogic(ros::NodeHandle n, ParameterServer& parameters);
 	void handleCamera(const sensor_msgs::ImageConstPtr& msg,
 				const sensor_msgs::CameraInfoConstPtr& info_msg);
 	void handleTrack(const c_tracking::TrackedObject& track);
+
+private:
+	void detect(cv::Mat& image, cv::Mat& mask);
+	void classify();
+	void display(cv::Mat& image);
 
 private:
 	void getImageData(const c_tracking::TrackedObject& track,
@@ -60,6 +66,11 @@ private:
 
 	ros::Subscriber trackSubscriber;
 
+	//Object detection
+	AdvancedDetector detector;
+
+	//Data needed to display results
+	ImageView viewer;
 };
 
 #endif /* SLAMLOGIC_H_ */

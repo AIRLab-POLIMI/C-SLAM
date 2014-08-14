@@ -26,16 +26,14 @@
 
 #include <c_tracking/NamedPolygon.h>
 
-
 namespace enc = sensor_msgs::image_encodings;
 
 using namespace std;
 using namespace cv;
 
-DetectorLogic::DetectorLogic(ros::NodeHandle& n,
-			ParameterServer& parameterServer) :
-			BaseLogic(n), detector(parameterServer), viewer("Detected Image"),
-			classifierParam(parameterServer.getClassifierParams())
+DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
+			BaseLogic(n, parameters), detector(parameters),
+			viewer("Detected Image")
 {
 	rotX = 0;
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
@@ -64,7 +62,7 @@ void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 void DetectorLogic::detect(const cv_bridge::CvImagePtr& cv_ptr)
 {
 	detector.setRoll(rotX);
-	detector.detectRectangles(cv_ptr->image);
+	detector.detect(cv_ptr->image);
 }
 
 void DetectorLogic::classify()
@@ -74,16 +72,7 @@ void DetectorLogic::classify()
 	ObjectClassificator classificator(serviceCall, classifierParam);
 	classificator.processFeatures(detector.getRectangles());
 
-	if (classificationService.isValid())
-	{
-		classificationService.call(serviceCall);
-	}
-	else
-	{
-		ROS_ERROR("Service down, waiting reconnection...");
-		classificationService.waitForExistence();
-		connectToClassificationServer();
-	}
+	callClassificationService(serviceCall);
 
 	classificator.labelFeatures();
 
@@ -92,6 +81,16 @@ void DetectorLogic::classify()
 
 	sendFeatures(features);
 
+}
+
+void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
+{
+	viewer.setRectangles(detector.getRectangles());
+	viewer.setPoles(detector.getPoles());
+	viewer.setRoll(rotX);
+	viewer.display(cv_ptr->image);
+
+	detector.deleteDetections();
 }
 
 void DetectorLogic::sendFeatures(
@@ -121,13 +120,3 @@ void DetectorLogic::sendFeatures(
 	}
 }
 
-void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
-{
-	viewer.setClusters(detector.getClusters());
-	viewer.setRectangles(detector.getRectangles());
-	viewer.setPoles(detector.getPoles());
-	viewer.setRoll(rotX);
-	viewer.display(cv_ptr->image);
-
-	detector.deleteDetections();
-}

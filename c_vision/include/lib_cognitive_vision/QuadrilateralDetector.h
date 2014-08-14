@@ -21,8 +21,8 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HIGHLEVELDETECTOR_H_
-#define HIGHLEVELDETECTOR_H_
+#ifndef QUADRILATERALDETECTOR_H_
+#define QUADRILATERALDETECTOR_H_
 
 #include <vector>
 #include <opencv2/core/core.hpp>
@@ -31,10 +31,10 @@
 #include "Rectangle.h"
 #include "Pole.h"
 
-class HighLevelDetector
+class QuadrilateralDetector
 {
 public:
-	HighLevelDetector();
+	QuadrilateralDetector();
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
 				std::vector<cv::Vec4i>& horizontalLines);
@@ -66,4 +66,4 @@ private:
 
 };
 
-#endif /* HIGHLEVELDETECTOR_H_ */
+#endif /* QUADRILATERALDETECTOR_H_ */

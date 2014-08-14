@@ -27,8 +27,8 @@
 #include <tf/LinearMath/Matrix3x3.h>
 #include <angles/angles.h>
 
-BaseLogic::BaseLogic(ros::NodeHandle& n) :
-			n(n), it(n)
+BaseLogic::BaseLogic(ros::NodeHandle& n, ParameterServer& parameters) :
+			n(n), it(n), classifierParam(parameters.getClassifierParams())
 {
 	imuSubscriber = n.subscribe("/ardrone/imu", 1, &BaseLogic::handleImu, this);
 
@@ -55,5 +55,20 @@ void BaseLogic::connectToClassificationServer()
 {
 	classificationService = n.serviceClient<c_fuzzy::Classification>(
 				"classification", true);
+}
+
+void BaseLogic::callClassificationService(
+			c_fuzzy::Classification& serviceCall)
+{
+	if (classificationService.isValid())
+	{
+		classificationService.call(serviceCall);
+	}
+	else
+	{
+		ROS_ERROR("Service down, waiting reconnection...");
+		classificationService.waitForExistence();
+		connectToClassificationServer();
+	}
 }
 

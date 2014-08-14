@@ -21,40 +21,24 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LINEDETECTOR_H_
-#define LINEDETECTOR_H_
+#ifndef SIMPLEDETECTOR_H_
+#define SIMPLEDETECTOR_H_
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include "BasicDetector.h"
 
 #include "ParameterServer.h"
-#include "ImageView.h"
 
-class LineDetector
+
+class SimpleDetector : public BasicDetector
 {
 public:
-	LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam& filterP);
-	void detect(cv::Mat& input, double roll, const cv::Mat& mask = cv::Mat());
+	SimpleDetector(ParameterServer& parameters);
 
-	std::vector<cv::Vec4i>* getVerticalLines()
-	{
-		return verticalLines;
-	}
-
-	std::vector<cv::Vec4i>* getHorizontalLines()
-	{
-		return horizontalLines;
-	}
+	void detect(cv::Mat& image);
 
 private:
-	CannyParam& cannyP;
-	HoughParam& houghP;
-	LFilterParam& filterP;
+	void preprocessing(cv::Mat& input, cv::Mat& equalizedFrame);
 
-	std::vector<cv::Vec4i>* verticalLines;
-	std::vector<cv::Vec4i>* horizontalLines;
-
-	ImageView viewer;
 };
 
-#endif /* LINEDETECTOR_H_ */
+#endif /* SIMPLEDETECTOR_H_ */

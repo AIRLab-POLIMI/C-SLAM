@@ -37,15 +37,24 @@ LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam&
 	verticalLines = NULL;
 }
 
-void LineDetector::detect(Mat& input, double roll)
+void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 {
-	Mat canny;
+	Mat tmp, canny;
 
-	double high_thres = 0.8*threshold(input, canny, 0, 255,
+	double high_thres = 0.8*threshold(input, tmp, 0, 255,
 				CV_THRESH_BINARY + CV_THRESH_OTSU);
 	double low_thres = high_thres * cannyP.alpha;
 
-	Canny(input, canny, low_thres, high_thres, cannyP.apertureSize, true);
+	Canny(input, tmp, low_thres, high_thres, cannyP.apertureSize, true);
+
+	if(mask.empty())
+	{
+		canny = tmp;
+	}
+	else
+	{
+		tmp.copyTo(canny, mask);
+	}
 
 	vector<Vec4i> lines;
 

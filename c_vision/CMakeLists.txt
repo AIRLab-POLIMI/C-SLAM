@@ -23,16 +23,18 @@ set(LIB_RECTIFICATION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_metric_rectificat
 add_library(cognitive_vision STATIC
 			${LIB_VISION_SOURCE_DIR}/ParameterServer.cpp
             ${LIB_VISION_SOURCE_DIR}/Cluster.cpp
-			${LIB_VISION_SOURCE_DIR}/CognitiveDetector.cpp
+            ${LIB_VISION_SOURCE_DIR}/Pole.cpp
+			${LIB_VISION_SOURCE_DIR}/Rectangle.cpp
 			${LIB_VISION_SOURCE_DIR}/DBSCAN.cpp
             ${LIB_VISION_SOURCE_DIR}/ClusterDetector.cpp
-			${LIB_VISION_SOURCE_DIR}/HighLevelDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/QuadrilateralDetector.cpp
 			${LIB_VISION_SOURCE_DIR}/LineDetector.cpp 
-			${LIB_VISION_SOURCE_DIR}/ImageView.cpp 
 			${LIB_VISION_SOURCE_DIR}/LineFilter.cpp
-			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp
-			${LIB_VISION_SOURCE_DIR}/Pole.cpp
-			${LIB_VISION_SOURCE_DIR}/Rectangle.cpp)
+			${LIB_VISION_SOURCE_DIR}/BasicDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/AdvancedDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/SimpleDetector.cpp
+			${LIB_VISION_SOURCE_DIR}/ImageView.cpp 
+			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp)
 			
 #build the metric rectification library
 add_library(metric_rectification STATIC
