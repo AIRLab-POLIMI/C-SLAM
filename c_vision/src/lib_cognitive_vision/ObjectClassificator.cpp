@@ -26,8 +26,6 @@
 using namespace c_fuzzy;
 using namespace std;
 
-#include <iostream>
-
 ObjectClassificator::ObjectClassificator(Classification& classification,
 			ClassifierParam& params) :
 			classification(classification),
