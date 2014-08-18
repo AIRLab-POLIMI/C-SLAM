@@ -41,7 +41,7 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 {
 	Mat tmp, canny;
 
-	double high_thres = 0.8*threshold(input, tmp, 0, 255,
+	double high_thres = threshold(input, tmp, 0, 255,
 				CV_THRESH_BINARY + CV_THRESH_OTSU);
 	double low_thres = high_thres * cannyP.alpha;
 

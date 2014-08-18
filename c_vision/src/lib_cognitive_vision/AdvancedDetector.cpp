@@ -41,7 +41,7 @@ void AdvancedDetector::detect(Mat& image, Mat& mask)
 	detectLines(grayFrame, mask);
 
 	//detect quadrilaterals and poles
-	detectQuadrilaterals();
+	detectQuadrilaterals(true);
 
 	//detect clusters
 	clusters = clusterDetector.detect(grayFrame);

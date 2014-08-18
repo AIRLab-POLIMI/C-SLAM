@@ -2,6 +2,9 @@
 <launch>
 	<!-- Arguments -->
 	<arg name="camera_source" default="/ardrone" />
+	<arg name="knowledgebase" default="$(find c_slam)/knowledgebase/prova.kb" />
+	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
+	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
@@ -48,4 +51,10 @@
 		<!-- classifier params -->
 		<param name="classifier/threshold" value="0.2" />
 	</node>	
+	
+	<node name="c_fuzzy_reasoner" 
+              pkg="c_fuzzy" 
+              type="c_fuzzy_reasoner" 
+              args="$(arg knowledgebase) $(arg classifierkb) $(arg classifier)" 
+              output="screen"/> 	
 </launch>

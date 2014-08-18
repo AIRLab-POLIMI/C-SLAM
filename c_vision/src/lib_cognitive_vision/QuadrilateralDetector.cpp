@@ -33,7 +33,7 @@ QuadrilateralDetector::QuadrilateralDetector()
 }
 
 void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
-			std::vector<cv::Vec4i>& horizontalLines)
+			std::vector<cv::Vec4i>& horizontalLines, bool skipCheck)
 {
 	for (size_t i = 0; i + 1 < verticalLines.size(); i++)
 	{	//i+1 instead size-1 to avoid integer overflow
@@ -54,12 +54,12 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 					Vec4i h2 = horizontalLines[k];
 					Point x, y, z, w;
 
-					x = findInterception(h1, v1, a[0], b[0]);
-					y = findInterception(h1, v2, a[1], b[1]);
-					z = findInterception(h2, v2, a[2], b[2]);
-					w = findInterception(h2, v1, a[3], b[3]);
+					x = findInterception(h1, v1, a[0], b[0], skipCheck);
+					y = findInterception(h1, v2, a[1], b[1], skipCheck);
+					z = findInterception(h2, v2, a[2], b[2], skipCheck);
+					w = findInterception(h2, v1, a[3], b[3], skipCheck);
 
-					if (isQuadrilateral(a, b))
+					if (skipCheck || isQuadrilateral(a, b))
 					{
 						Rectangle rectangle(x, y, z, w);
 						rectangle.setFeature();
@@ -75,7 +75,7 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 }
 
 Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
-			double& b)
+			double& b, bool skipCheck)
 {
 	Vec3d p0, p1, p2, p3;
 	Vec3d hl, vl;
@@ -95,13 +95,16 @@ Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 	p = hl.cross(vl);
 	p = p / p[2];
 
-	//Calculate the linear combination parameters
-	double xnear, xfar;
-	double ynear, yfar;
-	orderPoints(p[0], p0[0], p1[0], xnear, xfar);
-	orderPoints(p[1], p2[1], p3[1], ynear, yfar);
-	a = (p[0] - xnear) / (xfar - xnear);
-	b = (p[1] - ynear) / (yfar - ynear);
+	if (!skipCheck)
+	{
+		//Calculate the linear combination parameters
+		double xnear, xfar;
+		double ynear, yfar;
+		orderPoints(p[0], p0[0], p1[0], xnear, xfar);
+		orderPoints(p[1], p2[1], p3[1], ynear, yfar);
+		a = (p[0] - xnear) / (xfar - xnear);
+		b = (p[1] - ynear) / (yfar - ynear);
+	}
 
 	return Point(p[0], p[1]);
 
@@ -132,19 +135,22 @@ bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 
 }
 
-inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i, Point& j)
+inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
+			Point& j)
 {
 	i = Point(l[0], l[1]);
 	j = Point(l[2], l[3]);
 }
 
-inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Vec3d& i, Vec3d& j)
+inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Vec3d& i,
+			Vec3d& j)
 {
 	i = Vec3d(l[0], l[1], 1);
 	j = Vec3d(l[2], l[3], 1);
 }
 
-bool QuadrilateralDetector::isQuadrilateral(vector<double> a, vector<double> b)
+bool QuadrilateralDetector::isQuadrilateral(vector<double>& a,
+			vector<double>& b)
 {
 	int segmentCounter = 0;
 

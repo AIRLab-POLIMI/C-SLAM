@@ -68,10 +68,10 @@ void BasicDetector::detectLines(Mat& image, const Mat& mask)
 	horizontalLines = lineDetector.getHorizontalLines();
 }
 
-void BasicDetector::detectQuadrilaterals()
+void BasicDetector::detectQuadrilaterals(bool skipCheck)
 {
 	QuadrilateralDetector quadrilateralDetector;
-	quadrilateralDetector.detect(*verticalLines, *horizontalLines);
+	quadrilateralDetector.detect(*verticalLines, *horizontalLines, skipCheck);
 	rectangles = quadrilateralDetector.getRectangles();
 	poles = quadrilateralDetector.getPoles();
 }

@@ -66,7 +66,7 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
-		//classify();
+		classify();
 		display(objectImage);
 	}
 	catch (cv_bridge::Exception& e)
@@ -94,6 +94,8 @@ void SLAMLogic::classify()
 
 	ObjectClassificator classificator(serviceCall, classifierParam);
 	classificator.processFeatures(detector.getRectangles());
+	classificator.processFeatures(detector.getPoles());
+	classificator.processFeatures(detector.getClusters());
 
 	callClassificationService(serviceCall);
 
@@ -101,8 +103,6 @@ void SLAMLogic::classify()
 
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
-
-	//sendFeatures(features);
 
 }
 

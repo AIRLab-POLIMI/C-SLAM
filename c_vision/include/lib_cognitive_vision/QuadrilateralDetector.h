@@ -37,7 +37,7 @@ public:
 	QuadrilateralDetector();
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
-				std::vector<cv::Vec4i>& horizontalLines);
+				std::vector<cv::Vec4i>& horizontalLines, bool skipCheck = false);
 
 	inline std::vector<Pole>* getPoles() const
 	{
@@ -53,9 +53,9 @@ private:
 	inline void getPointsCoordinates(cv::Vec4i l, cv::Point& i, cv::Point& j);
 	inline void getPointsCoordinates(cv::Vec4i l, cv::Vec3d& i, cv::Vec3d& j);
 	cv::Point findInterception(cv::Vec4i l1, cv::Vec4i l2, double& a,
-				double& b);
+				double& b, bool skipCheck);
 	bool findPoles(cv::Vec4i l1, cv::Vec4i l2);
-	bool isQuadrilateral(std::vector<double> a, std::vector<double> b);
+	bool isQuadrilateral(std::vector<double>& a, std::vector<double>& b);
 	bool lineBelongToQuadrilateral(double a1, double a2);
 	void orderPoints(double p, double p1, double p2, double& pnear, double& pfar);
 

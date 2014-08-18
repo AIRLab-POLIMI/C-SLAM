@@ -55,7 +55,7 @@ public:
 
 protected:
 	void detectLines(cv::Mat& image, const cv::Mat& mask = cv::Mat());
-	void detectQuadrilaterals();
+	void detectQuadrilaterals(bool skipCheck = false);
 
 private:
 	//detectors
