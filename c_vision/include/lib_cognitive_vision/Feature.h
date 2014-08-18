@@ -66,12 +66,17 @@ public:
 		return classifications.end();
 	}
 
+	inline double operator [](std::string className) const
+	{
+		return classifications.at(className);
+	}
+
 	inline bool isInteresting()
 	{
 		return classifications.size() > 0;
 	}
 
-	inline std::string featureName()
+	inline std::string featureName() const
 	{
 		std::string name;
 		double max = 0;
@@ -82,7 +87,7 @@ public:
 			double val = it->second;
 			const std::string& className = it->first;
 
-			if(val > max)
+			if (val > max)
 			{
 				max = val;
 				name = className;
@@ -105,5 +110,20 @@ protected:
 	ClassificationMap classifications;
 
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Feature& input)
+{
+
+	std::string name = input.featureName();
+	double value = input[name];
+
+	os << name << ":" << value << std::endl;
+	for (FeatureMap::const_iterator i = input.begin(); i != input.end(); ++i)
+	{
+		os << i->first << "=" << i->second << std::endl;
+	}
+
+	return os;
+}
 
 #endif /* FEATURE_H_ */

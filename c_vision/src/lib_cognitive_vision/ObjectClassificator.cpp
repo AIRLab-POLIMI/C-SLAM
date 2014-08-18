@@ -26,6 +26,8 @@
 using namespace c_fuzzy;
 using namespace std;
 
+#include <iostream>
+
 ObjectClassificator::ObjectClassificator(Classification& classification,
 			ClassifierParam& params) :
 			classification(classification),
@@ -98,6 +100,7 @@ vector<pair<vector<cv::Point>, string> > ObjectClassificator::getGoodFeatures()
 			good.push_back(
 						make_pair(feature.getPointsVector(),
 									feature.featureName()));
+
 	}
 
 	return good;
