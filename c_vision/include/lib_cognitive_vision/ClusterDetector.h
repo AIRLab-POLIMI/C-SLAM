@@ -35,7 +35,7 @@ class ClusterDetector
 {
 public:
 	ClusterDetector(ClusterParam& params);
-	std::vector<Cluster>* detect(cv::Mat& input);
+	std::vector<Cluster>* detect(cv::Mat& input, const cv::Mat& mask = cv::Mat());
 
 private:
 	ClusterParam& params;

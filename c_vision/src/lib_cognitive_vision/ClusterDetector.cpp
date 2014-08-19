@@ -24,15 +24,29 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "ClusterDetector.h"
 
+using namespace std;
+using namespace cv;
+
 ClusterDetector::ClusterDetector(ClusterParam& params) :
 			params(params), clustering(params.maxDistance, params.minPoints)
 {
 }
 
-std::vector<Cluster>* ClusterDetector::detect(cv::Mat& input)
+vector<Cluster>* ClusterDetector::detect(Mat& input, const Mat& mask)
 {
-	std::vector<cv::KeyPoint> keyPoints;
+	vector<KeyPoint> keyPoints;
 
-	FAST(input, keyPoints, params.threshold);
+	Mat roi;
+
+	if(mask.empty())
+	{
+		roi = input;
+	}
+	else
+	{
+		input.copyTo(roi, mask);
+	}
+
+	FAST(roi, keyPoints, params.threshold);
 	return clustering.detect(keyPoints);
 }

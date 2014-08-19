@@ -44,7 +44,7 @@ void AdvancedDetector::detect(Mat& image, Mat& mask)
 	detectQuadrilaterals(true);
 
 	//detect clusters
-	clusters = clusterDetector.detect(grayFrame);
+	clusters = clusterDetector.detect(grayFrame, mask);
 }
 
 void AdvancedDetector::deleteDetections()
