@@ -55,7 +55,8 @@ void ReasoningGraph::addEdge(size_t i, size_t j)
 
 void ReasoningGraph::drawGraph(ostream& out)
 {
-	write_graphviz(out, graph, make_label_writer(get(&Vertex::name, graph)));
+	write_graphviz(out, graph, make_label_writer(get(&Vertex::name, graph)),
+				default_writer(), ReasoningGraph::graph_writer());
 }
 
 void ReasoningGraph::getReasonigOrder(vector<size_t>& order)

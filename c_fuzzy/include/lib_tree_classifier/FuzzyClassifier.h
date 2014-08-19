@@ -55,6 +55,8 @@ public:
 public:
 	void drawDependencyGraph(std::string path);
 	void drawReasoningGraph(std::string path);
+	void drawDependencyGraph(std::ostream& stream);
+	void drawReasoningGraph(std::ostream& stream);
 
 private:
 	ClassList classList;

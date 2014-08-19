@@ -46,6 +46,17 @@ int main(int argc, char **argv)
 						"classification",
 						&ClassifierServiceHandler::classificationCallback,
 						&classifierHandler);
+
+			ros::ServiceServer rGraphService =
+						n.advertiseService("getReasoningGraph",
+									&ClassifierServiceHandler::reasoningGraphRequestCallback,
+									&classifierHandler);
+
+			ros::ServiceServer dGraphService =
+						n.advertiseService("getDependencyGraph",
+									&ClassifierServiceHandler::dependencyGraphRequestCallback,
+									&classifierHandler);
+
 			ROS_INFO("Reasoner setup correctly");
 			ros::spin();
 			ROS_INFO("Reasoner shut down");

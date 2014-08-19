@@ -30,6 +30,7 @@
 #include "TreeClassifierBuilder.h"
 
 #include <iostream>
+#include <sstream>
 #include <ros/ros.h>
 #include <ctime>
 
@@ -55,7 +56,8 @@ bool ClassifierServiceHandler::classificationCallback(
 			Classification::Request& request,
 			Classification::Response& response)
 {
-	ROS_DEBUG_STREAM("Number of objects to classify: " << request.objects.size());
+	ROS_DEBUG_STREAM(
+				"Number of objects to classify: " << request.objects.size());
 	clock_t begin = clock();
 	vector<InputObject>& inputs = request.objects;
 	vector<ObjectInstance> objects(inputs.size());
@@ -67,6 +69,24 @@ bool ClassifierServiceHandler::classificationCallback(
 	double elapsed_ms = 1000 * double(end - begin) / CLOCKS_PER_SEC;
 	ROS_DEBUG_STREAM("Service takes: " << elapsed_ms << "ms");
 
+	return true;
+}
+
+bool ClassifierServiceHandler::reasoningGraphRequestCallback(c_fuzzy::Graph::Request& request,
+			c_fuzzy::Graph::Response& response)
+{
+	stringstream ss;
+	classifier->drawReasoningGraph(ss);
+	response.graph = ss.str();
+	return true;
+}
+
+bool ClassifierServiceHandler::dependencyGraphRequestCallback(c_fuzzy::Graph::Request& request,
+			c_fuzzy::Graph::Response& response)
+{
+	stringstream ss;
+	classifier->drawDependencyGraph(ss);
+	response.graph = ss.str();
 	return true;
 }
 

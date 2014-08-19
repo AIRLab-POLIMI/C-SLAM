@@ -48,6 +48,13 @@ public:
 	std::vector<std::string> getNodeNames(size_t index);
 
 public:
+	struct graph_writer
+	{
+		void operator()(std::ostream& out) const
+		{
+			out << "graph [rankdir=BT];" << std::endl;
+		}
+	};
 	void drawGraph(std::ostream& out);
 
 private:

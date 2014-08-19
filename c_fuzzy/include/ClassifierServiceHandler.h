@@ -29,6 +29,7 @@
 #include "ClassifierReasoner.h"
 
 #include "c_fuzzy/Classification.h"
+#include "c_fuzzy/Graph.h"
 
 class ClassifierServiceHandler
 {
@@ -38,6 +39,11 @@ public:
 
 	bool classificationCallback(c_fuzzy::Classification::Request& request,
 				c_fuzzy::Classification::Response& response);
+
+	bool reasoningGraphRequestCallback(c_fuzzy::Graph::Request& request,
+					c_fuzzy::Graph::Response& response);
+	bool dependencyGraphRequestCallback(c_fuzzy::Graph::Request& request,
+						c_fuzzy::Graph::Response& response);
 	~ClassifierServiceHandler();
 
 private:

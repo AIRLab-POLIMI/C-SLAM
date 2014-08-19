@@ -111,6 +111,11 @@ void FuzzyClassifier::drawDependencyGraph(string path)
 	dGraph.drawGraph(out);
 }
 
+void FuzzyClassifier::drawDependencyGraph(std::ostream& stream)
+{
+	dGraph.drawGraph(stream);
+}
+
 void FuzzyClassifier::drawReasoningGraph(string path)
 {
 	if (rGraph != NULL)
@@ -119,6 +124,11 @@ void FuzzyClassifier::drawReasoningGraph(string path)
 		out.open(path.c_str());
 		rGraph->drawGraph(out);
 	}
+}
+
+void FuzzyClassifier::drawReasoningGraph(std::ostream& stream)
+{
+	rGraph->drawGraph(stream);
 }
 
 FuzzyClassifier::~FuzzyClassifier()

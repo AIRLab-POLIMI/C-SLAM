@@ -12,7 +12,8 @@ if(catkin_FOUND)
                       InputVariable.msg  
                       ObjectClassification.msg  
                       SimbolicOutput.msg)
-    add_service_files(FILES 
+    add_service_files(FILES
+    				  Graph.srv 
                       Reasoning.srv 
                       Classification.srv)
     generate_messages()

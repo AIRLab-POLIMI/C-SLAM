@@ -87,7 +87,8 @@ DependencyGraph::NameList DependencyGraph::getDependencies(string className)
 void DependencyGraph::drawGraph(std::ostream& out)
 {
 	write_graphviz(out, graph, make_label_writer(get(&Vertex::name, graph)),
-				make_label_writer(get(&Edge::isSuperClass, graph)));
+				make_edge_writer(get(&Edge::isSuperClass, graph)),
+				DependencyGraph::graph_writer());
 }
 
 ReasoningGraph* DependencyGraph::buildReasoningGraph()
