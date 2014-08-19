@@ -274,26 +274,52 @@ ObjectList& ClassifierReasoner::getDependencyObjects(const string& className,
 void ClassifierReasoner::runReasoning(ClassificationData& data)
 {
 	OutputTable result = reasoner->run();
+
+	double minTruthValue = getMinTruthValue(result, data);
+
+	if (minTruthValue > 0 && minTruthValue >= threshold)
+	{
+
+		for (ObjectMap::iterator i = data.instanceMap.begin();
+					i != data.instanceMap.end(); ++i)
+		{
+			const string& className = i->first;
+			ObjectInstance* instance = i->second;
+			double truthValue = min(result[className][className].truth,
+						minTruthValue);
+			ClassificationMap& instanceClassifications =
+						data.results[instance->id];
+
+			if (instanceClassifications.count(className) == 0
+						|| instanceClassifications[className] < truthValue)
+			{
+				FuzzyClass* fuzzyClass = classifier.getClass(className);
+				instanceClassifications[className] = getMembershipLevel(
+							instance->id, fuzzyClass, truthValue, data);
+				table[className].insert(instance);
+			}
+
+		}
+	}
+}
+
+double ClassifierReasoner::getMinTruthValue(OutputTable& result,
+			ClassificationData& data)
+{
+	double minValue = 1.0;
+
 	for (ObjectMap::iterator i = data.instanceMap.begin();
 				i != data.instanceMap.end(); ++i)
 	{
 		string className = i->first;
 		ObjectInstance* instance = i->second;
-		double truthValue = result[className][className].truth;
-		ClassificationMap& instanceClassifications = data.results[instance->id];
-
-		if (truthValue >= threshold && truthValue > 0
-					&& (instanceClassifications.count(className) == 0
-								|| instanceClassifications[className]
-											< truthValue))
-		{
-			FuzzyClass* fuzzyClass = classifier.getClass(className);
-			instanceClassifications[className] = getMembershipLevel(
-						instance->id, fuzzyClass, truthValue, data);
-			table[className].insert(instance);
-		}
-
+		FuzzyClass* fuzzyClass = classifier.getClass(className);
+		double instanceLevel = getMembershipLevel(instance->id, fuzzyClass,
+					result[className][className].truth, data);
+		minValue = min(minValue, instanceLevel);
 	}
+
+	return minValue;
 }
 
 double ClassifierReasoner::getMembershipLevel(size_t id, FuzzyClass* fuzzyClass,

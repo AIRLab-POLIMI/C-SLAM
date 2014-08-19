@@ -33,14 +33,17 @@ CLASS CabinetDoor extends Rectangle
 	formFactor is Narrow;
 END_CLASS
 
-CLASS Door extends Rectangle
+CLASS PossibleDoor extends Rectangle
+	formFactor is VeryNarrow;
+	area is VeryBig;
+END_CLASS
+
+CLASS Door extends PossibleDoor
 	
 	CONSTANTS
 		height = High;
 	END_CONSTANTS
 	
-	formFactor is Narrow;
-	area is VeryBig;
 	Handle.x is Lateral on(xMin, xMax);
 	Handle.y is Centered on(yMin, yMax);
 

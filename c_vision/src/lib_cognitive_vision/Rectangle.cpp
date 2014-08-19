@@ -53,8 +53,8 @@ void Rectangle::setFeature()
 {
 	int xMin = std::min(x.x, w.x);
 	int xMax = std::max(y.x, z.x);
-	int yMin = std::min(x.x, w.x);
-	int yMax = std::min(x.x, w.x);
+	int yMin = std::min(x.y, y.y);
+	int yMax = std::max(z.y, w.y);
 	int FormFactor;
 
 	//TODO rectification?

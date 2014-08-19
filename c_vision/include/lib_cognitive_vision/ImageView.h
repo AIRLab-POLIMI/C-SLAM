@@ -88,6 +88,7 @@ private:
 	void displayRectanglesResults(cv::Mat& frame);
 	void displayPolesResults(cv::Mat& frame);
 	void displayClustersResults(cv::Mat& frame);
+	void writeFeaturesClassifications(cv::Mat& frame, Feature& feature);
 
 	typedef std::vector<std::vector<cv::Point> > Contours;
 	template<class T>

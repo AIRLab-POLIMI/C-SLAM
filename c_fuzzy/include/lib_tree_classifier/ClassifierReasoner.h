@@ -72,6 +72,7 @@ private:
 	void runReasoning(ClassificationData& data);
 	double getMembershipLevel(size_t id, FuzzyClass* fuzzyClass, double level,
 				ClassificationData& data);
+	double getMinTruthValue(OutputTable& result, ClassificationData& data);
 
 	//Flag management
 	void deleteHidden(InstanceClassification& results);

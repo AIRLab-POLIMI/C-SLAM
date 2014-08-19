@@ -2,7 +2,8 @@
 
 FUZZIFY_CLASS Rectangle
 	FUZZIFY formFactor
-		Narrow := tra(1800, 2000, 2600, 2800);
+		VeryNarrow := tra(2600, 2700, 2900, 3000);
+		Narrow := tra(1900, 2000, 2600, 2700);
 		Medium := tra(900, 1000, 1100, 1500); 
 		Wide := tra(850, 900, 920, 970);
 	END_FUZZIFY
@@ -21,6 +22,9 @@ FUZZIFY_CLASS CabinetDoor
 END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS WhiteBoard
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS PossibleDoor
 END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS Door

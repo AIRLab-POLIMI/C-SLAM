@@ -22,6 +22,7 @@
  */
 
 #include "ObjectClassificator.h"
+#include <iostream>
 
 using namespace c_fuzzy;
 using namespace std;
@@ -98,7 +99,10 @@ vector<pair<vector<cv::Point>, string> > ObjectClassificator::getGoodFeatures()
 			good.push_back(
 						make_pair(feature.getPointsVector(),
 									feature.featureName()));
-
+		if(feature.isInteresting())
+		{
+			cout << feature;
+		}
 	}
 
 	return good;

@@ -111,6 +111,31 @@ void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
 
 }
 
+void ImageView::writeFeaturesClassifications(Mat& frame, Feature& feature)
+{
+	int baseline = 0;
+	int currentHeightOffset = 0;
+	for (ClassificationMap::const_iterator j = feature.beginClass();
+				j != feature.endClass(); ++j)
+	{
+		stringstream ss;
+		ss << j->first << "(" << j->second << ")";
+		string text = ss.str();
+
+		Point featureCenter = feature.getCenter();
+		Size textSize = getTextSize(text, FONT_HERSHEY_SIMPLEX, 0.4, 1,
+					&baseline);
+		Point textOrigin(featureCenter.x - textSize.width/2,
+					featureCenter.y + currentHeightOffset + textSize.height);
+
+		putText(frame, text, textOrigin, FONT_HERSHEY_SIMPLEX, 0.4,
+					Scalar(0, 255, 0));
+
+		currentHeightOffset += 2*baseline + 3;
+	}
+
+}
+
 void ImageView::displayRectanglesResults(Mat& frame)
 {
 	drawContours(frame, rectangles, Scalar(0, 255, 0));
@@ -118,20 +143,9 @@ void ImageView::displayRectanglesResults(Mat& frame)
 	for (vector<Rectangle>::iterator i = rectangles->begin();
 				i != rectangles->end(); ++i)
 	{
-		Feature& feature = *i;
-
-		std::stringstream ss;
-
-		for (ClassificationMap::const_iterator j = feature.beginClass();
-					j != feature.endClass(); ++j)
-		{
-			if(j->first != "Rectangle")
-			ss << j->first << "(" << j->second << ")   ";
-		}
-
-		putText(frame, ss.str(), feature.getCenter(), FONT_HERSHEY_SIMPLEX, 0.4,
-					Scalar(0, 255, 0));
+		writeFeaturesClassifications(frame, *i);
 	}
+
 }
 
 void ImageView::displayPolesResults(Mat& frame)
@@ -146,5 +160,6 @@ void ImageView::displayClustersResults(Mat& frame)
 				it != clusters->end(); ++it)
 	{
 		it->draw(frame, Scalar(255, 0, 0));
+		writeFeaturesClassifications(frame, *it);
 	}
 }

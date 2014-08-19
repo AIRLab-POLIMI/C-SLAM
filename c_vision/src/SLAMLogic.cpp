@@ -44,7 +44,7 @@ SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&SLAMLogic::handleCamera, this);
-	trackSubscriber = n.subscribe("tracks", 100, &SLAMLogic::handleTrack, this);
+	trackSubscriber = n.subscribe("tracks", 10, &SLAMLogic::handleTrack, this);
 }
 
 void SLAMLogic::handleCamera(const ImageConstPtr& msg,
