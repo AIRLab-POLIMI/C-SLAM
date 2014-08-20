@@ -188,7 +188,14 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
 
 	if (!label.empty())
 	{
-		node = knowledgeBase.getPredicateInstance(currentClass, label, var);
+		if(simple)
+		{
+			node = knowledgeBase.getPredicateInstance(currentClass, label, var);
+		}
+		else
+		{
+			node = buildComplexRelation(var, label);
+		}
 	}
 	else if (simple)
 	{
@@ -204,29 +211,37 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
 
 Node* RuleBuilder::buildRHS()
 {
-	addDomain(currentClass, "True", FuzzyMFEngine::buildSgt(1));
+	addDomain(currentClass, "$True", FuzzyMFEngine::buildSgt(1));
 	return new FuzzyAssignment(knowledgeBase.getNamespaceTable(), currentClass,
-				currentClass, "True");
+				currentClass, "$True");
 }
 
 Node* RuleBuilder::buildCrispMatch(Variable var)
 {
-	addDomain(var.domain, "Perfect", FuzzyMFEngine::buildSgt(0));
+	addDomain(var.domain, "$Perfect", FuzzyMFEngine::buildSgt(0));
 
 	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), var.nameSpace,
-				var.domain, "Perfect");
+				var.domain, "$Perfect");
 
 	return is;
 }
 
 Node* RuleBuilder::buildCrispOn(Variable var)
 {
-	addDomain(var.domain, "Into", FuzzyMFEngine::buildInt(0, 100));
+	addDomain(var.domain, "$Into", FuzzyMFEngine::buildInt(0, 100));
 
 	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), var.nameSpace,
-				var.domain, "Into");
+				var.domain, "$Into");
 
 	return is;
+}
+
+Node* RuleBuilder::buildComplexRelation(Variable var, string& label)
+{
+	Node* fuzzyRule = knowledgeBase.getPredicateInstance(currentClass, label, var);
+	Node* boundCheck = buildCrispOn(var);
+
+	return new FuzzyAnd(boundCheck, fuzzyRule);
 }
 
 void RuleBuilder::addDomain(const string& domain, const string& label,
@@ -237,7 +252,7 @@ void RuleBuilder::addDomain(const string& domain, const string& label,
 	table[label] = fuzzyMF;
 
 	DomainTable domainTable;
-	domainTable[currentClass] = mfTable;
+	domainTable[domain] = mfTable;
 
 	knowledgeBase.addDomains(currentClass, domainTable);
 

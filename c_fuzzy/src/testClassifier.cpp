@@ -56,7 +56,7 @@ void addInstances(ClassifierReasoner& reasoner)
 
 	instance = new ObjectInstance();
 	instance->id = 3;
-	instance->properties["x"] = 23;
+	instance->properties["x"] = 15;
 	instance->properties["y"] = 20;
 	reasoner.addInstance(instance);
 }

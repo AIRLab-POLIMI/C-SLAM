@@ -38,12 +38,12 @@ public:
 	void enterNamespace(std::string& nameSpace);
 	void addMF(std::string& label, FuzzyMF* mf);
 	void addDomains(std::string& nameSpace, DomainTable& domain);
+	void joinDomains(MFTable& oldMfTable, MFTable* newMfTable,
+				std::string& nameSpace, std::string& domainName);
 	void buildDomain(std::vector<std::string> variables);
 	void normalizeVariableMasks(size_t size);
 	void updateVariableMask(Variable& var, size_t rule);
-	void updateVariableMask(
-			std::vector<Variable>& vars,
-			size_t rule);
+	void updateVariableMask(std::vector<Variable>& vars, size_t rule);
 	NamespaceTable& getTable();
 	VariableMasks& getMasks();
 	~FuzzyVariableEngine();

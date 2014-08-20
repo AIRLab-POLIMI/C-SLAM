@@ -59,7 +59,7 @@ void FuzzyVariableEngine::checkNameSpaceExistence(string& nameSpace)
 	if (namespaceTable.count(nameSpace) == 0)
 	{
 		stringstream ss;
-		ss << "Error: non existing class " << nameSpace << endl;;
+		ss << "Error: non existing class " << nameSpace << endl;
 		ss << "You must define a namespace in the knowledgeBase for each class";
 		throw runtime_error(ss.str());
 	}
@@ -80,7 +80,30 @@ void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
 			Variable variable(nameSpace, domainName);
 			variableMasks.newVariableMask(variable);
 		}
+		else
+		{
+			joinDomains(*domainTable[domainName], mfTable, nameSpace,
+						domainName);
+		}
 	}
+
+}
+
+void FuzzyVariableEngine::joinDomains(MFTable& oldMfTable, MFTable* newMfTable,
+			string& nameSpace, string& domainName)
+{
+	for (MFTable::iterator it = newMfTable->begin(); it != newMfTable->end();
+				++it)
+	{
+		const string& label = it->first;
+
+		if (oldMfTable.count(label) == 0)
+		{
+			oldMfTable[label] = it->second;
+		}
+	}
+
+	delete newMfTable;
 
 }
 
@@ -90,7 +113,7 @@ void FuzzyVariableEngine::buildDomain(vector<string> variables)
 	mfTable = new MFTable();
 
 	for (vector<string>::iterator it = variables.begin(); it != variables.end();
-			it++)
+				it++)
 	{
 		domainMap[*it] = mfTable;
 		Variable variable(currentNamespace, *it);
@@ -107,11 +130,10 @@ void FuzzyVariableEngine::updateVariableMask(Variable& var, size_t rule)
 	variableMasks.updateVariableMask(var, rule);
 }
 
-void FuzzyVariableEngine::updateVariableMask(
-		vector<Variable>& vars, size_t rule)
+void FuzzyVariableEngine::updateVariableMask(vector<Variable>& vars,
+			size_t rule)
 {
-	for (vector<Variable>::iterator it = vars.begin();
-			it != vars.end(); ++it)
+	for (vector<Variable>::iterator it = vars.begin(); it != vars.end(); ++it)
 	{
 
 		if (!variableMasks.contains(*it))
@@ -144,11 +166,11 @@ void FuzzyVariableEngine::initializeNamespaces()
 void FuzzyVariableEngine::deleteDomains()
 {
 	for (NamespaceTable::iterator it1 = namespaceTable.begin();
-			it1 != namespaceTable.end(); ++it1)
+				it1 != namespaceTable.end(); ++it1)
 	{
 		DomainTable* domain = it1->second;
 		for (DomainTable::iterator it2 = domain->begin(); it2 != domain->end();
-				++it2)
+					++it2)
 		{
 			deleteMF(it2->second);
 			delete it2->second;
