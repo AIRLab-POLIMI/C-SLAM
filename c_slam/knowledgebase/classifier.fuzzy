@@ -28,17 +28,17 @@ CLASS Cabinet extends Rectangle
 	formFactor is Medium;
 END_CLASS
 
-CLASS CabinetDoor extends Rectangle HIDDEN
+CLASS CabinetDoor extends Rectangle
 	area is VeryBig;
 	formFactor is Narrow;
 END_CLASS
 
-CLASS PossibleDoor extends Rectangle HIDDEN
+CLASS PossibleDoor extends Rectangle
 	formFactor is VeryNarrow;
 	area is VeryBig;
 END_CLASS
 
-CLASS Door extends PossibleDoor HIDDEN
+CLASS Door extends PossibleDoor
 	
 	CONSTANTS
 		height = High;
