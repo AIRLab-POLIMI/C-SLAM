@@ -62,7 +62,6 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 					if (skipCheck || isQuadrilateral(a, b))
 					{
 						Rectangle rectangle(x, y, z, w);
-						rectangle.setFeature();
 						rectangles->push_back(rectangle);
 					}
 
@@ -126,7 +125,6 @@ bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 	if (dy / dx > polesFormFactor)
 	{
 		Pole pole(p0, p1, p2, p3);
-		pole.setFeature();
 		poles->push_back(pole);
 		return true;
 	}

@@ -49,7 +49,7 @@ public:
 	}
 
 	virtual std::vector<cv::Point> getPointsVector();
-	virtual void setFeature();
+	virtual void setFeature(cv::Mat& R);
 
 private:
 	void updateMassCenter(cv::KeyPoint point);

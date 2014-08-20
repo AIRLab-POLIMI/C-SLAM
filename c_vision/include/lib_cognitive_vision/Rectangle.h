@@ -32,7 +32,7 @@ public:
 	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w);
 	virtual std::vector<cv::Point> getPointsVector();
 	virtual cv::Point getCenter();
-	virtual void setFeature();
+	virtual void setFeature(cv::Mat& R);
 
 
 private:

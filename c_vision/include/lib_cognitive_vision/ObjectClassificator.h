@@ -43,7 +43,7 @@ public:
 	std::vector<std::pair<std::vector<cv::Point>, std::string> > getGoodFeatures();
 
 	template<class T>
-	void processFeatures(std::vector<T>* features)
+	void processFeatures(std::vector<T>* features, cv::Mat& R)
 	{
 		typedef typename std::vector<T> FeatureVector;
 
@@ -51,6 +51,7 @@ public:
 					i != features->end(); ++i)
 		{
 			Feature& feature = *i;
+			feature.setFeature(R);
 			addFeature(feature);
 		}
 	}

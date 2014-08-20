@@ -48,7 +48,12 @@ void BaseLogic::handleImu(const sensor_msgs::Imu& imu)
 
 	rotationMatrix.getRPY(roll, pitch, yaw);
 
-	rotX = roll;
+	this->roll = roll;
+
+	double a = cos(roll);
+	double b = sin(roll);
+	cv::Matx22d R(a, -b, b, a);
+	this->R = cv::Mat(R);
 }
 
 void BaseLogic::connectToClassificationServer()

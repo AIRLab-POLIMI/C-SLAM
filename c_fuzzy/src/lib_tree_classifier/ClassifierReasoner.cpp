@@ -275,9 +275,9 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 {
 	OutputTable result = reasoner->run();
 
-	double minTruthValue = getMinTruthValue(result, data);
+	double truthValue = getMinTruthValue(result, data);
 
-	if (minTruthValue > 0 && minTruthValue >= threshold)
+	if (truthValue > 0 && truthValue >= threshold)
 	{
 
 		for (ObjectMap::iterator i = data.instanceMap.begin();
@@ -285,20 +285,15 @@ void ClassifierReasoner::runReasoning(ClassificationData& data)
 		{
 			const string& className = i->first;
 			ObjectInstance* instance = i->second;
-			double truthValue = min(result[className][className].truth,
-						minTruthValue);
 			ClassificationMap& instanceClassifications =
 						data.results[instance->id];
 
 			if (instanceClassifications.count(className) == 0
 						|| instanceClassifications[className] < truthValue)
 			{
-				FuzzyClass* fuzzyClass = classifier.getClass(className);
-				instanceClassifications[className] = getMembershipLevel(
-							instance->id, fuzzyClass, truthValue, data);
+				instanceClassifications[className] = truthValue;
 				table[className].insert(instance);
 			}
-
 		}
 	}
 }

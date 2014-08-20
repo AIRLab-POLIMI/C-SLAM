@@ -35,7 +35,7 @@ DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), detector(parameters),
 			viewer("Detected Image")
 {
-	rotX = 0;
+	roll = 0;
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
 	detectionPublisher = n.advertise<c_tracking::NamedPolygon>("to_track", 10);
@@ -61,7 +61,7 @@ void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 
 void DetectorLogic::detect(const cv_bridge::CvImagePtr& cv_ptr)
 {
-	detector.setRoll(rotX);
+	detector.setRoll(roll);
 	detector.detect(cv_ptr->image);
 }
 
@@ -70,7 +70,7 @@ void DetectorLogic::classify()
 	c_fuzzy::Classification serviceCall;
 
 	ObjectClassificator classificator(serviceCall, classifierParam);
-	classificator.processFeatures(detector.getRectangles());
+	classificator.processFeatures(detector.getRectangles(), R);
 
 	callClassificationService(serviceCall);
 
@@ -87,7 +87,7 @@ void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
 {
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
-	viewer.setRoll(rotX);
+	viewer.setRoll(roll);
 	viewer.display(cv_ptr->image);
 
 	detector.deleteDetections();

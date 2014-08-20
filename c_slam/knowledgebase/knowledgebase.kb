@@ -34,9 +34,9 @@ FUZZIFY_CLASS Door
 		Centered := (?x is Centered);
 		
 		FUZZIFY ?x
-			Left := tol(30, 40);
-			Centered := tra(30, 40, 60, 80);
-			Right := tor(60, 80);
+			Left := tol(20, 30);
+			Centered := tra(40, 50, 55, 60);
+			Right := tor(70, 80);
 		END_FUZZIFY
 		
 	END_FUZZIFY_PREDICATE	

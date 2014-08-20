@@ -84,18 +84,17 @@ void SLAMLogic::detect(Mat& image, Mat& mask)
 	Mat greyFrame;
 
 
-	detector.setRoll(rotX);
+	detector.setRoll(roll);
 	detector.detect(image, mask);
 }
 
 void SLAMLogic::classify()
 {
 	c_fuzzy::Classification serviceCall;
-
 	ObjectClassificator classificator(serviceCall, classifierParam);
-	classificator.processFeatures(detector.getRectangles());
-	classificator.processFeatures(detector.getPoles());
-	classificator.processFeatures(detector.getClusters());
+	classificator.processFeatures(detector.getRectangles(), R);
+	classificator.processFeatures(detector.getPoles(), R);
+	classificator.processFeatures(detector.getClusters(), R);
 
 	callClassificationService(serviceCall);
 
@@ -111,7 +110,7 @@ void SLAMLogic::display(Mat& image)
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
 	viewer.setClusters(detector.getClusters());
-	viewer.setRoll(rotX);
+	viewer.setRoll(roll);
 	viewer.display(image);
 
 	detector.deleteDetections();

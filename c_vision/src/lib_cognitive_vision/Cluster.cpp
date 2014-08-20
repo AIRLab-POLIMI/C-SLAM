@@ -23,7 +23,9 @@
 
 #include "Cluster.h"
 
+using namespace std;
 using namespace cv;
+#include <iostream>
 
 Cluster::Cluster()
 {
@@ -82,21 +84,27 @@ void Cluster::updateBoundingBox(KeyPoint point)
 
 }
 
-std::vector<cv::Point> Cluster::getPointsVector()
+vector<Point> Cluster::getPointsVector()
 {
-	std::vector<cv::Point> points;
+	vector<Point> points;
 	points.push_back(start);
 	points.push_back(end); //TODO compute correct square?
 	return points;
 }
 
-void Cluster::setFeature()
+void Cluster::setFeature(Mat& R)
 {
 	massCenter.pt.x /= massCenter.size;
 	massCenter.pt.y /= massCenter.size;
 
-	featureMap["x"] = massCenter.pt.x;
-	featureMap["y"] = massCenter.pt.y;
+	vector<Point> centerVector, transformedVector;
+	centerVector.push_back(Point(massCenter.pt.x, massCenter.pt.y));
+
+	transform(centerVector, transformedVector, R);
+	Point& center = transformedVector[0];
+
+	featureMap["x"] = center.x;
+	featureMap["y"] = center.y;
 	featureMap["size"] = massCenter.size;
 }
 

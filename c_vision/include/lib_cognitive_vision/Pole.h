@@ -36,7 +36,7 @@ public:
 	virtual std::vector<cv::Point> getPointsVector();
 
 	virtual cv::Point getCenter();
-	virtual void setFeature();
+	virtual void setFeature(cv::Mat& R);
 
 private:
 	cv::Point a1;

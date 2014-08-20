@@ -51,7 +51,8 @@ protected:
 	ros::ServiceClient classificationService;
 
 	//envirorment data
-	double rotX;
+	double roll;
+	cv::Mat R;
 
 	//parameters
 	ClassifierParam& classifierParam;

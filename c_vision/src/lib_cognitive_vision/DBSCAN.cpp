@@ -82,7 +82,7 @@ std::vector<Cluster>* DBSCAN::detect(const vector<KeyPoint>& keypoints)
 						currentCluster.add(p);
 					}
 				}
-				currentCluster.setFeature();
+
 				clusters.push_back(currentCluster);
 			}
 

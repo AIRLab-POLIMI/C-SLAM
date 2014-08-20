@@ -99,7 +99,7 @@ public:
 
 	virtual std::vector<cv::Point> getPointsVector() = 0;
 	virtual cv::Point getCenter() = 0;
-	virtual void setFeature() = 0;
+	virtual void setFeature(cv::Mat& R) = 0;
 
 	virtual ~Feature()
 	{

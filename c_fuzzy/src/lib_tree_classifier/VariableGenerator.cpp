@@ -104,7 +104,8 @@ void VariableGenerator::generateOns(ObjectProperties& generated)
 		Variable& min = on.min;
 		Variable& max = on.max;
 
-		int value = 100 * getDepValue(var) / abs(getValue(max) - getValue(min));
+		int value = 100 * (getDepValue(var) - getValue(min))
+					/ (getValue(max) - getValue(min));
 
 		generated[varName] = value;
 	}
@@ -121,7 +122,8 @@ void VariableGenerator::generateInverses(ObjectProperties& generated)
 		Variable& min = inverse.min;
 		Variable& max = inverse.max;
 
-		int value = 100 * getValue(target) / abs(getDepValue(max) - getDepValue(min));
+		int value = 100 * (getValue(target) - getDepValue(min))
+					/ (getDepValue(max) - getDepValue(min));
 
 		generated[varName] = value;
 	}

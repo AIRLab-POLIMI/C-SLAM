@@ -48,7 +48,7 @@ Point Pole::getCenter()
 	return 0.25 * (a1 + a2 + b1 + b2);
 }
 
-void Pole::setFeature()
+void Pole::setFeature(Mat& R)
 {
 	int deltaX = max(abs(a1.y - b1.y), abs(a2.y - b2.y));
 	int deltaY = max(abs(a1.y - b1.y), abs(a2.y - b2.y));

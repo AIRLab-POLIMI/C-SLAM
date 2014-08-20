@@ -35,7 +35,7 @@ Rectangle::Rectangle(Point x, Point y, Point z, Point w) :
 
 vector<Point> Rectangle::getPointsVector()
 {
-	std::vector<Point> points;
+	vector<Point> points;
 	points.push_back(x);
 	points.push_back(y);
 	points.push_back(z);
@@ -49,25 +49,24 @@ Point Rectangle::getCenter()
 	return (x + y + z + w) * 0.25;
 }
 
-void Rectangle::setFeature()
+void Rectangle::setFeature(Mat& R)
 {
-	int xMin = std::min(x.x, w.x);
-	int xMax = std::max(y.x, z.x);
-	int yMin = std::min(x.y, y.y);
-	int yMax = std::max(z.y, w.y);
-	int FormFactor;
+	vector<Point> transformedPoints;
+	transform(getPointsVector(), transformedPoints, R);
+	Point& x = transformedPoints[0];
+	Point& y = transformedPoints[1];
+	Point& z = transformedPoints[2];
+	Point& w = transformedPoints[3];
 
-	//TODO rectification?
-	int deltaX = std::max(norm(x - y), norm(w - z));
-	int deltaY = std::max(norm(x - w), norm(y - z));
+	int deltaX = (norm(x - y) + norm(w - z)) / 2;
+	int deltaY = (norm(x - w) + norm(y - z)) / 2;
 	if (deltaX != 0)
 	{
-		FormFactor = 1000 * deltaY / deltaX;
-		featureMap["xMax"] = xMax;
-		featureMap["yMax"] = yMax;
-		featureMap["xMin"] = xMin;
-		featureMap["yMin"] = yMin;
-		featureMap["formFactor"] = FormFactor;
+		featureMap["xMax"] = z.x;
+		featureMap["yMax"] = z.y;
+		featureMap["xMin"] = x.x;
+		featureMap["yMin"] = x.y;
+		featureMap["formFactor"] = 1000 * deltaY / deltaX;
 		featureMap["area"] = contourArea(getPointsVector());
 	}
 }
