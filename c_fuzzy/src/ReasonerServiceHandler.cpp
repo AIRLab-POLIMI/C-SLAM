@@ -37,11 +37,11 @@
 using namespace std;
 using namespace c_fuzzy;
 
-ReasonerServiceHandler::ReasonerServiceHandler(const char* knowledgeBasePath)
+ReasonerServiceHandler::ReasonerServiceHandler(const string& knowledgeBasePath)
 {
 	FuzzyBuilder builder;
 
-	builder.parse(knowledgeBasePath);
+	builder.parse(knowledgeBasePath.c_str());
 
 	knowledgeBase = builder.createKnowledgeBase();
 }

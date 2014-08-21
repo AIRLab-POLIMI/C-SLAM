@@ -5,6 +5,7 @@ project(c_fuzzy)
 
 # If catkin is not found, just compile the executable without ROS goodies
 if(catkin_FOUND)
+	find_package(Boost REQUIRED COMPONENTS program_options)
     add_message_files(FILES
                       ClassificationOutput.msg  
                       DefuzzyfiedOutput.msg  
@@ -136,12 +137,14 @@ if(catkin_FOUND)
 add_executable(${PROJECT_NAME}_reasoner 
                src/main.cpp 
                src/ReasonerServiceHandler.cpp
-               src/ClassifierServiceHandler.cpp)
+               src/ClassifierServiceHandler.cpp
+               src/CommandLineParser.cpp)
                
 target_link_libraries(${PROJECT_NAME}_reasoner 
                       fuzzy 
                       tree_classifier 
-                      ${catkin_LIBRARIES})
+                      ${catkin_LIBRARIES}
+                      ${Boost_LIBRARIES})
 
 #add dependency to generated messages
 add_dependencies(${PROJECT_NAME}_reasoner ${PROJECT_NAME}_generate_messages_cpp)

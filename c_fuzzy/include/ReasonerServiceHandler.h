@@ -25,6 +25,7 @@
 #define REASONERSERVICEHANDLER_H_
 
 #include <vector>
+#include <string>
 
 #include "FuzzyReasoner.h"
 
@@ -33,7 +34,7 @@
 class ReasonerServiceHandler
 {
 public:
-	ReasonerServiceHandler(const char* knowledgeBasePath);
+	ReasonerServiceHandler(const std::string& knowledgeBasePath);
 
 	bool reasoningCallback(c_fuzzy::Reasoning::Request& request,
 				c_fuzzy::Reasoning::Response& response);

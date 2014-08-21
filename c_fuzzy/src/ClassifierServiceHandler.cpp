@@ -38,15 +38,15 @@ using namespace std;
 using namespace c_fuzzy;
 
 ClassifierServiceHandler::ClassifierServiceHandler(
-			const char* knowledgeBasePath, const char* classifierPath)
+			const string& knowledgeBasePath, const string& classifierPath)
 {
 	FuzzyBuilder kbBuilder;
 	TreeClassifierBuilder classifierBuilder;
 
-	classifierBuilder.parse(classifierPath);
+	classifierBuilder.parse(classifierPath.c_str());
 	classifier = classifierBuilder.buildFuzzyClassifier();
 
-	kbBuilder.parse(knowledgeBasePath);
+	kbBuilder.parse(knowledgeBasePath.c_str());
 	knowledgeBase = kbBuilder.createKnowledgeBase();
 
 	reasoner = new ClassifierReasoner(*classifier, *knowledgeBase);
@@ -72,7 +72,8 @@ bool ClassifierServiceHandler::classificationCallback(
 	return true;
 }
 
-bool ClassifierServiceHandler::reasoningGraphRequestCallback(c_fuzzy::Graph::Request& request,
+bool ClassifierServiceHandler::reasoningGraphRequestCallback(
+			c_fuzzy::Graph::Request& request,
 			c_fuzzy::Graph::Response& response)
 {
 	stringstream ss;
@@ -81,7 +82,8 @@ bool ClassifierServiceHandler::reasoningGraphRequestCallback(c_fuzzy::Graph::Req
 	return true;
 }
 
-bool ClassifierServiceHandler::dependencyGraphRequestCallback(c_fuzzy::Graph::Request& request,
+bool ClassifierServiceHandler::dependencyGraphRequestCallback(
+			c_fuzzy::Graph::Request& request,
 			c_fuzzy::Graph::Response& response)
 {
 	stringstream ss;

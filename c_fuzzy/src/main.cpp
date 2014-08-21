@@ -27,48 +27,81 @@
 #include "ReasonerServiceHandler.h"
 #include "ClassifierServiceHandler.h"
 
+#include "CommandLineParser.h"
+
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "fuzzy_reasoner_server");
 	ros::NodeHandle n;
 
-	if (argc > 3)
-	{
-		try
-		{
-			ReasonerServiceHandler reasonerHandler(argv[1]);
-			ClassifierServiceHandler classifierHandler(argv[2], argv[3]);
+	CommandLineParser clParser;
 
+	clParser.parseCommandLine(argc, argv);
+	if (!clParser.validParameters())
+		return -1;
+
+	ReasonerServiceHandler* reasonerHandler;
+	ClassifierServiceHandler* classifierHandler;
+
+	try
+	{
+
+		if (clParser.hasReasoner())
+		{
+			reasonerHandler = new ReasonerServiceHandler(
+						clParser.getKnowledgeBase());
 			ros::ServiceServer reasonerService = n.advertiseService("reasoning",
 						&ReasonerServiceHandler::reasoningCallback,
-						&reasonerHandler);
+						reasonerHandler);
+
+			ROS_INFO("Reasoner setup correctly");
+		}
+
+		if (clParser.hasClassifier())
+		{
+			classifierHandler = new ClassifierServiceHandler(
+						clParser.getClassifierKnowledgeBase(),
+						clParser.getClassifier());
 			ros::ServiceServer classifierService = n.advertiseService(
 						"classification",
 						&ClassifierServiceHandler::classificationCallback,
-						&classifierHandler);
+						classifierHandler);
 
 			ros::ServiceServer rGraphService =
 						n.advertiseService("getReasoningGraph",
 									&ClassifierServiceHandler::reasoningGraphRequestCallback,
-									&classifierHandler);
+									classifierHandler);
 
 			ros::ServiceServer dGraphService =
 						n.advertiseService("getDependencyGraph",
 									&ClassifierServiceHandler::dependencyGraphRequestCallback,
-									&classifierHandler);
+									classifierHandler);
 
-			ROS_INFO("Reasoner setup correctly");
-			ros::spin();
-			ROS_INFO("Reasoner shut down");
+			ROS_INFO("Classifier setup correctly");
+
 		}
-		catch (std::runtime_error& e)
-		{
-			ROS_FATAL(e.what());
-			ROS_FATAL("Check the knowledge base file");
-		}
+
+		ros::spin();
+
+		if (reasonerHandler)
+			delete reasonerHandler;
+		if (classifierHandler)
+			delete classifierHandler;
+
+		ROS_INFO("Reasoner shut down");
+
 	}
-	else
-		ROS_FATAL("No knowledge base specified");
+	catch (std::runtime_error& e)
+	{
+		ROS_FATAL(e.what());
+		ROS_FATAL("Check the knowledge base file");
+
+		if (reasonerHandler)
+			delete reasonerHandler;
+		if (classifierHandler)
+			delete classifierHandler;
+		return -1;
+	}
 
 	return 0;
 }

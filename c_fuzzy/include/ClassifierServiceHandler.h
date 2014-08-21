@@ -25,6 +25,7 @@
 #define CLASSIFIERSERVICEHANDLER_H_
 
 #include <vector>
+#include <string>
 
 #include "ClassifierReasoner.h"
 
@@ -34,16 +35,16 @@
 class ClassifierServiceHandler
 {
 public:
-	ClassifierServiceHandler(const char* knowledgeBasePath,
-				const char* classifierPath);
+	ClassifierServiceHandler(const std::string& knowledgeBasePath,
+				const std::string& classifierPath);
 
 	bool classificationCallback(c_fuzzy::Classification::Request& request,
 				c_fuzzy::Classification::Response& response);
 
 	bool reasoningGraphRequestCallback(c_fuzzy::Graph::Request& request,
-					c_fuzzy::Graph::Response& response);
+				c_fuzzy::Graph::Response& response);
 	bool dependencyGraphRequestCallback(c_fuzzy::Graph::Request& request,
-						c_fuzzy::Graph::Response& response);
+				c_fuzzy::Graph::Response& response);
 	~ClassifierServiceHandler();
 
 private:
