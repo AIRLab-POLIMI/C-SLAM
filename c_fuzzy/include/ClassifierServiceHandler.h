@@ -32,10 +32,13 @@
 #include "c_fuzzy/Classification.h"
 #include "c_fuzzy/Graph.h"
 
+#include <ros/ros.h>
+
 class ClassifierServiceHandler
 {
 public:
-	ClassifierServiceHandler(const std::string& knowledgeBasePath,
+	ClassifierServiceHandler(ros::NodeHandle& n,
+				const std::string& knowledgeBasePath,
 				const std::string& classifierPath);
 
 	bool classificationCallback(c_fuzzy::Classification::Request& request,
@@ -51,6 +54,12 @@ private:
 	FuzzyKnowledgeBase* knowledgeBase;
 	FuzzyClassifier* classifier;
 	ClassifierReasoner* reasoner;
+
+	ros::ServiceServer classifierService;
+	ros::ServiceServer rGraphService;
+	ros::ServiceServer dGraphService;
+
+private:
 
 	void addInputs(std::vector<ObjectInstance>& objects,
 				std::vector<c_fuzzy::InputObject>& inputs);

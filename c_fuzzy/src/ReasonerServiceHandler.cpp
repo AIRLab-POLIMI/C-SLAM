@@ -37,13 +37,17 @@
 using namespace std;
 using namespace c_fuzzy;
 
-ReasonerServiceHandler::ReasonerServiceHandler(const string& knowledgeBasePath)
+ReasonerServiceHandler::ReasonerServiceHandler(ros::NodeHandle& n,
+			const string& knowledgeBasePath)
 {
 	FuzzyBuilder builder;
 
 	builder.parse(knowledgeBasePath.c_str());
 
 	knowledgeBase = builder.createKnowledgeBase();
+
+	reasonerService = n.advertiseService("reasoning",
+				&ReasonerServiceHandler::reasoningCallback, this);
 }
 
 bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
@@ -63,8 +67,8 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 	{
 		DomainOutputTable& table = i->second;
 
-		for (DomainOutputTable::iterator j = table.begin();
-					j != table.end(); ++j)
+		for (DomainOutputTable::iterator j = table.begin(); j != table.end();
+					++j)
 		{
 			DefuzzyfiedOutput output;
 			output.className = i->first;

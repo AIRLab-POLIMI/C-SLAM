@@ -37,7 +37,7 @@
 using namespace std;
 using namespace c_fuzzy;
 
-ClassifierServiceHandler::ClassifierServiceHandler(
+ClassifierServiceHandler::ClassifierServiceHandler(ros::NodeHandle& n,
 			const string& knowledgeBasePath, const string& classifierPath)
 {
 	FuzzyBuilder kbBuilder;
@@ -50,6 +50,16 @@ ClassifierServiceHandler::ClassifierServiceHandler(
 	knowledgeBase = kbBuilder.createKnowledgeBase();
 
 	reasoner = new ClassifierReasoner(*classifier, *knowledgeBase);
+
+	classifierService = n.advertiseService("classification",
+				&ClassifierServiceHandler::classificationCallback, this);
+
+	rGraphService = n.advertiseService("getReasoningGraph",
+				&ClassifierServiceHandler::reasoningGraphRequestCallback, this);
+
+	dGraphService = n.advertiseService("getDependencyGraph",
+				&ClassifierServiceHandler::dependencyGraphRequestCallback,
+				this);
 }
 
 bool ClassifierServiceHandler::classificationCallback(

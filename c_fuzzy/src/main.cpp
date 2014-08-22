@@ -48,37 +48,19 @@ int main(int argc, char **argv)
 
 		if (clParser.hasReasoner())
 		{
-			reasonerHandler = new ReasonerServiceHandler(
+			reasonerHandler = new ReasonerServiceHandler(n,
 						clParser.getKnowledgeBase());
-			ros::ServiceServer reasonerService = n.advertiseService("reasoning",
-						&ReasonerServiceHandler::reasoningCallback,
-						reasonerHandler);
 
 			ROS_INFO("Reasoner setup correctly");
 		}
 
 		if (clParser.hasClassifier())
 		{
-			classifierHandler = new ClassifierServiceHandler(
+			classifierHandler = new ClassifierServiceHandler(n,
 						clParser.getClassifierKnowledgeBase(),
 						clParser.getClassifier());
-			ros::ServiceServer classifierService = n.advertiseService(
-						"classification",
-						&ClassifierServiceHandler::classificationCallback,
-						classifierHandler);
-
-			ros::ServiceServer rGraphService =
-						n.advertiseService("getReasoningGraph",
-									&ClassifierServiceHandler::reasoningGraphRequestCallback,
-									classifierHandler);
-
-			ros::ServiceServer dGraphService =
-						n.advertiseService("getDependencyGraph",
-									&ClassifierServiceHandler::dependencyGraphRequestCallback,
-									classifierHandler);
 
 			ROS_INFO("Classifier setup correctly");
-
 		}
 
 		ros::spin();

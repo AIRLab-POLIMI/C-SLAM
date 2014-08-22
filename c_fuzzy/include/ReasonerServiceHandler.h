@@ -31,10 +31,13 @@
 
 #include "c_fuzzy/Reasoning.h"
 
+#include <ros/ros.h>
+
 class ReasonerServiceHandler
 {
 public:
-	ReasonerServiceHandler(const std::string& knowledgeBasePath);
+	ReasonerServiceHandler(ros::NodeHandle& n,
+				const std::string& knowledgeBasePath);
 
 	bool reasoningCallback(c_fuzzy::Reasoning::Request& request,
 				c_fuzzy::Reasoning::Response& response);
@@ -42,6 +45,8 @@ public:
 
 private:
 	FuzzyKnowledgeBase* knowledgeBase;
+
+	ros::ServiceServer reasonerService;
 
 };
 
