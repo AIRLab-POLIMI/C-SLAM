@@ -36,6 +36,8 @@
 #include "ParameterServer.h"
 #include "AdvancedDetector.h"
 
+#include "ObjectClassificator.h"
+
 class SLAMLogic: public BaseLogic
 {
 public:
@@ -46,8 +48,10 @@ public:
 
 private:
 	void detect(cv::Mat& image, cv::Mat& mask);
-	void classify();
+	void classify(image_geometry::PinholeCameraModel& cameraModel);
 	void display(cv::Mat& image);
+
+	void rectify(ObjectClassificator& classificator, image_geometry::PinholeCameraModel& cameraModel);
 
 private:
 	void getImageData(const c_tracking::TrackedObject& track,

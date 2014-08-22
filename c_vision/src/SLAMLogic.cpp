@@ -26,8 +26,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "AdvancedDetector.h"
-#include "ObjectClassificator.h"
+#include "MetricRectification.h"
 
 using namespace ros;
 using namespace sensor_msgs;
@@ -45,6 +44,8 @@ SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&SLAMLogic::handleCamera, this);
 	trackSubscriber = n.subscribe("tracks", 10, &SLAMLogic::handleTrack, this);
+
+	namedWindow("rectified");
 }
 
 void SLAMLogic::handleCamera(const ImageConstPtr& msg,
@@ -66,7 +67,7 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
-		classify();
+		classify(cameraModel);
 		display(objectImage);
 	}
 	catch (cv_bridge::Exception& e)
@@ -83,12 +84,11 @@ void SLAMLogic::detect(Mat& image, Mat& mask)
 {
 	Mat greyFrame;
 
-
 	detector.setRoll(roll);
 	detector.detect(image, mask);
 }
 
-void SLAMLogic::classify()
+void SLAMLogic::classify(PinholeCameraModel& cameraModel)
 {
 	c_fuzzy::Classification serviceCall;
 	ObjectClassificator classificator(serviceCall, classifierParam);
@@ -100,9 +100,74 @@ void SLAMLogic::classify()
 
 	classificator.labelFeatures();
 
+	rectify(classificator, cameraModel);
+
+}
+
+void SLAMLogic::rectify(ObjectClassificator& classificator,
+			PinholeCameraModel& cameraModel)
+{
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
+	for (vector<pair<vector<Point>, string> >::const_iterator it =
+				features.begin(); it != features.end(); ++it)
+	{
+		if (it->second != "Handle")
+		{
+			const vector<Point>& quadrilateral = it->first;
+			const Point& x = quadrilateral[0];
+			const Point& y = quadrilateral[1];
+			const Point& z = quadrilateral[2];
+			const Point& w = quadrilateral[3];
 
+			Vec3d h1, h2, v1, v2;
+			metric_rectification::findLine(x, y, h1);
+			metric_rectification::findLine(z, w, h2);
+			metric_rectification::findLine(x, w, v1);
+			metric_rectification::findLine(y, z, v2);
+
+			Vec3d van1 = h1.cross(h2);
+			van1 = van1 / norm(van1);
+			Vec3d van2 = v1.cross(v2);
+			van2 = van2 / norm(van2);
+
+			Mat H = metric_rectification::metricRectify(
+						cameraModel.fullIntrinsicMatrix(), van1, van2);
+
+
+			vector<Point2f> old;
+
+			for(int i = 0; i < it->first.size(); i++)
+			{
+				old.push_back(it->first[i]);
+			}
+
+			vector<Point2f> rectified;
+
+			perspectiveTransform(old, rectified, H);
+
+			Rect bb = boundingRect(rectified);
+
+			Mat rectifiedFrame(bb.width, bb.height, CV_8UC3);
+			rectifiedFrame.setTo(Scalar(0,0,0));
+
+			vector<Point> newVec;
+
+			for(int i = 0; i < rectified.size(); i++)
+			{
+				newVec.push_back(rectified[i]);
+			}
+
+			vector<vector<Point> > rectifiedvector;
+			rectifiedvector.push_back(newVec);
+
+			drawContours(rectifiedFrame, rectifiedvector, -1,
+						Scalar(0, 255, 0));
+
+			imshow("rectified", rectifiedFrame);
+
+		}
+	}
 }
 
 void SLAMLogic::display(Mat& image)

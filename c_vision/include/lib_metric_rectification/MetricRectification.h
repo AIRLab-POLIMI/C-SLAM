@@ -29,21 +29,23 @@
 namespace metric_rectification
 {
 
-cv::Mat metricRectify(cv::Mat& K, cv::Vec3f& v1, cv::Vec3f& v2);
+void findLine(const cv::Point& a, const cv::Point& b, cv::Vec3d& l);
 
-void findConicDualCircularPoints(const cv::Mat& W, const cv::Vec3f& linf,
+cv::Mat metricRectify(const cv::Mat& K, cv::Vec3d& v1, cv::Vec3d& v2);
+
+void findConicDualCircularPoints(const cv::Mat& W, const cv::Vec3d& linf,
 			cv::Mat& Cinf);
 
 cv::Mat findHomography(const cv::Mat& Cinf);
 
-void intersectConicLine(const cv::Mat& C, const cv::Vec3f& l,
-			std::vector<std::complex<float> >& I,
-			std::vector<std::complex<float> >& J);
+void intersectConicLine(const cv::Mat& C, const cv::Vec3d& l,
+			std::vector<std::complex<double> >& I,
+			std::vector<std::complex<double> >& J);
 
-void getPointsOnLine(cv::Vec3f l, cv::Vec3f p1, cv::Vec3f p2);
+void getPointsOnLine(const cv::Vec3d& l, cv::Vec3d& p1, cv::Vec3d& p2);
 
-cv::Mat scalarProduct(const std::vector<std::complex<float> >& I,
-			const std::vector<std::complex<float> >& J);
+cv::Mat scalarProduct(const std::vector<std::complex<double> >& I,
+			const std::vector<std::complex<double> >& J);
 
 }
 

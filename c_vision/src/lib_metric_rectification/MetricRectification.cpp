@@ -26,13 +26,23 @@
 using namespace cv;
 using namespace std;
 
-Mat metric_rectification::metricRectify(Mat& K, Vec3f& v1, Vec3f& v2)
+void metric_rectification::findLine(const cv::Point& a, const cv::Point& b,
+			cv::Vec3d& l)
+{
+	cv::Vec3d ah(a.x, a.y, 1);
+	cv::Vec3d bh(b.x, b.y, 1);
+
+	l = ah.cross(bh);
+	l = l / norm(l);
+}
+
+Mat metric_rectification::metricRectify(const Mat& K, Vec3d& v1, Vec3d& v2)
 {
 
 	Mat Cinf;
 	Mat W = (K * K.t()).inv();
 	//  find the line at the infinity of the plane
-	Vec3f linf = v1.cross(v2);
+	Vec3d linf = v1.cross(v2);
 	linf = linf / norm(linf);
 
 	// find the circular points of the plane
@@ -40,22 +50,23 @@ Mat metric_rectification::metricRectify(Mat& K, Vec3f& v1, Vec3f& v2)
 
 	//find the euclidean rectification
 	return findHomography(Cinf);
+
 }
 
 void metric_rectification::findConicDualCircularPoints(const Mat& W,
-			const Vec3f& linf, Mat& Cinf)
+			const Vec3d& linf, Mat& Cinf)
 {
-	vector<complex<float> > I, J;
+	vector<complex<double> > I, J;
 
 	intersectConicLine(W, linf, I, J);
 
 	Cinf = scalarProduct(I, J) + scalarProduct(J, I);
 }
 
-Mat metric_rectification::scalarProduct(const vector<complex<float> >& I,
-			const vector<complex<float> >& J)
+Mat metric_rectification::scalarProduct(const vector<complex<double> >& I,
+			const vector<complex<double> >& J)
 {
-	Mat_<float> P;
+	Mat_<double> P(3, 3);
 	for (int i = 0; i < I.size(); i++)
 		for (int j = 0; j < J.size(); j++)
 			P(i, j) = real(I[i] * J[j]);
@@ -65,37 +76,40 @@ Mat metric_rectification::scalarProduct(const vector<complex<float> >& I,
 Mat metric_rectification::findHomography(const Mat& Cinf)
 {
 	//find the euclidean rectification
-	Mat_<float> H, U, V, S, Sr;
+	Mat_<double> H, U, V, S, Sr(3, 3);
 	SVD::compute(Cinf, S, U, V);
 	S(2, 2) = 100;
-	sqrt(S, Sr);
+	Sr.setTo(0);
+	Sr(0, 0) = sqrt(S(0, 0));
+	Sr(1, 1) = sqrt(S(0, 1));
+	Sr(2, 2) = 10;
 	H = (U * Sr).inv();
 	H = H / H(2, 2);
 
 	return H;
 }
 
-void metric_rectification::intersectConicLine(const Mat& C, const Vec3f& l,
-			vector<complex<float> >& I, vector<complex<float> >& J)
+void metric_rectification::intersectConicLine(const Mat& C, const Vec3d& l,
+			vector<complex<double> >& I, vector<complex<double> >& J)
 {
-	Vec3f p1, p2;
+	Vec3d p1, p2;
 	// take the generic point p = p1 + t*p2
 	getPointsOnLine(l, p1, p2);
 
 	// the point is on the conic c if p'*C*p=0
 	// the equation is: a*t^2 + 2*b*t + c = 0
-	Mat_<float> af = (Mat(p2).t() * C * Mat(p2));
-	Mat_<float> bf = (Mat(p1).t() * C * Mat(p2));
-	Mat_<float> cf = (Mat(p1).t() * C * Mat(p1));
+	Mat_<double> af = (Mat(p2).t() * C * Mat(p2));
+	Mat_<double> bf = (Mat(p1).t() * C * Mat(p2));
+	Mat_<double> cf = (Mat(p1).t() * C * Mat(p1));
 
-	complex<float> a(af(0, 0), 0);
-	complex<float> b(bf(0, 0), 0);
-	complex<float> c(cf(0, 0), 0);
+	complex<double> a(af(0, 0), 0);
+	complex<double> b(bf(0, 0), 0);
+	complex<double> c(cf(0, 0), 0);
 
 	// compute the two t
-	complex<float> deltaSqrt = sqrt(pow(b, 2) - a * c);
-	complex<float> t1 = (-b + deltaSqrt) / a;
-	complex<float> t2 = (-b - deltaSqrt) / a;
+	complex<double> deltaSqrt = sqrt(pow(b, 2) - a * c);
+	complex<double> t1 = (-b + deltaSqrt) / a;
+	complex<double> t2 = (-b - deltaSqrt) / a;
 
 	//compute the two points
 	for (int i = 0; i < 3; i++)
@@ -105,20 +119,20 @@ void metric_rectification::intersectConicLine(const Mat& C, const Vec3f& l,
 	}
 }
 
-void metric_rectification::getPointsOnLine(Vec3f l, Vec3f p1, Vec3f p2)
+void metric_rectification::getPointsOnLine(const Vec3d& l, Vec3d& p1, Vec3d& p2)
 {
 	if (l[0] == 0 && l[1] == 0) //line at infinity
 	{
-		p1 = Vec3f(1, 0, 0);
-		p2 = Vec3f(0, 1, 0);
+		p1 = Vec3d(1, 0, 0);
+		p2 = Vec3d(0, 1, 0);
 	}
 	else
 	{
-		p2 = Vec3f(-l[1], l[0], 0);
+		p2 = Vec3d(-l[1], l[0], 0);
 		if (abs(l[0]) < abs(l[1]))
-			p1 = Vec3f(0, -l[2], l[1]);
+			p1 = Vec3d(0, -l[2], l[1]);
 		else
-			p1 = Vec3f(-l[2], 0, l[0]);
+			p1 = Vec3d(-l[2], 0, l[0]);
 
 	}
 }

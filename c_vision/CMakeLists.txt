@@ -55,7 +55,8 @@ add_executable(c_vision_slam src/BaseLogic.cpp
 target_link_libraries(c_vision_detector cognitive_vision 
 					  					${catkin_LIBRARIES})
 					  					
-target_link_libraries(c_vision_slam cognitive_vision 
+target_link_libraries(c_vision_slam cognitive_vision
+									metric_rectification 
 					  				${catkin_LIBRARIES})
 					  				
 #avoid tf and filters warnings
