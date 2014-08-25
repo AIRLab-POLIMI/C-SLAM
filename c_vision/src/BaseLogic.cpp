@@ -33,10 +33,16 @@ BaseLogic::BaseLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 	imuSubscriber = n.subscribe("/ardrone/imu", 1, &BaseLogic::handleImu, this);
 
 	connectToClassificationServer();
+
+	roll = 0;
+	R = cv::Mat::eye(2, 2, CV_64F);
 }
 
 void BaseLogic::handleImu(const sensor_msgs::Imu& imu)
 {
+	if (camera_frame_id.empty())
+		return;
+
 	double roll, pitch, yaw;
 	double x = imu.orientation.x;
 	double y = imu.orientation.y;
@@ -44,9 +50,13 @@ void BaseLogic::handleImu(const sensor_msgs::Imu& imu)
 	double w = imu.orientation.w;
 
 	tf::Quaternion quaternion(x, y, z, w);
-	tf::Matrix3x3 rotationMatrix(quaternion);
+	tf::StampedTransform transform;
+	tfListener.lookupTransform(imu.header.frame_id, camera_frame_id,
+				ros::Time(0), transform);
+	quaternion *= transform.getRotation();
 
-	rotationMatrix.getRPY(roll, pitch, yaw);
+	tf::Matrix3x3 rotationMatrix(quaternion);
+	rotationMatrix.getRPY(pitch, roll, yaw);
 
 	this->roll = roll;
 
@@ -62,8 +72,7 @@ void BaseLogic::connectToClassificationServer()
 				"classification", true);
 }
 
-void BaseLogic::callClassificationService(
-			c_fuzzy::Classification& serviceCall)
+void BaseLogic::callClassificationService(c_fuzzy::Classification& serviceCall)
 {
 	if (classificationService.isValid())
 	{

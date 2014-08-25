@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         tf)
                                         
 find_package(OpenCV REQUIRED)
-find_package(PCL REQUIRED)
 
 project(c_tracking)
 

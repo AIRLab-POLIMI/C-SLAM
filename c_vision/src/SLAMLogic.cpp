@@ -51,6 +51,7 @@ SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
 void SLAMLogic::handleCamera(const ImageConstPtr& msg,
 			const CameraInfoConstPtr& info_msg)
 {
+	camera_frame_id = msg->header.frame_id;
 	imageCache.add(msg);
 	infoCache.add(info_msg);
 }

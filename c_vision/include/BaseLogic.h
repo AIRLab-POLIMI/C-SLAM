@@ -28,6 +28,7 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/Imu.h>
 #include <c_fuzzy/Classification.h>
+#include <tf/transform_listener.h>
 
 #include "ParameterServer.h"
 
@@ -48,16 +49,17 @@ protected:
 
 	ros::Subscriber imuSubscriber;
 	image_transport::Subscriber imageSubscriber;
+	tf::TransformListener tfListener;
 	ros::ServiceClient classificationService;
 
 	//envirorment data
+	std::string camera_frame_id;
 	double roll;
 	cv::Mat R;
+
 
 	//parameters
 	ClassifierParam& classifierParam;
 };
-
-
 
 #endif /* BASELOGIC_H_ */

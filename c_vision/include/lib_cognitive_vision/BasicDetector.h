@@ -37,7 +37,6 @@ public:
 
 	inline void setRoll(double roll)
 	{
-		//The - is due to the different coordinate system from image and world
 		this->roll = -roll;
 	}
 

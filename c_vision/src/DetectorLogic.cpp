@@ -35,7 +35,6 @@ DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), detector(parameters),
 			viewer("Detected Image")
 {
-	roll = 0;
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
 	detectionPublisher = n.advertise<c_tracking::NamedPolygon>("to_track", 10);
@@ -43,6 +42,8 @@ DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 
 void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
+	camera_frame_id = msg->header.frame_id;
+
 	try
 	{
 		cv_bridge::CvImagePtr cv_ptr;
