@@ -33,6 +33,9 @@ void findLine(const cv::Point& a, const cv::Point& b, cv::Vec3d& l);
 
 cv::Mat metricRectify(const cv::Mat& K, cv::Vec3d& v1, cv::Vec3d& v2);
 
+cv::Mat getScaleTranslationAndRotation(const cv::Vec3d& origin,
+			const cv::Vec3d& vertical, double height);
+
 void findConicDualCircularPoints(const cv::Mat& W, const cv::Vec3d& linf,
 			cv::Mat& Cinf);
 

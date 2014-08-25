@@ -61,4 +61,4 @@ target_link_libraries(c_vision_slam cognitive_vision
 					  				${catkin_LIBRARIES})
 					  				
 #avoid tf and filters warnings
-add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)					  					
+add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)		  					

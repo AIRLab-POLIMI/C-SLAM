@@ -110,9 +110,13 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 {
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
+
+	vector<vector<Point> > rectifiedvector;
+
 	for (vector<pair<vector<Point>, string> >::const_iterator it =
 				features.begin(); it != features.end(); ++it)
 	{
+
 		if (it->second != "Handle")
 		{
 			const vector<Point>& quadrilateral = it->first;
@@ -135,10 +139,9 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 			Mat H = metric_rectification::metricRectify(
 						cameraModel.fullIntrinsicMatrix(), van1, van2);
 
-
 			vector<Point2f> old;
 
-			for(int i = 0; i < it->first.size(); i++)
+			for (int i = 0; i < it->first.size(); i++)
 			{
 				old.push_back(it->first[i]);
 			}
@@ -147,28 +150,36 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 
 			perspectiveTransform(old, rectified, H);
 
-			Rect bb = boundingRect(rectified);
+			Point2f originP = rectified[0];
+			Point2f verticalP = rectified[3];
+			Vec3d origin(originP.x, originP.y, 1);
+			Vec3d vertical(verticalP.x, verticalP.y, 1);
 
-			Mat rectifiedFrame(bb.width, bb.height, CV_8UC3);
-			rectifiedFrame.setTo(Scalar(0,0,0));
+			Mat H2 = metric_rectification::getScaleTranslationAndRotation(
+						origin, vertical, 100);
+
+			vector<Point2f> rotatedAndScaled;
+
+			perspectiveTransform(rectified, rotatedAndScaled, H2);
 
 			vector<Point> newVec;
 
-			for(int i = 0; i < rectified.size(); i++)
+			for (int i = 0; i < rotatedAndScaled.size(); i++)
 			{
-				newVec.push_back(rectified[i]);
+				newVec.push_back(rotatedAndScaled[i]);
 			}
 
-			vector<vector<Point> > rectifiedvector;
 			rectifiedvector.push_back(newVec);
-
-			drawContours(rectifiedFrame, rectifiedvector, -1,
-						Scalar(0, 255, 0));
-
-			imshow("rectified", rectifiedFrame);
-
 		}
 	}
+
+	Mat rectifiedFrame(150, 600, CV_8UC3);
+
+	rectifiedFrame.setTo(Scalar(0, 0, 0));
+
+	drawContours(rectifiedFrame, rectifiedvector, -1, Scalar(0, 255, 0));
+
+	imshow("rectified", rectifiedFrame);
 }
 
 void SLAMLogic::display(Mat& image)

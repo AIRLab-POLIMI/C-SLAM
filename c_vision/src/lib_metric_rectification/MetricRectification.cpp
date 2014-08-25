@@ -53,6 +53,36 @@ Mat metric_rectification::metricRectify(const Mat& K, Vec3d& v1, Vec3d& v2)
 
 }
 
+Mat metric_rectification::getScaleTranslationAndRotation(const Vec3d& origin,
+			const Vec3d& vertical, double height)
+{
+	//apply translation
+	Mat Ht = Mat::eye(3, 3, CV_64F);
+	Mat(-origin).copyTo(Ht.col(2));
+	Ht.at<double>(2,2) = 1.0;
+
+	//apply rotation
+
+	Vec3d tVertical = Mat(Ht * Mat(vertical));
+	double theta = atan2(tVertical[0], tVertical[1]);
+	double mr[3][3] =
+	{
+	{ cos(theta), -sin(theta), 0 },
+	{ sin(theta), cos(theta), 0 },
+	{ 0, 0, 1 } };
+	Mat Hr(3, 3, CV_64F, mr);
+
+	//apply scale
+	Vec3d rVertical = Mat(Hr * Mat(tVertical));
+	double k = height / rVertical[1];
+	Mat Hs = Mat::eye(3, 3, CV_64F);
+	Hs.at<double>(0, 0) = k;
+	Hs.at<double>(1, 1) = k;
+
+	return Hs * Hr * Ht;
+
+}
+
 void metric_rectification::findConicDualCircularPoints(const Mat& W,
 			const Vec3d& linf, Mat& Cinf)
 {
