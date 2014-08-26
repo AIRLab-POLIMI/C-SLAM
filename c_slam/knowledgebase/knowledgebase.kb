@@ -6,6 +6,7 @@ FUZZIFY_CLASS Rectangle
 		Narrow := tra(1900, 2000, 2600, 2700);
 		Medium := tra(900, 1000, 1100, 1500); 
 		Wide := tra(850, 900, 920, 970);
+		VeryWide := tra(700, 800, 850, 900);
 	END_FUZZIFY
 	
 	FUZZIFY area
@@ -22,6 +23,9 @@ FUZZIFY_CLASS CabinetDoor
 END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS WhiteBoard
+END_FUZZIFY_CLASS
+
+FUZZIFY_CLASS LargeWhiteBoard
 END_FUZZIFY_CLASS
 
 FUZZIFY_CLASS PossibleDoor

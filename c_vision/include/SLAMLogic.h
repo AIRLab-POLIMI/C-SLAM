@@ -48,10 +48,10 @@ public:
 
 private:
 	void detect(cv::Mat& image, cv::Mat& mask);
-	void classify(image_geometry::PinholeCameraModel& cameraModel);
+	void classify(image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
 	void display(cv::Mat& image);
 
-	void rectify(ObjectClassificator& classificator, image_geometry::PinholeCameraModel& cameraModel);
+	void rectify(ObjectClassificator& classificator, image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
 
 private:
 	void getImageData(const c_tracking::TrackedObject& track,

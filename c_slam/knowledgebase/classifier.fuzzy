@@ -23,6 +23,11 @@ CLASS WhiteBoard extends Rectangle
 	formFactor is Wide;
 END_CLASS
 
+CLASS LargeWhiteBoard extends Rectangle
+	area is VeryBig;
+	formFactor is VeryWide;
+END_CLASS
+
 CLASS Cabinet extends Rectangle
 	area is Huge;
 	formFactor is Medium;

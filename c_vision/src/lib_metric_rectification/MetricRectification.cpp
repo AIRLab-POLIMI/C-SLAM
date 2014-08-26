@@ -41,6 +41,7 @@ Mat metric_rectification::metricRectify(const Mat& K, Vec3d& v1, Vec3d& v2)
 
 	Mat Cinf;
 	Mat W = (K * K.t()).inv();
+	W = W / W.at<double>(2,2);
 	//  find the line at the infinity of the plane
 	Vec3d linf = v1.cross(v2);
 	linf = linf / norm(linf);
@@ -59,10 +60,9 @@ Mat metric_rectification::getScaleTranslationAndRotation(const Vec3d& origin,
 	//apply translation
 	Mat Ht = Mat::eye(3, 3, CV_64F);
 	Mat(-origin).copyTo(Ht.col(2));
-	Ht.at<double>(2,2) = 1.0;
+	Ht.at<double>(2, 2) = 1.0;
 
 	//apply rotation
-
 	Vec3d tVertical = Mat(Ht * Mat(vertical));
 	double theta = atan2(tVertical[0], tVertical[1]);
 	double mr[3][3] =
@@ -108,7 +108,6 @@ Mat metric_rectification::findHomography(const Mat& Cinf)
 	//find the euclidean rectification
 	Mat_<double> H, U, V, S, Sr(3, 3);
 	SVD::compute(Cinf, S, U, V);
-	S(2, 2) = 100;
 	Sr.setTo(0);
 	Sr(0, 0) = sqrt(S(0, 0));
 	Sr(1, 1) = sqrt(S(0, 1));
@@ -137,7 +136,7 @@ void metric_rectification::intersectConicLine(const Mat& C, const Vec3d& l,
 	complex<double> c(cf(0, 0), 0);
 
 	// compute the two t
-	complex<double> deltaSqrt = sqrt(pow(b, 2) - a * c);
+	complex<double> deltaSqrt = sqrt(b * b - a * c);
 	complex<double> t1 = (-b + deltaSqrt) / a;
 	complex<double> t2 = (-b - deltaSqrt) / a;
 

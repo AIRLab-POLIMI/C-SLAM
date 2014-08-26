@@ -68,7 +68,7 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
-		classify(cameraModel);
+		classify(cameraModel, roi);
 		display(objectImage);
 	}
 	catch (cv_bridge::Exception& e)
@@ -89,7 +89,7 @@ void SLAMLogic::detect(Mat& image, Mat& mask)
 	detector.detect(image, mask);
 }
 
-void SLAMLogic::classify(PinholeCameraModel& cameraModel)
+void SLAMLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 {
 	c_fuzzy::Classification serviceCall;
 	ObjectClassificator classificator(serviceCall, classifierParam);
@@ -101,17 +101,18 @@ void SLAMLogic::classify(PinholeCameraModel& cameraModel)
 
 	classificator.labelFeatures();
 
-	rectify(classificator, cameraModel);
+	rectify(classificator, cameraModel, roi);
 
 }
 
 void SLAMLogic::rectify(ObjectClassificator& classificator,
-			PinholeCameraModel& cameraModel)
+			PinholeCameraModel& cameraModel, Rect& roi)
 {
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
 
 	vector<vector<Point> > rectifiedvector;
+	Point offset(roi.x, roi.y);
 
 	for (vector<pair<vector<Point>, string> >::const_iterator it =
 				features.begin(); it != features.end(); ++it)
@@ -120,36 +121,42 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 		if (it->second != "Handle")
 		{
 			const vector<Point>& quadrilateral = it->first;
-			const Point& x = quadrilateral[0];
-			const Point& y = quadrilateral[1];
-			const Point& z = quadrilateral[2];
-			const Point& w = quadrilateral[3];
 
+			//compute four image vetices
+			const Point& x = quadrilateral[0] + offset;
+			const Point& y = quadrilateral[1] + offset;
+			const Point& z = quadrilateral[2] + offset;
+			const Point& w = quadrilateral[3] + offset;
+
+			//stack vertices in a vector
+			vector<Point2f> imagePoints;
+			imagePoints.push_back(x);
+			imagePoints.push_back(y);
+			imagePoints.push_back(z);
+			imagePoints.push_back(w);
+
+			//Compute 4 lines
 			Vec3d h1, h2, v1, v2;
 			metric_rectification::findLine(x, y, h1);
 			metric_rectification::findLine(z, w, h2);
 			metric_rectification::findLine(x, w, v1);
 			metric_rectification::findLine(y, z, v2);
 
+			//compute vanishing points
 			Vec3d van1 = h1.cross(h2);
 			van1 = van1 / norm(van1);
 			Vec3d van2 = v1.cross(v2);
 			van2 = van2 / norm(van2);
 
+			//rectify points
 			Mat H = metric_rectification::metricRectify(
 						cameraModel.fullIntrinsicMatrix(), van1, van2);
 
-			vector<Point2f> old;
-
-			for (int i = 0; i < it->first.size(); i++)
-			{
-				old.push_back(it->first[i]);
-			}
-
 			vector<Point2f> rectified;
 
-			perspectiveTransform(old, rectified, H);
+			perspectiveTransform(imagePoints, rectified, H);
 
+			//find rotation, translation and scale
 			Point2f originP = rectified[0];
 			Point2f verticalP = rectified[3];
 			Vec3d origin(originP.x, originP.y, 1);
@@ -162,6 +169,8 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 
 			perspectiveTransform(rectified, rotatedAndScaled, H2);
 
+
+			//stack points to draw
 			vector<Point> newVec;
 
 			for (int i = 0; i < rotatedAndScaled.size(); i++)
