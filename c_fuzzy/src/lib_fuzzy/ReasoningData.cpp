@@ -26,7 +26,7 @@
 
 using namespace std;
 
-void FuzzyAggregator::addValue(std::string nameSpace, string output,
+void FuzzyAggregator::addValue(string nameSpace, string output,
 			string mfLabel, double weight, double value)
 {
 	if (weight == 0)
