@@ -43,6 +43,8 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	src_window = "Cognitive Tracking";
 
 	namedWindow(src_window, CV_WINDOW_AUTOSIZE);
+
+	nextId = 0;
 }
 
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
@@ -80,9 +82,10 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 			//extract roi
 			const vector<Point2f>& polygon = track.getTrackedPolygon();
 			const Rect& roi = findRoi(polygon, grayImage);
+			uint64_t id = track.getId();
 
 			//send results
-			publishTrack(polygon, roi, msg->header.stamp);
+			publishTrack(id, polygon, roi, msg->header.stamp);
 
 			//draw results
 			drawResults(coloredImage, roi, track);
@@ -114,6 +117,7 @@ void Dispatcher::handleObjectTrackRequest(
 		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
 		Track track;
 		track.initialize(cv_ptr->image, data);
+		track.setId(nextId++);
 		track.setLabel(polygonMessage.polygonLabel);
 		tracks.push_back(track);
 
@@ -179,8 +183,9 @@ void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
 	}
 }
 
-void Dispatcher::publishTrack(const std::vector<cv::Point2f>& polygon,
-			const cv::Rect& roi, ros::Time stamp)
+void Dispatcher::publishTrack(const uint64_t& id,
+			const std::vector<cv::Point2f>& polygon, const cv::Rect& roi,
+			const ros::Time& stamp)
 {
 	c_tracking::TrackedObject message;
 	for (int i = 0; i < polygon.size(); i++)
@@ -196,6 +201,7 @@ void Dispatcher::publishTrack(const std::vector<cv::Point2f>& polygon,
 	message.roi.y_offset = roi.y;
 	message.roi.width = roi.width;
 	message.roi.height = roi.height;
+	message.id = id;
 
 	message.imageStamp = stamp;
 

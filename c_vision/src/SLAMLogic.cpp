@@ -163,7 +163,7 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 			Vec3d vertical(verticalP.x, verticalP.y, 1);
 
 			Mat H2 = metric_rectification::getScaleTranslationAndRotation(
-						origin, vertical, 100);
+						origin, vertical, 210);
 
 			vector<Point2f> rotatedAndScaled;
 
@@ -177,6 +177,8 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 			{
 				newVec.push_back(rotatedAndScaled[i]);
 			}
+
+			cout << rotatedAndScaled[1] << endl;
 
 			rectifiedvector.push_back(newVec);
 		}

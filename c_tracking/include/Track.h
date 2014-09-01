@@ -31,18 +31,29 @@
 class Track : public CMT
 {
 public:
-	void setLabel(const std::string& label)
+	inline void setId(const uint64_t& id)
+	{
+		this->id = id;
+	}
+
+	inline uint64_t getId() const
+	{
+		return id;
+	}
+
+	inline void setLabel(const std::string& label)
 	{
 		this->label = label;
 	}
 
-	const std::string& getLabel() const
+	inline const std::string& getLabel() const
 	{
 		return label;
 	}
 
 private:
 	std::string label;
+	uint64_t id;
 };
 
 

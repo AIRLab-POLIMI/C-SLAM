@@ -45,8 +45,9 @@ public:
 				const c_tracking::NamedPolygon& polygonMessage);
 
 private:
-	void publishTrack(const std::vector<cv::Point2f>& polygon,
-				const cv::Rect& roi, ros::Time stamp);
+	void publishTrack(const uint64_t& id,
+				const std::vector<cv::Point2f>& polygon, const cv::Rect& roi,
+				const ros::Time& stamp);
 	void getPolygon(const c_tracking::NamedPolygon& polygonMessage,
 				std::vector<cv::Point2f>& polygon, cv::Point2f& massCenter);
 	cv::Rect findRoi(const std::vector<cv::Point2f>& polygon, cv::Mat& image);
@@ -79,6 +80,8 @@ private:
 
 	//display
 	std::string src_window;
+
+	uint64_t nextId;
 };
 
 #endif /* DISPATCHER_H_ */
