@@ -31,7 +31,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/cache.h>
 #include <image_geometry/pinhole_camera_model.h>
-#include <c_tracking/TrackedObject.h>
+#include <c_slam_msgs/TrackedObject.h>
 
 #include "ParameterServer.h"
 #include "AdvancedDetector.h"
@@ -44,7 +44,7 @@ public:
 	RecognizerLogic(ros::NodeHandle n, ParameterServer& parameters);
 	void handleCamera(const sensor_msgs::ImageConstPtr& msg,
 				const sensor_msgs::CameraInfoConstPtr& info_msg);
-	void handleTrack(const c_tracking::TrackedObject& track);
+	void handleTrack(const c_slam_msgs::TrackedObject& track);
 
 private:
 	void detect(cv::Mat& image, cv::Mat& mask);
@@ -54,11 +54,11 @@ private:
 	void rectify(ObjectClassificator& classificator, image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
 
 private:
-	void getImageData(const c_tracking::TrackedObject& track,
+	void getImageData(const c_slam_msgs::TrackedObject& track,
 				cv_bridge::CvImagePtr& cv_ptr,
 				cv_bridge::CvImagePtr& cv_ptr_color,
 				image_geometry::PinholeCameraModel& cameraModel);
-	void getRoi(const c_tracking::TrackedObject& track, cv::Mat& input,
+	void getRoi(const c_slam_msgs::TrackedObject& track, cv::Mat& input,
 				cv::Rect& roi, cv::Mat& image, cv::Mat& mask);
 
 private:

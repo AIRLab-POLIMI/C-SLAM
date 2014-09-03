@@ -24,7 +24,7 @@
 #include "DetectorLogic.h"
 #include "ObjectClassificator.h"
 
-#include <c_tracking/NamedPolygon.h>
+#include <c_slam_msgs/NamedPolygon.h>
 
 namespace enc = sensor_msgs::image_encodings;
 
@@ -37,7 +37,7 @@ DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 {
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
-	detectionPublisher = n.advertise<c_tracking::NamedPolygon>("to_track", 10);
+	detectionPublisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 10);
 }
 
 void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
@@ -103,7 +103,7 @@ void DetectorLogic::sendFeatures(
 		const vector<Point>& polygon = i->first;
 		const string& name = i->second;
 
-		c_tracking::NamedPolygon message;
+		c_slam_msgs::NamedPolygon message;
 
 		message.polygonLabel = name;
 

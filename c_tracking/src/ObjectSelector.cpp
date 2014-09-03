@@ -26,7 +26,7 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
-#include <c_tracking/NamedPolygon.h>
+#include <c_slam_msgs/NamedPolygon.h>
 
 using namespace std;
 using namespace cv;
@@ -41,7 +41,7 @@ ros::Publisher publisher;
 
 void sendPolygonMessage()
 {
-	c_tracking::NamedPolygon message;
+	c_slam_msgs::NamedPolygon message;
 	for(int i = 0; i < polygon.size(); i++)
 	{
 		geometry_msgs::Point32 point;
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 	image_transport::ImageTransport it(n);
 
 	image_transport::Subscriber imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1, &handleImage);
-	publisher = n.advertise<c_tracking::NamedPolygon>("to_track", 1000);
+	publisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 1000);
 
 	namedWindow(src_window);
 	setMouseCallback(src_window, mouseHandler);

@@ -56,7 +56,7 @@ void RecognizerLogic::handleCamera(const ImageConstPtr& msg,
 	infoCache.add(info_msg);
 }
 
-void RecognizerLogic::handleTrack(const c_tracking::TrackedObject& track)
+void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 {
 	Mat objectImage, mask;
 	Rect roi;
@@ -204,7 +204,7 @@ void RecognizerLogic::display(Mat& image)
 	detector.deleteDetections();
 }
 
-void RecognizerLogic::getImageData(const c_tracking::TrackedObject& track,
+void RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,
 			CvImagePtr& cv_ptr, CvImagePtr& cv_ptr_color,
 			PinholeCameraModel& cameraModel)
 {
@@ -221,7 +221,7 @@ void RecognizerLogic::getImageData(const c_tracking::TrackedObject& track,
 	cv_ptr_color = toCvCopy(img, enc::BGR8);
 }
 
-void RecognizerLogic::getRoi(const c_tracking::TrackedObject& track, Mat& input,
+void RecognizerLogic::getRoi(const c_slam_msgs::TrackedObject& track, Mat& input,
 			Rect& roi, Mat& image, Mat& mask)
 {
 	vector<Point> polygon;

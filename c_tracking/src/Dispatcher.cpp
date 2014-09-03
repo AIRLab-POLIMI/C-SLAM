@@ -36,7 +36,7 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 {
 	toTrackSubscriber = n.subscribe("to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);
-	trackPublisher = n.advertise<c_tracking::TrackedObject>("tracks", 100);
+	trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("tracks", 100);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
 
@@ -98,7 +98,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 }
 
 void Dispatcher::handleObjectTrackRequest(
-			const c_tracking::NamedPolygon& polygonMessage)
+			const c_slam_msgs::NamedPolygon& polygonMessage)
 {
 	//if an image does not exist, return
 	if (cv_ptr.use_count() == 0)
@@ -160,7 +160,7 @@ bool Dispatcher::isSameObject(Track& track, vector<Point2f>& polygon,
 	return insideTrack || insideObject;
 }
 
-void Dispatcher::getPolygon(const c_tracking::NamedPolygon& polygonMessage,
+void Dispatcher::getPolygon(const c_slam_msgs::NamedPolygon& polygonMessage,
 			vector<Point2f>& polygon, Point2f& massCenter)
 {
 	const geometry_msgs::Polygon& p = polygonMessage.polygon;
@@ -187,7 +187,7 @@ void Dispatcher::publishTrack(const uint64_t& id,
 			const std::vector<cv::Point2f>& polygon, const cv::Rect& roi,
 			const ros::Time& stamp)
 {
-	c_tracking::TrackedObject message;
+	c_slam_msgs::TrackedObject message;
 	for (int i = 0; i < polygon.size(); i++)
 	{
 		geometry_msgs::Point32 point;

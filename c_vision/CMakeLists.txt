@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 2.8.3)
 
 find_package(catkin REQUIRED COMPONENTS roscpp 
 										cv_bridge 
-										tf
 										image_transport
-										image_geometry)
+										image_geometry
+										c_slam_msgs
+										tf)
 find_package(OpenCV REQUIRED)
 
 project(c_vision)
@@ -59,6 +60,10 @@ target_link_libraries(c_vision_detector cognitive_vision
 target_link_libraries(c_vision_recognizer cognitive_vision
 									      metric_rectification 
 					  				      ${catkin_LIBRARIES})
+					  				      
+#add dependencies
+add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS})
+add_dependencies(c_vision_recognizer ${catkin_EXPORTED_TARGETS})					  				      
 					  				
 #avoid tf and filters warnings
 add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)		  					

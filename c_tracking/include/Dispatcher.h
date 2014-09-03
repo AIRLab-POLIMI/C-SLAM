@@ -30,8 +30,8 @@
 #include <sensor_msgs/image_encodings.h>
 #include <ardrone_autonomy/Navdata.h>
 
-#include <c_tracking/NamedPolygon.h>
-#include <c_tracking/TrackedObject.h>
+#include <c_slam_msgs/NamedPolygon.h>
+#include <c_slam_msgs/TrackedObject.h>
 
 #include "Track.h"
 #include "CMTFeatureExtractor.h"
@@ -42,13 +42,13 @@ public:
 	Dispatcher(ros::NodeHandle& n);
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 	void handleObjectTrackRequest(
-				const c_tracking::NamedPolygon& polygonMessage);
+				const c_slam_msgs::NamedPolygon& polygonMessage);
 
 private:
 	void publishTrack(const uint64_t& id,
 				const std::vector<cv::Point2f>& polygon, const cv::Rect& roi,
 				const ros::Time& stamp);
-	void getPolygon(const c_tracking::NamedPolygon& polygonMessage,
+	void getPolygon(const c_slam_msgs::NamedPolygon& polygonMessage,
 				std::vector<cv::Point2f>& polygon, cv::Point2f& massCenter);
 	cv::Rect findRoi(const std::vector<cv::Point2f>& polygon, cv::Mat& image);
 
