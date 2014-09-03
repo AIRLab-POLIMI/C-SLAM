@@ -24,7 +24,7 @@
 #include <ros/ros.h>
 
 #include "ParameterServer.h"
-#include "SLAMLogic.h"
+#include "RecognizerLogic.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	ros::NodeHandle nh("~");
 
 	ParameterServer parameterServer(nh);
-	SLAMLogic logic(n, parameterServer);
+	RecognizerLogic logic(n, parameterServer);
 
 	ros::spin();
 

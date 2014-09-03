@@ -21,7 +21,7 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SLAMLogic.h"
+#include "RecognizerLogic.h"
 
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/highgui/highgui.hpp>
@@ -37,18 +37,18 @@ using namespace std;
 
 namespace enc = sensor_msgs::image_encodings;
 
-SLAMLogic::SLAMLogic(NodeHandle n, ParameterServer& parameters) :
+RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), infoCache(15), imageCache(15),
 			detector(parameters), viewer("ROI")
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
-				&SLAMLogic::handleCamera, this);
-	trackSubscriber = n.subscribe("tracks", 10, &SLAMLogic::handleTrack, this);
+				&RecognizerLogic::handleCamera, this);
+	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack, this);
 
 	namedWindow("rectified");
 }
 
-void SLAMLogic::handleCamera(const ImageConstPtr& msg,
+void RecognizerLogic::handleCamera(const ImageConstPtr& msg,
 			const CameraInfoConstPtr& info_msg)
 {
 	camera_frame_id = msg->header.frame_id;
@@ -56,7 +56,7 @@ void SLAMLogic::handleCamera(const ImageConstPtr& msg,
 	infoCache.add(info_msg);
 }
 
-void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
+void RecognizerLogic::handleTrack(const c_tracking::TrackedObject& track)
 {
 	Mat objectImage, mask;
 	Rect roi;
@@ -81,7 +81,7 @@ void SLAMLogic::handleTrack(const c_tracking::TrackedObject& track)
 	}
 }
 
-void SLAMLogic::detect(Mat& image, Mat& mask)
+void RecognizerLogic::detect(Mat& image, Mat& mask)
 {
 	Mat greyFrame;
 
@@ -89,7 +89,7 @@ void SLAMLogic::detect(Mat& image, Mat& mask)
 	detector.detect(image, mask);
 }
 
-void SLAMLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
+void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 {
 	c_fuzzy::Classification serviceCall;
 	ObjectClassificator classificator(serviceCall, classifierParam);
@@ -105,7 +105,7 @@ void SLAMLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 
 }
 
-void SLAMLogic::rectify(ObjectClassificator& classificator,
+void RecognizerLogic::rectify(ObjectClassificator& classificator,
 			PinholeCameraModel& cameraModel, Rect& roi)
 {
 	const vector<pair<vector<Point>, string> >& features =
@@ -193,7 +193,7 @@ void SLAMLogic::rectify(ObjectClassificator& classificator,
 	imshow("rectified", rectifiedFrame);
 }
 
-void SLAMLogic::display(Mat& image)
+void RecognizerLogic::display(Mat& image)
 {
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
@@ -204,7 +204,7 @@ void SLAMLogic::display(Mat& image)
 	detector.deleteDetections();
 }
 
-void SLAMLogic::getImageData(const c_tracking::TrackedObject& track,
+void RecognizerLogic::getImageData(const c_tracking::TrackedObject& track,
 			CvImagePtr& cv_ptr, CvImagePtr& cv_ptr_color,
 			PinholeCameraModel& cameraModel)
 {
@@ -221,7 +221,7 @@ void SLAMLogic::getImageData(const c_tracking::TrackedObject& track,
 	cv_ptr_color = toCvCopy(img, enc::BGR8);
 }
 
-void SLAMLogic::getRoi(const c_tracking::TrackedObject& track, Mat& input,
+void RecognizerLogic::getRoi(const c_tracking::TrackedObject& track, Mat& input,
 			Rect& roi, Mat& image, Mat& mask)
 {
 	vector<Point> polygon;

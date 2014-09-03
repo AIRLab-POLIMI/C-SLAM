@@ -21,8 +21,8 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SLAMLOGIC_H_
-#define SLAMLOGIC_H_
+#ifndef RECOGNIZERLOGIC_H_
+#define RECOGNIZERLOGIC_H_
 
 #include "BaseLogic.h"
 
@@ -38,10 +38,10 @@
 
 #include "ObjectClassificator.h"
 
-class SLAMLogic: public BaseLogic
+class RecognizerLogic: public BaseLogic
 {
 public:
-	SLAMLogic(ros::NodeHandle n, ParameterServer& parameters);
+	RecognizerLogic(ros::NodeHandle n, ParameterServer& parameters);
 	void handleCamera(const sensor_msgs::ImageConstPtr& msg,
 				const sensor_msgs::CameraInfoConstPtr& info_msg);
 	void handleTrack(const c_tracking::TrackedObject& track);
@@ -77,4 +77,4 @@ private:
 	ImageView viewer;
 };
 
-#endif /* SLAMLOGIC_H_ */
+#endif /* RECOGNIZERLOGIC_H_ */

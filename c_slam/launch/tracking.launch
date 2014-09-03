@@ -23,9 +23,9 @@
 	      type="object_selector" 
 	      output="screen" />
 	      
-	<node name="c_vision_slam" 
+	<node name="c_vision_recognizer" 
 	      pkg="c_vision" 
-	      type="c_vision_slam" 
+	      type="c_vision_recognizer" 
 	      output="screen">
 	    <!-- canny params -->
 		<param name="canny/alpha" value="0.05" />
