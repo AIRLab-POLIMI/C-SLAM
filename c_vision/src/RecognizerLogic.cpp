@@ -178,13 +178,11 @@ void RecognizerLogic::rectify(ObjectClassificator& classificator,
 				newVec.push_back(rotatedAndScaled[i]);
 			}
 
-			cout << rotatedAndScaled[1] << endl;
-
 			rectifiedvector.push_back(newVec);
 		}
 	}
 
-	Mat rectifiedFrame(150, 600, CV_8UC3);
+	Mat rectifiedFrame(300, 300, CV_8UC3);
 
 	rectifiedFrame.setTo(Scalar(0, 0, 0));
 

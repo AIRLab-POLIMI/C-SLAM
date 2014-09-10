@@ -58,18 +58,3 @@ CLASS Handle extends Cluster
 	x is Lateral on Door(xMin, xMax);
 	y is Centered on Door(yMin, yMax);
 END_CLASS
-
-CLASS Circle
-	VARIABLES
-		x;
-		y;
-		r;
-	END_VARIABLES
-END_CLASS
-
-CLASS ConcentricCircle extends Circle
-	
-	ConcentricCircle.x match x degree Good;
-	ConcentricCircle.y match y degree Good;	
-
-END_CLASS

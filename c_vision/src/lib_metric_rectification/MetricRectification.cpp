@@ -90,7 +90,12 @@ void metric_rectification::findConicDualCircularPoints(const Mat& W,
 
 	intersectConicLine(W, linf, I, J);
 
+	cout << "I=(" << I[0] << "," << I[1] << "," << I[2] << ")" << endl;
+	cout << "J=(" << J[0] << "," << J[1] << "," << J[2] << ")" << endl;
+
 	Cinf = scalarProduct(I, J) + scalarProduct(J, I);
+
+	cout << "Cinf=" << Cinf << endl;
 }
 
 Mat metric_rectification::scalarProduct(const vector<complex<double> >& I,
@@ -106,12 +111,13 @@ Mat metric_rectification::scalarProduct(const vector<complex<double> >& I,
 Mat metric_rectification::findHomography(const Mat& Cinf)
 {
 	//find the euclidean rectification
-	Mat_<double> H, U, V, S, Sr(3, 3);
-	SVD::compute(Cinf, S, U, V);
+	Mat_<double> H, U, V, Sr(3, 3);
+	vector<double> sv;
+	SVD::compute(Cinf, sv, U, V);
 	Sr.setTo(0);
-	Sr(0, 0) = sqrt(S(0, 0));
-	Sr(1, 1) = sqrt(S(0, 1));
-	Sr(2, 2) = 10;
+	Sr(0, 0) = sqrt(sv[0]);
+	Sr(1, 1) = sqrt(sv[1]);
+	Sr(2, 2) = 1;
 	H = (U * Sr).inv();
 	H = H / H(2, 2);
 
