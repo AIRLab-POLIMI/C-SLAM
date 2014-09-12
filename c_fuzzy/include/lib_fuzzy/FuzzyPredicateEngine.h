@@ -30,7 +30,7 @@
 #include "Node.h"
 #include "FuzzyMF.h"
 
-typedef std::pair<Node*, DomainTable*> PredicateInstance;
+typedef std::pair<Node*, DomainTablePtr> PredicateInstance;
 
 class FuzzyPredicateEngine
 {
@@ -60,7 +60,7 @@ public:
 
 
 private:
-	DomainTable* instantiatePredicateVar(std::string nameSpace, std::string templateVar,
+	DomainTablePtr instantiatePredicateVar(std::string nameSpace, std::string templateVar,
 			std::string variable);
 
 private:

@@ -26,7 +26,10 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <boost/make_shared.hpp>
+
 using namespace std;
+using namespace boost;
 
 FuzzyVariableEngine::FuzzyVariableEngine()
 {
@@ -37,7 +40,7 @@ void FuzzyVariableEngine::enterNamespace(string& nameSpace)
 {
 	if (namespaceTable.count(nameSpace) == 0)
 	{
-		domainTable = new DomainTable();
+		domainTable = make_shared<DomainTable>();
 		namespaceTable[nameSpace] = domainTable;
 	}
 	else
@@ -51,7 +54,7 @@ void FuzzyVariableEngine::enterNamespace(string& nameSpace)
 void FuzzyVariableEngine::addMF(string& label, FuzzyMF* mf)
 {
 	MFTable& map = *mfTable;
-	map[label] = mf;
+	map[label] = FuzzyMFPtr(mf);
 }
 
 void FuzzyVariableEngine::checkNameSpaceExistence(string& nameSpace)
@@ -72,7 +75,7 @@ void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
 	for (DomainTable::iterator it = domain.begin(); it != domain.end(); ++it)
 	{
 		string domainName = it->first;
-		MFTable* mfTable = it->second;
+		MFTablePtr mfTable = it->second;
 		DomainTable& domainTable = *namespaceTable[nameSpace];
 		if (domainTable.count(domainName) == 0)
 		{
@@ -82,35 +85,34 @@ void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
 		}
 		else
 		{
-			joinDomains(*domainTable[domainName], mfTable, nameSpace,
+			joinDomains(domainTable[domainName], mfTable, nameSpace,
 						domainName);
 		}
 	}
 
 }
 
-void FuzzyVariableEngine::joinDomains(MFTable& oldMfTable, MFTable* newMfTable,
-			string& nameSpace, string& domainName)
+void FuzzyVariableEngine::joinDomains(MFTablePtr oldMfTable,
+			MFTablePtr newMfTable, string& nameSpace, string& domainName)
 {
 	for (MFTable::iterator it = newMfTable->begin(); it != newMfTable->end();
 				++it)
 	{
 		const string& label = it->first;
 
-		if (oldMfTable.count(label) == 0)
+		if (oldMfTable->count(label) == 0)
 		{
-			oldMfTable[label] = it->second;
+			MFTable& tableRef = *oldMfTable;
+			tableRef[label] = it->second;
 		}
 	}
-
-	delete newMfTable;
 
 }
 
 void FuzzyVariableEngine::buildDomain(vector<string> variables)
 {
 	DomainTable& domainMap = *domainTable;
-	mfTable = new MFTable();
+	mfTable = make_shared<MFTable>();
 
 	for (vector<string>::iterator it = variables.begin(); it != variables.end();
 				it++)
@@ -158,39 +160,7 @@ VariableMasks& FuzzyVariableEngine::getMasks()
 void FuzzyVariableEngine::initializeNamespaces()
 {
 	currentNamespace = "";
-	domainTable = new DomainTable();
-	mfTable = NULL;
+	domainTable = make_shared<DomainTable>();
+	mfTable.reset();
 	namespaceTable[currentNamespace] = domainTable;
-}
-
-void FuzzyVariableEngine::deleteDomains()
-{
-	for (NamespaceTable::iterator it1 = namespaceTable.begin();
-				it1 != namespaceTable.end(); ++it1)
-	{
-		DomainTable* domain = it1->second;
-		for (DomainTable::iterator it2 = domain->begin(); it2 != domain->end();
-					++it2)
-		{
-			deleteMF(it2->second);
-			delete it2->second;
-		}
-
-		delete domain;
-
-	}
-
-}
-
-void FuzzyVariableEngine::deleteMF(MFTable* mfTable)
-{
-	for (MFTable::iterator it = mfTable->begin(); it != mfTable->end(); ++it)
-	{
-		delete it->second;
-	}
-}
-
-FuzzyVariableEngine::~FuzzyVariableEngine()
-{
-	deleteDomains();
 }

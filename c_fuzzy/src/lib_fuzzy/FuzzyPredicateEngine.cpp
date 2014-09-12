@@ -26,11 +26,14 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <boost/make_shared.hpp>
+
 using namespace std;
+using namespace boost;
 
 FuzzyPredicateEngine::FuzzyPredicateEngine()
 {
-	table[""] = new DomainTable();
+	table[""] = make_shared<DomainTable>();
 	currentNamespace = "";
 	currentTemplateVar = "";
 }
@@ -41,7 +44,7 @@ void FuzzyPredicateEngine::enterNamespace(string nameSpace)
 
 	if (table.count(nameSpace) == 0)
 	{
-		table[nameSpace] = new DomainTable();
+		table[nameSpace] = make_shared<DomainTable>();
 	}
 }
 
@@ -56,7 +59,7 @@ void FuzzyPredicateEngine::buildDomain(std::string templateVar)
 
 	if (domainTable.count(templateVar) == 0)
 	{
-		domainTable[templateVar] = new MFTable();
+		domainTable[templateVar] = make_shared<MFTable>();
 	}
 	else
 	{
@@ -72,7 +75,7 @@ void FuzzyPredicateEngine::addTemplateMF(string label, FuzzyMF* mf)
 {
 	DomainTable& domainTable = *table[currentNamespace];
 	MFTable& mfTable = *domainTable[currentTemplateVar];
-	mfTable[label] = mf;
+	mfTable[label] = FuzzyMFPtr(mf);
 }
 
 void FuzzyPredicateEngine::buildPredicate(string name, Node* rule)
@@ -91,7 +94,7 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
 		Node* predicate = data.definition->instantiate(variable);
-		DomainTable* domains = instantiatePredicateVar(nameSpace,
+		DomainTablePtr domains = instantiatePredicateVar(nameSpace,
 				data.templateVar, variable.domain);
 		return PredicateInstance(predicate, domains);
 	}
@@ -114,12 +117,12 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string predicate,
 	return getPredicateInstance("", predicate, variable);
 }
 
-DomainTable* FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
+DomainTablePtr FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
 		string templateVar, string variable)
 {
 	DomainTable& templateDomain = *table[nameSpace];
-	MFTable* mfTable = templateDomain[templateVar];
-	DomainTable* domain = new DomainTable();
+	MFTablePtr mfTable = templateDomain[templateVar];
+	DomainTablePtr domain = make_shared<DomainTable>();
 	DomainTable& domainMap = *domain;
 	domainMap[variable] = mfTable;
 

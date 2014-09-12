@@ -38,7 +38,7 @@ public:
 	void enterNamespace(std::string& nameSpace);
 	void addMF(std::string& label, FuzzyMF* mf);
 	void addDomains(std::string& nameSpace, DomainTable& domain);
-	void joinDomains(MFTable& oldMfTable, MFTable* newMfTable,
+	void joinDomains(MFTablePtr oldMfTable, MFTablePtr newMfTable,
 				std::string& nameSpace, std::string& domainName);
 	void buildDomain(std::vector<std::string> variables);
 	void normalizeVariableMasks(size_t size);
@@ -46,20 +46,17 @@ public:
 	void updateVariableMask(std::vector<Variable>& vars, size_t rule);
 	NamespaceTable& getTable();
 	VariableMasks& getMasks();
-	~FuzzyVariableEngine();
 
 private:
 	void initializeNamespaces();
 	void deleteMasks();
-	void deleteDomains();
-	void deleteMF(MFTable* mfTable);
 	void checkNameSpaceExistence(std::string& nameSpace);
 
 private:
 	//Variable data
 	NamespaceTable namespaceTable;
-	DomainTable* domainTable;
-	MFTable* mfTable;
+	DomainTablePtr domainTable;
+	MFTablePtr mfTable;
 
 	//Mask data
 	VariableMasks variableMasks;

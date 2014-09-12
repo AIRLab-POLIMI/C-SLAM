@@ -110,7 +110,7 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 {
 	DomainTable& map = *lookUpTable[nameSpace];
 	MFTable& mfTable = *map[label];
-	Node* mFunction = mfTable[mfLabel];
+	FuzzyMFPtr mFunction = mfTable[mfLabel];
 	int crispValue = reasoningData.inputs[nameSpace][label];
 	reasoningData.inputValue = crispValue;
 	return mFunction->evaluate(reasoningData);
@@ -151,7 +151,7 @@ double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 	double truthValue = reasoningData.truthValue;
 	DomainTable& map = *lookUpTable[nameSpace];
 	MFTable& mfTable = *map[output];
-	FuzzyMF* mf = mfTable[mfLabel];
+	FuzzyMFPtr mf = mfTable[mfLabel];
 	double result = mf->defuzzify(truthValue);
 	reasoningData.aggregator.addValue(nameSpace, output, mfLabel, truthValue,
 				result);

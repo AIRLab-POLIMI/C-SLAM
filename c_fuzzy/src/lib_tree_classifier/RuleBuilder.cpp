@@ -28,7 +28,10 @@
 #include "FuzzyOperator.h"
 #include "FuzzyRule.h"
 
+#include <boost/make_shared.hpp>
+
 using namespace std;
+using namespace boost;
 
 RuleBuilder::RuleBuilder(FuzzyKnowledgeBase& knowledgeBase) :
 			knowledgeBase(knowledgeBase), generator(NULL)
@@ -87,7 +90,6 @@ void RuleBuilder::fixNameSpace(FuzzyClass& fuzzyClass)
 
 		NamespaceTable& table = knowledgeBase.getNamespaceTable();
 
-		//FIXME needs copy, crash when deallocating memory
 		knowledgeBase.addDomains(className, *table[superClassName]);
 	}
 }
@@ -244,12 +246,13 @@ Node* RuleBuilder::buildComplexRelation(Variable var, string& label)
 	return new FuzzyAnd(boundCheck, fuzzyRule);
 }
 
+//TODO levare da qui? nel caso levare pure using e include
 void RuleBuilder::addDomain(const string& domain, const string& label,
 			FuzzyMF* fuzzyMF)
 {
-	MFTable* mfTable = new MFTable();
+	MFTablePtr mfTable = make_shared<MFTable>();
 	MFTable& table = *mfTable;
-	table[label] = fuzzyMF;
+	table[label] = FuzzyMFPtr(fuzzyMF);
 
 	DomainTable domainTable;
 	domainTable[domain] = mfTable;

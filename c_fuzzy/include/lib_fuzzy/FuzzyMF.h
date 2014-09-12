@@ -26,6 +26,7 @@
 
 #include <string>
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 #include "Node.h"
 
@@ -154,8 +155,14 @@ private:
 	int value;
 };
 
-typedef std::map<std::string, FuzzyMF*> MFTable;
-typedef std::map<std::string, MFTable*> DomainTable;
-typedef std::map<std::string, DomainTable*> NamespaceTable;
+typedef boost::shared_ptr<FuzzyMF> FuzzyMFPtr;
+
+typedef std::map<std::string, FuzzyMFPtr> MFTable;
+typedef boost::shared_ptr<MFTable> MFTablePtr;
+
+typedef std::map<std::string, MFTablePtr> DomainTable;
+typedef boost::shared_ptr<DomainTable> DomainTablePtr;
+
+typedef std::map<std::string, DomainTablePtr> NamespaceTable;
 
 #endif /* FUZZYMF_H_ */
