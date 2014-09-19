@@ -66,4 +66,4 @@ add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS})
 add_dependencies(c_vision_recognizer ${catkin_EXPORTED_TARGETS})					  				      
 					  				
 #avoid tf and filters warnings
-add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)		  					
+add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
