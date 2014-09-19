@@ -134,7 +134,7 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
 	_imu->step(za, zw);
 }
 
-void FullSlamImu::tracksCb(const c_tracking::TrackedObject& msg) {
+void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 
 	double t = msg.imageStamp.toSec();
 

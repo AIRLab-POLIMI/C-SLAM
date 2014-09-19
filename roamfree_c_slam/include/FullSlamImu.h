@@ -18,7 +18,7 @@
 #include "ROAMimu/IMUIntegralHandler.h"
 
 #include <sensor_msgs/Imu.h>
-#include <c_tracking/TrackedObject.h>
+#include <c_slam_msgs/TrackedObject.h>
 
 using namespace ROAMestimation;
 using namespace ROAMimu;
@@ -50,7 +50,7 @@ protected:
 	std::set<int> _tracks;
 
 	void imuCb(const sensor_msgs::Imu &msg);
-	void tracksCb(const c_tracking::TrackedObject &msg);
+	void tracksCb(const c_slam_msgs::TrackedObject &msg);
 
 
 
