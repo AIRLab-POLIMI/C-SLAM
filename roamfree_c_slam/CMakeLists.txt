@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(roamfree_c_slam)
 
-find_package(catkin REQUIRED COMPONENTS roscpp tf)
+find_package(catkin REQUIRED COMPONENTS roscpp tf c_slam_msgs)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
@@ -32,3 +32,8 @@ target_link_libraries(full_slam_imu
   ${catkin_LIBRARIES}
   ${ROAMFREE_LIBRARIES}  
 )
+
+add_dependencies(full_slam_imu ${catkin_EXPORTED_TARGETS})
+
+#avoid tf warnings
+add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
