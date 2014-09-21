@@ -23,9 +23,11 @@
 using namespace ROAMestimation;
 using namespace ROAMimu;
 
-namespace roamfree_c_slam {
+namespace roamfree_c_slam
+{
 
-class FullSlamImu {
+class FullSlamImu
+{
 
 public:
 
@@ -51,9 +53,6 @@ protected:
 
 	void imuCb(const sensor_msgs::Imu &msg);
 	void tracksCb(const c_slam_msgs::TrackedObject &msg);
-
-
-
 
 };
 

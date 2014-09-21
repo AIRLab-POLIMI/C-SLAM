@@ -12,29 +12,36 @@
 #include <tf_conversions/tf_eigen.h>
 #include <ROAMimu/IMUIntegralHandler.h>
 
-namespace roamfree_c_slam {
+namespace roamfree_c_slam
+{
 
 FullSlamImu::FullSlamImu() :
-		_filter(NULL), _imu(NULL), _initialized(false) {
+			_filter(NULL), _imu(NULL), _initialized(false)
+{
 }
 
-FullSlamImu::~FullSlamImu() {
-	if (_filter != NULL) {
+FullSlamImu::~FullSlamImu()
+{
+	if (_filter != NULL)
+	{
 		delete _filter;
 	}
-	if (_imu != NULL) {
+	if (_imu != NULL)
+	{
 		delete _imu;
 	}
 }
 
-void FullSlamImu::init() {
+void FullSlamImu::init()
+{
 
 	/* configure roamfree */
 
 	_filter = FactorGraphFilterFactory::getNewFactorGraphFilter();
 
 	_filter->setLowLevelLogging(true); // default log folder
-	system("rm /tmp/roamfree/*.log");
+	system("mkdir -p /tmp/roamfree/");
+	system("rm -f /tmp/roamfree/*.log");
 
 	_filter->setDeadReckoning(false);
 	_filter->setSolverMethod(LevenbergMarquardt);
@@ -60,7 +67,7 @@ void FullSlamImu::init() {
 
 	// the pose of the camera wrt odometric center
 	_T_OC_tf = tf::Transform(tf::Quaternion(-0.5, 0.5, -0.5, 0.5),
-			tf::Vector3(0.21, 0.00, 0.00));
+				tf::Vector3(0.21, 0.00, 0.00));
 
 	Eigen::VectorXd CM(9); //the camera intrinsic calibration matrix
 	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
@@ -77,15 +84,18 @@ void FullSlamImu::init() {
 
 }
 
-void FullSlamImu::run() {
+void FullSlamImu::run()
+{
 	ros::NodeHandle n("~");
 
 	ros::Rate rate(0.2);
 
-	while (ros::ok()) {
+	while (ros::ok())
+	{
 		ros::spinOnce();
 
-		if (_filter->getNthOldestPose(1)) {
+		if (_filter->getNthOldestPose(1))
+		{
 
 			_filter->getNthOldestPose(0)->setFixed(true);
 			_filter->getNthOldestPose(1)->setFixed(true);
@@ -93,15 +103,20 @@ void FullSlamImu::run() {
 			_filter->estimate(25);
 		}
 
-		rate.sleep();
+		//rate.sleep();
+		//ros::Duration(5).sleep();
+		sleep(5); //TODO why ros not working???
 	};
+
 }
 
-void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
-
+void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
+{
+	ROS_INFO("imu callback");
 	double t = msg.header.stamp.toSec();
 
-	if (!_initialized) {
+	if (!_initialized)
+	{
 
 		// we have to initialize the IMUIntegralHandler
 
@@ -116,8 +131,8 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
 		Eigen::VectorXd T_OS_IMU(7); // Transformation between Odometer and robot frame
 		T_OS_IMU << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
-		_imu->init(_filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias, true,
-				x0, t);
+		_imu->init(_filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias,
+					true, x0, t);
 
 		// fix first pose to remove gauge freedom
 		_filter->getOldestPose()->setFixed(true);
@@ -126,16 +141,18 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
 	}
 
 	// fill temporaries with measurements
-	double za[] = { msg.linear_acceleration.x, msg.linear_acceleration.y,
-			msg.linear_acceleration.z };
-	double zw[] = { msg.angular_velocity.x, msg.angular_velocity.y,
-			msg.angular_velocity.z };
+	double za[] =
+	{ msg.linear_acceleration.x, msg.linear_acceleration.y,
+	msg.linear_acceleration.z };
+	double zw[] =
+	{ msg.angular_velocity.x, msg.angular_velocity.y, msg.angular_velocity.z };
 
 	_imu->step(za, zw);
 }
 
-void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
-
+void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
+{
+	ROS_INFO("Tracks callback");
 	double t = msg.imageStamp.toSec();
 
 	// produce the sensor name
@@ -146,26 +163,29 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 	// compute the center of mass
 	Eigen::VectorXd z(2);
 	z
-			<< 0.25
-					* (msg.polygon.points[0].x + msg.polygon.points[1].x
-							+ msg.polygon.points[2].x + msg.polygon.points[3].x), 0.25
-			* (msg.polygon.points[0].y + msg.polygon.points[1].y
-					+ msg.polygon.points[2].y + msg.polygon.points[3].y);
+				<< 0.25
+							* (msg.polygon.points[0].x + msg.polygon.points[1].x
+										+ msg.polygon.points[2].x
+										+ msg.polygon.points[3].x), 0.25
+				* (msg.polygon.points[0].y + msg.polygon.points[1].y
+							+ msg.polygon.points[2].y + msg.polygon.points[3].y);
 
 	std::set<int>::iterator s_it = _tracks.find(msg.id);
 
-	if (s_it == _tracks.end()) {
+	if (s_it == _tracks.end())
+	{
 
 		// there must already exist a pose
 		ROAMestimation::PoseVertexWrapper_Ptr pose_ptr =
-				_filter->getNearestPoseByTimestamp(t);
-		if (!pose_ptr) {
+					_filter->getNearestPoseByTimestamp(t);
+		if (!pose_ptr)
+		{
 			return;
 		}
 
 		// we need to add a new sensor
 		_filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false,
-				true);
+					true);
 		_filter->shareSensorFrame("Camera", sensor);
 		_filter->shareParameter("Camera_CM", sensor + "_CM");
 
@@ -174,12 +194,12 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 		double alpha = 2;
 
 		const Eigen::Map<const Eigen::Matrix3d> cm(
-				_filter->getParameterByName("Camera_CM")->getEstimate().data());
+					_filter->getParameterByName("Camera_CM")->getEstimate().data());
 		Eigen::Matrix3d cm_inv; // the inverse of the camera intrinsic calibration matrix
 		std::cout << cm(0, 0);
 
-		cm_inv << 1.0 / cm(0, 0), 0.0, -cm(0, 2) / cm(0, 0), 0.0, 1.0 / cm(1, 1), -cm(
-				1, 2) / cm(1, 1), 0.0, 0.0, 1.0;
+		cm_inv << 1.0 / cm(0, 0), 0.0, -cm(0, 2) / cm(0, 0), 0.0, 1.0
+					/ cm(1, 1), -cm(1, 2) / cm(1, 1), 0.0, 0.0, 1.0;
 
 		Eigen::Vector3d Limg; // the landmark on the image plane
 		Limg << z(0), z(1), 1.0;
@@ -190,7 +210,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 		// the pose of the odometric center wrt world
 		const Eigen::VectorXd &x = pose_ptr->getEstimate();
 		tf::Transform T_WO_tf(tf::Quaternion(x(4), x(5), x(6), x(3)),
-				tf::Vector3(x(0), x(1), x(2)));
+					tf::Vector3(x(0), x(1), x(2)));
 
 		// TODO: a little bit of messy code between eigen and tf
 		tf::Vector3 Lc_tf(Lc(0), Lc(1), Lc(2));
@@ -199,12 +219,13 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 		Eigen::VectorXd Lw(3);
 		Lw << Lw_tf.x(), Lw_tf.y(), Lw_tf.z();
 
-		std::cout << "INITIAL Lw " << sensor << " " << Lw.transpose() << std::endl;
+		std::cout << "INITIAL Lw " << sensor << " " << Lw.transpose()
+					<< std::endl;
 
 		//
 
-		_filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw",
-				Lw, false);
+		_filter->addConstantParameter(ROAMestimation::Euclidean3D,
+					sensor + "_Lw", Lw, false);
 
 		_filter->setRobustKernel(sensor, true, 0.1);
 
@@ -220,14 +241,17 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 
 } /* namespace roamfree_c_slam */
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	ros::init(argc, argv, "roamfree_full_slam_imu");
 
 	roamfree_c_slam::FullSlamImu n;
 
+	ROS_INFO("Localization node started");
 	n.init();
-
+	ROS_INFO("Localization node initialized");
 	n.run();
+	ROS_INFO("Localization node shut down");
 
 	return 0;
 }
