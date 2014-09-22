@@ -103,9 +103,9 @@ void FullSlamImu::run()
 			_filter->estimate(25);
 		}
 
-		//rate.sleep();
+		rate.sleep();
 		//ros::Duration(5).sleep();
-		sleep(5); //TODO why ros not working???
+		//sleep(5); //TODO why ros not working???
 	};
 
 }
@@ -219,8 +219,8 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 		Eigen::VectorXd Lw(3);
 		Lw << Lw_tf.x(), Lw_tf.y(), Lw_tf.z();
 
-		std::cout << "INITIAL Lw " << sensor << " " << Lw.transpose()
-					<< std::endl;
+		std::cout << "INITIAL Lw " << sensor << " " << Lw.transpose();
+		std::cout << std::endl;
 
 		//
 

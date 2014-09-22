@@ -1,19 +1,20 @@
-<?xml version="1.0"?>
 <package>
-  <name>roamfree_c_slam</name>
-  <version>0.0.0</version>
-  <description>The roamfree_c_slam package</description>
-  
-  <maintainer email="davide@todo.todo">davide</maintainer>
-  <license>GPLv3</license>
+	<name>roamfree_c_slam</name>
+	<version>1.0.0</version>
+	<description>
+		The roamfree_c_slam package
+	</description>
+	
+	<maintainer email="davide@todo.todo">Davide Antonio Cucci</maintainer>
+	<license>GPLv3</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+	<author>Davide Antonio Cucci</author>
+	<author>Davide Tateo</author>
+	<url>http://ros.org/wiki/roamfre_c_slam</url>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>tf</build_depend>
-  
-  <build_depend>message_generation</build_depend>
-  
-  <run_depend>message_runtime</run_depend>
-
+	<build_depend>roscpp</build_depend>
+	<build_depend>tf</build_depend>
+	<build_depend>c_slam_msgs</build_depend>
+	
+	<buildtool_depend>catkin</buildtool_depend>
 </package>
