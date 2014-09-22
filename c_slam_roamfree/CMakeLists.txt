@@ -38,6 +38,7 @@ target_link_libraries(circular_test ${catkin_LIBRARIES})
 
 
 add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
+add_dependencies(circular_test ${catkin_EXPORTED_TARGETS})
 
 #avoid tf warnings
 add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
