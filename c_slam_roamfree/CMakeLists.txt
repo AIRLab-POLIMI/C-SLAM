@@ -25,13 +25,17 @@ include_directories(include
 )
 
 add_executable(c_localization
-	src/FullSlamImu.cpp
-)
+	           src/FullSlamImu.cpp)
 
 target_link_libraries(c_localization
-  ${catkin_LIBRARIES}
-  ${ROAMFREE_LIBRARIES}  
-)
+                      ${catkin_LIBRARIES}
+                      ${ROAMFREE_LIBRARIES})
+
+add_executable(circular_test
+               src/CircularTest.cpp)
+
+target_link_libraries(circular_test ${catkin_LIBRARIES})
+
 
 add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
 
