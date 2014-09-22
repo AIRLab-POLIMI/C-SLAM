@@ -1,8 +1,8 @@
 <package>
-	<name>roamfree_c_slam</name>
+	<name>c_slam_roamfree</name>
 	<version>1.0.0</version>
 	<description>
-		The roamfree_c_slam package
+		The c_slam_roamfree package
 	</description>
 	
 	<maintainer email="davide@todo.todo">Davide Antonio Cucci</maintainer>

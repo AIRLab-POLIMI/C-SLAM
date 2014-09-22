@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(roamfree_c_slam)
+project(c_slam_roamfree)
 
 find_package(catkin REQUIRED COMPONENTS roscpp tf c_slam_msgs)
 
@@ -19,21 +19,21 @@ set(CMAKE_CXX_FLAGS "-g -std=c++11 ${OTHERS_DEFINE}")
 
 include_directories(include 
                     ${catkin_INCLUDE_DIRS}
-		    ${ROAMFREE_INCLUDE_DIR}
-		    ${EIGEN3_INCLUDE_DIR}
-		    ${Boost_INCLUDE_DIRS}  
+		            ${ROAMFREE_INCLUDE_DIR}
+		            ${EIGEN3_INCLUDE_DIR}
+		            ${Boost_INCLUDE_DIRS}  
 )
 
-add_executable(full_slam_imu
+add_executable(c_localization
 	src/FullSlamImu.cpp
 )
 
-target_link_libraries(full_slam_imu
+target_link_libraries(c_localization
   ${catkin_LIBRARIES}
   ${ROAMFREE_LIBRARIES}  
 )
 
-add_dependencies(full_slam_imu ${catkin_EXPORTED_TARGETS})
+add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
 
 #avoid tf warnings
 add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
