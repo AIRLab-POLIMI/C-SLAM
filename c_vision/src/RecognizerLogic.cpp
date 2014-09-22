@@ -150,7 +150,7 @@ void RecognizerLogic::rectify(ObjectClassificator& classificator,
 
 			//rectify points
 			Mat H = metric_rectification::metricRectify(
-						cameraModel.fullIntrinsicMatrix(), van1, van2);
+						Mat(cameraModel.fullIntrinsicMatrix()), van1, van2);
 
 			vector<Point2f> rectified;
 

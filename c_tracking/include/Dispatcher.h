@@ -28,7 +28,6 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
-#include <ardrone_autonomy/Navdata.h>
 
 #include <c_slam_msgs/NamedPolygon.h>
 #include <c_slam_msgs/TrackedObject.h>
