@@ -39,7 +39,7 @@ public:
 		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 1024);
 	}
 
-	void publishIMU(vector<double> za, vector<double> zw)
+	void publishIMU(vector<double>& za, vector<double>& zw)
 	{
 		sensor_msgs::Imu msg;
 
@@ -86,6 +86,8 @@ int main(int argc, char *argv[])
 		{ alpha * r, std::pow(w, 2) * r, 9.8 };
 		vector<double> zw =
 		{ 0.0, 0.0, w };
+
+		ROS_INFO_STREAM(zw[0] << " " << zw[1] << " " << zw[2]);
 
 		publisher.publishIMU(za, zw);
 

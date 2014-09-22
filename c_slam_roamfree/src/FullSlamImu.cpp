@@ -78,7 +78,7 @@ void FullSlamImu::init()
 
 	ros::NodeHandle n("~");
 
-	_imu_sub = n.subscribe("/ardrone/imu", 1024, &FullSlamImu::imuCb, this);
+	_imu_sub = n.subscribe("/ardrone/imu", 2048, &FullSlamImu::imuCb, this);
 
 	_tracks_sub = n.subscribe("/tracks", 1024, &FullSlamImu::tracksCb, this);
 
