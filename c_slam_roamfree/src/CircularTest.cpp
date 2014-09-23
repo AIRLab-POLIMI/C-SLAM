@@ -36,10 +36,13 @@ public:
 	RosPublisher()
 	{
 		imuPublisher = n.advertise<sensor_msgs::Imu>("/ardrone/imu", 1024);
-		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 1024);
+		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks",
+					1024);
+
+		//K << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
 	}
 
-	void publishIMU(vector<double>& za, vector<double>& zw)
+	void publishIMU(vector<double>& za, vector<double>& zw, double t)
 	{
 		sensor_msgs::Imu msg;
 
@@ -51,6 +54,8 @@ public:
 		msg.linear_acceleration.y = za[1];
 		msg.linear_acceleration.z = za[2];
 
+		msg.header.stamp.fromSec(t);
+
 		imuPublisher.publish(msg);
 	}
 
@@ -58,9 +63,26 @@ private:
 	ros::NodeHandle n;
 	ros::Publisher imuPublisher;
 	ros::Publisher trackPublisher;
+
+	//Eigen::Matrix3d K;
 };
 
+/*void setTracks(vector<vector<Eigen::Vector4d> >& tracks)
+{
+	int numTracks = 8;
 
+	tracks.resize(numTracks);
+
+	for (int i = 0; i < numTracks; i++)
+	{
+		for (int j = 1; j < 4; j++)
+		{
+			Eigen::Vector4d track;
+
+			tracks[i].push_back(track);
+		}
+	}
+}*/
 
 int main(int argc, char *argv[])
 {
@@ -68,12 +90,16 @@ int main(int argc, char *argv[])
 
 	RosPublisher publisher;
 
+	//IMU data
 	double r = 1.0; // meters
 	double alpha = 0.1; // radians / s^2
 	double w0 = 0.0; //initial angular speed
-	double theta0 = -M_PI / 2.0;
+	double theta0 = 0;//-M_PI / 2.0;
 	double t = 0.0;
 	double imuRate = 50;
+
+	//Tracks data
+	//vector<vector<Eigen::Vector4d> > tracks;
 
 	ROS_INFO("Simulation started");
 
@@ -83,13 +109,11 @@ int main(int argc, char *argv[])
 		double w = w0 + alpha * t;
 
 		vector<double> za =
-		{ alpha * r, std::pow(w, 2) * r, 9.8 };
+		{ alpha * r, std::pow(w, 2) * r, 9.80566 };
 		vector<double> zw =
 		{ 0.0, 0.0, w };
 
-		ROS_INFO_STREAM(zw[0] << " " << zw[1] << " " << zw[2]);
-
-		publisher.publishIMU(za, zw);
+		publisher.publishIMU(za, zw, t);
 
 		t += 1.0 / imuRate;
 

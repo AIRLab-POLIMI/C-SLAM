@@ -44,7 +44,7 @@ void FullSlamImu::init()
 	system("rm -f /tmp/roamfree/*.log");
 
 	_filter->setDeadReckoning(false);
-	_filter->setSolverMethod(LevenbergMarquardt);
+	_filter->setSolverMethod(GaussNewton);
 
 	/* configure IMU handler */
 
@@ -88,7 +88,7 @@ void FullSlamImu::run()
 {
 	ros::NodeHandle n("~");
 
-	ros::Rate rate(0.2);
+	ros::Rate rate(1.0);
 
 	while (ros::ok())
 	{
