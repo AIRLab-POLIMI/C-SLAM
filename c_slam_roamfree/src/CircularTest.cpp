@@ -67,39 +67,31 @@ public:
 	{
 		for (int i = 0; i < tracks.size(); i++)
 		{
-			int inImage = 0;
-			for (int j = 0; j < tracks[i].size(); j++)
+			if (trackVisible(tracks[i], H))
 			{
-				if(trackVisible(tracks[i][j], H))
-				{
-
-				}
-
-
-			}
-
-			if(inImage)
-			{
-				Eigen::Vector3d p1 = K * H.topRows(3) * tracks[i][0];
-				Eigen::Vector3d p2 = K * H.topRows(3) * tracks[i][1];
-				Eigen::Vector3d p3 = K * H.topRows(3) * tracks[i][2];
-				Eigen::Vector3d p4 = K * H.topRows(3) * tracks[i][3];
-
 				c_slam_msgs::TrackedObject msg;
 
 				msg.id = i;
 				msg.imageStamp.fromSec(t);
 
+				for (int j = 0; j < tracks[i].size(); j++)
+				{
+					Eigen::Vector3d homogeneusPoint = K * H.topRows(3)
+								* tracks[i][j];
+					geometry_msgs::Point32 point;
 
-				msg.polygon.points[0].x = p1(0);
-				msg.polygon.points[0].y = p1(1);
+					point.x = homogeneusPoint(0);
+					point.y = homogeneusPoint(1);
+
+					msg.polygon.points.push_back(point);
+				}
 			}
 
 		}
 	}
 
 private:
-	bool trackVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H)
+	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H)
 	{
 		Eigen::Vector4d trackRC = H * trackPoint;
 
@@ -107,6 +99,20 @@ private:
 
 		return trackRC(3) > 0 && projection(0) >= 0 && projection(0) <= 320
 					&& projection(1) >= 0 && projection(2) <= 240;
+	}
+
+	bool trackVisible(vector<Eigen::Vector4d>& track, const Eigen::Matrix4d& H)
+	{
+		for (int i = 0; i < track.size(); i++)
+		{
+			if (pointVisible(track[i], H))
+			{
+				return true;
+			}
+		}
+
+		return false;
+
 	}
 
 private:
@@ -127,19 +133,19 @@ void setTracks(vector<vector<Eigen::Vector4d> >& tracks, double r)
 	tracks.resize(numTracks);
 
 	double theta = 0;
-
+	cout << "c_generated = [";
 	for (int i = 0; i < numTracks; i++)
 	{
 		double x = r * cos(theta);
 		double y = r * sin(theta);
 		double z = 0;
-		for (int j = 1; j < 4; j++)
+		for (int j = 0; j < 4; j++)
 		{
 			double thetaR = theta + M_PI / 2;
 
-			double xpr = ((j == 2 || j == 3) ? -1 : 1) * w / 2;
+			double xpr = ((j == 1 || j == 2) ? -1 : 1) * w / 2;
 			double ypr = 0;
-			double zpr = ((j > 2) ? -1 : 1) * h / 2;
+			double zpr = ((j >= 2) ? -1 : 1) * h / 2;
 
 			double xpr2 = xpr * cos(thetaR) - ypr * sin(thetaR);
 			double ypr2 = xpr * sin(thetaR) + ypr * cos(thetaR);
@@ -151,11 +157,15 @@ void setTracks(vector<vector<Eigen::Vector4d> >& tracks, double r)
 
 			Eigen::Vector4d track;
 			track << xp, zp, yp, 1;
+
+			cout << track(0) << "," << track(1) << "," << track(2) << ";";
+			cout << endl;
 			tracks[i].push_back(track);
 		}
 
 		theta += 2 * M_PI / numTracks;
 	}
+	cout << "]" << endl;
 }
 
 void computeHomography(Eigen::Matrix4d& H, double t, double theta0, double w0,
@@ -209,6 +219,7 @@ int main(int argc, char *argv[])
 		computeHomography(H, t, theta0, w0, alpha, r);
 
 		publisher.publishIMU(za, zw, t);
+		publisher.publishTracks(tracks, H, t);
 
 		t += 1.0 / imuRate;
 
