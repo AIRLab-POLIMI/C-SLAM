@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(c_slam_roamfree)
 
-find_package(catkin REQUIRED COMPONENTS roscpp tf c_slam_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp 
+                                        tf 
+                                        tf_conversions 
+                                        c_slam_msgs)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
