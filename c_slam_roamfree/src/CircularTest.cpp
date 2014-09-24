@@ -73,30 +73,28 @@ public:
 		imuPublisher.publish(msg);
 	}
 
-	void publishTracks(vector<vector<Eigen::Vector4d> > tracks,
+	void publishTracks(vector<vector<Eigen::Vector4d> > tracksCw,
 				Eigen::Matrix4d& H_WC, double t)
 	{
-		Eigen::Matrix4d H_CW = H_WC.inverse();
-		H_CW /= H_CW(3, 3);
+		Eigen::Matrix4d H_CwC = H_WCw.inverse() * H_WC;
+		H_CwC /= H_CwC(3, 3);
 
-		for (int i = 0; i < tracks.size(); i++)
+		for (int i = 0; i < tracksCw.size(); i++)
 		{
-			if (trackVisible(tracks[i], H_CW))
+			if (trackVisible(tracksCw[i], H_CwC))
 			{
 				c_slam_msgs::TrackedObject msg;
 
 				msg.id = i;
 				msg.imageStamp.fromSec(t);
 
-				for (int j = 0; j < tracks[i].size(); j++)
+				for (int j = 0; j < tracksCw[i].size(); j++)
 				{
-					Eigen::Vector3d homogeneusPoint = K * H_CW.topRows(3)
-								* H_WCw.transpose() * tracks[i][j];
+					Eigen::Vector3d homogeneusPoint = K * H_CwC.topRows(3)
+								* tracksCw[i][j];
 
 					homogeneusPoint /= homogeneusPoint(2);
 					geometry_msgs::Point32 point;
-
-					//cout << homogeneusPoint << endl; //TODO levami
 
 					point.x = homogeneusPoint(0);
 					point.y = homogeneusPoint(1);
@@ -176,23 +174,14 @@ public:
 private:
 	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H)
 	{
-		Eigen::Vector4d trackRC = H * H_WCw.transpose() * trackPoint;
+		Eigen::Vector4d trackRC = H * trackPoint;
 		trackRC /= trackRC(3);
 
-		Eigen::Vector3d projection = K * H.topRows(3) * H_WCw.transpose()
-					* trackPoint;
+		Eigen::Vector3d projection = K * H.topRows(3) * trackPoint;
 		projection /= projection(2);
 
-		bool visible = trackRC(2) > 0 && projection(0) >= 0
-					&& projection(0) <= 320 && projection(1) >= 0
-					&& projection(1) <= 240;
-
-		if (visible) //TODO levami
-		{
-			//cout << "point visible: " << endl << projection << endl;
-		}
-
-		return visible;
+		return trackRC(2) > 0 && projection(0) >= 0 && projection(0) <= 320
+					&& projection(1) >= 0 && projection(1) <= 240;
 	}
 
 	bool trackVisible(vector<Eigen::Vector4d>& track, const Eigen::Matrix4d& H)
@@ -222,6 +211,13 @@ private:
 void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
 			vector<Eigen::Vector3d>& tracksCM, double r)
 {
+	Eigen::Matrix4d H_WCw, H_CwW;
+	H_WCw << 0, 0, 1, 0, //
+	1, 0, 0, 0, //
+	0, 1, 0, 0, //
+	0, 0, 0, 1;
+	H_CwW = H_WCw.inverse();
+
 	int numTracks = 8;
 
 	const double w = 0.2;
@@ -262,7 +258,7 @@ void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
 
 			cout << track(0) << "," << track(1) << "," << track(2) << ";";
 			cout << endl;
-			tracks[i].push_back(track);
+			tracks[i].push_back(H_CwW * track);
 		}
 
 		theta += 2 * M_PI / numTracks;
@@ -320,7 +316,7 @@ int main(int argc, char *argv[])
 	ROS_INFO("Simulation started");
 
 	ros::Rate rate(imuRate);
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 10000 && ros::ok(); i++)
 	{
 		double w = w0 + alpha * t;
 
@@ -329,14 +325,17 @@ int main(int argc, char *argv[])
 		vector<double> zw =
 		{ 0.0, 0.0, w };
 
-		Eigen::Matrix4d H;
-		computeHomography(H, t, thetaRobot0, w0, alpha, r);
+		Eigen::Matrix4d H_WC;
+		computeHomography(H_WC, t, thetaRobot0, w0, alpha, r);
 
 		publisher.publishIMU(za, zw, t);
-		publisher.publishTracks(tracks, H, t);
-		publisher.publishGroundTruth(H);
-		publisher.publishGroundTruthLandmark(tracksCM);
-		publisher.publishCameraWorld();
+		if (i % 10 == 0)
+		{
+			publisher.publishTracks(tracks, H_WC, t);
+			publisher.publishGroundTruth(H_WC);
+			publisher.publishGroundTruthLandmark(tracksCM);
+			publisher.publishCameraWorld();
+		}
 
 		t += 1.0 / imuRate;
 
