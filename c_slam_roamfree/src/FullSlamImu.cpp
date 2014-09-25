@@ -44,7 +44,7 @@ void FullSlamImu::init()
 	system("rm -f /tmp/roamfree/*.log");
 
 	_filter->setDeadReckoning(false);
-	_filter->setSolverMethod(GaussNewton);
+	_filter->setSolverMethod(LevenbergMarquardt);
 
 	/* configure IMU handler */
 
@@ -194,10 +194,16 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 		const Eigen::Map<const Eigen::Matrix3d> cm(
 					_filter->getParameterByName("Camera_CM")->getEstimate().data());
 		Eigen::Matrix3d cm_inv = cm.inverse(); // the inverse of the camera intrinsic calibration matrix
-		cm_inv /= cm_inv(2,2);
+		//cm_inv /= cm_inv(2,2);
+
+		std::cerr << cm_inv;
+		std::cerr << std::endl;
 
 		Eigen::Vector3d Limg; // the landmark on the image plane
 		Limg << z(0), z(1), 1.0;
+
+		std::cerr << Limg;
+		std::cerr << std::endl;
 
 		Eigen::Vector3d Lc; // the landmark in the camera reference frame at given depth;
 		Lc = alpha * cm_inv * Limg;
@@ -208,8 +214,21 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 					tf::Vector3(x(0), x(1), x(2)));
 
 		// TODO: a little bit of messy code between eigen and tf
-		tf::Vector3 Lc_tf(Lc(0), Lc(1), Lc(2));
+		//tf::Vector3 Lc_tf(Lc(0), Lc(1), Lc(2));
+		tf::Vector3 Lc_tf(0, 0, 1);
 		tf::Vector3 Lw_tf = T_WO_tf * _T_OC_tf * Lc_tf;
+
+		tf::Matrix3x3 R_WC_tf = (T_WO_tf * _T_OC_tf).getBasis();
+		tf::Vector3 t_WC_tf = (T_WO_tf * _T_OC_tf).getOrigin();
+
+		Eigen::Matrix3d R_WC;
+		Eigen::Vector3d t_WC;
+
+		tf::matrixTFToEigen(R_WC_tf, R_WC);
+		tf::vectorTFToEigen(t_WC_tf, t_WC);
+
+		std::cerr << R_WC << std::endl;
+		std::cerr << t_WC << std::endl;
 
 		Eigen::VectorXd Lw(3);
 		Lw << Lw_tf.x(), Lw_tf.y(), Lw_tf.z();

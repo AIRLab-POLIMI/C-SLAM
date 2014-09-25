@@ -13,5 +13,11 @@
           type="circular_test" 
           output="screen" 
           launch-prefix=""/>
+          
+           <node name="displayer" 
+          pkg="c_slam_roamfree" 
+          type="displayer" 
+          output="screen" 
+          launch-prefix=""/>
 
 </launch>

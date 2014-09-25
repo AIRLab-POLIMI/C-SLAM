@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
 
 	//IMU data
 	double r = 1; // meters
-	double alpha = 0.1; // radians / s^2
+	double alpha = 0.01; // radians / s^2
 	double w0 = 0.0; //initial angular speed
 	double thetaRobot0 = 0;//-M_PI / 2.0;
 	double t = 0.0;
