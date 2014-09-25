@@ -65,5 +65,3 @@ target_link_libraries(c_vision_recognizer cognitive_vision
 add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS})
 add_dependencies(c_vision_recognizer ${catkin_EXPORTED_TARGETS})					  				      
 					  				
-#avoid tf and filters warnings
-add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)

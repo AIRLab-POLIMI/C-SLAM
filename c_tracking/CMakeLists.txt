@@ -33,6 +33,3 @@ target_link_libraries(object_selector ${catkin_LIBRARIES})
 #add dependencies
 add_dependencies(c_tracker ${catkin_EXPORTED_TARGETS})
 add_dependencies(object_selector ${catkin_EXPORTED_TARGETS})	
-
-#avoid tf warnings
-add_definitions(-DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
