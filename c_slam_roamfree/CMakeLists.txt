@@ -48,4 +48,5 @@ target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
 add_dependencies(circular_test ${catkin_EXPORTED_TARGETS})
+add_dependencies(displayer ${catkin_EXPORTED_TARGETS})
 
