@@ -194,6 +194,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 		const Eigen::Map<const Eigen::Matrix3d> cm(
 					_filter->getParameterByName("Camera_CM")->getEstimate().data());
 		Eigen::Matrix3d cm_inv = cm.inverse(); // the inverse of the camera intrinsic calibration matrix
+		cm_inv /= cm_inv(2,2);
 
 		Eigen::Vector3d Limg; // the landmark on the image plane
 		Limg << z(0), z(1), 1.0;
