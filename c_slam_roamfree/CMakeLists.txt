@@ -5,6 +5,8 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         tf 
                                         tf_conversions 
                                         c_slam_msgs)
+                                        
+find_package(OpenCV REQUIRED)                                        
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
@@ -36,8 +38,12 @@ target_link_libraries(c_localization
 
 add_executable(circular_test
                src/CircularTest.cpp)
+               
+add_executable(displayer
+               src/Displayer.cpp)               
 
 target_link_libraries(circular_test ${catkin_LIBRARIES})
+target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
 add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
