@@ -71,7 +71,7 @@ public:
 				Eigen::Matrix4d& H_WC, double t)
 	{
 		Eigen::Matrix4d H_CW = H_WC.inverse();
-		H_CW /= H_CW(3,3);
+		H_CW /= H_CW(3, 3);
 
 		for (int i = 0; i < tracks.size(); i++)
 		{
@@ -152,11 +152,12 @@ private:
 		Eigen::Vector3d projection = K * H_CW.topRows(3) * trackPoint;
 		projection /= projection(2);
 
-		return trackRC(2) > 0  && projection(0) >= 0 && projection(0) < 640
+		return trackRC(2) > 0 && projection(0) >= 0 && projection(0) < 640
 					&& projection(1) >= 0 && projection(1) < 360;
 	}
 
-	bool trackVisible(vector<Eigen::Vector4d>& track, const Eigen::Matrix4d& H_CW)
+	bool trackVisible(vector<Eigen::Vector4d>& track,
+				const Eigen::Matrix4d& H_CW)
 	{
 		for (int i = 0; i < track.size(); i++)
 		{
@@ -249,14 +250,14 @@ void computeCameraPose(Eigen::Matrix4d& H, double t, double theta0, double w0,
 
 	Eigen::Matrix4d H_RC;
 
-	H_RC <<      0,     0,     1,     0,
-			     1,     0,     0,     0,
-			     0,     1,     0,     0,
-			     0,     0,     0,     1;
+	H_RC << 0, 0, 1, 0, //
+	1, 0, 0, 0, //
+	0, 1, 0, 0, //
+	0, 0, 0, 1;
 
 	H = H_WR * H_RC;
 
-	H = H / H(3,3);
+	H = H / H(3, 3);
 
 }
 
@@ -270,7 +271,7 @@ int main(int argc, char *argv[])
 	double r = 1; // meters
 	double alpha = 0.01; // radians / s^2
 	double w0 = 0.0; //initial angular speed
-	double thetaRobot0 = 0;//-M_PI / 2.0;
+	double thetaRobot0 = 0; //-M_PI / 2.0;
 	double t = 0.0;
 	double imuRate = 50;
 

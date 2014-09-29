@@ -146,6 +146,8 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 	{ msg.angular_velocity.x, msg.angular_velocity.y, msg.angular_velocity.z };
 
 	_imu->step(za, zw);
+	//TODO delete this
+	//_filter->getNewestPose()->setEstimate();
 }
 
 void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
@@ -189,51 +191,47 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 		// place the marker somewhere on the direction where it was seen
 
-		double alpha = 2;
-
 		const Eigen::Map<const Eigen::Matrix3d> cm(
 					_filter->getParameterByName("Camera_CM")->getEstimate().data());
-		Eigen::Matrix3d cm_inv = cm.inverse(); // the inverse of the camera intrinsic calibration matrix
-		//cm_inv /= cm_inv(2,2);
+		Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
+		cm_inv /= cm_inv(2, 2);
 
-		std::cerr << cm_inv;
-		std::cerr << std::endl;
+		ROS_ERROR_STREAM("cm: " << std::endl << cm << std::endl);
+		ROS_ERROR_STREAM("cm_inv: " << std::endl << cm_inv << std::endl);
 
 		Eigen::Vector3d Limg; // the landmark on the image plane
 		Limg << z(0), z(1), 1.0;
 
-		std::cerr << Limg;
-		std::cerr << std::endl;
+		ROS_ERROR_STREAM("Limg :" << std::endl << Limg << std::endl);
 
-		Eigen::Vector3d Lc; // the landmark in the camera reference frame at given depth;
-		Lc = alpha * cm_inv * Limg;
+		Eigen::Vector3d dc; // the direction of the landmark in the camera reference frame
+		dc = cm_inv * Limg;
 
 		// the pose of the odometric center wrt world
 		const Eigen::VectorXd &x = pose_ptr->getEstimate();
 		tf::Transform T_WO_tf(tf::Quaternion(x(4), x(5), x(6), x(3)),
 					tf::Vector3(x(0), x(1), x(2)));
 
-		// TODO: a little bit of messy code between eigen and tf
-		//tf::Vector3 Lc_tf(Lc(0), Lc(1), Lc(2));
-		tf::Vector3 Lc_tf(0, 0, 1);
-		tf::Vector3 Lw_tf = T_WO_tf * _T_OC_tf * Lc_tf;
+		tf::Transform T_WC_tf = T_WO_tf * _T_OC_tf;
 
-		tf::Matrix3x3 R_WC_tf = (T_WO_tf * _T_OC_tf).getBasis();
-		tf::Vector3 t_WC_tf = (T_WO_tf * _T_OC_tf).getOrigin();
+		tf::Matrix3x3 R_WC_tf = T_WC_tf.getBasis();
+		tf::Vector3 t_WC_tf = T_WC_tf.getOrigin();
 
 		Eigen::Matrix3d R_WC;
 		Eigen::Vector3d t_WC;
 
 		tf::matrixTFToEigen(R_WC_tf, R_WC);
 		tf::vectorTFToEigen(t_WC_tf, t_WC);
+		ROS_ERROR_STREAM("R_WC :" << std::endl << R_WC << std::endl);
+		ROS_ERROR_STREAM("t_WC :" << std::endl << t_WC << std::endl);
 
-		std::cerr << R_WC << std::endl;
-		std::cerr << t_WC << std::endl;
 
+		//Compute a possible pose for the landmark
+		double alpha = 2;
 		Eigen::VectorXd Lw(3);
-		Lw << Lw_tf.x(), Lw_tf.y(), Lw_tf.z();
+		Lw = alpha * R_WC * dc + t_WC;
 
-		ROS_INFO_STREAM("INITIAL Lw " << sensor << " " << Lw.transpose());
+		ROS_ERROR_STREAM("INITIAL Lw " << sensor << " " << Lw.transpose());
 
 		_filter->addConstantParameter(ROAMestimation::Euclidean3D,
 					sensor + "_Lw", Lw, false);
