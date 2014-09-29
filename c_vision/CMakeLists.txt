@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 										image_transport
 										image_geometry
 										c_slam_msgs
+										c_fuzzy
 										tf)
 find_package(OpenCV REQUIRED)
 
@@ -62,6 +63,7 @@ target_link_libraries(c_vision_recognizer cognitive_vision
 					  				      ${catkin_LIBRARIES})
 					  				      
 #add dependencies
+add_dependencies(cognitive_vision ${catkin_EXPORTED_TARGETS})
 add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS})
 add_dependencies(c_vision_recognizer ${catkin_EXPORTED_TARGETS})					  				      
 					  				
