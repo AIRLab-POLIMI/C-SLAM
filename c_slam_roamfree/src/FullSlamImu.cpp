@@ -16,7 +16,7 @@ namespace roamfree_c_slam
 {
 
 FullSlamImu::FullSlamImu() :
-			_filter(NULL), _imu(NULL), _initialized(false)
+			_filter(NULL), _imu(NULL), _initialized(false), _initCalled(false)
 {
 }
 
@@ -53,7 +53,7 @@ void FullSlamImu::init()
 
 	_imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
-	_imu->getSensorNoises() = Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
+	_imu->getSensorNoises() = 1e-2*Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
 
 	/* configure the camera	 */
 
@@ -82,13 +82,15 @@ void FullSlamImu::init()
 
 	_tracks_sub = n.subscribe("/tracks", 1024, &FullSlamImu::tracksCb, this);
 
+	_initCalled = true;
+
 }
 
 void FullSlamImu::run()
 {
 	ros::NodeHandle n("~");
 
-	ros::Rate rate(1.0);
+	ros::Rate rate(0.1);
 
 	while (ros::ok())
 	{
@@ -98,13 +100,35 @@ void FullSlamImu::run()
 		{
 
 			_filter->getNthOldestPose(0)->setFixed(true);
-			_filter->getNthOldestPose(1)->setFixed(true);
+			//_filter->getNthOldestPose(1)->setFixed(true);
 
-			_filter->estimate(25);
+			_filter->estimate(200);
 		}
 
 		rate.sleep();
 	};
+
+}
+
+void computePose(Eigen::VectorXd& pose, double t, double theta0, double w0,
+			double alpha, double r)
+{
+	double thetaRobot = theta0 + w0 * t + 0.5 * alpha * std::pow(t, 2);
+	double theta = thetaRobot - M_PI / 2;
+
+	double x = r * cos(theta);
+	double y = r * sin(theta);
+	double z = 0;
+
+	Eigen::Matrix3d R;
+
+	R << cos(thetaRobot), -sin(thetaRobot), 0, //
+	sin(thetaRobot), cos(thetaRobot), 0, //
+	0, 0, 1;
+
+	Eigen::Quaterniond q(R);
+
+	pose << x, y, z, q.w(), q.x(), q.y(), q.z();
 
 }
 
@@ -124,7 +148,7 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 		gyroBias << 0.0, 0.0, 0.0;
 
 		Eigen::VectorXd x0(7);
-		x0 << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+		x0 << 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
 		Eigen::VectorXd T_OS_IMU(7); // Transformation between Odometer and robot frame
 		T_OS_IMU << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
@@ -145,9 +169,19 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 	double zw[] =
 	{ msg.angular_velocity.x, msg.angular_velocity.y, msg.angular_velocity.z };
 
-	_imu->step(za, zw);
-	//TODO delete this
-	//_filter->getNewestPose()->setEstimate();
+	if (_imu->step(za, zw))
+	{
+		//TODO delete this
+		double r = 1; // meters
+		double alpha = 0.01; // radians / s^2
+		double w0 = 0.0; //initial angular speed
+		double thetaRobot0 = 0;
+		double imuRate = 50;
+		Eigen::VectorXd pose(7);
+		computePose(pose, t, thetaRobot0, w0, alpha, r);
+		_filter->getNewestPose()->setEstimate(pose);
+
+	}
 }
 
 void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
@@ -224,7 +258,6 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 		tf::vectorTFToEigen(t_WC_tf, t_WC);
 		ROS_ERROR_STREAM("R_WC :" << std::endl << R_WC << std::endl);
 		ROS_ERROR_STREAM("t_WC :" << std::endl << t_WC << std::endl);
-
 
 		//Compute a possible pose for the landmark
 		double alpha = 2;

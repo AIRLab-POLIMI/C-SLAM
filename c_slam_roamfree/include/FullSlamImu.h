@@ -41,6 +41,7 @@ public:
 protected:
 
 	bool _initialized;
+	bool _initCalled;
 
 	FactorGraphFilter *_filter;
 	IMUIntegralHandler *_imu;
