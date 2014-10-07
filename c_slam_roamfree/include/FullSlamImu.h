@@ -9,19 +9,15 @@
 #define FULLSLAMIMU_H_
 
 #include <Eigen/Dense>
-#include <set>
 
 #include <ros/ros.h>
 #include <tf/tf.h>
 
-#include "ROAMestimation/ROAMestimation.h"
-#include "ROAMimu/IMUIntegralHandler.h"
-
 #include <sensor_msgs/Imu.h>
 #include <c_slam_msgs/TrackedObject.h>
 
-using namespace ROAMestimation;
-using namespace ROAMimu;
+#include "ImuHandler.h"
+#include "TracksHandler.h"
 
 namespace roamfree_c_slam
 {
@@ -33,27 +29,28 @@ public:
 
 	FullSlamImu();
 	virtual ~FullSlamImu();
-
-	void init();
-
 	void run();
 
 protected:
-
-	bool _initialized;
-	bool _initCalled;
-
-	FactorGraphFilter *_filter;
-	IMUIntegralHandler *_imu;
-
-	tf::Transform _T_OC_tf; // transformation from robot to camera;
-
-	ros::Subscriber _tracks_sub, _imu_sub;
-
-	std::set<int> _tracks;
-
 	void imuCb(const sensor_msgs::Imu &msg);
 	void tracksCb(const c_slam_msgs::TrackedObject &msg);
+
+private:
+	void initRoamfree();
+	void initCamera();
+
+private:
+	ros::NodeHandle n;
+	ros::Subscriber tracks_sub;
+	ros::Subscriber imu_sub;
+
+	tf::Transform T_OC_tf; // transformation from robot to camera;
+
+private:
+	FactorGraphFilter* filter;
+	ImuHandler* imuHandler;
+	TracksHandler* tracksHandler;
+
 
 };
 

@@ -30,7 +30,9 @@ include_directories(include
 )
 
 add_executable(c_localization
-	           src/FullSlamImu.cpp)
+	           src/FullSlamImu.cpp
+	           src/ImuHandler.cpp
+	           src/TracksHandler.cpp)
 
 target_link_libraries(c_localization
                       ${catkin_LIBRARIES}
