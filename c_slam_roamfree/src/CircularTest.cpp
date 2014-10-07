@@ -42,9 +42,9 @@ class RosPublisher
 public:
 	RosPublisher()
 	{
-		imuPublisher = n.advertise<sensor_msgs::Imu>("/ardrone/imu", 1024);
+		imuPublisher = n.advertise<sensor_msgs::Imu>("/ardrone/imu", 6000);
 		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks",
-					1024);
+					6000);
 		K << 565.59102697808, 0.0, 337.839450567586, //
 		0.0, 563.936510489792, 199.522081717361, //
 		0.0, 0.0, 1.0;
@@ -68,7 +68,7 @@ public:
 	}
 
 	void publishTracks(vector<vector<Eigen::Vector4d> > tracks,
-				Eigen::Matrix4d& H_WC, double t)
+				const Eigen::Matrix4d& H_WC, double t)
 	{
 		Eigen::Matrix4d H_CW = H_WC.inverse();
 		H_CW /= H_CW(3, 3);
@@ -251,12 +251,11 @@ void computeCameraPose(Eigen::Matrix4d& H, double t, double theta0, double w0,
 	Eigen::Matrix4d H_RC;
 
 	H_RC << 0, 0, 1, 0, //
-	1, 0, 0, 0, //
-	0, 1, 0, 0, //
+	-1, 0, 0, 0, //
+	0, -1, 0, 0, //
 	0, 0, 0, 1;
 
-	H = H_WR * H_RC;
-
+	H =  H_WR * H_RC;
 	H = H / H(3, 3);
 
 }

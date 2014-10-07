@@ -78,9 +78,9 @@ void FullSlamImu::init()
 
 	ros::NodeHandle n("~");
 
-	_imu_sub = n.subscribe("/ardrone/imu", 2048, &FullSlamImu::imuCb, this);
+	_imu_sub = n.subscribe("/ardrone/imu", 6000, &FullSlamImu::imuCb, this);
 
-	_tracks_sub = n.subscribe("/tracks", 1024, &FullSlamImu::tracksCb, this);
+	_tracks_sub = n.subscribe("/tracks", 6000, &FullSlamImu::tracksCb, this);
 
 	_initCalled = true;
 
@@ -96,13 +96,10 @@ void FullSlamImu::run()
 	{
 		ros::spinOnce();
 
-		if (_filter->getNthOldestPose(1))
+		if (_filter->getOldestPose())
 		{
-
-			_filter->getNthOldestPose(0)->setFixed(true);
-			//_filter->getNthOldestPose(1)->setFixed(true);
-
-			_filter->estimate(200);
+			_filter->getOldestPose()->setFixed(true);
+			_filter->estimate(250);
 		}
 
 		rate.sleep();
@@ -156,9 +153,6 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 		_imu->init(_filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias,
 					true, x0, t);
 
-		// fix first pose to remove gauge freedom
-		_filter->getOldestPose()->setFixed(true);
-
 		_initialized = true;
 	}
 
@@ -180,6 +174,7 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 		Eigen::VectorXd pose(7);
 		computePose(pose, t, thetaRobot0, w0, alpha, r);
 		_filter->getNewestPose()->setEstimate(pose);
+		_filter->getNewestPose()->setFixed(true);
 
 	}
 }
@@ -187,6 +182,7 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 {
 	ROS_INFO("Tracks callback");
+
 	double t = msg.imageStamp.toSec();
 
 	// produce the sensor name
@@ -243,8 +239,10 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 		// the pose of the odometric center wrt world
 		const Eigen::VectorXd &x = pose_ptr->getEstimate();
-		tf::Transform T_WO_tf(tf::Quaternion(x(4), x(5), x(6), x(3)),
-					tf::Vector3(x(0), x(1), x(2)));
+		Eigen::Quaterniond q(x(3), x(4), x(5), x(6));
+		tf::Quaternion q_tf;
+		tf::quaternionEigenToTF(q, q_tf);
+		tf::Transform T_WO_tf(q_tf,	tf::Vector3(x(0), x(1), x(2)));
 
 		tf::Transform T_WC_tf = T_WO_tf * _T_OC_tf;
 
@@ -260,7 +258,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 		ROS_ERROR_STREAM("t_WC :" << std::endl << t_WC << std::endl);
 
 		//Compute a possible pose for the landmark
-		double alpha = 2;
+		double alpha = 5;
 		Eigen::VectorXd Lw(3);
 		Lw = alpha * R_WC * dc + t_WC;
 
@@ -269,7 +267,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 		_filter->addConstantParameter(ROAMestimation::Euclidean3D,
 					sensor + "_Lw", Lw, false);
 
-		_filter->setRobustKernel(sensor, true, 0.1);
+		//_filter->setRobustKernel(sensor, true, 0.1);
 
 		_tracks.insert(msg.id);
 
