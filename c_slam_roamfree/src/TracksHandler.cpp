@@ -30,7 +30,7 @@ using namespace ROAMestimation;
 TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) :
 			filter(filter), T_OC_tf(T_OC_tf)
 {
-	int numTracks = 8;
+	static const int numTracks = 8;
 	double trackData[numTracks][3] =
 	{
 
