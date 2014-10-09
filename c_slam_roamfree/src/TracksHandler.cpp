@@ -36,7 +36,8 @@ TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) 
 			2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
 			-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
 
-	for (int i = 0; i < numTracks; i++) {
+	for (int i = 0; i < numTracks; i++)
+	{
 		// produce the sensor name
 		std::stringstream s;
 		s << "Track_" << i;
@@ -57,6 +58,7 @@ TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) 
 		//set the track as initialized
 		tracks.insert(i);
 	}
+
 	*/
 }
 
