@@ -25,8 +25,8 @@
 
 using namespace ROAMestimation;
 
-ImuHandler::ImuHandler(FactorGraphFilter* filter) : filter(filter)
-{
+ImuHandler::ImuHandler(FactorGraphFilter* filter) :
+		filter(filter) {
 	initialized = false;
 
 	//TODO parameters
@@ -35,11 +35,10 @@ ImuHandler::ImuHandler(FactorGraphFilter* filter) : filter(filter)
 
 	imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
-	imu->getSensorNoises() = 1e-2 * Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
+	imu->getSensorNoises() = 1e+2 * Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
 }
 
-void ImuHandler::addMeasurement(double za[3], double zw[3], double t)
-{
+void ImuHandler::addMeasurement(double za[3], double zw[3], double t) {
 	if (!initialized)
 		initialize(t);
 
@@ -48,8 +47,7 @@ void ImuHandler::addMeasurement(double za[3], double zw[3], double t)
 
 }
 
-void ImuHandler::computePose(double t)
-{
+void ImuHandler::computePose(double t) {
 	//Pose data
 	double r = 1; // meters
 	double alpha = 0.01; // radians / s^2
@@ -76,13 +74,16 @@ void ImuHandler::computePose(double t)
 	Eigen::VectorXd pose(7);
 	pose << x, y, z, q.w(), q.x(), q.y(), q.z();
 
-	filter->getNewestPose()->setEstimate(pose);
-	filter->getNewestPose()->setFixed(true);
+	std::cout << "pose id " << filter->getNewestPose()->getId() << ": "
+			<< std::endl << (filter->getNewestPose()->getEstimate() - pose).transpose()
+			<< std::endl;
+
+	//filter->getNewestPose()->setEstimate(pose);
+	//filter->getNewestPose()->setFixed(true);
 
 }
 
-void ImuHandler::initialize(double t)
-{
+void ImuHandler::initialize(double t) {
 	// we have to initialize the IMUIntegralHandler
 
 	Eigen::VectorXd accBias(3);  // Accelerometer and Gyroscope biases
@@ -96,8 +97,8 @@ void ImuHandler::initialize(double t)
 	Eigen::VectorXd T_OS_IMU(7); // Transformation between Odometer and robot frame
 	T_OS_IMU << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
-	imu->init(filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias, true,
-				x0, t);
+	imu->init(filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias, true, x0,
+			t);
 
 	initialized = true;
 }

@@ -28,49 +28,39 @@
 using namespace ROAMestimation;
 
 TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) :
-			filter(filter), T_OC_tf(T_OC_tf)
-{
+		filter(filter), T_OC_tf(T_OC_tf) {
+
+	/*
 	int numTracks = 8;
-	double trackData[numTracks][3] =
-	{
+	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
+			2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
+			-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
 
-	{ 2.5000, 0, 0 },
-	{ 1.7678, 1.7678, 0 },
-	{ 0, 2.5000, 0 },
-	{ -1.7678, 1.7678, 0 },
-	{ -2.5000, 0, 0 },
-	{ -1.7678, -1.7678, 0 },
-	{ 0, -2.5000, 0 },
-	{ 1.7678, -1.7678, 0 }
-
-	};
-
-	for (int i = 0; i < numTracks; i++)
-	{
+	for (int i = 0; i < numTracks; i++) {
 		// produce the sensor name
 		std::stringstream s;
 		s << "Track_" << i;
 		std::string sensor = s.str();
 
 		filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false,
-					true);
+				true);
 		filter->shareSensorFrame("Camera", sensor);
 		filter->shareParameter("Camera_CM", sensor + "_CM");
 
 		// place the marker in the correct position
 		Eigen::VectorXd Lw(3);
 		Lw << trackData[i][0], trackData[i][1], trackData[i][2];
-		filter->addConstantParameter(ROAMestimation::Euclidean3D,
-					sensor + "_Lw", Lw, true);
+		filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw",
+				Lw, true);
 		filter->setRobustKernel(sensor, true, 0.1);
 
 		//set the track as initialized
 		tracks.insert(i);
 	}
+	*/
 }
 
-void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z)
-{
+void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
 	std::set<size_t>::iterator s_it = tracks.find(id);
 
 	// produce the sensor name
@@ -78,14 +68,12 @@ void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z)
 	s << "Track_" << id;
 	std::string sensor = s.str();
 
-	if (s_it == tracks.end())
-	{
+	if (s_it == tracks.end()) {
 
 		// there must already exist a pose
 		ROAMestimation::PoseVertexWrapper_Ptr pose_ptr =
-					filter->getNearestPoseByTimestamp(t);
-		if (!pose_ptr)
-		{
+				filter->getNearestPoseByTimestamp(t);
+		if (!pose_ptr) {
 			return;
 		}
 
@@ -100,19 +88,17 @@ void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z)
 }
 
 void TracksHandler::initTrack(const std::string& sensor,
-			const Eigen::VectorXd& z, const Eigen::VectorXd& x, size_t id)
-{
+		const Eigen::VectorXd& z, const Eigen::VectorXd& x, size_t id) {
 	// we need to add a new sensor
-	filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false,
-				true);
+	filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false, true);
 	filter->shareSensorFrame("Camera", sensor);
 	filter->shareParameter("Camera_CM", sensor + "_CM");
 
 	// place the marker somewhere on the direction where it was seen
 	Eigen::VectorXd Lw(3);
 	computePossibleLandmarkLocation(z, x, Lw);
-	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw",
-				Lw, false);
+	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw", Lw,
+			false);
 	filter->setRobustKernel(sensor, true, 0.1);
 
 	//add to current track list
@@ -120,11 +106,10 @@ void TracksHandler::initTrack(const std::string& sensor,
 }
 
 void TracksHandler::computePossibleLandmarkLocation(const Eigen::VectorXd& z,
-			const Eigen::VectorXd& x, Eigen::VectorXd& Lw)
-{
+		const Eigen::VectorXd& x, Eigen::VectorXd& Lw) {
 	// place the marker somewhere on the direction where it was seen
 	const Eigen::Map<const Eigen::Matrix3d> cm(
-				filter->getParameterByName("Camera_CM")->getEstimate().data());
+			filter->getParameterByName("Camera_CM")->getEstimate().data());
 
 	Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
 	cm_inv /= cm_inv(2, 2);
@@ -146,8 +131,7 @@ void TracksHandler::computePossibleLandmarkLocation(const Eigen::VectorXd& z,
 }
 
 void TracksHandler::computeCameraPose(const Eigen::VectorXd& x,
-			Eigen::Matrix3d& R_WC, Eigen::Vector3d& t_WC)
-{
+		Eigen::Matrix3d& R_WC, Eigen::Vector3d& t_WC) {
 	Eigen::Quaterniond q(x(3), x(4), x(5), x(6));
 	tf::Quaternion q_tf;
 	tf::quaternionEigenToTF(q, q_tf);

@@ -9,6 +9,8 @@
 
 #include <tf_conversions/tf_eigen.h>
 
+using namespace ROAMestimation;
+
 namespace roamfree_c_slam
 {
 
@@ -52,15 +54,15 @@ void FullSlamImu::run()
 
 	while (ros::ok())
 	{
+		rate.sleep();
+
 		ros::spinOnce();
 
 		if (filter->getOldestPose())
 		{
 			filter->getOldestPose()->setFixed(true);
-			filter->estimate(250);
+			filter->estimate(500);
 		}
-
-		rate.sleep();
 	};
 
 }
@@ -114,7 +116,7 @@ void FullSlamImu::initRoamfree()
 void FullSlamImu::initCamera()
 {
 
-	filter->addConstantParameter("Camera_SOx", 0.210, true);
+	filter->addConstantParameter("Camera_SOx", 0.000, true);
 	filter->addConstantParameter("Camera_SOy", 0.000, true);
 	filter->addConstantParameter("Camera_SOz", 0.000, true);
 
@@ -124,7 +126,7 @@ void FullSlamImu::initCamera()
 
 // the pose of the camera wrt odometric center
 	T_OC_tf = tf::Transform(tf::Quaternion(-0.5, 0.5, -0.5, 0.5),
-				tf::Vector3(0.21, 0.00, 0.00));
+				tf::Vector3(0.0, 0.00, 0.00));
 
 	Eigen::VectorXd CM(9); //the camera intrinsic calibration matrix
 	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;

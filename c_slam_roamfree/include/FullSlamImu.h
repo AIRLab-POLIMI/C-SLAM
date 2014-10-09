@@ -47,7 +47,7 @@ private:
 	tf::Transform T_OC_tf; // transformation from robot to camera;
 
 private:
-	FactorGraphFilter* filter;
+	ROAMestimation::FactorGraphFilter* filter;
 	ImuHandler* imuHandler;
 	TracksHandler* tracksHandler;
 
