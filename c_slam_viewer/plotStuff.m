@@ -4,8 +4,9 @@ global path
 
 global x Sa edge augs 
 
+numothers = 2;
 numtracks = 8;
-numplots = numtracks+1;
+numplots = numtracks+numothers;
 
 mapLimits = [];
 
@@ -40,10 +41,10 @@ axis([-4 4 -4 4])
 
 %% -------------------- FIGURA 2
 
-
 set(0,'CurrentFigure',2)
 clf
 
+%% Accelerometer
 edgename = 'IMUintegralDeltaP';
 
 edgef = sprintf('%s%s.log',path, edgename);
@@ -59,7 +60,7 @@ if exist(edgef, 'file')
     
     %plot(edge(oi:end,1),edge(oi:end,25:27))    
     plot(edge(:,1) - edge(1,1),edge(:,50:52))
-    title({'IMU $\varepsilon$' ''}, 'Interpreter','latex')
+    title({'IMU $\varepsilon$ $\Delta P$' ''}, 'Interpreter','latex')
     set(gca,'FontSize', 7)
 
     axis tight
@@ -70,11 +71,45 @@ if exist(edgef, 'file')
     %plot(edge(oi:end,1),[edge(oi:end,22:24)])
     plot(edge(:,1) - edge(1,1),[edge(:,23:25)])
     
-    title({'IMU z' ''}, 'Interpreter','latex') 
+    title({'IMU z  $\Delta P$' ''}, 'Interpreter','latex') 
     set(gca,'FontSize', 7)
     
     axis tight
 end
+
+%% Gyroscope
+edgename = 'IMUintegralDeltaQ';
+
+edgef = sprintf('%s%s.log',path, edgename);
+
+if exist(edgef, 'file')
+    
+    edge = sortByT(stubbornLoad(edgef));
+    oi = find(edge(:,1) >= x(i(1),1),1);
+    
+    axis tight    
+    %% plot error
+    subplot(2,numplots,2)
+    
+    %plot(edge(oi:end,1),edge(oi:end,25:27))    
+    plot(edge(:,1) - edge(1,1),edge(:,39:41))
+    title({'IMU $\varepsilon$  $\Delta Q$' ''}, 'Interpreter','latex')
+    set(gca,'FontSize', 7)
+
+    axis tight
+
+    %% plot measure
+    subplot(2,numplots,numplots + 2)
+
+    %plot(edge(oi:end,1),[edge(oi:end,22:24)])
+    plot(edge(:,1) - edge(1,1),[edge(:,23:26)])
+    
+    title({'IMU z  $\Delta Q$' ''}, 'Interpreter','latex') 
+    set(gca,'FontSize', 7)
+    
+    axis tight
+end
+
 
 %% -------------------- LANDMARK
 
@@ -91,7 +126,7 @@ for M = 0:8
 
         if M < numtracks
         %% plot error
-        subplot(2,numplots,2+M)
+        subplot(2,numplots,numothers + M + 1)
 
         plot(edge(:,1) - edge(1,1),edge(:,[25:26])) %xy img
         title({strcat('\verb|',edgename,'| $\varepsilon$') ''}, 'Interpreter','latex')
@@ -100,7 +135,7 @@ for M = 0:8
         axis tight
         
         %% plot measure
-        subplot(2,numplots,numplots+2+M)
+        subplot(2,numplots,numplots + numothers + M + 1)
         
         plot(edge(:,1) - edge(1,1),edge(:,[23:24])) % xy z
         title({strcat('\verb|',edgename,'| z') ''}, 'Interpreter','latex')
