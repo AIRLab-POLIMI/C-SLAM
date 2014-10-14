@@ -279,6 +279,10 @@ int main(int argc, char *argv[])
 	vector<Eigen::Vector3d> tracksCM;
 	setTracks(tracks, tracksCM, 2.5);
 
+	ROS_INFO("Waiting other nodes to start...");
+
+	ros::Duration(2.0).sleep();
+
 	ROS_INFO("Simulation started");
 
 	ros::Rate rate(imuRate);
