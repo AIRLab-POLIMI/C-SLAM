@@ -28,8 +28,8 @@ FullSlamImu::FullSlamImu() :
 	tracksHandler = new TracksHandler(filter, T_OC_tf);
 
 	//subscribe to sensor topics
-	imu_sub = n.subscribe("/ardrone/imu", 6000, &FullSlamImu::imuCb, this);
-	tracks_sub = n.subscribe("/tracks", 6000, &FullSlamImu::tracksCb, this);
+	imu_sub = n.subscribe("/ardrone/imu", 60000, &FullSlamImu::imuCb, this);
+	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu::tracksCb, this);
 }
 
 FullSlamImu::~FullSlamImu()

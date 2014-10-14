@@ -4,6 +4,11 @@ global path
 
 global x Sa edge augs 
 
+numtracks = 8;
+numplots = numtracks+1;
+
+mapLimits = [];
+
 
 %% load stuff
 
@@ -29,7 +34,6 @@ for j = i(1:20:length(i))'
 end    
 
 grid on
-%axis image
 axis manual
 axis equal
 axis([-4 4 -4 4])
@@ -51,18 +55,23 @@ if exist(edgef, 'file')
     
     axis tight    
     %% plot error
-    subplot(2,5,1)
+    subplot(2,numplots,1)
     
     %plot(edge(oi:end,1),edge(oi:end,25:27))    
     plot(edge(:,1) - edge(1,1),edge(:,50:52))
+    title({'IMU $\varepsilon$' ''}, 'Interpreter','latex')
+    set(gca,'FontSize', 7)
 
     axis tight
 
     %% plot measure
-    subplot(2,5,6)
+    subplot(2,numplots,numplots +1)
 
     %plot(edge(oi:end,1),[edge(oi:end,22:24)])
     plot(edge(:,1) - edge(1,1),[edge(:,23:25)])
+    
+    title({'IMU z' ''}, 'Interpreter','latex') 
+    set(gca,'FontSize', 7)
     
     axis tight
 end
@@ -80,18 +89,22 @@ for M = 0:8
         edge = sortByT(stubbornLoad(edgef));
         oi = find(edge(:,1) >= x(i(1),1),1);
 
-        if M < 4 
+        if M < numtracks
         %% plot error
-        subplot(2,5,2+M)
+        subplot(2,numplots,2+M)
 
         plot(edge(:,1) - edge(1,1),edge(:,[25:26])) %xy img
+        title({strcat('\verb|',edgename,'| $\varepsilon$') ''}, 'Interpreter','latex')
+        set(gca,'FontSize', 7)
         
         axis tight
         
         %% plot measure
-        subplot(2,5,7+M)
+        subplot(2,numplots,numplots+2+M)
         
         plot(edge(:,1) - edge(1,1),edge(:,[23:24])) % xy z
+        title({strcat('\verb|',edgename,'| z') ''}, 'Interpreter','latex')
+        set(gca,'FontSize', 7)
 
         axis tight
         end
@@ -105,7 +118,6 @@ for M = 0:8
         hold on
         plot(L(1,3), L(1,4), 'ro')
         text(L(1,3), L(1,4), sprintf('L%d', M));
-        %axis tight
         
         set(0,'CurrentFigure',2)
         
