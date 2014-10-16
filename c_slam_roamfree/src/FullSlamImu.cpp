@@ -50,7 +50,7 @@ void FullSlamImu::run()
 {
 	ros::NodeHandle n("~");
 
-	ros::Rate rate(0.1);
+	ros::Rate rate(0.5);
 
 	while (ros::ok())
 	{
@@ -58,9 +58,13 @@ void FullSlamImu::run()
 
 		ros::spinOnce();
 
-		if (filter->getOldestPose())
+		if (filter->getNthOldestPose(1))
 		{
-			filter->getOldestPose()->setFixed(true);
+			//filter->getOldestPose()->setFixed(true);
+
+			filter->getNthOldestPose(0)->setFixed(true);
+			//filter->getNthOldestPose(1)->setFixed(true);
+
 			filter->estimate(500);
 		}
 	};

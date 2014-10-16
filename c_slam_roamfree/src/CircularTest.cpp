@@ -180,6 +180,7 @@ private:
 	Eigen::Matrix3d K;
 };
 
+/*
 void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
 			vector<Eigen::Vector3d>& tracksCM, double r)
 {
@@ -230,6 +231,54 @@ void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
 	}
 	cout << "]" << endl;
 }
+*/
+
+void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
+			vector<Eigen::Vector3d>& tracksCM, double r) {
+
+	const int numTracks = 16;
+
+	double cm [][3] = {
+			{2.0,-2.0,-0.3},
+			{2.0,-1.0, 0.3},
+			{2.0, 0.0,-0.3},
+			{2.0, 1.0, 0.3},
+			{2.0, 2.0,-0.3},
+
+			{-2.0,-2.0,-0.3},
+			{-2.0,-1.0, 0.3},
+			{-2.0, 0.0,-0.3},
+			{-2.0, 1.0, 0.3},
+			{-2.0, 2.0,-0.3},
+
+			{-1.0, 2.0, 0.3},
+			{-0.0, 2.0,-0.3},
+			{ 1.0, 2.0, 0.3},
+
+			{-1.0,-2.0, 0.3},
+			{ 0.0,-2.0,-0.3},
+			{ 1.0,-2.0, 0.3}
+	};
+
+	tracks.resize(numTracks);
+
+	for (int k = 0; k < numTracks; k++) {
+		Eigen::Vector3d trackCM;
+		trackCM << cm[k][0], cm[k][1], cm[k][2];
+		tracksCM.push_back(trackCM);
+
+		for (int j = 0; j < 4; j++)
+		{
+			Eigen::Vector4d track;
+			track << cm[k][0], cm[k][1], cm[k][2], 1;
+
+			cout << track(0) << "," << track(1) << "," << track(2) << ";";
+			cout << endl;
+			tracks[k].push_back(track);
+		}
+	}
+}
+
 
 void computeCameraPose(Eigen::Matrix4d& H, double t, double theta0, double w0,
 			double alpha, double r)

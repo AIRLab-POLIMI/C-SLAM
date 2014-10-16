@@ -30,14 +30,21 @@ using namespace ROAMestimation;
 TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) :
 		filter(filter), T_OC_tf(T_OC_tf) {
 
-	/*
-	int numTracks = 8;
-	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
-			2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
-			-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
+//  giro giro tondo
+//
+//  int numTracks = 8;
+//	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
+//				2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
+//				-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
 
-	for (int i = 0; i < numTracks; i++)
-	{
+	int numTracks = 16;
+	double trackData[][3] = { { 2.0, -2.0, -0.3 }, { 2.0, -1.0, 0.3 }, { 2.0, 0.0,
+			-0.3 }, { 2.0, 1.0, 0.3 }, { 2.0, 2.0, -0.3 }, { -2.0, -2.0, -0.3 }, {
+			-2.0, -1.0, 0.3 }, { -2.0, 0.0, -0.3 }, { -2.0, 1.0, 0.3 }, { -2.0, 2.0,
+			-0.3 }, { -1.0, 2.0, 0.3 }, { -0.0, 2.0, -0.3 }, { 1.0, 2.0, 0.3 }, {
+			-1.0, -2.0, 0.3 }, { 0.0, -2.0, -0.3 }, { 1.0, -2.0, 0.3 } };
+
+	for (int i = 0; i < numTracks; i++) {
 		// produce the sensor name
 		std::stringstream s;
 		s << "Track_" << i;
@@ -52,14 +59,12 @@ TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) 
 		Eigen::VectorXd Lw(3);
 		Lw << trackData[i][0], trackData[i][1], trackData[i][2];
 		filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw",
-				Lw, true);
-		filter->setRobustKernel(sensor, true, 0.1);
+				Lw, false);
+		//filter->setRobustKernel(sensor, true, 0.1);
 
 		//set the track as initialized
 		tracks.insert(i);
 	}
-
-	*/
 }
 
 void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
@@ -101,7 +106,7 @@ void TracksHandler::initTrack(const std::string& sensor,
 	computePossibleLandmarkLocation(z, x, Lw);
 	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw", Lw,
 			false);
-	filter->setRobustKernel(sensor, true, 0.1);
+	//filter->setRobustKernel(sensor, true, 0.1);
 
 	//add to current track list
 	tracks.insert(id);
