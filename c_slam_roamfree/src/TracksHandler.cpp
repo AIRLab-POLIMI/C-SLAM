@@ -23,48 +23,67 @@
 
 #include "TracksHandler.h"
 
+#include <random>
+
 #include <tf_conversions/tf_eigen.h>
 
 using namespace ROAMestimation;
 
+void add_gaussian_noise(double *to, unsigned int size, double mean, double std) {
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+
+	std::normal_distribution<double> dist(mean, std);
+
+	for (int k = 0; k < size; ++k) {
+		to[k] += dist(gen);
+	}
+}
+
 TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) :
 		filter(filter), T_OC_tf(T_OC_tf) {
 
-//  giro giro tondo
-//
-//  int numTracks = 8;
-//	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
-//				2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
-//				-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
+// cerchio
+	int numTracks = 8;
+	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
+				2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
+				-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
+//*/
 
-	int numTracks = 16;
-	double trackData[][3] = { { 2.0, -2.0, -0.3 }, { 2.0, -1.0, 0.3 }, { 2.0, 0.0,
-			-0.3 }, { 2.0, 1.0, 0.3 }, { 2.0, 2.0, -0.3 }, { -2.0, -2.0, -0.3 }, {
-			-2.0, -1.0, 0.3 }, { -2.0, 0.0, -0.3 }, { -2.0, 1.0, 0.3 }, { -2.0, 2.0,
-			-0.3 }, { -1.0, 2.0, 0.3 }, { -0.0, 2.0, -0.3 }, { 1.0, 2.0, 0.3 }, {
-			-1.0, -2.0, 0.3 }, { 0.0, -2.0, -0.3 }, { 1.0, -2.0, 0.3 } };
+/* quadrato
 
-	for (int i = 0; i < numTracks; i++) {
-		// produce the sensor name
-		std::stringstream s;
-		s << "Track_" << i;
-		std::string sensor = s.str();
+	 int numTracks = 16;
+	 double trackData[][3] = { { 2.0, -2.0, -0.3 }, { 2.0, -1.0, 0.3 }, { 2.0, 0.0,
+	 -0.3 }, { 2.0, 1.0, 0.3 }, { 2.0, 2.0, -0.3 }, { -2.0, -2.0, -0.3 }, {
+	 -2.0, -1.0, 0.3 }, { -2.0, 0.0, -0.3 }, { -2.0, 1.0, 0.3 }, { -2.0, 2.0,
+	 -0.3 }, { -1.0, 2.0, 0.3 }, { -0.0, 2.0, -0.3 }, { 1.0, 2.0, 0.3 }, {
+	 -1.0, -2.0, 0.3 }, { 0.0, -2.0, -0.3 }, { 1.0, -2.0, 0.3 } };
+//*/
 
-		filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false,
-				true);
-		filter->shareSensorFrame("Camera", sensor);
-		filter->shareParameter("Camera_CM", sensor + "_CM");
+	/*
+	 for (int i = 0; i < numTracks; i++) {
+	 // produce the sensor name
+	 std::stringstream s;
+	 s << "Track_" << i;
+	 std::string sensor = s.str();
 
-		// place the marker in the correct position
-		Eigen::VectorXd Lw(3);
-		Lw << trackData[i][0], trackData[i][1], trackData[i][2];
-		filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw",
-				Lw, false);
-		//filter->setRobustKernel(sensor, true, 0.1);
+	 filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false,
+	 true);
+	 filter->shareSensorFrame("Camera", sensor);
+	 filter->shareParameter("Camera_CM", sensor + "_CM");
 
-		//set the track as initialized
-		tracks.insert(i);
-	}
+	 // place the marker in the correct position
+	 Eigen::VectorXd Lw(3);
+	 Lw << trackData[i][0], trackData[i][1], trackData[i][2];
+
+	 filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw",
+	 Lw, false);
+	 //filter->setRobustKernel(sensor, true, 0.1);
+
+	 //set the track as initialized
+	 tracks.insert(i);
+	 }
+	 */
 }
 
 void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
@@ -133,7 +152,7 @@ void TracksHandler::computePossibleLandmarkLocation(const Eigen::VectorXd& z,
 
 	computeCameraPose(x, R_WC, t_WC);
 	//Compute a possible pose for the landmark
-	double alpha = 5;
+	double alpha = 3;
 	Lw = alpha * R_WC * dc + t_WC;
 }
 
