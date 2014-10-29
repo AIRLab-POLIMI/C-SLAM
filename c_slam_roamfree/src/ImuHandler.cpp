@@ -23,8 +23,6 @@
 
 #include "ImuHandler.h"
 
-#include <iostream>
-
 using namespace ROAMestimation;
 
 ImuHandler::ImuHandler(FactorGraphFilter* filter) :
