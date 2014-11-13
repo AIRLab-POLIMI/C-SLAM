@@ -4,13 +4,10 @@ project(c_slam_roamfree)
 find_package(catkin REQUIRED COMPONENTS roscpp 
                                         tf 
                                         tf_conversions 
-                                        c_slam_msgs)
+                                        c_slam_msgs
+                                        roamfree)
                                         
-find_package(OpenCV REQUIRED)                                        
-
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
-
-find_package(ROAMFREE REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
 
