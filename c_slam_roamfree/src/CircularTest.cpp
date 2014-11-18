@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
 		double w = w0 + alpha * t;
 
 		vector<double> za =
-		{ alpha * r, std::pow(w, 2) * r, 9.80665 };
+		{ alpha * r, std::pow(w, 2) * r, 9.8 };
 		vector<double> zw =
 		{ 0.0, 0.0, w };
 

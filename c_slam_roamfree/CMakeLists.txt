@@ -6,6 +6,9 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         tf_conversions 
                                         c_slam_msgs
                                         roamfree)
+
+#this is needed if no system level FindEigen3.cmake is available
+#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
                                         
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)

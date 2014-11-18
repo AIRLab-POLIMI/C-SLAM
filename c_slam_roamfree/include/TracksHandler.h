@@ -44,7 +44,11 @@ private:
 	void computePossibleLandmarkLocation(const Eigen::VectorXd& z,
 				const Eigen::VectorXd& x, Eigen::VectorXd& Lw);
 	void initTrack(const std::string& sensor, const Eigen::VectorXd& z,
-				const Eigen::VectorXd& x, size_t id);
+			ROAMestimation::PoseVertexWrapper_Ptr pv, size_t id);
+
+	void initTrack_FHP(const std::string& sensor, const Eigen::VectorXd& z,
+			ROAMestimation::PoseVertexWrapper_Ptr pv, size_t id);
+
 	void computeCameraPose(const Eigen::VectorXd& x, Eigen::Matrix3d& R_WC,
 				Eigen::Vector3d& t_WC);
 

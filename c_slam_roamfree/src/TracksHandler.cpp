@@ -104,7 +104,7 @@ void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
 		}
 
 		// we need to add a new sensor
-		initTrack(sensor, z, pose_ptr->getEstimate(), id);
+		initTrack_FHP(sensor, z, pose_ptr, id);
 	}
 
 	Eigen::MatrixXd cov(2, 2);
@@ -114,7 +114,7 @@ void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
 }
 
 void TracksHandler::initTrack(const std::string& sensor,
-		const Eigen::VectorXd& z, const Eigen::VectorXd& x, size_t id) {
+		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv, size_t id) {
 	// we need to add a new sensor
 	filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false, true);
 	filter->shareSensorFrame("Camera", sensor);
@@ -122,7 +122,7 @@ void TracksHandler::initTrack(const std::string& sensor,
 
 	// place the marker somewhere on the direction where it was seen
 	Eigen::VectorXd Lw(3);
-	computePossibleLandmarkLocation(z, x, Lw);
+	computePossibleLandmarkLocation(z, pv->getEstimate(), Lw);
 	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_Lw", Lw,
 			false);
 	//filter->setRobustKernel(sensor, true, 0.1);
@@ -131,11 +131,47 @@ void TracksHandler::initTrack(const std::string& sensor,
 	tracks.insert(id);
 }
 
+void TracksHandler::initTrack_FHP(const std::string& sensor,
+		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv, size_t id) {
+
+	filter->addSensor(sensor, ROAMestimation::FramedHomogeneousPoint, false, true);
+	filter->shareSensorFrame("Camera", sensor);
+	filter->shareParameter("Camera_CM", sensor + "_CM");
+
+	// place the marker somewhere on the direction where it was seen
+
+	Eigen::VectorXd HP(3);
+	Eigen::Vector3d zO;
+	zO << z(0), z(1) , 1.0;
+
+	ParameterWrapper_Ptr CM_par = filter->getParameterByName("Camera_CM");
+	const Eigen::Map<const Eigen::Matrix3d> cm(CM_par->getEstimate().data());
+
+	Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
+
+	HP << cm_inv * zO;
+	HP(2) = 1.0/5.0; // 1/d distance of the plane parallel to the image plane on which features are initialized.
+
+
+
+	// ---
+
+	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_HP", HP,
+			false);
+	filter->poseVertexAsParameter(pv, sensor + "_F");
+
+	//filter->setRobustKernel(sensor, true, 0.1);
+
+	//add to current track list
+	tracks.insert(id);
+}
+
+
 void TracksHandler::computePossibleLandmarkLocation(const Eigen::VectorXd& z,
 		const Eigen::VectorXd& x, Eigen::VectorXd& Lw) {
 	// place the marker somewhere on the direction where it was seen
-	const Eigen::Map<const Eigen::Matrix3d> cm(
-			filter->getParameterByName("Camera_CM")->getEstimate().data());
+	ParameterWrapper_Ptr CM_par = filter->getParameterByName("Camera_CM");
+	const Eigen::Map<const Eigen::Matrix3d > cm(CM_par->getEstimate().data());
 
 	Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
 	cm_inv /= cm_inv(2, 2);
@@ -168,4 +204,3 @@ void TracksHandler::computeCameraPose(const Eigen::VectorXd& x,
 	tf::matrixTFToEigen(R_WC_tf, R_WC);
 	tf::vectorTFToEigen(t_WC_tf, t_WC);
 }
-

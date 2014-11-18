@@ -65,7 +65,7 @@ void FullSlamImu::run()
 			filter->getNthOldestPose(0)->setFixed(true);
 			//filter->getNthOldestPose(1)->setFixed(true);
 
-			filter->estimate(250);
+			filter->estimate(0);
 		}
 	};
 
