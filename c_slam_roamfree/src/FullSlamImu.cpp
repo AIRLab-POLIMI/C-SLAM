@@ -120,19 +120,33 @@ void FullSlamImu::initRoamfree()
 void FullSlamImu::initCamera()
 {
 
+	// the pose of the camera wrt odometric center
+
 	filter->addConstantParameter("Camera_SOx", 0.000, true);
 	filter->addConstantParameter("Camera_SOy", 0.000, true);
 	filter->addConstantParameter("Camera_SOz", 0.000, true);
 
+	/* imu centric
 	filter->addConstantParameter("Camera_qOSx", -0.5, true);
 	filter->addConstantParameter("Camera_qOSy", 0.5, true);
 	filter->addConstantParameter("Camera_qOSz", -0.5, true);
 
-// the pose of the camera wrt odometric center
 	T_OC_tf = tf::Transform(tf::Quaternion(-0.5, 0.5, -0.5, 0.5),
 				tf::Vector3(0.0, 0.00, 0.00));
+	//*/
 
-	Eigen::VectorXd CM(9); //the camera intrinsic calibration matrix
+	// camera centric
+	filter->addConstantParameter("Camera_qOSx", 0.0, true);
+	filter->addConstantParameter("Camera_qOSy", 0.0, true);
+	filter->addConstantParameter("Camera_qOSz", 0.0, true);
+
+	T_OC_tf = tf::Transform(tf::Quaternion(0.0, 0.0, 0.0, 1.0),
+				tf::Vector3(0.0, 0.00, 0.00));
+	//*/
+
+	//the camera intrinsic calibration matrix
+
+	Eigen::VectorXd CM(9);
 	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
 
 	filter->addConstantParameter(Matrix3D, "Camera_CM", CM, true);

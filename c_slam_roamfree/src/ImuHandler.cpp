@@ -76,10 +76,6 @@ void ImuHandler::computePose(double t) {
 	Eigen::VectorXd pose(7);
 	pose << x, y, z, q.w(), q.x(), q.y(), q.z();
 
-	std::cout << "pose id " << filter->getNewestPose()->getId() << ": "
-			<< std::endl << (filter->getNewestPose()->getEstimate() - pose).transpose()
-			<< std::endl;
-
 	//filter->getNewestPose()->setEstimate(pose);
 	//filter->getNewestPose()->setFixed(true);
 
@@ -93,11 +89,18 @@ void ImuHandler::initialize(double t) {
 	Eigen::VectorXd gyroBias(3);
 	gyroBias << 0.0, 0.0, 0.0;
 
-	Eigen::VectorXd x0(7);
-	x0 << 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0;
-
+	Eigen::VectorXd x0(7); // initial robot position
 	Eigen::VectorXd T_OS_IMU(7); // Transformation between Odometer and robot frame
-	T_OS_IMU << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+
+	/* imu centric
+	 T_OS_IMU << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+	 x0 << 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+	//*/
+
+	// camera centric
+	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
+	x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+	//*/
 
 	imu->init(filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias, true, x0,
 			t);

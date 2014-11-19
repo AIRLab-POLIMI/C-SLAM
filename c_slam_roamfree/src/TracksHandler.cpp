@@ -29,7 +29,8 @@
 
 using namespace ROAMestimation;
 
-void add_gaussian_noise(double *to, unsigned int size, double mean, double std) {
+void add_gaussian_noise(double *to, unsigned int size, double mean,
+		double std) {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
 
@@ -46,11 +47,11 @@ TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) 
 // cerchio
 	int numTracks = 8;
 	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
-				2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
-				-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
+			2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
+			-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
 //*/
 
-/* quadrato
+	/* quadrato
 
 	 int numTracks = 16;
 	 double trackData[][3] = { { 2.0, -2.0, -0.3 }, { 2.0, -1.0, 0.3 }, { 2.0, 0.0,
@@ -58,7 +59,7 @@ TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) 
 	 -2.0, -1.0, 0.3 }, { -2.0, 0.0, -0.3 }, { -2.0, 1.0, 0.3 }, { -2.0, 2.0,
 	 -0.3 }, { -1.0, 2.0, 0.3 }, { -0.0, 2.0, -0.3 }, { 1.0, 2.0, 0.3 }, {
 	 -1.0, -2.0, 0.3 }, { 0.0, -2.0, -0.3 }, { 1.0, -2.0, 0.3 } };
-//*/
+	 //*/
 
 	/*
 	 for (int i = 0; i < numTracks; i++) {
@@ -114,7 +115,8 @@ void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
 }
 
 void TracksHandler::initTrack(const std::string& sensor,
-		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv, size_t id) {
+		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv,
+		size_t id) {
 	// we need to add a new sensor
 	filter->addSensor(sensor, ROAMestimation::ImagePlaneProjection, false, true);
 	filter->shareSensorFrame("Camera", sensor);
@@ -132,9 +134,11 @@ void TracksHandler::initTrack(const std::string& sensor,
 }
 
 void TracksHandler::initTrack_FHP(const std::string& sensor,
-		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv, size_t id) {
+		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv,
+		size_t id) {
 
-	filter->addSensor(sensor, ROAMestimation::FramedHomogeneousPoint, false, true);
+	filter->addSensor(sensor, ROAMestimation::FramedHomogeneousPoint, false,
+			true);
 	filter->shareSensorFrame("Camera", sensor);
 	filter->shareParameter("Camera_CM", sensor + "_CM");
 
@@ -142,7 +146,7 @@ void TracksHandler::initTrack_FHP(const std::string& sensor,
 
 	Eigen::VectorXd HP(3);
 	Eigen::Vector3d zO;
-	zO << z(0), z(1) , 1.0;
+	zO << z(0), z(1), 1.0;
 
 	ParameterWrapper_Ptr CM_par = filter->getParameterByName("Camera_CM");
 	const Eigen::Map<const Eigen::Matrix3d> cm(CM_par->getEstimate().data());
@@ -150,14 +154,12 @@ void TracksHandler::initTrack_FHP(const std::string& sensor,
 	Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
 
 	HP << cm_inv * zO;
-	HP(2) = 1.0/5.0; // 1/d distance of the plane parallel to the image plane on which features are initialized.
-
-
+	HP(2) = 1.0 / 5.0; // 1/d distance of the plane parallel to the image plane on which features are initialized.
 
 	// ---
 
-	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_HP", HP,
-			false);
+	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_HP",
+			pv->getTimestamp(), HP, false);
 	filter->poseVertexAsParameter(pv, sensor + "_F");
 
 	//filter->setRobustKernel(sensor, true, 0.1);
@@ -166,12 +168,11 @@ void TracksHandler::initTrack_FHP(const std::string& sensor,
 	tracks.insert(id);
 }
 
-
 void TracksHandler::computePossibleLandmarkLocation(const Eigen::VectorXd& z,
 		const Eigen::VectorXd& x, Eigen::VectorXd& Lw) {
 	// place the marker somewhere on the direction where it was seen
 	ParameterWrapper_Ptr CM_par = filter->getParameterByName("Camera_CM");
-	const Eigen::Map<const Eigen::Matrix3d > cm(CM_par->getEstimate().data());
+	const Eigen::Map<const Eigen::Matrix3d> cm(CM_par->getEstimate().data());
 
 	Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
 	cm_inv /= cm_inv(2, 2);
