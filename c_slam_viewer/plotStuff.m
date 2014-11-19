@@ -35,9 +35,9 @@ for j = i(1:20:length(i))'
 end    
 
 grid on
-axis manual
+%axis manual
 axis equal
-axis([-4 4 -4 4])
+%axis([-4 4 -4 4])
 
 %% -------------------- FIGURA 2
 
@@ -146,13 +146,34 @@ for M = 0:8
         %% plot landmarks on map
         
         set(0,'CurrentFigure',1)
+
+%         %ImagePlaneProjection  
+%         
+%         Lf = sprintf('%s%s%s.log',path, edgename,'_Lw');
+%         L = sortByT(stubbornLoad(Lf));
+% 
+%         hold on
+%         plot(L(1,3), L(1,4), 'ro')
+%         text(L(1,3), L(1,4), sprintf('L%d', M));
+
+        %FramedHomogeneousPoint
         
-        Lf = sprintf('%s%s%s.log',path, edgename,'_Lw');
-        L = sortByT(stubbornLoad(Lf));
+        HPf = sprintf('%s%s%s.log',path, edgename,'_HP');
+        HP = sortByT(stubbornLoad(HPf));
+        
+        ai = find(x(:,1) == HP(1,1),1);
+        A = x(ai,:);
 
         hold on
-        plot(L(1,3), L(1,4), 'ro')
-        text(L(1,3), L(1,4), sprintf('L%d', M));
+        plot(A(1,3), A(1,4), 'ro')
+        text(A(1,3), A(1,4), sprintf('AP%d', M));
+        
+        % compute 3d point
+        LW = A(3:5)'+1/HP(5)*quatrot(A(6:9))*[HP(3) HP(4) 1]';
+
+        plot(LW(1), LW(2), 'ro')
+        text(LW(1), LW(2), sprintf('L%d', M));
+
         
         set(0,'CurrentFigure',2)
         
