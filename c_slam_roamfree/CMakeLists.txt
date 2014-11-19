@@ -24,7 +24,6 @@ set(CMAKE_CXX_FLAGS "-g -std=c++11 ${OTHERS_DEFINE}")
 
 include_directories(include 
                     ${catkin_INCLUDE_DIRS}
-		            ${ROAMFREE_INCLUDE_DIR}
 		            ${EIGEN3_INCLUDE_DIR}
 		            ${Boost_INCLUDE_DIRS}  
 )
@@ -35,8 +34,7 @@ add_executable(c_localization
 	           src/TracksHandler.cpp)
 
 target_link_libraries(c_localization
-                      ${catkin_LIBRARIES}
-                      ${ROAMFREE_LIBRARIES})
+                      ${catkin_LIBRARIES})
 
 add_executable(circular_test
                src/CircularTest.cpp)
