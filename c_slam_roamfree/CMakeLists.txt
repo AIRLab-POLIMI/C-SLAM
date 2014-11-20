@@ -39,10 +39,14 @@ target_link_libraries(c_localization
 add_executable(circular_test
                src/CircularTest.cpp)
                
+add_executable(firefly_test
+               src/FireflyTest.cpp)
+               
 add_executable(displayer
                src/Displayer.cpp)               
 
 target_link_libraries(circular_test ${catkin_LIBRARIES})
+target_link_libraries(firefly_test ${catkin_LIBRARIES})
 target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 

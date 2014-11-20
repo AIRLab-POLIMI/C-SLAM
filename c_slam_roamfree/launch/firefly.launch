@@ -1,0 +1,23 @@
+<launch>
+	
+	<param name="use_sim_time" value="False"/>	
+
+    <node name="c_localization" 
+          pkg="c_slam_roamfree" 
+          type="c_localization" 
+          output="screen" 
+          launch-prefix=""/>
+          
+	 <node name="firefly_test" 
+          pkg="c_slam_roamfree" 
+          type="firefly_test" 
+          output="screen" 
+          launch-prefix=""/>
+          
+          <node name="displayer" 
+          pkg="c_slam_roamfree" 
+          type="displayer" 
+          output="screen" 
+          launch-prefix=""/>
+
+</launch>
