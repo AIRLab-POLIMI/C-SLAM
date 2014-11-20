@@ -24,7 +24,7 @@
 #ifndef TRACKSHANDLER_H_
 #define TRACKSHANDLER_H_
 
-#include <set>
+#include <map>
 
 #include <Eigen/Dense>
 
@@ -55,7 +55,11 @@ private:
 private:
 	ROAMestimation::FactorGraphFilter* filter;
 	tf::Transform& T_OC_tf;
-	std::set<size_t> tracks;
+
+	typedef std::map<size_t, size_t> TracksMap;
+	TracksMap tracks;
+
+
 
 };
 

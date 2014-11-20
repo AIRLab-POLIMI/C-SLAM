@@ -65,7 +65,9 @@ void FullSlamImu::run()
 			filter->getNthOldestPose(0)->setFixed(true);
 			//filter->getNthOldestPose(1)->setFixed(true);
 
-			filter->estimate(0);
+			bool ret = filter->estimate(25);
+
+			assert(ret);
 		}
 	};
 
@@ -114,7 +116,7 @@ void FullSlamImu::initRoamfree()
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
 	filter->setDeadReckoning(false);
-	filter->setSolverMethod(LevenbergMarquardt);
+	filter->setSolverMethod(GaussNewton);
 }
 
 void FullSlamImu::initCamera()

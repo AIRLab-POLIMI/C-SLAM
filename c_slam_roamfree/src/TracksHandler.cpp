@@ -44,22 +44,21 @@ void add_gaussian_noise(double *to, unsigned int size, double mean,
 TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) :
 		filter(filter), T_OC_tf(T_OC_tf) {
 
-// cerchio
-	int numTracks = 8;
-	double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
-			2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
-			-1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
-//*/
-
-	/* quadrato
-
-	 int numTracks = 16;
-	 double trackData[][3] = { { 2.0, -2.0, -0.3 }, { 2.0, -1.0, 0.3 }, { 2.0, 0.0,
-	 -0.3 }, { 2.0, 1.0, 0.3 }, { 2.0, 2.0, -0.3 }, { -2.0, -2.0, -0.3 }, {
-	 -2.0, -1.0, 0.3 }, { -2.0, 0.0, -0.3 }, { -2.0, 1.0, 0.3 }, { -2.0, 2.0,
-	 -0.3 }, { -1.0, 2.0, 0.3 }, { -0.0, 2.0, -0.3 }, { 1.0, 2.0, 0.3 }, {
-	 -1.0, -2.0, 0.3 }, { 0.0, -2.0, -0.3 }, { 1.0, -2.0, 0.3 } };
+	/* cerchio
+	 int numTracks = 8;
+	 double trackData[][3] = { { 2.5000, 0, 0 }, { 1.7678, 1.7678, 0 }, { 0,
+	 2.5000, 0 }, { -1.7678, 1.7678, 0 }, { -2.5000, 0, 0 }, { -1.7678,
+	 -1.7678, 0 }, { 0, -2.5000, 0 }, { 1.7678, -1.7678, 0 } };
 	 //*/
+
+	// quadrato
+	int numTracks = 16;
+	double trackData[][3] = { { 2.0, -2.0, -0.3 }, { 2.0, -1.0, 0.3 }, { 2.0,
+			0.0, -0.3 }, { 2.0, 1.0, 0.3 }, { 2.0, 2.0, -0.3 }, { -2.0, -2.0, -0.3 },
+			{ -2.0, -1.0, 0.3 }, { -2.0, 0.0, -0.3 }, { -2.0, 1.0, 0.3 }, { -2.0, 2.0,
+					-0.3 }, { -1.0, 2.0, 0.3 }, { -0.0, 2.0, -0.3 }, { 1.0, 2.0, 0.3 }, {
+					-1.0, -2.0, 0.3 }, { 0.0, -2.0, -0.3 }, { 1.0, -2.0, 0.3 } };
+	//*/
 
 	/*
 	 for (int i = 0; i < numTracks; i++) {
@@ -88,7 +87,7 @@ TracksHandler::TracksHandler(FactorGraphFilter* filter, tf::Transform& T_OC_tf) 
 }
 
 void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
-	std::set<size_t>::iterator s_it = tracks.find(id);
+	TracksMap::iterator s_it = tracks.find(id);
 
 	// produce the sensor name
 	std::stringstream s;
@@ -106,12 +105,21 @@ void TracksHandler::addMeasurement(double t, size_t id, Eigen::VectorXd z) {
 
 		// we need to add a new sensor
 		initTrack_FHP(sensor, z, pose_ptr, id);
+	} else { // it has already been seen
+		Eigen::MatrixXd cov(2, 2);
+		cov = Eigen::MatrixXd::Identity(2, 2);
+
+		filter->addSequentialMeasurement(sensor, t, z, cov);
+
+		s_it->second ++;
+
+		if (s_it->second == 3) { // we have enough information to estimate depth (seen three times, 2 edges)
+			ParameterWrapper_Ptr hp = filter->getParameterByName(sensor+"_HP");
+			assert(hp);
+
+			hp->setFixed(false);
+		}
 	}
-
-	Eigen::MatrixXd cov(2, 2);
-	cov = Eigen::MatrixXd::Identity(2, 2);
-
-	filter->addSequentialMeasurement(sensor, t, z, cov);
 }
 
 void TracksHandler::initTrack(const std::string& sensor,
@@ -130,7 +138,7 @@ void TracksHandler::initTrack(const std::string& sensor,
 	//filter->setRobustKernel(sensor, true, 0.1);
 
 	//add to current track list
-	tracks.insert(id);
+	tracks[id] = 1;
 }
 
 void TracksHandler::initTrack_FHP(const std::string& sensor,
@@ -154,18 +162,18 @@ void TracksHandler::initTrack_FHP(const std::string& sensor,
 	Eigen::Matrix3d cm_inv = cm.transpose().inverse(); // the inverse of the camera intrinsic calibration matrix
 
 	HP << cm_inv * zO;
-	HP(2) = 1.0 / 5.0; // 1/d distance of the plane parallel to the image plane on which features are initialized.
+	HP(2) = 1.0/10.0; // 1/d distance of the plane parallel to the image plane on which features are initialized.
 
 	// ---
 
 	filter->addConstantParameter(ROAMestimation::Euclidean3D, sensor + "_HP",
-			pv->getTimestamp(), HP, false);
+			pv->getTimestamp(), HP, true); // insert HP as a fixed parameter, it will be unfixed later
 	filter->poseVertexAsParameter(pv, sensor + "_F");
 
 	//filter->setRobustKernel(sensor, true, 0.1);
 
 	//add to current track list
-	tracks.insert(id);
+	tracks[id] = 1;
 }
 
 void TracksHandler::computePossibleLandmarkLocation(const Eigen::VectorXd& z,
