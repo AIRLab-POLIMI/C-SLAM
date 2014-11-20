@@ -4,7 +4,8 @@
 
     <node name="c_localization" 
           pkg="c_slam_roamfree" 
-          type="c_localization" 
+          type="c_localization"
+          args="/ardrone/imu"  
           output="screen" 
           launch-prefix=""/>
           

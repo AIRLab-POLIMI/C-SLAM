@@ -27,7 +27,7 @@ class FullSlamImu
 
 public:
 
-	FullSlamImu();
+	FullSlamImu(std::string imuTopic);
 	virtual ~FullSlamImu();
 	void run();
 

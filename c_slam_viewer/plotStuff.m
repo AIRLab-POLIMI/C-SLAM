@@ -5,7 +5,7 @@ global path
 global x Sa edge augs 
 
 numothers = 2;
-numtracks = 8;
+numtracks = 16;
 numplots = numtracks+numothers;
 
 mapLimits = [];
@@ -113,7 +113,7 @@ end
 
 %% -------------------- LANDMARK
 
-for M = 0:8
+for M = 0:numtracks
 
     edgename = sprintf('Track_%d', M);
 

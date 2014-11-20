@@ -14,7 +14,7 @@ using namespace ROAMestimation;
 namespace roamfree_c_slam
 {
 
-FullSlamImu::FullSlamImu() :
+FullSlamImu::FullSlamImu(std::string imuTopic) :
 			filter(NULL), imuHandler(NULL), tracksHandler(NULL)
 {
 	//setup roamfree
@@ -28,7 +28,7 @@ FullSlamImu::FullSlamImu() :
 	tracksHandler = new TracksHandler(filter, T_OC_tf);
 
 	//subscribe to sensor topics
-	imu_sub = n.subscribe("/ardrone/imu", 60000, &FullSlamImu::imuCb, this);
+	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
 	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu::tracksCb, this);
 }
 
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "roamfree_full_slam_imu");
 
-	roamfree_c_slam::FullSlamImu n;
+	roamfree_c_slam::FullSlamImu n(argv[1]);
 
 	ROS_INFO("Localization node started");
 	n.run();
