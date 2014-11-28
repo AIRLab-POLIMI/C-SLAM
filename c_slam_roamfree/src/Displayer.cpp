@@ -32,9 +32,16 @@
 using namespace std;
 
 cv::Mat image(360, 640, CV_8UC3);
+ros::Time last_ts;
 
 void tracksCb(const c_slam_msgs::TrackedObject& msg)
 {
+
+	if (msg.imageStamp > last_ts) {
+		image.setTo(cv::Scalar(0, 0, 0));
+		last_ts = msg.imageStamp;
+	}
+
 	vector<geometry_msgs::Point32> points = msg.polygon.points;
 	vector<cv::Point> polygon;
 	for (int i = 0; i < points.size(); i++)
@@ -73,9 +80,6 @@ void tracksCb(const c_slam_msgs::TrackedObject& msg)
 	cv::putText(image, ss.str(), textOrigin, cv::FONT_HERSHEY_SIMPLEX, 0.4,
 				cv::Scalar(0, 255, 0));
 
-	cv::imshow("Tracks", image);
-	cv::waitKey(1);
-
 }
 
 int main(int argc, char *argv[])
@@ -89,11 +93,15 @@ int main(int argc, char *argv[])
 
 	ROS_INFO("Displayer started");
 
-	ros::Rate rate(5);
+	ros::Rate rate(100);
 	while (ros::ok())
 	{
-		image.setTo(cv::Scalar(0, 0, 0));
+		//image.setTo(cv::Scalar(0, 0, 0));
 		ros::spinOnce();
+
+		cv::imshow("Tracks", image);
+		cv::waitKey(1);
+
 		rate.sleep();
 	}
 

@@ -25,7 +25,6 @@ FullSlamImu::FullSlamImu(std::string imuTopic) :
 
 	//setup the handlers
 	imuHandler = new ImuHandler(filter);
-	tracksHandler = new TracksHandler(filter, T_OC_tf);
 
 	//subscribe to sensor topics
 	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
@@ -50,7 +49,7 @@ void FullSlamImu::run()
 {
 	ros::NodeHandle n("~");
 
-	ros::Rate rate(0.5);
+	ros::Rate rate(5);
 
 	while (ros::ok())
 	{
@@ -65,7 +64,8 @@ void FullSlamImu::run()
 			filter->getNthOldestPose(0)->setFixed(true);
 			//filter->getNthOldestPose(1)->setFixed(true);
 
-			bool ret = filter->estimate(25);
+			ROS_INFO("Run estimation");
+			bool ret = filter->estimate(20);
 
 			assert(ret);
 		}
@@ -75,7 +75,7 @@ void FullSlamImu::run()
 
 void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 {
-	ROS_INFO("imu callback");
+	//ROS_INFO("imu callback");
 	double t = msg.header.stamp.toSec();
 
 // fill temporaries with measurements
@@ -91,7 +91,7 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 
 void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 {
-	ROS_INFO("Tracks callback");
+	//ROS_INFO("Tracks callback");
 
 	double t = msg.imageStamp.toSec();
 
@@ -105,7 +105,9 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 				* (msg.polygon.points[0].y + msg.polygon.points[1].y
 							+ msg.polygon.points[2].y + msg.polygon.points[3].y);
 
-	tracksHandler->addMeasurement(t, msg.id, z);
+	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2,2);
+
+	tracksHandler->addFeatureObservation(msg.id, t, z, cov);
 
 }
 
@@ -122,37 +124,17 @@ void FullSlamImu::initRoamfree()
 void FullSlamImu::initCamera()
 {
 
-	// the pose of the camera wrt odometric center
-
-	filter->addConstantParameter("Camera_SOx", 0.000, true);
-	filter->addConstantParameter("Camera_SOy", 0.000, true);
-	filter->addConstantParameter("Camera_SOz", 0.000, true);
-
-	/* imu centric
-	filter->addConstantParameter("Camera_qOSx", -0.5, true);
-	filter->addConstantParameter("Camera_qOSy", 0.5, true);
-	filter->addConstantParameter("Camera_qOSz", -0.5, true);
-
-	T_OC_tf = tf::Transform(tf::Quaternion(-0.5, 0.5, -0.5, 0.5),
-				tf::Vector3(0.0, 0.00, 0.00));
-	//*/
-
-	// camera centric
-	filter->addConstantParameter("Camera_qOSx", 0.0, true);
-	filter->addConstantParameter("Camera_qOSy", 0.0, true);
-	filter->addConstantParameter("Camera_qOSz", 0.0, true);
-
-	T_OC_tf = tf::Transform(tf::Quaternion(0.0, 0.0, 0.0, 1.0),
-				tf::Vector3(0.0, 0.00, 0.00));
-	//*/
+	tracksHandler = new ROAMvision::FHPFeatureHandler(2.0);
+	tracksHandler->setTimestampOffsetTreshold(5e-3);
 
 	//the camera intrinsic calibration matrix
-
 	Eigen::VectorXd CM(9);
 	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
 
-	filter->addConstantParameter(Matrix3D, "Camera_CM", CM, true);
+	Eigen::VectorXd T_OC(7);
+	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
+	tracksHandler->init(filter, "Track", T_OC, CM);
 }
 
 } /* namespace roamfree_c_slam */

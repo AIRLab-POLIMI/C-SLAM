@@ -23,21 +23,35 @@
 
 #include "ImuHandler.h"
 
+#include <ros/ros.h>
+
 #include <iostream>
 
 using namespace ROAMestimation;
 
 ImuHandler::ImuHandler(FactorGraphFilter* filter) :
 		filter(filter) {
-	initialized = false;
 
-	//TODO parameters
-	double imu_N = 10;
-	double imu_dt = 0.02; //ardrone imu runs at 50 Hz
+
+	// -- get parameters
+
+	double imu_N, imu_dt;
+
+	ros::NodeHandle _node("~");
+
+	if (!_node.getParam("IMU_N_integration_steps", imu_N)) {
+		ROS_FATAL("parameter IMU_N_integration_steps undefined");
+	}
+
+	if (!_node.getParam("IMU_nominal_period", imu_dt)) {
+		ROS_FATAL("parameter IMU_nominal_period undefined");
+	}
+
+	initialized = false;
 
 	imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
-	imu->getSensorNoises() = 1e+2 * Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
+	imu->getSensorNoises() = Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
 }
 
 void ImuHandler::addMeasurement(double za[3], double zw[3], double t) {
@@ -99,7 +113,9 @@ void ImuHandler::initialize(double t) {
 
 	// camera centric
 	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
-	x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+	//x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+
+	x0 << 0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5;
 	//*/
 
 	imu->init(filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias, true, x0,

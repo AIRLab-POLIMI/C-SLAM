@@ -50,4 +50,32 @@ for i = 1:size(qtest,1)
     end
 end
 
-plot(qtest)   
+plot(qtest) 
+
+
+%% test if computed dP follows theory
+
+edgename = 'IMUintegralDeltaP';
+
+edgef = sprintf('/tmp/roamfree/%s.log', edgename);
+  
+edge = sortByT(stubbornLoad(edgef));
+
+t = edge(:,1) - edge(1,1);
+z = edge(:,23:25);
+
+alpha = 0.01;
+w = t*alpha;
+
+a = [repmat(alpha, length(t), 1), w.^2, repmat(9.8, length(t), 1)];
+dt = 0.2;
+
+dP = 0.5*a(1:end-1,:)*dt^2+0.5*a(2:end,:)*dt^2;
+
+
+plot(t(1:end-1),dP)
+
+
+
+
+

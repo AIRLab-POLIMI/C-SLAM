@@ -39,66 +39,63 @@
 
 using namespace std;
 
-class RosPublisher
-{
+class RosPublisher {
 public:
 
-	RosPublisher()
-	{
+	RosPublisher() {
 		setTracks();
 
-		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks",
-					6000);
+		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 6000);
 
 		gtSubscriber = n.subscribe("/firefly/ground_truth/pose", 1000,
-					&RosPublisher::publishTracks, this);
+				&RosPublisher::publishTracks, this);
 
 		K << 565.59102697808, 0.0, 337.839450567586, //
 		0.0, 563.936510489792, 199.522081717361, //
 		0.0, 0.0, 1.0;
 	}
 
-	void publishTracks(const geometry_msgs::PoseWithCovarianceStamped& pose_msg)
-	{
-		geometry_msgs::Quaternion q = pose_msg.pose.pose.orientation;
-		geometry_msgs::Point p = pose_msg.pose.pose.position;
-		tf::Quaternion q_tf;
-		tf::quaternionMsgToTF(q, q_tf);
-		tf::Matrix3x3 R(q_tf);
+	void publishTracks(const geometry_msgs::PoseWithCovarianceStamped& pose_msg) {
 
-		//TODO compute pose
+		tf::Transform t_wr(
+				tf::Quaternion(pose_msg.pose.pose.orientation.x,
+						pose_msg.pose.pose.orientation.y, pose_msg.pose.pose.orientation.z,
+						pose_msg.pose.pose.orientation.w),
+				tf::Vector3(pose_msg.pose.pose.position.x,
+						pose_msg.pose.pose.position.y, pose_msg.pose.pose.position.z));
 
-		Eigen::Matrix4d H_CW, H_WC, H_RC, H_WR;
+		tf::Transform t_rc(tf::Quaternion(-0.5, 0.5, -0.5, 0.5),
+				tf::Vector3(0.0, 0.0, 0.0));
 
-		H_WR << R[0][0], R[0][1], R[0][0], p.x, //
-		R[1][0], R[1][1], R[1][1], p.y, //
-		R[2][0], R[2][1], R[2][2], p.z, //
-		0, 0, 0, 1;
+		tf::Transform t_wc = t_wr * t_rc;
+		for (int i = 0; i < tracks.size(); i++) {
+			c_slam_msgs::TrackedObject msg;
 
-		H_RC << 0, 0, 1, 0, //
-		-1, 0, 0, 0, //
-		0, -1, 0, 0, //
-		0, 0, 0, 1;
+			msg.id = i;
+			msg.imageStamp = pose_msg.header.stamp;
 
-		H_WC = H_WR * H_RC;
-		H_WC = H_WC / H_WC(3, 3);
+			// check if the track center of mass is visible
 
-		H_CW = H_WC.inverse();
-		H_CW /= H_CW(3, 3);
+			tf::Vector3 track_w(tracksCM[i](0), tracksCM[i](1), tracksCM[i](2));
+			tf::Vector3 track_c = t_wc.inverse() * track_w;
 
-		for (int i = 0; i < tracks.size(); i++)
-		{
-			if (trackVisible(tracks[i], H_CW))
-			{
-				c_slam_msgs::TrackedObject msg;
+			Eigen::Vector3d track_c_eig;
 
-				msg.id = i;
-				msg.imageStamp = pose_msg.header.stamp;
+			tf::vectorTFToEigen(track_c, track_c_eig);
 
-				for (int j = 0; j < tracks[i].size(); j++)
-				{
-					Eigen::Vector3d homogeneusPoint = K * H_CW.topRows(3)
-								* tracks[i][j];
+			if (pointVisibile(track_c_eig)) {
+
+				for (int j = 0; j < tracks[i].size(); j++) {
+
+					tf::Vector3 track_pt_w(tracks[i][j](0), tracks[i][j](1),
+							tracks[i][j](2));
+					tf::Vector3 track_pt_c = t_wc.inverse() * track_pt_w;
+
+					Eigen::Vector3d track_pt_c_eig;
+
+					tf::vectorTFToEigen(track_pt_c, track_pt_c_eig);
+
+					Eigen::Vector3d homogeneusPoint = K * track_pt_c_eig;
 
 					homogeneusPoint /= homogeneusPoint(2);
 					geometry_msgs::Point32 point;
@@ -111,14 +108,15 @@ public:
 
 				trackPublisher.publish(msg);
 			}
-
 		}
+
+		br.sendTransform(
+				tf::StampedTransform(t_wc, ros::Time::now(), "world", "camera"));
+
 	}
 
-	void publishGroundTruthLandmark()
-	{
-		for (int i = 0; i < tracksCM.size(); i++)
-		{
+	void publishGroundTruthLandmark() {
+		for (int i = 0; i < tracksCM.size(); i++) {
 			stringstream ss;
 			ss << "Track_" << i;
 			tf::Transform trasform;
@@ -129,14 +127,12 @@ public:
 			trasform.setOrigin(t_m_tf);
 			trasform.setRotation(tf::Quaternion::getIdentity());
 			br.sendTransform(
-						tf::StampedTransform(trasform, ros::Time::now(),
-									"world", ss.str()));
+					tf::StampedTransform(trasform, ros::Time::now(), "world", ss.str()));
 		}
 	}
 
 private:
-	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H_CW)
-	{
+	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H_CW) {
 		Eigen::Vector4d trackRC = H_CW * trackPoint;
 		trackRC /= trackRC(3);
 
@@ -144,16 +140,21 @@ private:
 		projection /= projection(2);
 
 		return trackRC(2) > 0 && projection(0) >= 0 && projection(0) < 640
-					&& projection(1) >= 0 && projection(1) < 360;
+				&& projection(1) >= 0 && projection(1) < 360;
+	}
+
+	bool pointVisibile(Eigen::Vector3d & trackPointInCamera) {
+		Eigen::Vector3d projection = K * trackPointInCamera;
+		projection /= projection(2);
+
+		return trackPointInCamera(2) > 0 && projection(0) >= 0
+				&& projection(0) < 640 && projection(1) >= 0 && projection(1) < 360;
 	}
 
 	bool trackVisible(vector<Eigen::Vector4d>& track,
-				const Eigen::Matrix4d& H_CW)
-	{
-		for (int i = 0; i < track.size(); i++)
-		{
-			if (pointVisible(track[i], H_CW))
-			{
+			const Eigen::Matrix4d& H_CW) {
+		for (int i = 0; i < track.size(); i++) {
+			if (pointVisible(track[i], H_CW)) {
 				return true;
 			}
 		}
@@ -162,51 +163,66 @@ private:
 
 	}
 
-	void setTracks()
-	{
+	void setTracks() {
 
-		const int numTracks = 16;
+		/*
+		 const int numTracks = 16;
 
-		double cm[][3] =
-		{
-		{ 2.0, -2.0, -0.3 },
-		{ 2.0, -1.0, 0.3 },
-		{ 2.0, 0.0, -0.3 },
-		{ 2.0, 1.0, 0.3 },
-		{ 2.0, 2.0, -0.3 },
+		 double cm[][3] = { { 2.0, -2.0, -0.3+1.0 }, { 2.0, -1.0, 0.3+1.0 },
+		 { 2.0, 0.0, -0.3+1.0 }, { 2.0, 1.0, 0.3+1.0 }, { 2.0, 2.0, -0.3+1.0 },
 
-		{ -2.0, -2.0, -0.3 },
-		{ -2.0, -1.0, 0.3 },
-		{ -2.0, 0.0, -0.3 },
-		{ -2.0, 1.0, 0.3 },
-		{ -2.0, 2.0, -0.3 },
+		 { -2.0, -2.0, -0.3+1.0 }, { -2.0, -1.0, 0.3+1.0 }, { -2.0, 0.0, -0.3+1.0 }, { -2.0,
+		 1.0, 0.3+1.0 }, { -2.0, 2.0, -0.3+1.0 },
 
-		{ -1.0, 2.0, 0.3 },
-		{ -0.0, 2.0, -0.3 },
-		{ 1.0, 2.0, 0.3 },
+		 { -1.0, 2.0, 0.3+1.0 }, { -0.0, 2.0, -0.3+1.0 }, { 1.0, 2.0, 0.3+1.0 },
 
-		{ -1.0, -2.0, 0.3 },
-		{ 0.0, -2.0, -0.3 },
-		{ 1.0, -2.0, 0.3 } };
+		 { -1.0, -2.0, 0.3+1.0 }, { 0.0, -2.0, -0.3+1.0 }, { 1.0, -2.0, 0.3+1.0 } };
 
-		tracks.resize(numTracks);
+		 tracks.resize(numTracks);
 
-		for (int k = 0; k < numTracks; k++)
-		{
-			Eigen::Vector3d trackCM;
-			trackCM << cm[k][0], cm[k][1], cm[k][2];
-			tracksCM.push_back(trackCM);
+		 for (int k = 0; k < numTracks; k++) {
+		 Eigen::Vector3d trackCM;
+		 trackCM << cm[k][0], cm[k][1], cm[k][2];
+		 tracksCM.push_back(trackCM);
 
-			for (int j = 0; j < 4; j++)
-			{
+		 for (int j = 0; j < 4; j++) {
+		 Eigen::Vector4d track;
+		 track << cm[k][0], cm[k][1], cm[k][2], 1;
+
+		 cout << track(0) << "," << track(1) << "," << track(2) << ";";
+		 cout << endl;
+		 tracks[k].push_back(track);
+		 }
+		 }
+		 //*/
+
+		// generate a carpet of tracks in the area [-2.5 12.5] X [-2.5 7.5]
+		double x = -10;
+		while (x <= 15.0) {
+			double y = -10;
+
+			while (y < 15.0) {
 				Eigen::Vector4d track;
-				track << cm[k][0], cm[k][1], cm[k][2], 1;
+				track << x, y, 0.0, 1.0;
 
-				cout << track(0) << "," << track(1) << "," << track(2) << ";";
-				cout << endl;
-				tracks[k].push_back(track);
+				tracks.resize(tracks.size() + 1);
+
+				for (int k = 0; k < 4; k++) {  // four superimposed points
+					tracks[tracks.size() - 1].push_back(track);
+				}
+
+				Eigen::Vector3d trackCM;
+				trackCM = track.head(3);
+				tracksCM.push_back(trackCM);
+
+				y += 5.0;
 			}
+
+			x += 5.0;
 		}
+
+		//*/
+
 	}
 
 private:
@@ -222,15 +238,13 @@ private:
 	Eigen::Matrix3d K;
 };
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "circular_test");
 
 	RosPublisher publisher;
 
 	ros::Rate rate(30);
-	while (ros::ok())
-	{
+	while (ros::ok()) {
 		publisher.publishGroundTruthLandmark();
 		ros::spinOnce();
 		rate.sleep();

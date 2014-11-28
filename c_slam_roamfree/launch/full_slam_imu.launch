@@ -1,13 +1,19 @@
 <launch>
 	
-	<param name="use_sim_time" value="False"/>	
+	<param name="use_sim_time" value="False"/>
+	
+	<arg name="imu_topic" default="/ardrone/imu"/>	
 
     <node name="c_localization" 
           pkg="c_slam_roamfree" 
           type="c_localization"
-          args="/ardrone/imu"  
+          args="$(arg imu_topic)"  
           output="screen" 
-          launch-prefix=""/>
+          launch-prefix="">
+    
+    	<param name="IMU_N_integration_steps" value="10"/>
+     	<param name="IMU_nominal_period" value="0.02"/>
+     </node>
           
 	 <node name="circular_test" 
           pkg="c_slam_roamfree" 

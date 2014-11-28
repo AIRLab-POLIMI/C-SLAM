@@ -5,7 +5,7 @@ global path
 global x Sa edge augs 
 
 numothers = 2;
-numtracks = 16;
+numtracks = 8;
 numplots = numtracks+numothers;
 
 mapLimits = [];
@@ -165,14 +165,14 @@ for M = 0:numtracks
         A = x(ai,:);
 
         hold on
-        plot(A(1,3), A(1,4), 'ro')
+        plot3(A(1,3), A(1,4), A(1,5), 'ro')
         text(A(1,3), A(1,4), sprintf('AP%d', M));
         
         % compute 3d point
         LW = A(3:5)'+1/HP(5)*quatrot(A(6:9))*[HP(3) HP(4) 1]';
 
-        plot(LW(1), LW(2), 'ro')
-        text(LW(1), LW(2), sprintf('L%d', M));
+        plot3(LW(1), LW(2), LW(3), 'ro')
+        text(LW(1), LW(2), LW(3), sprintf('L%d', M));
 
         
         set(0,'CurrentFigure',2)

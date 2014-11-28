@@ -17,7 +17,7 @@
 #include <c_slam_msgs/TrackedObject.h>
 
 #include "ImuHandler.h"
-#include "TracksHandler.h"
+#include <ROAMvision/ROAMvision.h>
 
 namespace roamfree_c_slam
 {
@@ -49,7 +49,7 @@ private:
 private:
 	ROAMestimation::FactorGraphFilter* filter;
 	ImuHandler* imuHandler;
-	TracksHandler* tracksHandler;
+	ROAMvision::ImageFeatureHandler *tracksHandler;
 
 
 };

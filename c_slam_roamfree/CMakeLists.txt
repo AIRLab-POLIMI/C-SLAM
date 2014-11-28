@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         roamfree)
 
 #this is needed if no system level FindEigen3.cmake is available
-#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
                                         
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -30,8 +30,7 @@ include_directories(include
 
 add_executable(c_localization
 	           src/FullSlamImu.cpp
-	           src/ImuHandler.cpp
-	           src/TracksHandler.cpp)
+	           src/ImuHandler.cpp)
 
 target_link_libraries(c_localization
                       ${catkin_LIBRARIES})
