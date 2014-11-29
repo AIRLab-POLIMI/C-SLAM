@@ -8,6 +8,7 @@
 #include "FullSlamImu.h"
 
 #include <tf_conversions/tf_eigen.h>
+#include <visualization_msgs/Marker.h>
 
 using namespace ROAMestimation;
 
@@ -29,6 +30,8 @@ FullSlamImu::FullSlamImu(std::string imuTopic) :
 	//subscribe to sensor topics
 	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
 	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu::tracksCb, this);
+	markers_pub = n.advertise<visualization_msgs::Marker>(
+				"/visualization/features", 1);
 }
 
 FullSlamImu::~FullSlamImu()
@@ -67,7 +70,11 @@ void FullSlamImu::run()
 			ROS_INFO("Run estimation");
 			bool ret = filter->estimate(20);
 
+			publishFeatureMarkers();
+			publishCameraPose();
+
 			assert(ret);
+
 		}
 	};
 
@@ -105,7 +112,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 				* (msg.polygon.points[0].y + msg.polygon.points[1].y
 							+ msg.polygon.points[2].y + msg.polygon.points[3].y);
 
-	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2,2);
+	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2, 2);
 
 	tracksHandler->addFeatureObservation(msg.id, t, z, cov);
 
@@ -135,6 +142,71 @@ void FullSlamImu::initCamera()
 	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
 	tracksHandler->init(filter, "Track", T_OC, CM);
+}
+
+void FullSlamImu::publishFeatureMarkers()
+{
+	std::vector<long int> ids;
+
+	tracksHandler->getFeaturesIds(ids);
+
+	visualization_msgs::Marker msg;
+
+	msg.header.stamp = ros::Time::now();
+	msg.header.frame_id = "/world";
+	msg.type = visualization_msgs::Marker::CUBE_LIST;
+	//msg.lifetime = ros::Duration(0.2);
+	msg.frame_locked = false;
+	msg.ns = "roamfree_visualodometry";
+	msg.id = 0;
+	msg.action = visualization_msgs::Marker::ADD;
+
+	msg.color.r = 1.0;
+	msg.color.g = 0.0;
+	msg.color.b = 0.0;
+	msg.color.a = 1.0;
+
+	msg.scale.x = 0.05;
+	msg.scale.y = 0.05;
+	msg.scale.z = 0.05;
+
+	msg.pose.position.x = 0.0;
+	msg.pose.position.y = 0.0;
+	msg.pose.position.z = 0.0;
+
+	msg.pose.orientation.w = 1.0;
+
+	msg.points.resize(ids.size());
+
+	for (int k = 0; k < ids.size(); ++k)
+	{
+		Eigen::VectorXd fw(3);
+
+		tracksHandler->getFeaturePositionInWorldFrame(ids[k], fw);
+
+		msg.points[k].x = fw(0);
+		msg.points[k].y = fw(1);
+		msg.points[k].z = fw(2);
+	}
+
+	markers_pub.publish(msg);
+}
+
+void FullSlamImu::publishCameraPose()
+{
+	ROAMestimation::PoseVertexWrapper_Ptr cameraPose_ptr =
+				filter->getNewestPose();
+	const Eigen::VectorXd &camera = cameraPose_ptr->getEstimate();
+
+	tf::Transform T_WR_tf(
+				tf::Quaternion(camera(4), camera(5), camera(6), camera(3)),
+				tf::Vector3(camera(0), camera(1), camera(2)));
+
+	pose_tf_br.sendTransform(
+				tf::StampedTransform(T_WR_tf,
+							ros::Time(cameraPose_ptr->getTimestamp()), "world",
+							"camera_link"));
+
 }
 
 } /* namespace roamfree_c_slam */

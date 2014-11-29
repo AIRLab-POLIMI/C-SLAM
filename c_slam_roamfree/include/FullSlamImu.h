@@ -15,9 +15,13 @@
 
 #include <sensor_msgs/Imu.h>
 #include <c_slam_msgs/TrackedObject.h>
+#include <ROAMvision/ROAMvision.h>
+
+#include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
+
 
 #include "ImuHandler.h"
-#include <ROAMvision/ROAMvision.h>
 
 namespace roamfree_c_slam
 {
@@ -38,11 +42,16 @@ protected:
 private:
 	void initRoamfree();
 	void initCamera();
+	void publishFeatureMarkers();
+	void publishCameraPose();
 
 private:
 	ros::NodeHandle n;
 	ros::Subscriber tracks_sub;
 	ros::Subscriber imu_sub;
+
+	ros::Publisher markers_pub;
+	tf::TransformBroadcaster pose_tf_br;
 
 	tf::Transform T_OC_tf; // transformation from robot to camera;
 
