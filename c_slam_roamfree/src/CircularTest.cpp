@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
 
 	ROS_INFO("Waiting other nodes to start...");
 
-	ros::Duration(2.0).sleep();
+	ros::Duration(5.0).sleep();
 
 	ROS_INFO("Simulation started");
 

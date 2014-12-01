@@ -60,20 +60,15 @@ void FullSlamImu::run()
 
 		ros::spinOnce();
 
-		if (filter->getNthOldestPose(1))
+		if (filter->getWindowLenght() > 1.0 && tracksHandler->getNActiveFeatures() >= 3)
 		{
-			//filter->getOldestPose()->setFixed(true);
-
 			filter->getNthOldestPose(0)->setFixed(true);
-			//filter->getNthOldestPose(1)->setFixed(true);
 
 			ROS_INFO("Run estimation");
 			bool ret = filter->estimate(20);
 
 			publishFeatureMarkers();
 			publishCameraPose();
-
-			assert(ret);
 
 		}
 	};
@@ -131,7 +126,7 @@ void FullSlamImu::initRoamfree()
 void FullSlamImu::initCamera()
 {
 
-	tracksHandler = new ROAMvision::FHPFeatureHandler(2.0);
+	tracksHandler = new ROAMvision::FHPFeatureHandler(10.0);
 	tracksHandler->setTimestampOffsetTreshold(5e-3);
 
 	//the camera intrinsic calibration matrix
