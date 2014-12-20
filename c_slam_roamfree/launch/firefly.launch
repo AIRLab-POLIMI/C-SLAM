@@ -27,4 +27,10 @@
           output="screen" 
           launch-prefix=""/>
 
+    <node name="rviz" 
+          pkg="rviz" 
+          type="rviz"
+          respawn="true"
+          args="-d $(find c_slam_roamfree)/rviz_config/rviz.rviz"  
+          output="screen"/>
 </launch>
