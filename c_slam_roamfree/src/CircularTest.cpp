@@ -21,33 +21,18 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <vector>
-#include <sstream>
+#include "TestPublisher.h"
 
-#include <ros/ros.h>
-
-#include <sensor_msgs/Imu.h>
-#include <c_slam_msgs/TrackedObject.h>
-
-#include <tf/transform_broadcaster.h>
 #include <tf_conversions/tf_eigen.h>
-
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
 
 using namespace std;
 
-class RosPublisher
+class CircularTestPublisher : public TestPublisher
 {
 public:
-	RosPublisher()
+	CircularTestPublisher() : TestPublisher()
 	{
 		imuPublisher = n.advertise<sensor_msgs::Imu>("/ardrone/imu", 6000);
-		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks",
-					6000);
-		K << 565.59102697808, 0.0, 337.839450567586, //
-		0.0, 563.936510489792, 199.522081717361, //
-		0.0, 0.0, 1.0;
 	}
 
 	void publishIMU(vector<double>& za, vector<double>& zw, double t)
@@ -65,41 +50,6 @@ public:
 		msg.header.stamp.fromSec(t);
 
 		imuPublisher.publish(msg);
-	}
-
-	void publishTracks(vector<vector<Eigen::Vector4d> > tracks,
-				const Eigen::Matrix4d& H_WC, double t)
-	{
-		Eigen::Matrix4d H_CW = H_WC.inverse();
-		H_CW /= H_CW(3, 3);
-
-		for (int i = 0; i < tracks.size(); i++)
-		{
-			if (trackVisible(tracks[i], H_CW))
-			{
-				c_slam_msgs::TrackedObject msg;
-
-				msg.id = i;
-				msg.imageStamp.fromSec(t);
-
-				for (int j = 0; j < tracks[i].size(); j++)
-				{
-					Eigen::Vector3d homogeneusPoint = K * H_CW.topRows(3)
-								* tracks[i][j];
-
-					homogeneusPoint /= homogeneusPoint(2);
-					geometry_msgs::Point32 point;
-
-					point.x = homogeneusPoint(0);
-					point.y = homogeneusPoint(1);
-
-					msg.polygon.points.push_back(point);
-				}
-
-				trackPublisher.publish(msg);
-			}
-
-		}
 	}
 
 	void publishGroundTruth(Eigen::Matrix4d& H)
@@ -124,160 +74,10 @@ public:
 
 	}
 
-	void publishGroundTruthLandmark(vector<Eigen::Vector3d>& tracksCM)
-	{
-		for (int i = 0; i < tracksCM.size(); i++)
-		{
-			stringstream ss;
-			ss << "Track_" << i;
-			tf::Transform trasform;
-			tf::Vector3 t_m_tf;
-
-			tf::vectorEigenToTF(tracksCM[i], t_m_tf);
-
-			trasform.setOrigin(t_m_tf);
-			trasform.setRotation(tf::Quaternion::getIdentity());
-			br.sendTransform(
-						tf::StampedTransform(trasform, ros::Time::now(),
-									"world", ss.str()));
-		}
-	}
-
 private:
-	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H_CW)
-	{
-		Eigen::Vector4d trackRC = H_CW * trackPoint;
-		trackRC /= trackRC(3);
-
-		Eigen::Vector3d projection = K * H_CW.topRows(3) * trackPoint;
-		projection /= projection(2);
-
-		return trackRC(2) > 0 && projection(0) >= 0 && projection(0) < 640
-					&& projection(1) >= 0 && projection(1) < 360;
-	}
-
-	bool trackVisible(vector<Eigen::Vector4d>& track,
-				const Eigen::Matrix4d& H_CW)
-	{
-		for (int i = 0; i < track.size(); i++)
-		{
-			if (pointVisible(track[i], H_CW))
-			{
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
-private:
-	ros::NodeHandle n;
 	ros::Publisher imuPublisher;
-	ros::Publisher trackPublisher;
-	tf::TransformBroadcaster br;
-
-	Eigen::Matrix3d K;
 };
 
-/*
-void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
-			vector<Eigen::Vector3d>& tracksCM, double r)
-{
-	int numTracks = 8;
-
-	const double w = 0.2;
-	const double h = 0.1;
-
-	tracks.resize(numTracks);
-
-	double theta = 0;
-	cout << "c_generated = [";
-	for (int i = 0; i < numTracks; i++)
-	{
-		double x = r * cos(theta);
-		double y = r * sin(theta);
-		double z = 0;
-
-		Eigen::Vector3d trackCM;
-		trackCM << x, y, z;
-		tracksCM.push_back(trackCM);
-
-		for (int j = 0; j < 4; j++)
-		{
-			double thetaR = theta + M_PI / 2;
-
-			double xpr = ((j == 1 || j == 2) ? -1 : 1) * w / 2;
-			double ypr = 0;
-			double zpr = ((j >= 2) ? -1 : 1) * h / 2;
-
-			double xpr2 = xpr * cos(thetaR) - ypr * sin(thetaR);
-			double ypr2 = xpr * sin(thetaR) + ypr * cos(thetaR);
-			double zpr2 = zpr;
-
-			double xp = x + xpr2;
-			double yp = y + ypr2;
-			double zp = z + zpr2;
-
-			Eigen::Vector4d track;
-			track << xp, yp, zp, 1;
-
-			cout << track(0) << "," << track(1) << "," << track(2) << ";";
-			cout << endl;
-			tracks[i].push_back(track);
-		}
-
-		theta += 2 * M_PI / numTracks;
-	}
-	cout << "]" << endl;
-}
-*/
-
-void setTracks(vector<vector<Eigen::Vector4d> >& tracks,
-			vector<Eigen::Vector3d>& tracksCM, double r) {
-
-	const int numTracks = 16;
-
-	double cm [][3] = {
-			{2.0,-2.0,-0.3},
-			{2.0,-1.0, 0.3},
-			{2.0, 0.0,-0.3},
-			{2.0, 1.0, 0.3},
-			{2.0, 2.0,-0.3},
-
-			{-2.0,-2.0,-0.3},
-			{-2.0,-1.0, 0.3},
-			{-2.0, 0.0,-0.3},
-			{-2.0, 1.0, 0.3},
-			{-2.0, 2.0,-0.3},
-
-			{-1.0, 2.0, 0.3},
-			{-0.0, 2.0,-0.3},
-			{ 1.0, 2.0, 0.3},
-
-			{-1.0,-2.0, 0.3},
-			{ 0.0,-2.0,-0.3},
-			{ 1.0,-2.0, 0.3}
-	};
-
-	tracks.resize(numTracks);
-
-	for (int k = 0; k < numTracks; k++) {
-		Eigen::Vector3d trackCM;
-		trackCM << cm[k][0], cm[k][1], cm[k][2];
-		tracksCM.push_back(trackCM);
-
-		for (int j = 0; j < 4; j++)
-		{
-			Eigen::Vector4d track;
-			track << cm[k][0], cm[k][1], cm[k][2], 1;
-
-			cout << track(0) << "," << track(1) << "," << track(2) << ";";
-			cout << endl;
-			tracks[k].push_back(track);
-		}
-	}
-}
 
 
 void computeCameraPose(Eigen::Matrix4d& H, double t, double theta0, double w0,
@@ -304,7 +104,7 @@ void computeCameraPose(Eigen::Matrix4d& H, double t, double theta0, double w0,
 	0, -1, 0, 0, //
 	0, 0, 0, 1;
 
-	H =  H_WR * H_RC;
+	H = H_WR * H_RC;
 	H = H / H(3, 3);
 
 }
@@ -313,7 +113,7 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "circular_test");
 
-	RosPublisher publisher;
+	CircularTestPublisher publisher;
 
 	//IMU data
 	double r = 1; // meters
@@ -323,10 +123,10 @@ int main(int argc, char *argv[])
 	double t = 0.0;
 	double imuRate = 50;
 
-	//Tracks data
-	vector<vector<Eigen::Vector4d> > tracks;
-	vector<Eigen::Vector3d> tracksCM;
-	setTracks(tracks, tracksCM, 2.5);
+	//Tracks data setup
+	publisher.setTracksSquare(2.5);
+	//publisher.setTracksCircle(2.5);
+	//publisher.setTracksCarpet();
 
 	ROS_INFO("Waiting other nodes to start...");
 
@@ -350,9 +150,9 @@ int main(int argc, char *argv[])
 		publisher.publishIMU(za, zw, t);
 		if (i % 10 == 0)
 		{
-			publisher.publishTracks(tracks, H_WC, t);
+			publisher.publishTracks(H_WC, t);
 			publisher.publishGroundTruth(H_WC);
-			publisher.publishGroundTruthLandmark(tracksCM);
+			publisher.publishGroundTruthLandmark();
 		}
 
 		t += 1.0 / imuRate;

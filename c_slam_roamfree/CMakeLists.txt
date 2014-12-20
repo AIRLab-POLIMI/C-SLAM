@@ -36,6 +36,7 @@ target_link_libraries(c_localization
                       ${catkin_LIBRARIES})
 
 add_executable(circular_test
+               src/TestPublisher.cpp
                src/CircularTest.cpp)
                
 add_executable(firefly_test

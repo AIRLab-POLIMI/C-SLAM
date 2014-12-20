@@ -39,36 +39,43 @@
 
 using namespace std;
 
-class RosPublisher {
+class CircularTestPublisher
+{
 public:
 
-	RosPublisher() {
-		setTracks();
+	CircularTestPublisher()
+	{
+		setTracksCarpet();
 
-		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 6000);
+		trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks",
+					6000);
 
 		gtSubscriber = n.subscribe("/firefly/ground_truth/pose", 1000,
-				&RosPublisher::publishTracks, this);
+					&CircularTestPublisher::publishTracks, this);
 
 		K << 565.59102697808, 0.0, 337.839450567586, //
 		0.0, 563.936510489792, 199.522081717361, //
 		0.0, 0.0, 1.0;
 	}
 
-	void publishTracks(const geometry_msgs::PoseWithCovarianceStamped& pose_msg) {
+	void publishTracks(const geometry_msgs::PoseWithCovarianceStamped& pose_msg)
+	{
 
 		tf::Transform t_wr(
-				tf::Quaternion(pose_msg.pose.pose.orientation.x,
-						pose_msg.pose.pose.orientation.y, pose_msg.pose.pose.orientation.z,
-						pose_msg.pose.pose.orientation.w),
-				tf::Vector3(pose_msg.pose.pose.position.x,
-						pose_msg.pose.pose.position.y, pose_msg.pose.pose.position.z));
+					tf::Quaternion(pose_msg.pose.pose.orientation.x,
+								pose_msg.pose.pose.orientation.y,
+								pose_msg.pose.pose.orientation.z,
+								pose_msg.pose.pose.orientation.w),
+					tf::Vector3(pose_msg.pose.pose.position.x,
+								pose_msg.pose.pose.position.y,
+								pose_msg.pose.pose.position.z));
 
 		tf::Transform t_rc(tf::Quaternion(-0.5, 0.5, -0.5, 0.5),
-				tf::Vector3(0.0, 0.0, 0.0));
+					tf::Vector3(0.0, 0.0, 0.0));
 
 		tf::Transform t_wc = t_wr * t_rc;
-		for (int i = 0; i < tracks.size(); i++) {
+		for (int i = 0; i < tracks.size(); i++)
+		{
 			c_slam_msgs::TrackedObject msg;
 
 			msg.id = i;
@@ -83,12 +90,14 @@ public:
 
 			tf::vectorTFToEigen(track_c, track_c_eig);
 
-			if (pointVisibile(track_c_eig)) {
+			if (pointVisibile(track_c_eig))
+			{
 
-				for (int j = 0; j < tracks[i].size(); j++) {
+				for (int j = 0; j < tracks[i].size(); j++)
+				{
 
 					tf::Vector3 track_pt_w(tracks[i][j](0), tracks[i][j](1),
-							tracks[i][j](2));
+								tracks[i][j](2));
 					tf::Vector3 track_pt_c = t_wc.inverse() * track_pt_w;
 
 					Eigen::Vector3d track_pt_c_eig;
@@ -111,12 +120,15 @@ public:
 		}
 
 		br.sendTransform(
-				tf::StampedTransform(t_wc, ros::Time::now(), "world", "camera"));
+					tf::StampedTransform(t_wc, ros::Time::now(), "world",
+								"camera"));
 
 	}
 
-	void publishGroundTruthLandmark() {
-		for (int i = 0; i < tracksCM.size(); i++) {
+	void publishGroundTruthLandmark()
+	{
+		for (int i = 0; i < tracksCM.size(); i++)
+		{
 			stringstream ss;
 			ss << "Track_" << i;
 			tf::Transform trasform;
@@ -127,12 +139,14 @@ public:
 			trasform.setOrigin(t_m_tf);
 			trasform.setRotation(tf::Quaternion::getIdentity());
 			br.sendTransform(
-					tf::StampedTransform(trasform, ros::Time::now(), "world", ss.str()));
+						tf::StampedTransform(trasform, ros::Time::now(),
+									"world", ss.str()));
 		}
 	}
 
 private:
-	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H_CW) {
+	bool pointVisible(Eigen::Vector4d& trackPoint, Eigen::Matrix4d H_CW)
+	{
 		Eigen::Vector4d trackRC = H_CW * trackPoint;
 		trackRC /= trackRC(3);
 
@@ -140,21 +154,26 @@ private:
 		projection /= projection(2);
 
 		return trackRC(2) > 0 && projection(0) >= 0 && projection(0) < 640
-				&& projection(1) >= 0 && projection(1) < 360;
+					&& projection(1) >= 0 && projection(1) < 360;
 	}
 
-	bool pointVisibile(Eigen::Vector3d & trackPointInCamera) {
+	bool pointVisibile(Eigen::Vector3d & trackPointInCamera)
+	{
 		Eigen::Vector3d projection = K * trackPointInCamera;
 		projection /= projection(2);
 
 		return trackPointInCamera(2) > 0 && projection(0) >= 0
-				&& projection(0) < 640 && projection(1) >= 0 && projection(1) < 360;
+					&& projection(0) < 640 && projection(1) >= 0
+					&& projection(1) < 360;
 	}
 
 	bool trackVisible(vector<Eigen::Vector4d>& track,
-			const Eigen::Matrix4d& H_CW) {
-		for (int i = 0; i < track.size(); i++) {
-			if (pointVisible(track[i], H_CW)) {
+				const Eigen::Matrix4d& H_CW)
+	{
+		for (int i = 0; i < track.size(); i++)
+		{
+			if (pointVisible(track[i], H_CW))
+			{
 				return true;
 			}
 		}
@@ -163,51 +182,23 @@ private:
 
 	}
 
-	void setTracks() {
-
-		/*
-		 const int numTracks = 16;
-
-		 double cm[][3] = { { 2.0, -2.0, -0.3+1.0 }, { 2.0, -1.0, 0.3+1.0 },
-		 { 2.0, 0.0, -0.3+1.0 }, { 2.0, 1.0, 0.3+1.0 }, { 2.0, 2.0, -0.3+1.0 },
-
-		 { -2.0, -2.0, -0.3+1.0 }, { -2.0, -1.0, 0.3+1.0 }, { -2.0, 0.0, -0.3+1.0 }, { -2.0,
-		 1.0, 0.3+1.0 }, { -2.0, 2.0, -0.3+1.0 },
-
-		 { -1.0, 2.0, 0.3+1.0 }, { -0.0, 2.0, -0.3+1.0 }, { 1.0, 2.0, 0.3+1.0 },
-
-		 { -1.0, -2.0, 0.3+1.0 }, { 0.0, -2.0, -0.3+1.0 }, { 1.0, -2.0, 0.3+1.0 } };
-
-		 tracks.resize(numTracks);
-
-		 for (int k = 0; k < numTracks; k++) {
-		 Eigen::Vector3d trackCM;
-		 trackCM << cm[k][0], cm[k][1], cm[k][2];
-		 tracksCM.push_back(trackCM);
-
-		 for (int j = 0; j < 4; j++) {
-		 Eigen::Vector4d track;
-		 track << cm[k][0], cm[k][1], cm[k][2], 1;
-
-		 cout << track(0) << "," << track(1) << "," << track(2) << ";";
-		 cout << endl;
-		 tracks[k].push_back(track);
-		 }
-		 }
-		 //*/
-
+	void setTracksCarpet()
+	{
 		// generate a carpet of tracks in the area [-2.5 12.5] X [-2.5 7.5]
 		double x = -10;
-		while (x <= 15.0) {
+		while (x <= 15.0)
+		{
 			double y = -10;
 
-			while (y < 15.0) {
+			while (y < 15.0)
+			{
 				Eigen::Vector4d track;
 				track << x, y, 0.0, 1.0;
 
 				tracks.resize(tracks.size() + 1);
 
-				for (int k = 0; k < 4; k++) {  // four superimposed points
+				for (int k = 0; k < 4; k++)
+				{  // four superimposed points
 					tracks[tracks.size() - 1].push_back(track);
 				}
 
@@ -220,8 +211,6 @@ private:
 
 			x += 5.0;
 		}
-
-		//*/
 
 	}
 
@@ -238,13 +227,15 @@ private:
 	Eigen::Matrix3d K;
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	ros::init(argc, argv, "circular_test");
 
-	RosPublisher publisher;
+	CircularTestPublisher publisher;
 
 	ros::Rate rate(30);
-	while (ros::ok()) {
+	while (ros::ok())
+	{
 		publisher.publishGroundTruthLandmark();
 		ros::spinOnce();
 		rate.sleep();
