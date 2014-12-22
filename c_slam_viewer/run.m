@@ -22,5 +22,9 @@ set(1,'OuterPosition', [0 0 res(3)/2 res(4)])
 figure(2)  
 set(2,'OuterPosition', [res(3)/2 0 res(3)/2 res(4)])
 
+% figure(3)  
+% set(3,'OuterPosition', [res(3)/2 0 res(3)/2 res(4)])
+
+
 
 watchFile();

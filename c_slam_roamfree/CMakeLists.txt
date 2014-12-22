@@ -32,7 +32,15 @@ add_executable(c_localization
 	           src/FullSlamImu.cpp
 	           src/ImuHandler.cpp)
 
+add_executable(c_localization_rectangles
+	           src/FullSlamImu_rectangles.cpp
+	           src/RectangleHandler.cpp
+	           src/ImuHandler.cpp)
+
 target_link_libraries(c_localization
+                      ${catkin_LIBRARIES})
+
+target_link_libraries(c_localization_rectangles
                       ${catkin_LIBRARIES})
 
 add_executable(circular_test
@@ -51,6 +59,7 @@ target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
 add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
+add_dependencies(c_localization_rectangles ${catkin_EXPORTED_TARGETS})
 add_dependencies(circular_test ${catkin_EXPORTED_TARGETS})
 add_dependencies(displayer ${catkin_EXPORTED_TARGETS})
 

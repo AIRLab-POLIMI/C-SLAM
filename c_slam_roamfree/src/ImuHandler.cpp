@@ -32,7 +32,6 @@ using namespace ROAMestimation;
 ImuHandler::ImuHandler(FactorGraphFilter* filter) :
 		filter(filter) {
 
-
 	// -- get parameters
 
 	double imu_N, imu_dt;
@@ -52,6 +51,7 @@ ImuHandler::ImuHandler(FactorGraphFilter* filter) :
 	imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
 	imu->getSensorNoises() = Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
+	//imu->setPredictorEnabled(false);
 }
 
 void ImuHandler::addMeasurement(double za[3], double zw[3], double t) {
@@ -98,10 +98,19 @@ void ImuHandler::computePose(double t) {
 void ImuHandler::initialize(double t) {
 	// we have to initialize the IMUIntegralHandler
 
+	// zero bias
 	Eigen::VectorXd accBias(3);  // Accelerometer and Gyroscope biases
 	accBias << 0.0, 0.0, 0.0;
 	Eigen::VectorXd gyroBias(3);
 	gyroBias << 0.0, 0.0, 0.0;
+	//*/
+
+	/* firefly.bag biases
+	Eigen::VectorXd accBias(3);  // Accelerometer and Gyroscope biases
+	accBias << 0.1939, 0.0921, -0.2989;
+	Eigen::VectorXd gyroBias(3);
+	gyroBias << -0.0199, 0.0077, -0.0099;
+	//*/
 
 	Eigen::VectorXd x0(7); // initial robot position
 	Eigen::VectorXd T_OS_IMU(7); // Transformation between Odometer and robot frame
@@ -109,17 +118,16 @@ void ImuHandler::initialize(double t) {
 	/* imu centric
 	 T_OS_IMU << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 	 x0 << 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0;
-	//*/
+	 //*/
 
 	// camera centric
 	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
-	//x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+	x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
 
-	x0 << 0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5;
 	//*/
 
-	imu->init(filter, "IMUintegral", T_OS_IMU, accBias, true, gyroBias, true, x0,
-			t);
+	imu->init(filter, "IMUintegral", T_OS_IMU, accBias, false, gyroBias, false,
+			x0, t);
 
 	initialized = true;
 }

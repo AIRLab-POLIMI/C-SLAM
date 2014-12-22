@@ -56,7 +56,7 @@ void FullSlamImu::run()
 
 	while (ros::ok())
 	{
-		rate.sleep();
+		//rate.sleep();
 
 		ros::spinOnce();
 
@@ -64,12 +64,22 @@ void FullSlamImu::run()
 		{
 			filter->getNthOldestPose(0)->setFixed(true);
 
-			ROS_INFO("Run estimation");
-			bool ret = filter->estimate(20);
+			int cnt = 1;
+			double curTs = filter->getNewestPose()->getTimestamp();
+			PoseVertexWrapper_Ptr cur;
 
+			while ((cur=filter->getNthOldestPose(cnt))->getTimestamp() < curTs - 5.0) {
+				cur->setFixed(true);
+				cnt++;
+			}
+
+			ROS_INFO("Run estimation");
+			bool ret = filter->estimate(1);
+		}
+
+		if (filter->getOldestPose()) {
 			publishFeatureMarkers();
 			publishCameraPose();
-
 		}
 	};
 
@@ -116,7 +126,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 void FullSlamImu::initRoamfree()
 {
 	filter = FactorGraphFilterFactory::getNewFactorGraphFilter();
-	filter->setLowLevelLogging(true); // default log folder
+	filter->setLowLevelLogging(false); // default log folder
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
 	filter->setDeadReckoning(false);
@@ -126,7 +136,7 @@ void FullSlamImu::initRoamfree()
 void FullSlamImu::initCamera()
 {
 
-	tracksHandler = new ROAMvision::FHPFeatureHandler(10.0);
+	tracksHandler = new ROAMvision::RectangleHandler(10.0);
 	tracksHandler->setTimestampOffsetTreshold(5e-3);
 
 	//the camera intrinsic calibration matrix
@@ -161,9 +171,9 @@ void FullSlamImu::publishFeatureMarkers()
 	msg.color.b = 0.0;
 	msg.color.a = 1.0;
 
-	msg.scale.x = 0.05;
-	msg.scale.y = 0.05;
-	msg.scale.z = 0.05;
+	msg.scale.x = 0.30;
+	msg.scale.y = 0.30;
+	msg.scale.z = 0.30;
 
 	msg.pose.position.x = 0.0;
 	msg.pose.position.y = 0.0;
