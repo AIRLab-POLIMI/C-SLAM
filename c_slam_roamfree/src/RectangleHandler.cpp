@@ -156,12 +156,12 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 	double ff = sqrt(
 			(n2.transpose() * omega * n2)[0] / (n3.transpose() * omega * n3)[0]);
 
-	Eigen::Vector3d&& CtOhat = lambda * _K.inverse() * m1;
-	Eigen::Vector3d&& Fthat = Ct + Cq.toRotationMatrix() * CtOhat;
+	Eigen::Vector3d CtOhat = lambda * _K.inverse() * m1;
+	Eigen::Vector3d Fthat = Ct + Cq.toRotationMatrix() * CtOhat;
 
 //compute shape parameters
-	Eigen::Vector3d&& X = _K * R1;
-	Eigen::Vector3d&& Y = c2 * lambda * m2 - lambda * m1;
+	Eigen::Vector3d X = _K * R1;
+	Eigen::Vector3d Y = c2 * lambda * m2 - lambda * m1;
 
 	double w = ((X.transpose() * X).inverse() * X.transpose() * Y)[0];
 	double h = w / ff;
