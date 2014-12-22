@@ -10,11 +10,14 @@
 #include <tf_conversions/tf_eigen.h>
 #include <visualization_msgs/Marker.h>
 
+#include <iostream>
+
 using namespace ROAMestimation;
+using namespace std;
 
 namespace roamfree_c_slam {
 
-FullSlamImu::FullSlamImu(std::string imuTopic) :
+FullSlamImu::FullSlamImu(string imuTopic) :
 		filter(NULL), imuHandler(NULL), tracksHandler(NULL) {
 	//setup roamfree
 	initRoamfree();
@@ -51,21 +54,22 @@ void FullSlamImu::run() {
 	ros::Rate rate(5);
 
 	while (ros::ok()) {
-		rate.sleep();
+		//rate.sleep();
 
 		ros::spinOnce();
 
 		if (filter->getWindowLenght() > 1.0
 				&& tracksHandler->getNActiveFeatures() >= 1) {
-			filter->getNthOldestPose(0)->setFixed(true);
+
+			//filter->getNthOldestPose(0)->setFixed(true);
 
 			double curTs = filter->getNewestPose()->getTimestamp();
 			PoseVertexWrapper_Ptr cur;
 
-			ROS_INFO("Run estimation");
-			bool ret = filter->estimate(50);
+			//ROS_INFO("Run estimation");
+			bool ret = filter->estimate(0);
 
-			filter->marginalizeOldNodes(5.0);
+			filter->forgetOldNodes(2.5);
 		}
 
 		if (filter->getOldestPose()) {
@@ -110,8 +114,8 @@ void FullSlamImu::initRoamfree() {
 	filter->setLowLevelLogging(true); // default log folder
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
-	filter->setDeadReckoning(false);
-	filter->setSolverMethod(LevenbergMarquardt);
+	filter->setDeadReckoning(true);
+	filter->setSolverMethod(GaussNewton);
 }
 
 void FullSlamImu::initCamera() {
@@ -130,7 +134,7 @@ void FullSlamImu::initCamera() {
 }
 
 void FullSlamImu::publishFeatureMarkers() {
-	std::vector<long int> ids;
+	vector<long int> ids;
 
 	tracksHandler->getFeaturesIds(ids);
 
@@ -155,8 +159,12 @@ void FullSlamImu::publishFeatureMarkers() {
 		Eigen::VectorXd fw(7);
 		Eigen::VectorXd dim(2);
 
-		tracksHandler->getFeaturePoseInWorldFrame(ids[k], fw);
-		tracksHandler->getFeatureDimensions(k, dim);
+		bool ret;
+
+		ret = tracksHandler->getFeaturePoseInWorldFrame(ids[k], fw);
+		assert(ret);
+		ret = tracksHandler->getFeatureDimensions(ids[k], dim);
+		assert(ret);
 
 		msg.pose.position.x = fw(0);
 		msg.pose.position.y = fw(1);
@@ -170,6 +178,7 @@ void FullSlamImu::publishFeatureMarkers() {
 		msg.scale.x = dim(0);
 		msg.scale.y = dim(1);
 		msg.scale.z = 0.05;
+
 
 
 /*
