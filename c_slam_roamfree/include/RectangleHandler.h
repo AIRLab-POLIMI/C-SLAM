@@ -37,6 +37,7 @@ public:
 
 	virtual bool getFeaturePoseInWorldFrame(long int id,
 			Eigen::VectorXd &lw) const;
+	virtual bool getFeatureDimensions(long int id, Eigen::VectorXd &dim) const;
 	virtual long int getNActiveFeatures() const;
 	bool getFeaturesIds(std::vector<long int>& to) const;
 
@@ -53,8 +54,9 @@ protected:
 
 	virtual bool initFeature(const std::string& sensor, const Eigen::VectorXd& z,
 			ROAMestimation::PoseVertexWrapper_Ptr pv, long int id);
-	void initRectangle(const Eigen::VectorXd& Sw, double lambda, const Eigen::VectorXd& z,
-			Eigen::VectorXd& shapeParams, Eigen::VectorXd& F);
+	void initRectangle(const Eigen::VectorXd& Sw, double lambda,
+			const Eigen::VectorXd& z, Eigen::VectorXd& shapeParams,
+			Eigen::VectorXd& F);
 
 	std::string getFeatureSensor(long int id) const;
 
