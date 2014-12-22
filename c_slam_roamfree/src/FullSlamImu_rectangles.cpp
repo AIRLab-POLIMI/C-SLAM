@@ -109,7 +109,7 @@ void FullSlamImu::initRoamfree() {
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
 	filter->setDeadReckoning(false);
-	filter->setSolverMethod(GaussNewton);
+	filter->setSolverMethod(LevenbergMarquardt);
 }
 
 void FullSlamImu::initCamera() {

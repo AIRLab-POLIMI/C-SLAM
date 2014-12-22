@@ -9,7 +9,7 @@
           type="c_localization_rectangles"
           args="$(arg imu_topic)"  
           output="screen" 
-          launch-prefix="gdb -ex run --args">
+          launch-prefix="">
     
     	<param name="IMU_N_integration_steps" value="10"/>
      	<param name="IMU_nominal_period" value="0.02"/>

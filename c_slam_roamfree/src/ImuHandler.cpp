@@ -51,7 +51,6 @@ ImuHandler::ImuHandler(FactorGraphFilter* filter) :
 	imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
 	imu->getSensorNoises() = Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
-	//imu->setPredictorEnabled(false);
 }
 
 void ImuHandler::addMeasurement(double za[3], double zw[3], double t) {
