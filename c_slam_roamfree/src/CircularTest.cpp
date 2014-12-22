@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 		{
 			publisher.publishTracks(H_WC, t);
 			publisher.publishGroundTruth(H_WC);
-			publisher.publishGroundTruthLandmark();
+			//publisher.publishGroundTruthLandmark();
 		}
 
 		t += 1.0 / imuRate;

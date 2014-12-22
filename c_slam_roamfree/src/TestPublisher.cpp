@@ -92,8 +92,8 @@ void TestPublisher::publishTracks(const Eigen::Matrix4d& H_WC, double t)
 void TestPublisher::setTracksCircle(double r)
 {
 	const int numTracks = 8;
-	const double w = 0.2;
-	const double h = 0.1;
+	const double w = 0.5;
+	const double h = 0.25;
 
 	tracks.resize(numTracks);
 
@@ -120,8 +120,8 @@ void TestPublisher::setTracksSquare(double r)
 {
 
 	const int numTracks = 16;
-	const double w = 0.2;
-	const double h = 0.1;
+	const double w = 0.5;
+	const double h = 0.25;
 
 	double cm[][3] =
 	{

@@ -64,6 +64,8 @@ void FullSlamImu::run() {
 
 			ROS_INFO("Run estimation");
 			bool ret = filter->estimate(50);
+
+			filter->marginalizeOldNodes(5.0);
 		}
 
 		if (filter->getOldestPose()) {
@@ -150,13 +152,11 @@ void FullSlamImu::publishFeatureMarkers() {
 		msg.color.b = 0.0;
 		msg.color.a = 1.0;
 
-		msg.scale.x = 0.5;
-		msg.scale.y = 0.5;
-		msg.scale.z = 0.05;
-
 		Eigen::VectorXd fw(7);
+		Eigen::VectorXd dim(2);
 
 		tracksHandler->getFeaturePoseInWorldFrame(ids[k], fw);
+		tracksHandler->getFeatureDimensions(k, dim);
 
 		msg.pose.position.x = fw(0);
 		msg.pose.position.y = fw(1);
@@ -166,6 +166,11 @@ void FullSlamImu::publishFeatureMarkers() {
 		msg.pose.orientation.x = fw(4);
 		msg.pose.orientation.y = fw(5);
 		msg.pose.orientation.z = fw(6);
+
+		msg.scale.x = dim(0);
+		msg.scale.y = dim(1);
+		msg.scale.z = 0.05;
+
 
 /*
 		msg.points.resize(1);

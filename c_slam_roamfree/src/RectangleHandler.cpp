@@ -173,16 +173,44 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 }
 
 bool RectangleHandler::getFeaturePoseInWorldFrame(long int id,
-		Eigen::VectorXd& fw) const {
+		Eigen::VectorXd& c) const {
 
 	const string &sensor = getFeatureSensor(id);
 
 	ParameterWrapper_Ptr f_par = _filter->getParameterByName(sensor + "_F"); // anchor frame
 
-	const Eigen::VectorXd &f = f_par->getEstimate();
+	if (!f_par) {
+		return false;
+	}
 
-	fw = f;
+	const Eigen::VectorXd &fw = f_par->getEstimate();
 
+	Eigen::VectorXd dim(2);
+	getFeatureDimensions(id, dim);
+
+	Eigen::Quaterniond R_WO(fw(3),fw(4),fw(5),fw(6));
+	Eigen::Vector3d t_WO(fw(0),fw(1),fw(2));
+	Eigen::Vector3d t_OC(dim(0)/2.0, dim(1)/2.0, 0.0);
+
+	c.head(3) = t_WO+R_WO.toRotationMatrix()*t_OC;
+	c.tail(4) =  fw.tail(4);
+
+	return true;
+}
+
+bool RectangleHandler::getFeatureDimensions(long int id,
+		Eigen::VectorXd& dim) const {
+	const string &sensor = getFeatureSensor(id);
+
+	ParameterWrapper_Ptr dim_par = _filter->getParameterByName(sensor + "_Dim"); // anchor frame
+
+	if (!dim_par) {
+		return false;
+	}
+
+	dim = dim_par->getEstimate();
+
+	return true;
 }
 
 long int RectangleHandler::getNActiveFeatures() const {
@@ -212,3 +240,5 @@ string RectangleHandler::getFeatureSensor(long int id) const {
 void RectangleHandler::setTimestampOffsetTreshold(double dt) {
 	_timestampOffsetTreshold = dt;
 }
+
+
