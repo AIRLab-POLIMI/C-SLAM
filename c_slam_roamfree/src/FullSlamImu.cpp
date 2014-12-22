@@ -136,7 +136,7 @@ void FullSlamImu::initRoamfree()
 void FullSlamImu::initCamera()
 {
 
-	tracksHandler = new ROAMvision::RectangleHandler(10.0);
+	tracksHandler = new ROAMvision::FHPFeatureHandler(10.0);
 	tracksHandler->setTimestampOffsetTreshold(5e-3);
 
 	//the camera intrinsic calibration matrix
