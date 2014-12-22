@@ -24,12 +24,15 @@
 #include "TestPublisher.h"
 
 #include <tf_conversions/tf_eigen.h>
+#include <visualization_msgs/Marker.h>
 
 using namespace std;
 
 TestPublisher::TestPublisher()
 {
 	trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 6000);
+	markersPublisher = n.advertise<visualization_msgs::Marker>(
+				"/visualization/features", 1);
 
 	K << 565.59102697808, 0.0, 337.839450567586, //
 	0.0, 563.936510489792, 199.522081717361, //
@@ -38,21 +41,87 @@ TestPublisher::TestPublisher()
 
 void TestPublisher::publishGroundTruthLandmark()
 {
+	visualization_msgs::Marker msg;
+
+	msg.header.stamp = ros::Time::now();
+	msg.header.frame_id = "/world";
+	msg.type = visualization_msgs::Marker::CUBE_LIST;
+	//msg.lifetime = ros::Duration(0.2);
+	msg.frame_locked = false;
+	msg.ns = "roamfree_markers_gt";
+	msg.id = 1;
+	msg.action = visualization_msgs::Marker::ADD;
+
+	msg.color.r = 0.0;
+	msg.color.g = 1.0;
+	msg.color.b = 0.0;
+	msg.color.a = 1.0;
+
+	msg.scale.x = 0.10;
+	msg.scale.y = 0.10;
+	msg.scale.z = 0.40;
+
+	msg.pose.position.x = 0.0;
+	msg.pose.position.y = 0.0;
+	msg.pose.position.z = 0.0;
+
+	msg.pose.orientation.w = 1.0;
+
+	msg.points.resize(tracksCM.size());
+
 	for (int i = 0; i < tracksCM.size(); i++)
 	{
-		stringstream ss;
-		ss << "Track_" << i;
-		tf::Transform trasform;
-		tf::Vector3 t_m_tf;
-
-		tf::vectorEigenToTF(tracksCM[i], t_m_tf);
-
-		trasform.setOrigin(t_m_tf);
-		trasform.setRotation(tf::Quaternion::getIdentity());
-		br.sendTransform(
-					tf::StampedTransform(trasform, ros::Time::now(), "world",
-								ss.str()));
+		msg.points[i].x = tracksCM[i](0);
+		msg.points[i].y = tracksCM[i](1);
+		msg.points[i].z = tracksCM[i](2);
 	}
+
+	markersPublisher.publish(msg);
+}
+
+void TestPublisher::publishGroundTruthLandmarkPoints()
+{
+	visualization_msgs::Marker msg;
+
+	msg.header.stamp = ros::Time::now();
+	msg.header.frame_id = "/world";
+	msg.type = visualization_msgs::Marker::SPHERE_LIST;
+	//msg.lifetime = ros::Duration(0.2);
+	msg.frame_locked = false;
+	msg.ns = "roamfree_markers_gt";
+	msg.id = 1;
+	msg.action = visualization_msgs::Marker::ADD;
+
+	msg.color.r = 0.0;
+	msg.color.g = 1.0;
+	msg.color.b = 0.0;
+	msg.color.a = 1.0;
+
+	msg.scale.x = 0.10;
+	msg.scale.y = 0.10;
+	msg.scale.z = 0.10;
+
+	msg.pose.position.x = 0.0;
+	msg.pose.position.y = 0.0;
+	msg.pose.position.z = 0.0;
+
+	msg.pose.orientation.w = 1.0;
+
+	for (int i = 0; i < tracks.size(); i++)
+	{
+		for (int j = 0; j < tracks[i].size(); j++)
+		{
+			geometry_msgs::Point p;
+
+			p.x = tracks[i][j](0);
+			p.y = tracks[i][j](1);
+			p.z = tracks[i][j](2);
+
+			msg.points.push_back(p);
+		}
+	}
+
+	markersPublisher.publish(msg);
 }
 
 void TestPublisher::publishTracks(const Eigen::Matrix4d& H_WC, double t)
@@ -248,4 +317,3 @@ void TestPublisher::createRotatedRectangle(const double theta, const double w,
 		track.push_back(trackVertex);
 	}
 }
-

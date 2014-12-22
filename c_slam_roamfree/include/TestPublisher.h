@@ -46,6 +46,7 @@ public:
 	void publishTracks(const Eigen::Matrix4d& H_WC, double t);
 
 	void publishGroundTruthLandmark();
+	void publishGroundTruthLandmarkPoints();
 
 public:
 	void setTracksCircle(double r);
@@ -65,6 +66,7 @@ private:
 protected:
 	ros::NodeHandle n;
 	ros::Publisher trackPublisher;
+	ros::Publisher markersPublisher;
 	tf::TransformBroadcaster br;
 
 	//tracks
