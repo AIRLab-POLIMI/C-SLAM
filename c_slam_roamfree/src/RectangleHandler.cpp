@@ -120,8 +120,6 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 		const Eigen::VectorXd& z, Eigen::VectorXd& shapeParams,
 		Eigen::VectorXd& F) {
 
-	cerr << "initRectangle" << endl;
-
 	//Get the points
 	Eigen::Vector3d m1(z[0], z[1], 1);
 	Eigen::Vector3d m2(z[2], z[3], 1);
@@ -208,7 +206,7 @@ bool RectangleHandler::getFeatureDimensions(long int id,
 		Eigen::VectorXd& dim) const {
 	const string &sensor = getFeatureSensor(id);
 
-	ParameterWrapper_Ptr dim_par = _filter->getParameterByName(sensor + "_Dim"); // anchor frame
+	ParameterWrapper_Ptr dim_par = _filter->getParameterByName(sensor + "_Dim"); // dimensions
 
 	if (!dim_par) {
 		return false;
