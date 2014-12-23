@@ -37,10 +37,6 @@ ImuHandler::ImuHandler(FactorGraphFilter* filter, bool isAccBiasFixed,
 			isGyroBiasFixed(isGyroBiasFixed), gyroBias(3), T_OS_IMU(7), x0(7)
 {
 
-	//get parameters
-
-	double imu_N, imu_dt;
-
 	ros::NodeHandle _node("~");
 
 	if (!_node.getParam("IMU_N_integration_steps", imu_N))
@@ -66,7 +62,7 @@ ImuHandler::ImuHandler(FactorGraphFilter* filter, bool isAccBiasFixed,
 	//setup roamfree imu integral handler
 	imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
-	imu->getSensorNoises() = Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
+	imu->getSensorNoises() = 1e-4*Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
 }
 
 void ImuHandler::addMeasurement(double za[3], double zw[3], double t)

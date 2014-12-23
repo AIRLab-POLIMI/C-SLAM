@@ -62,7 +62,9 @@ private:
 	ROAMvision::ImageFeatureHandler *tracksHandler;
 
 private:
-	static const int iterationN = 50;
+	const int iterationN = 1;
+	const double waitWindowLengthSeconds = 2.0;
+	const double FHPInitialDepth = 10.0;
 
 
 };

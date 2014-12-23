@@ -12,30 +12,27 @@
 
 using namespace ROAMestimation;
 
-namespace roamfree_c_slam
-{
+namespace roamfree_c_slam {
 
 FullSlamImu::FullSlamImu(std::string imuTopic) :
-			filter(NULL), imuHandler(NULL), tracksHandler(NULL)
-{
+		filter(NULL), imuHandler(NULL), tracksHandler(NULL) {
 	//setup roamfree
 	initRoamfree();
 
-	//setup the camera
-	initCamera();
-
 	//setup the imu handler
 	initIMU();
+
+	//setup the camera
+	initCamera();
 
 	//subscribe to sensor topics
 	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
 	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu::tracksCb, this);
 	markers_pub = n.advertise<visualization_msgs::Marker>(
-				"/visualization/features", 1);
+			"/visualization/features", 1);
 }
 
-FullSlamImu::~FullSlamImu()
-{
+FullSlamImu::~FullSlamImu() {
 	if (filter != NULL)
 
 		delete filter;
@@ -48,32 +45,21 @@ FullSlamImu::~FullSlamImu()
 
 }
 
-void FullSlamImu::run()
-{
+void FullSlamImu::run() {
 	ros::NodeHandle n("~");
 
 	ros::Rate rate(5);
 
-	while (ros::ok())
-	{
+	while (ros::ok()) {
 		//rate.sleep();
 
 		ros::spinOnce();
 
-		if (filter->getWindowLenght() > 1.0 && tracksHandler->getNActiveFeatures() >= 3)
-		{
+		if (filter->getWindowLenght() > waitWindowLengthSeconds
+				&& tracksHandler->getNActiveFeatures() >= 3) {
 			filter->getNthOldestPose(0)->setFixed(true);
 
-			int cnt = 1;
-			double curTs = filter->getNewestPose()->getTimestamp();
-			PoseVertexWrapper_Ptr cur;
-
-			while ((cur=filter->getNthOldestPose(cnt))->getTimestamp() < curTs - 5.0) {
-				cur->setFixed(true);
-				cnt++;
-			}
-
-			ROS_INFO("Run estimation");
+			//ROS_INFO("Run estimation");
 			bool ret = filter->estimate(iterationN);
 		}
 
@@ -85,59 +71,67 @@ void FullSlamImu::run()
 
 }
 
-void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
-{
+void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
 	//ROS_INFO("imu callback");
 	double t = msg.header.stamp.toSec();
 
 	// fill temporaries with measurements
-	double za[] =
-	{ msg.linear_acceleration.x, msg.linear_acceleration.y,
-	msg.linear_acceleration.z };
-	double zw[] =
-	{ msg.angular_velocity.x, msg.angular_velocity.y, msg.angular_velocity.z };
+	double za[] = { msg.linear_acceleration.x, msg.linear_acceleration.y,
+			msg.linear_acceleration.z };
+	double zw[] = { msg.angular_velocity.x, msg.angular_velocity.y,
+			msg.angular_velocity.z };
 
 	imuHandler->addMeasurement(za, zw, t);
 
 }
 
-void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
-{
+void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 	//ROS_INFO("Tracks callback");
 
 	double t = msg.imageStamp.toSec();
 
-	// compute the center of mass
-	Eigen::VectorXd z(2);
-	z
-				<< 0.25
-							* (msg.polygon.points[0].x + msg.polygon.points[1].x
-										+ msg.polygon.points[2].x
-										+ msg.polygon.points[3].x), 0.25
-				* (msg.polygon.points[0].y + msg.polygon.points[1].y
-							+ msg.polygon.points[2].y + msg.polygon.points[3].y);
-
 	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2, 2);
 
-	tracksHandler->addFeatureObservation(msg.id, t, z, cov);
+	/* compute the center of mass
+	 Eigen::VectorXd z(2);
+
+	 z
+	 << 0.25
+	 * (msg.polygon.points[0].x + msg.polygon.points[1].x
+	 + msg.polygon.points[2].x + msg.polygon.points[3].x), 0.25
+	 * (msg.polygon.points[0].y + msg.polygon.points[1].y
+	 + msg.polygon.points[2].y + msg.polygon.points[3].y);
+
+	 tracksHandler->addFeatureObservation(msg.id, t, z, cov);
+	 //*/
+
+	//
+	for (int k = 0; k < 4; k++) {
+		Eigen::VectorXd z(2);
+
+		z << msg.polygon.points[k].x, msg.polygon.points[k].y;
+
+		tracksHandler->addFeatureObservation(msg.id * 4 + k, t, z, cov);
+	}
+	//*/
 
 }
 
-void FullSlamImu::initRoamfree()
-{
+void FullSlamImu::initRoamfree() {
 	filter = FactorGraphFilterFactory::getNewFactorGraphFilter();
-	filter->setLowLevelLogging(false); // default log folder
+	filter->setLowLevelLogging(true); // default log folder
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
 	filter->setDeadReckoning(false);
 	filter->setSolverMethod(GaussNewton);
 }
 
-void FullSlamImu::initCamera()
-{
+void FullSlamImu::initCamera() {
 
-	tracksHandler = new ROAMvision::FHPFeatureHandler(10.0);
-	tracksHandler->setTimestampOffsetTreshold(5e-3);
+	assert(imuHandler != NULL);
+
+	tracksHandler = new ROAMvision::FHPFeatureHandler(FHPInitialDepth);
+	tracksHandler->setTimestampOffsetTreshold(1.0/2.0/imuHandler->getPoseRate());
 
 	//the camera intrinsic calibration matrix
 	Eigen::VectorXd CM(9);
@@ -149,15 +143,14 @@ void FullSlamImu::initCamera()
 	tracksHandler->init(filter, "Track", T_OC, CM);
 }
 
-void FullSlamImu::initIMU()
-{
+void FullSlamImu::initIMU() {
 	//setup the handlers
 	imuHandler = new ImuHandler(filter, false, false);
 
-	//Firefly initial pose and sensor pose
-	/*Eigen::VectorXd T_OS_IMU(7), x0(7);
+	/* Firefly initial pose and sensor pose
+	Eigen::VectorXd T_OS_IMU(7), x0(7);
 	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
-	x0 << 0.0, 0.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+	x0 << 0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5;
 	imuHandler->setSensorframe(T_OS_IMU, x0);
 
 	//Firefly bias
@@ -165,11 +158,11 @@ void FullSlamImu::initIMU()
 	accBias << 0.1939, 0.0921, -0.2989;
 	Eigen::VectorXd gyroBias(3);
 	gyroBias << -0.0199, 0.0077, -0.0099;
-	imuHandler->setBias(accBias, gyroBias);*/
+	imuHandler->setBias(accBias, gyroBias);
+	//*/
 }
 
-void FullSlamImu::publishFeatureMarkers()
-{
+void FullSlamImu::publishFeatureMarkers() {
 	std::vector<long int> ids;
 
 	tracksHandler->getFeaturesIds(ids);
@@ -202,8 +195,7 @@ void FullSlamImu::publishFeatureMarkers()
 
 	msg.points.resize(ids.size());
 
-	for (int k = 0; k < ids.size(); ++k)
-	{
+	for (int k = 0; k < ids.size(); ++k) {
 		Eigen::VectorXd fw(3);
 
 		tracksHandler->getFeaturePositionInWorldFrame(ids[k], fw);
@@ -216,27 +208,24 @@ void FullSlamImu::publishFeatureMarkers()
 	markers_pub.publish(msg);
 }
 
-void FullSlamImu::publishCameraPose()
-{
+void FullSlamImu::publishCameraPose() {
 	ROAMestimation::PoseVertexWrapper_Ptr cameraPose_ptr =
-				filter->getNewestPose();
+			filter->getNewestPose();
 	const Eigen::VectorXd &camera = cameraPose_ptr->getEstimate();
 
 	tf::Transform T_WR_tf(
-				tf::Quaternion(camera(4), camera(5), camera(6), camera(3)),
-				tf::Vector3(camera(0), camera(1), camera(2)));
+			tf::Quaternion(camera(4), camera(5), camera(6), camera(3)),
+			tf::Vector3(camera(0), camera(1), camera(2)));
 
 	pose_tf_br.sendTransform(
-				tf::StampedTransform(T_WR_tf,
-							ros::Time(cameraPose_ptr->getTimestamp()), "world",
-							"camera_link"));
+			tf::StampedTransform(T_WR_tf, ros::Time(cameraPose_ptr->getTimestamp()),
+					"world", "camera_link"));
 
 }
 
 } /* namespace roamfree_c_slam */
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "roamfree_full_slam_imu");
 
 	roamfree_c_slam::FullSlamImu n(argv[1]);

@@ -67,7 +67,7 @@ void FullSlamImu_rectangles::run() {
 			PoseVertexWrapper_Ptr cur;
 
 			//ROS_INFO("Run estimation");
-			bool ret = filter->estimate(0);
+			bool ret = filter->estimate(50);
 
 			filter->forgetOldNodes(2.5);
 		}
@@ -115,7 +115,7 @@ void FullSlamImu_rectangles::initRoamfree() {
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
 	filter->setDeadReckoning(true);
-	filter->setSolverMethod(GaussNewton);
+	filter->setSolverMethod(LevenbergMarquardt);
 }
 
 void FullSlamImu_rectangles::initCamera() {

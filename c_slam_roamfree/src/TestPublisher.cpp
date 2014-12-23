@@ -253,12 +253,12 @@ void TestPublisher::setTracksSquare(double r)
 void TestPublisher::setTracksCarpet()
 {
 	// generate a carpet of tracks in the area [-2.5 12.5] X [-2.5 7.5]
-	double x = -10;
-	while (x <= 15.0)
+	double x = -25;
+	while (x <= 25.0)
 	{
-		double y = -10;
+		double y = -25;
 
-		while (y < 15.0)
+		while (y < 25.0)
 		{
 			Eigen::Vector4d track;
 			track << x, y, 0.0, 1.0;

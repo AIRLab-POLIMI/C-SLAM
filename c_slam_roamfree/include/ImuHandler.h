@@ -47,6 +47,10 @@ public:
 		this->x0 = x0;
 	}
 
+	double getPoseRate() const {
+		return 1.0/(imu_N*imu_dt);
+	}
+
 private:
 	void initialize(double t);
 
@@ -63,6 +67,8 @@ private:
 
 	Eigen::VectorXd T_OS_IMU;
 	Eigen::VectorXd x0;
+
+	double imu_N, imu_dt;
 
 
 };
