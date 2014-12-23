@@ -24,8 +24,8 @@ FullSlamImu::FullSlamImu(std::string imuTopic) :
 	//setup the camera
 	initCamera();
 
-	//setup the handlers
-	imuHandler = new ImuHandler(filter);
+	//setup the imu handler
+	initIMU();
 
 	//subscribe to sensor topics
 	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
@@ -74,7 +74,7 @@ void FullSlamImu::run()
 			}
 
 			ROS_INFO("Run estimation");
-			bool ret = filter->estimate(1);
+			bool ret = filter->estimate(iterationN);
 		}
 
 		if (filter->getOldestPose()) {
@@ -90,7 +90,7 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg)
 	//ROS_INFO("imu callback");
 	double t = msg.header.stamp.toSec();
 
-// fill temporaries with measurements
+	// fill temporaries with measurements
 	double za[] =
 	{ msg.linear_acceleration.x, msg.linear_acceleration.y,
 	msg.linear_acceleration.z };
@@ -107,7 +107,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 	double t = msg.imageStamp.toSec();
 
-// compute the center of mass
+	// compute the center of mass
 	Eigen::VectorXd z(2);
 	z
 				<< 0.25
@@ -147,6 +147,25 @@ void FullSlamImu::initCamera()
 	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
 
 	tracksHandler->init(filter, "Track", T_OC, CM);
+}
+
+void FullSlamImu::initIMU()
+{
+	//setup the handlers
+	imuHandler = new ImuHandler(filter, false, false);
+
+	//Firefly initial pose and sensor pose
+	/*Eigen::VectorXd T_OS_IMU(7), x0(7);
+	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
+	x0 << 0.0, 0.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+	imuHandler->setSensorframe(T_OS_IMU, x0);
+
+	//Firefly bias
+	Eigen::VectorXd accBias(3);
+	accBias << 0.1939, 0.0921, -0.2989;
+	Eigen::VectorXd gyroBias(3);
+	gyroBias << -0.0199, 0.0077, -0.0099;
+	imuHandler->setBias(accBias, gyroBias);*/
 }
 
 void FullSlamImu::publishFeatureMarkers()

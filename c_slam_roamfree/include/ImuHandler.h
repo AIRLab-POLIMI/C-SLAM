@@ -27,21 +27,46 @@
 #include <ROAMestimation/ROAMestimation.h>
 #include <ROAMimu/IMUIntegralHandler.h>
 
+namespace roamfree_c_slam
+{
 class ImuHandler
 {
 public:
-	ImuHandler(ROAMestimation::FactorGraphFilter* filter);
+	ImuHandler(ROAMestimation::FactorGraphFilter* filter, bool isAccBiasFixed, bool isGyroBiasFixed);
 	void addMeasurement(double za[3], double zw[3], double t);
+
+	inline void setBias(const Eigen::VectorXd& accBias, const Eigen::VectorXd& gyroBias)
+	{
+		this->accBias = accBias;
+		this->gyroBias = gyroBias;
+	}
+
+	inline void setSensorframe(const Eigen::VectorXd& T_OS_IMU, const Eigen::VectorXd& x0)
+	{
+		this->T_OS_IMU = T_OS_IMU;
+		this->x0 = x0;
+	}
 
 private:
 	void initialize(double t);
-	void computePose(double t);
 
 private:
 	ROAMestimation::FactorGraphFilter* filter;
 	ROAMimu::IMUIntegralHandler* imu;
 	bool initialized;
+
+	bool isAccBiasFixed;
+	Eigen::VectorXd accBias;
+
+	bool isGyroBiasFixed;
+	Eigen::VectorXd gyroBias;
+
+	Eigen::VectorXd T_OS_IMU;
+	Eigen::VectorXd x0;
+
+
 };
 
+}
 
 #endif /* IMUHANDLER_H_ */

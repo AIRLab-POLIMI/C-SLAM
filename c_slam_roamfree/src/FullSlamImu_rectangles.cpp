@@ -14,7 +14,7 @@ using namespace ROAMestimation;
 
 namespace roamfree_c_slam {
 
-FullSlamImu::FullSlamImu(std::string imuTopic) :
+FullSlamImu_rectangles::FullSlamImu_rectangles(std::string imuTopic) :
 		filter(NULL), imuHandler(NULL), tracksHandler(NULL) {
 	//setup roamfree
 	initRoamfree();
@@ -22,17 +22,17 @@ FullSlamImu::FullSlamImu(std::string imuTopic) :
 	//setup the camera
 	initCamera();
 
-	//setup the handlers
-	imuHandler = new ImuHandler(filter);
+	//setup the imu handler
+	initIMU();
 
 	//subscribe to sensor topics
-	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
-	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu::tracksCb, this);
+	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu_rectangles::imuCb, this);
+	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu_rectangles::tracksCb, this);
 	markers_pub = n.advertise<visualization_msgs::Marker>(
 			"/visualization/features", 1);
 }
 
-FullSlamImu::~FullSlamImu() {
+FullSlamImu_rectangles::~FullSlamImu_rectangles() {
 	if (filter != NULL)
 
 		delete filter;
@@ -45,7 +45,7 @@ FullSlamImu::~FullSlamImu() {
 
 }
 
-void FullSlamImu::run() {
+void FullSlamImu_rectangles::run() {
 	ros::NodeHandle n("~");
 
 	ros::Rate rate(5);
@@ -76,11 +76,11 @@ void FullSlamImu::run() {
 
 }
 
-void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
+void FullSlamImu_rectangles::imuCb(const sensor_msgs::Imu& msg) {
 	//ROS_INFO("imu callback");
 	double t = msg.header.stamp.toSec();
 
-// fill temporaries with measurements
+	// fill temporaries with measurements
 	double za[] = { msg.linear_acceleration.x, msg.linear_acceleration.y,
 			msg.linear_acceleration.z };
 	double zw[] = { msg.angular_velocity.x, msg.angular_velocity.y,
@@ -90,12 +90,12 @@ void FullSlamImu::imuCb(const sensor_msgs::Imu& msg) {
 
 }
 
-void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
+void FullSlamImu_rectangles::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 	//ROS_INFO("Tracks callback");
 
 	double t = msg.imageStamp.toSec();
 
-// compute the center of mass
+	// compute the center of mass
 	Eigen::VectorXd z(8);
 	z << msg.polygon.points[0].x, msg.polygon.points[0].y, msg.polygon.points[1].x, msg.polygon.points[1].y, msg.polygon.points[2].x, msg.polygon.points[2].y, msg.polygon.points[3].x, msg.polygon.points[3].y;
 
@@ -105,7 +105,7 @@ void FullSlamImu::tracksCb(const c_slam_msgs::TrackedObject& msg) {
 
 }
 
-void FullSlamImu::initRoamfree() {
+void FullSlamImu_rectangles::initRoamfree() {
 	filter = FactorGraphFilterFactory::getNewFactorGraphFilter();
 	filter->setLowLevelLogging(true); // default log folder
 	system("mkdir -p /tmp/roamfree/");
@@ -114,7 +114,7 @@ void FullSlamImu::initRoamfree() {
 	filter->setSolverMethod(LevenbergMarquardt);
 }
 
-void FullSlamImu::initCamera() {
+void FullSlamImu_rectangles::initCamera() {
 
 	tracksHandler = new RectangleHandler(2.0);
 	tracksHandler->setTimestampOffsetTreshold(1.0 / 5.0 / 2.0);
@@ -129,7 +129,17 @@ void FullSlamImu::initCamera() {
 	tracksHandler->init(filter, "Track", T_OC, CM);
 }
 
-void FullSlamImu::publishFeatureMarkers() {
+void FullSlamImu_rectangles::initIMU()
+{
+	//setup the imu handler
+	imuHandler = new ImuHandler(filter, true, true);
+	Eigen::VectorXd T_OS_IMU(7), x0(7);
+	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
+	x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
+	imuHandler->setSensorframe(T_OS_IMU, x0);
+}
+
+void FullSlamImu_rectangles::publishFeatureMarkers() {
 	std::vector<long int> ids;
 
 	tracksHandler->getFeaturesIds(ids);
@@ -171,21 +181,12 @@ void FullSlamImu::publishFeatureMarkers() {
 		msg.scale.y = dim(1);
 		msg.scale.z = 0.05;
 
-
-/*
-		msg.points.resize(1);
-
-		msg.points[0].x = 0.0;
-		msg.points[0].y = 0.0;
-		msg.points[0].z = 0.0;
-		*/
-
 		markers_pub.publish(msg);
 
 	}
 }
 
-void FullSlamImu::publishCameraPose() {
+void FullSlamImu_rectangles::publishCameraPose() {
 	ROAMestimation::PoseVertexWrapper_Ptr cameraPose_ptr =
 			filter->getNewestPose();
 	const Eigen::VectorXd &camera = cameraPose_ptr->getEstimate();
@@ -205,7 +206,7 @@ void FullSlamImu::publishCameraPose() {
 int main(int argc, char *argv[]) {
 	ros::init(argc, argv, "roamfree_full_slam_imu");
 
-	roamfree_c_slam::FullSlamImu n(argv[1]);
+	roamfree_c_slam::FullSlamImu_rectangles n(argv[1]);
 
 	ROS_INFO("Localization node started");
 	n.run();

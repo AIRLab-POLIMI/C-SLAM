@@ -45,6 +45,7 @@ public:
 
 	void publishTracks(const Eigen::Matrix4d& H_WC, double t);
 
+	void publishGroundTruth(Eigen::Matrix4d& H);
 	void publishGroundTruthLandmark();
 	void publishGroundTruthLandmarkPoints();
 

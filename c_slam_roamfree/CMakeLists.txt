@@ -48,6 +48,7 @@ add_executable(circular_test
                src/CircularTest.cpp)
                
 add_executable(firefly_test
+               src/TestPublisher.cpp
                src/FireflyTest.cpp)
                
 add_executable(displayer

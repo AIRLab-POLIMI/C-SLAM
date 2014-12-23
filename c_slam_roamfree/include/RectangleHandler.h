@@ -43,6 +43,8 @@ public:
 
 	virtual void setTimestampOffsetTreshold(double dt);
 
+	virtual ~RectangleHandler();
+
 protected:
 
 	class RectangleDescriptor {

@@ -25,6 +25,8 @@ using namespace ROAMestimation;
 
 RectangleHandler::RectangleHandler(double initialDepth) :
 		_lambda(initialDepth) {
+	_timestampOffsetTreshold = 0;
+	_filter = NULL;
 }
 
 bool RectangleHandler::init(FactorGraphFilter* f, const string &name,
@@ -48,6 +50,8 @@ bool RectangleHandler::init(FactorGraphFilter* f, const string &name,
 	Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > KasMatrix(
 			K.data());
 	_K = KasMatrix;
+
+	return true;
 
 }
 
@@ -82,6 +86,8 @@ bool RectangleHandler::addFeatureObservation(long int id, double t,
 
 	MeasurementEdgeWrapper_Ptr ret = _filter->addMeasurement(sensor, t, z, cov,
 			cur_frame);
+
+	return true;
 }
 
 bool RectangleHandler::initFeature(const std::string& sensor,
@@ -116,7 +122,7 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 
 	cerr << "initRectangle" << endl;
 
-//Get the points
+	//Get the points
 	Eigen::Vector3d m1(z[0], z[1], 1);
 	Eigen::Vector3d m2(z[2], z[3], 1);
 	Eigen::Vector3d m3(z[4], z[5], 1);
@@ -125,7 +131,7 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 	Eigen::Vector3d Ct(Sw[0], Sw[1], Sw[2]);
 	Eigen::Quaterniond Cq(Sw[3], Sw[4], Sw[5], Sw[6]);
 
-//compute normals
+	//compute normals
 	double c2 = (m1.cross(m3).transpose() * m4)[0]
 			/ (m2.cross(m3).transpose() * m4)[0];
 	double c3 = (m1.cross(m3).transpose() * m2)[0]
@@ -134,7 +140,7 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 	Eigen::Vector3d n2 = c2 * m2 - m1;
 	Eigen::Vector3d n3 = c3 * m4 - m1;
 
-//Compute rotation matrix columns
+	//Compute rotation matrix columns
 	Eigen::Vector3d R1 = _K.inverse() * n2;
 	R1 = R1 / R1.norm();
 
@@ -143,7 +149,7 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 
 	Eigen::Vector3d R3 = R1.cross(R2);
 
-//Compute frame quaternion
+	//Compute frame quaternion
 	Eigen::Matrix3d R;
 	R << R1, R2, R3;
 
@@ -151,7 +157,7 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 
 	Eigen::Quaterniond Fqhat = Cq * qOC;
 
-//Compute frame transaltion
+	//Compute frame transaltion
 	Eigen::Matrix3d omega = _K.transpose().inverse() * _K.inverse();
 	double ff = sqrt(
 			(n2.transpose() * omega * n2)[0] / (n3.transpose() * omega * n3)[0]);
@@ -159,14 +165,14 @@ void RectangleHandler::initRectangle(const Eigen::VectorXd& Sw, double lambda,
 	Eigen::Vector3d CtOhat = lambda * _K.inverse() * m1;
 	Eigen::Vector3d Fthat = Ct + Cq.toRotationMatrix() * CtOhat;
 
-//compute shape parameters
+	//compute shape parameters
 	Eigen::Vector3d X = _K * R1;
 	Eigen::Vector3d Y = c2 * lambda * m2 - lambda * m1;
 
 	double w = ((X.transpose() * X).inverse() * X.transpose() * Y)[0];
 	double h = w / ff;
 
-//Write the results
+	//Write the results
 	shapeParams << w, h;
 	F << Fthat[0], Fthat[1], Fthat[2], Fqhat.w(), Fqhat.x(), Fqhat.y(), Fqhat.z();
 
@@ -229,6 +235,8 @@ bool RectangleHandler::getFeaturesIds(std::vector<long int>& to) const {
 	for (auto it = _features.begin(); it != _features.end(); ++it) {
 		to.push_back(it->first);
 	}
+
+	return true;
 }
 
 string RectangleHandler::getFeatureSensor(long int id) const {
@@ -241,4 +249,8 @@ void RectangleHandler::setTimestampOffsetTreshold(double dt) {
 	_timestampOffsetTreshold = dt;
 }
 
+RectangleHandler::~RectangleHandler()
+{
+
+}
 

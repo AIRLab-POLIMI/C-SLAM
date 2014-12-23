@@ -5,8 +5,8 @@
  *      Author: davide
  */
 
-#ifndef FULLSLAMIMU_H_
-#define FULLSLAMIMU_H_
+#ifndef FULLSLAMIMU_RECTANGLES_H_
+#define FULLSLAMIMU_RECTANGLES_H_
 
 #include <Eigen/Dense>
 
@@ -25,13 +25,13 @@
 namespace roamfree_c_slam
 {
 
-class FullSlamImu
+class FullSlamImu_rectangles
 {
 
 public:
 
-	FullSlamImu(std::string imuTopic);
-	virtual ~FullSlamImu();
+	FullSlamImu_rectangles(std::string imuTopic);
+	virtual ~FullSlamImu_rectangles();
 	void run();
 
 protected:
@@ -43,6 +43,7 @@ private:
 	void initCamera();
 	void publishFeatureMarkers();
 	void publishCameraPose();
+	void initIMU();
 
 private:
 	ros::NodeHandle n;
@@ -63,4 +64,4 @@ private:
 
 } /* namespace roamfree_c_slam */
 
-#endif /* FULLSLAMIMU_H_ */
+#endif /* FULLSLAMIMU_RECTANGLES_H_ */

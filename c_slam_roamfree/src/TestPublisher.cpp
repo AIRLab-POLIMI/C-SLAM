@@ -39,6 +39,28 @@ TestPublisher::TestPublisher()
 	0.0, 0.0, 1.0;
 }
 
+void TestPublisher::publishGroundTruth(Eigen::Matrix4d& H)
+{
+	tf::Transform transform;
+
+	Eigen::Vector3d t = H.block<3, 1>(0, 3);
+	Eigen::Matrix3d R = H.block<3, 3>(0, 0);
+	Eigen::Quaterniond q(R);
+
+	tf::Vector3 t_tf;
+	tf::Quaternion q_tf;
+
+	tf::vectorEigenToTF(t, t_tf);
+	tf::quaternionEigenToTF(q, q_tf);
+
+	transform.setOrigin(t_tf);
+	transform.setRotation(q_tf);
+	br.sendTransform(
+				tf::StampedTransform(transform, ros::Time::now(), "world",
+							"camera_ground_truth"));
+
+}
+
 void TestPublisher::publishGroundTruthLandmark()
 {
 	visualization_msgs::Marker msg;

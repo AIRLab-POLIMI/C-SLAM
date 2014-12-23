@@ -44,6 +44,7 @@ private:
 	void initCamera();
 	void publishFeatureMarkers();
 	void publishCameraPose();
+	void initIMU();
 
 private:
 	ros::NodeHandle n;
@@ -59,6 +60,9 @@ private:
 	ROAMestimation::FactorGraphFilter* filter;
 	ImuHandler* imuHandler;
 	ROAMvision::ImageFeatureHandler *tracksHandler;
+
+private:
+	static const int iterationN = 50;
 
 
 };
