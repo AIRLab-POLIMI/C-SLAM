@@ -1,25 +1,35 @@
 /*
- * FullSlamImu.h
+ * c_slam_roamfree,
  *
- *  Created on: Sep 8, 2014
- *      Author: davide
+ *
+ * Copyright (C) 2014 Davide Tateo
+ * Versione 1.0
+ *
+ * This file is part of c_slam_roamfree.
+ *
+ * c_slam_roamfree is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * c_slam_roamfree is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef FULLSLAMIMU_H_
 #define FULLSLAMIMU_H_
 
-#include <Eigen/Dense>
-
 #include <ros/ros.h>
-#include <tf/tf.h>
-
 #include <sensor_msgs/Imu.h>
-#include <c_slam_msgs/TrackedObject.h>
-#include <ROAMvision/ROAMvision.h>
-
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 
+#include <string>
 
 #include "ImuHandler.h"
 
@@ -28,47 +38,40 @@ namespace roamfree_c_slam
 
 class FullSlamImu
 {
-
 public:
-
 	FullSlamImu(std::string imuTopic);
 	virtual ~FullSlamImu();
-	void run();
+	virtual void run() = 0;
+
 
 protected:
 	void imuCb(const sensor_msgs::Imu &msg);
-	void tracksCb(const c_slam_msgs::TrackedObject &msg);
+	void publishPose();
 
 private:
-	void initRoamfree();
-	void initCamera();
-	void publishFeatureMarkers();
-	void publishCameraPose();
 	void initIMU();
+	void initRoamfree();
 
-private:
+protected:
+	const int iterationN = 1;
+
+protected:
 	ros::NodeHandle n;
-	ros::Subscriber tracks_sub;
-	ros::Subscriber imu_sub;
-
 	ros::Publisher markers_pub;
-	tf::TransformBroadcaster pose_tf_br;
 
-	tf::Transform T_OC_tf; // transformation from robot to camera;
-
-private:
 	ROAMestimation::FactorGraphFilter* filter;
 	ImuHandler* imuHandler;
-	ROAMvision::ImageFeatureHandler *tracksHandler;
 
 private:
-	const int iterationN = 1;
-	const double waitWindowLengthSeconds = 2.0;
-	const double FHPInitialDepth = 10.0;
+	ros::Subscriber imu_sub;
+
+	tf::Transform T_OC_tf; // transformation from robot to camera;
+	tf::TransformBroadcaster pose_tf_br;
 
 
 };
 
-} /* namespace roamfree_c_slam */
+}
+
 
 #endif /* FULLSLAMIMU_H_ */

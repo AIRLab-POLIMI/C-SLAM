@@ -1,0 +1,174 @@
+/*
+ * FullSlamImu.cpp
+ *
+ *  Created on: Sep 8, 2014
+ *      Author: davide
+ */
+
+#include "FullSlamImu_FHP.h"
+
+#include <visualization_msgs/Marker.h>
+
+using namespace ROAMestimation;
+
+namespace roamfree_c_slam
+{
+
+FullSlamImu_FHP::FullSlamImu_FHP(std::string imuTopic) :
+			FullSlamImu(imuTopic), tracksHandler(NULL)
+{
+	//setup the camera
+	initCamera();
+
+	//subscribe to sensor topics
+	tracks_sub = n.subscribe("/tracks", 60000, &FullSlamImu_FHP::tracksCb,
+				this);
+}
+
+FullSlamImu_FHP::~FullSlamImu_FHP()
+{
+	if (tracksHandler)
+		delete tracksHandler;
+}
+
+void FullSlamImu_FHP::run()
+{
+	ros::NodeHandle n("~");
+
+	ros::Rate rate(5);
+
+	while (ros::ok())
+	{
+		//rate.sleep();
+
+		ros::spinOnce();
+
+		if (filter->getWindowLenght() > waitWindowLengthSeconds
+					&& tracksHandler->getNActiveFeatures() >= 3)
+		{
+			filter->getNthOldestPose(0)->setFixed(true);
+
+			//ROS_INFO("Run estimation");
+			bool ret = filter->estimate(iterationN);
+		}
+
+		if (filter->getOldestPose())
+		{
+			publishFeatureMarkers();
+			publishPose();
+		}
+	};
+
+}
+
+void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg)
+{
+	//ROS_INFO("Tracks callback");
+
+	double t = msg.imageStamp.toSec();
+
+	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2, 2);
+
+	/* compute the center of mass
+	 Eigen::VectorXd z(2);
+
+	 z
+	 << 0.25
+	 * (msg.polygon.points[0].x + msg.polygon.points[1].x
+	 + msg.polygon.points[2].x + msg.polygon.points[3].x), 0.25
+	 * (msg.polygon.points[0].y + msg.polygon.points[1].y
+	 + msg.polygon.points[2].y + msg.polygon.points[3].y);
+
+	 tracksHandler->addFeatureObservation(msg.id, t, z, cov);
+	 //*/
+
+	//
+	for (int k = 0; k < 4; k++)
+	{
+		Eigen::VectorXd z(2);
+
+		z << msg.polygon.points[k].x, msg.polygon.points[k].y;
+
+		tracksHandler->addFeatureObservation(msg.id * 4 + k, t, z, cov);
+	}
+	//*/
+
+}
+
+void FullSlamImu_FHP::initCamera()
+{
+	tracksHandler = new ROAMvision::FHPFeatureHandler(FHPInitialDepth);
+	tracksHandler->setTimestampOffsetTreshold(
+				1.0 / 2.0 / imuHandler->getPoseRate());
+
+	//the camera intrinsic calibration matrix
+	Eigen::VectorXd CM(9);
+	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
+
+	Eigen::VectorXd T_OC(7);
+	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+
+	tracksHandler->init(filter, "Track", T_OC, CM);
+}
+
+void FullSlamImu_FHP::publishFeatureMarkers()
+{
+	std::vector<long int> ids;
+
+	tracksHandler->getFeaturesIds(ids);
+
+	visualization_msgs::Marker msg;
+
+	msg.header.stamp = ros::Time::now();
+	msg.header.frame_id = "/world";
+	msg.type = visualization_msgs::Marker::CUBE_LIST;
+	msg.frame_locked = false;
+	msg.ns = "c_slam_roamfree";
+	msg.id = 0;
+	msg.action = visualization_msgs::Marker::ADD;
+
+	msg.color.r = 1.0;
+	msg.color.g = 0.0;
+	msg.color.b = 0.0;
+	msg.color.a = 1.0;
+
+	msg.scale.x = 0.30;
+	msg.scale.y = 0.30;
+	msg.scale.z = 0.30;
+
+	msg.pose.position.x = 0.0;
+	msg.pose.position.y = 0.0;
+	msg.pose.position.z = 0.0;
+
+	msg.pose.orientation.w = 1.0;
+
+	msg.points.resize(ids.size());
+
+	for (int k = 0; k < ids.size(); ++k)
+	{
+		Eigen::VectorXd fw(3);
+
+		tracksHandler->getFeaturePositionInWorldFrame(ids[k], fw);
+
+		msg.points[k].x = fw(0);
+		msg.points[k].y = fw(1);
+		msg.points[k].z = fw(2);
+	}
+
+	markers_pub.publish(msg);
+}
+
+} /* namespace roamfree_c_slam */
+
+int main(int argc, char *argv[])
+{
+	ros::init(argc, argv, "roamfree_full_slam_imu");
+
+	roamfree_c_slam::FullSlamImu_FHP n(argv[1]);
+
+	ROS_INFO("Localization node started");
+	n.run();
+	ROS_INFO("Localization node shut down");
+
+	return 0;
+}

@@ -29,10 +29,12 @@ include_directories(include
 )
 
 add_executable(c_localization
-	           src/FullSlamImu.cpp
+               src/FullSlamImu.cpp
+	           src/FullSlamImu_FHP.cpp
 	           src/ImuHandler.cpp)
 
 add_executable(c_localization_rectangles
+               src/FullSlamImu.cpp
 	           src/FullSlamImu_rectangles.cpp
 	           src/RectangleHandler.cpp
 	           src/ImuHandler.cpp)
