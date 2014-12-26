@@ -34,15 +34,24 @@ FullSlamConfig::FullSlamConfig()
 {
 	ros::NodeHandle n("~");
 
-	initROS(n);
+	try
+	{
 
-	initPose(n);
+		initROS(n);
 
-	initIMU(n);
+		initPose(n);
 
-	initCamera(n);
+		initIMU(n);
 
-	initRoamfree(n);
+		initCamera(n);
+
+		initRoamfree(n);
+	}
+	catch(runtime_error& e)
+	{
+		ROS_FATAL(e.what());
+		throw e;
+	}
 
 }
 
@@ -51,7 +60,7 @@ void FullSlamConfig::initROS(const ros::NodeHandle& n)
 	n.param<string>("trackedFrame", trackedFrame, "camera_link");
 	if (!n.getParam("imuTopic", imuTopic))
 	{
-		ROS_FATAL("IMU topic not set");
+		throw runtime_error("IMU topic not set");
 	}
 }
 
@@ -62,7 +71,7 @@ void FullSlamConfig::initPose(const ros::NodeHandle& n)
 	vector<double> x0_std;
 	if (!n.getParam("initialPose", x0_std) || x0_std.size() != 7)
 	{
-		ROS_FATAL("Incorrect initial pose or no initial pose specified");
+		throw runtime_error("Incorrect initial pose or no initial pose specified");
 	}
 
 	x0.resize(7);
@@ -72,7 +81,7 @@ void FullSlamConfig::initPose(const ros::NodeHandle& n)
 	vector<double> T_O_IMU_std;
 	if (!n.getParam("T_O_IMU", T_O_IMU_std) || T_O_IMU_std.size() != 7)
 	{
-		ROS_FATAL("Incorrect imu pose or no imu pose specified");
+		throw runtime_error("Incorrect imu pose or no imu pose specified");
 	}
 
 	T_O_IMU.resize(7);
@@ -82,7 +91,7 @@ void FullSlamConfig::initPose(const ros::NodeHandle& n)
 	vector<double> T_O_CAMERA_std;
 	if (!n.getParam("T_O_CAMERA", T_O_CAMERA_std) || T_O_CAMERA_std.size() != 7)
 	{
-		ROS_FATAL("Incorrect camera pose or no camera pose specified");
+		throw runtime_error("Incorrect camera pose or no camera pose specified");
 	}
 
 	T_O_CAMERA.resize(7);
@@ -126,13 +135,13 @@ void FullSlamConfig::initIMU(const ros::NodeHandle& n)
 	//Setup imu integration steps
 	if (!n.getParam("imu_N", imu_N))
 	{
-		ROS_FATAL("parameter imu_N undefined");
+		throw runtime_error("parameter imu_N undefined");
 	}
 
 	//Setup imu nominal period
 	if (!n.getParam("imu_dt", imu_dt))
 	{
-		ROS_FATAL("parameter imu_dt undefined");
+		throw runtime_error("parameter imu_dt undefined");
 	}
 }
 
@@ -142,7 +151,7 @@ void FullSlamConfig::initCamera(const ros::NodeHandle& n)
 	vector<double> K_std;
 	if (!n.getParam("K", K_std) || K_std.size() != 9)
 	{
-		ROS_FATAL("Incorrect initial pose or no initial pose specified");
+		throw runtime_error("Incorrect initial pose or no initial pose specified");
 	}
 
 	K.resize(7);

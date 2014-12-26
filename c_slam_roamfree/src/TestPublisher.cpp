@@ -189,7 +189,6 @@ void TestPublisher::setTracksCircle(double r)
 	tracks.resize(numTracks);
 
 	double theta = 0;
-	cout << "c_generated = [";
 	for (int i = 0; i < numTracks; i++)
 	{
 		double x = r * cos(theta);
@@ -204,7 +203,6 @@ void TestPublisher::setTracksCircle(double r)
 
 		theta += 2 * M_PI / numTracks;
 	}
-	cout << "]" << endl;
 }
 
 void TestPublisher::setTracksSquare(double r)
@@ -333,9 +331,6 @@ void TestPublisher::createRotatedRectangle(const double theta, const double w,
 		Eigen::Vector4d trackVertex;
 		trackVertex << xp, yp, zp, 1;
 
-		cout << trackVertex(0) << "," << trackVertex(1) << "," << trackVertex(2)
-					<< ";";
-		cout << endl;
 		track.push_back(trackVertex);
 	}
 }

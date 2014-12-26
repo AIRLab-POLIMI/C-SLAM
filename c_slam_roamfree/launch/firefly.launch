@@ -31,6 +31,5 @@
           pkg="rviz" 
           type="rviz"
           respawn="true"
-          args="-d $(find c_slam_roamfree)/rviz_config/rviz.rviz"  
-          output="screen"/>
+          args="-d $(find c_slam_roamfree)/rviz_config/rviz.rviz"/>
 </launch>

@@ -45,7 +45,8 @@ void FullSlamImu_rectangles::run()
 		ros::spinOnce();
 
 		if (filter->getWindowLenght() > config.minWindowLenghtSecond
-					&& tracksHandler->getNActiveFeatures() >= config.minActiveFeatures)
+					&& tracksHandler->getNActiveFeatures()
+								>= config.minActiveFeatures)
 		{
 
 			//filter->getNthOldestPose(0)->setFixed(true);
@@ -151,13 +152,21 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "c_localization");
 
-	roamfree_c_slam::FullSlamConfig config;
+	try
+	{
+		roamfree_c_slam::FullSlamConfig config;
 
-	roamfree_c_slam::FullSlamImu_rectangles n(config);
+		roamfree_c_slam::FullSlamImu_rectangles n(config);
 
-	ROS_INFO("Localization node started");
-	n.run();
-	ROS_INFO("Localization node shut down");
+		ROS_INFO("Localization node started");
+		n.run();
+		ROS_INFO("Localization node shut down");
+
+	}
+	catch (std::runtime_error& error)
+	{
+		return -1;
+	}
 
 	return 0;
 }

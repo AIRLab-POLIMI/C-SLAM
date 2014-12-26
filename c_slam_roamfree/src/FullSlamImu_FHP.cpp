@@ -103,10 +103,10 @@ void FullSlamImu_FHP::initCamera()
 
 	//the camera intrinsic calibration matrix FIXME levami
 	/*Eigen::VectorXd CM(9);
-	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
+	 CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
 
-	Eigen::VectorXd T_OC(7);
-	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;*/
+	 Eigen::VectorXd T_OC(7);
+	 T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;*/
 
 	tracksHandler->init(filter, "Track", config.T_O_CAMERA, config.K);
 }
@@ -164,12 +164,20 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "c_localization");
 
-	roamfree_c_slam::FullSlamConfig config;
-	roamfree_c_slam::FullSlamImu_FHP n(config);
+	try
+	{
+		roamfree_c_slam::FullSlamConfig config;
 
-	ROS_INFO("Localization node started");
-	n.run();
-	ROS_INFO("Localization node shut down");
+		roamfree_c_slam::FullSlamImu_FHP n(config);
+
+		ROS_INFO("Localization node started");
+		n.run();
+		ROS_INFO("Localization node shut down");
+	}
+	catch (std::runtime_error& e)
+	{
+		return -1;
+	}
 
 	return 0;
 }

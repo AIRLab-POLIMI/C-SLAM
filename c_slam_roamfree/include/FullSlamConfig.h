@@ -25,6 +25,7 @@
 #define FULLSLAMCONFIG_H_
 
 #include <string>
+#include <stdexcept>
 #include <Eigen/Dense>
 #include <ros/ros.h>
 
