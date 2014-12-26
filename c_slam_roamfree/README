@@ -1,0 +1,35 @@
+Parameters:
+
+//Ros stuff
+trackedFrame --> string (optional)
+imuTopic --> string 
+
+//Initial Pose
+initialPose --> list(7)
+
+//Sensor relative pose
+T_O_IMU --> list(7)
+T_O_CAMERA --> list(7)
+
+//Imu bias
+isAccBiasFixed --> bool (optional, default true)
+accBias --> list(3) (optional, default true)
+isGyroBiasFixed --> bool (optional)
+gyroBias --> list(3) (optional)
+
+//Imu data
+imu_N --> int
+imu_dt --> float
+
+
+//Camera calibration
+K --> list(9)
+
+//Vision Stuff
+initialScale --> float (optional, default 4.0)
+minWindowLenghtSecond --> float (optional, default 2.0)
+minActiveFeatures --> int (optional, default 3)
+
+//Optimization method
+useGaussNewton --> bool (optional, default true)
+iterationN --> int (optional, default 1)

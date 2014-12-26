@@ -1,37 +1,44 @@
 <launch>
-	
-	<param name="use_sim_time" value="False"/>
-	
-	<arg name="imu_topic" default="/ardrone/imu"/>	
 
-    <node name="c_localization" 
-          pkg="c_slam_roamfree" 
-          type="c_localization"
-          args="$(arg imu_topic)"  
-          output="screen" 
-          launch-prefix="">
-    
-    	<param name="IMU_N_integration_steps" value="10"/>
-     	<param name="IMU_nominal_period" value="0.02"/>
-     </node>
-          
-	 <node name="circular_test" 
-          pkg="c_slam_roamfree" 
-          type="circular_test" 
-          output="screen" 
-          launch-prefix=""/>
-          
-           <node name="displayer" 
-          pkg="c_slam_roamfree" 
-          type="displayer" 
-          output="screen" 
-          launch-prefix=""/>
-          
-    <node name="rviz" 
-          pkg="rviz" 
-          type="rviz"
-          respawn="true"
-          args="-d $(find c_slam_roamfree)/rviz_config/rviz.rviz"/>
-    
+	<param name="use_sim_time" value="False" />
+
+	<node name="c_localization" pkg="c_slam_roamfree" type="c_localization" output="screen" launch-prefix="">
+		<!-- Ros stuff -->
+		<param name="trackedFrame" value="camera_link" />
+		<param name="imuTopic" value="/ardrone/imu" />
+
+		<!-- Initial pose -->
+		<rosparam param="initialPose">[0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5]</rosparam>
+
+		<rosparam param="T_O_IMU">[0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5]</rosparam>
+
+		<rosparam param="T_O_CAMERA">[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]</rosparam>
+
+		<!-- Imu data -->
+		<param name="imu_N" value="10" />
+		<param name="imu_dt" value="0.02" />
+
+		<!-- Camera calibration -->
+		<rosparam param="K">[565.59102697808, 0.0, 337.839450567586, 0.0,563.936510489792, 199.522081717361, 0.0, 0.0, 1.0]</rosparam>
+
+		<!-- Vision Stuff -->
+		<param name="initialScale" value="5.0" />
+		<param name="minWindowLenghtSecond" value="2.0" />
+		<param name="minActiveFeatures" value="3" />
+
+		<!-- Optimization method -->
+		<param name="useGaussNewton" value="True" />
+		<param name="iterationN" value="1" />
+	</node>
+
+	<node name="circular_test" pkg="c_slam_roamfree" type="circular_test"
+		output="screen" launch-prefix="" />
+
+	<node name="displayer" pkg="c_slam_roamfree" type="displayer"
+		output="screen" launch-prefix="" />
+
+	<node name="rviz" pkg="rviz" type="rviz" respawn="true"
+		args="-d $(find c_slam_roamfree)/rviz_config/rviz.rviz" />
+
 
 </launch>

@@ -1,18 +1,48 @@
 <launch>
 	
 	<param name="use_sim_time" value="True"/>	
-
-	<arg name="imu_topic" default="/firefly/imu"/>	
-
+	
     <node name="c_localization" 
           pkg="c_slam_roamfree" 
-          type="c_localization"
-          args="$(arg imu_topic)"  
+          type="c_localization"  
           output="screen" 
           launch-prefix="">
     
-     	<param name="IMU_N_integration_steps" value="10"/>
-     	<param name="IMU_nominal_period" value="0.01"/>
+     	<!-- Ros stuff -->
+		<param name="trackedFrame" value="camera_link" />
+		<param name="imuTopic" value="/firefly/imu" />
+
+		<!-- Initial pose -->
+		<rosparam param="initialPose">[0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5]</rosparam>
+
+		<rosparam param="T_O_IMU">[0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5]</rosparam>
+
+		<rosparam param="T_O_CAMERA">[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]</rosparam>
+
+		<!-- Imu bias -->
+		<param name="isAccBiasFixed" value="False" />
+
+		<rosparam param="accBias">[0.1939, 0.0921, -0.2989]</rosparam>
+
+		<param name="isGyroBiasFixed" value="False" />
+
+		<rosparam param="gyroBias">[-0.0199, 0.0077, -0.0099]</rosparam>
+
+		<!-- Imu data -->
+		<param name="imu_N" value="10" />
+		<param name="imu_dt" value="0.02" />
+
+		<!-- Camera calibration -->
+		<rosparam param="K">[565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0]</rosparam>
+
+		<!-- Vision Stuff -->
+		<param name="initialScale" value="5.0" />
+		<param name="minWindowLenghtSecond" value="2.0" />
+		<param name="minActiveFeatures" value="3" />
+
+		<!-- Optimization method -->
+		<param name="useGaussNewton" value="True" />
+		<param name="iterationN" value="1" />
     </node>
           
 	 <node name="firefly_test" 

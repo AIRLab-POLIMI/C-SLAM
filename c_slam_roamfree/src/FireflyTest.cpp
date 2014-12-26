@@ -95,7 +95,7 @@ private:
 
 int main(int argc, char *argv[])
 {
-	ros::init(argc, argv, "circular_test");
+	ros::init(argc, argv, "firefly_test");
 
 	FireflyTestPublisher publisher;
 

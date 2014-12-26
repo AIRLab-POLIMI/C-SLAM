@@ -124,19 +124,6 @@ void FullSlamImu::initIMU()
 		imuHandler->setBias(config.accBias, config.gyroBias);
 	}
 
-	/* Firefly initial pose and sensor pose FIXME levami
-	 Eigen::VectorXd T_OS_IMU(7), x0(7);
-	 T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
-	 x0 << 0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5;
-
-
-	 //Firefly bias
-	 Eigen::VectorXd accBias(3);
-	 accBias << 0.1939, 0.0921, -0.2989;
-	 Eigen::VectorXd gyroBias(3);
-	 gyroBias << -0.0199, 0.0077, -0.0099;
-	 imuHandler->setBias(accBias, gyroBias);
-	 //*/
 }
 
 }

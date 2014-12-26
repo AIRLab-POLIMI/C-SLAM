@@ -36,7 +36,6 @@ FullSlamConfig::FullSlamConfig()
 
 	try
 	{
-
 		initROS(n);
 
 		initPose(n);
@@ -68,7 +67,7 @@ void FullSlamConfig::initPose(const ros::NodeHandle& n)
 {
 
 	//Init initial pose
-	vector<double> x0_std;
+	vector<double> x0_std(7);
 	if (!n.getParam("initialPose", x0_std) || x0_std.size() != 7)
 	{
 		throw runtime_error("Incorrect initial pose or no initial pose specified");
@@ -78,7 +77,7 @@ void FullSlamConfig::initPose(const ros::NodeHandle& n)
 	x0 << x0_std[0], x0_std[1], x0_std[2], x0_std[3], x0_std[4], x0_std[5], x0_std[6];
 
 	//Init imu pose wrt odometric center
-	vector<double> T_O_IMU_std;
+	vector<double> T_O_IMU_std(7);
 	if (!n.getParam("T_O_IMU", T_O_IMU_std) || T_O_IMU_std.size() != 7)
 	{
 		throw runtime_error("Incorrect imu pose or no imu pose specified");
@@ -88,7 +87,7 @@ void FullSlamConfig::initPose(const ros::NodeHandle& n)
 	T_O_IMU << T_O_IMU_std[0], T_O_IMU_std[1], T_O_IMU_std[2], T_O_IMU_std[3], T_O_IMU_std[4], T_O_IMU_std[5], T_O_IMU_std[6];
 
 	//Init camera pose wrt odometric center
-	vector<double> T_O_CAMERA_std;
+	vector<double> T_O_CAMERA_std(7);
 	if (!n.getParam("T_O_CAMERA", T_O_CAMERA_std) || T_O_CAMERA_std.size() != 7)
 	{
 		throw runtime_error("Incorrect camera pose or no camera pose specified");
@@ -105,7 +104,7 @@ void FullSlamConfig::initIMU(const ros::NodeHandle& n)
 	ROS_INFO_STREAM(
 				"Accelerometer bias" << (isAccBiasFixed ? "" : " not") << " fixed");
 
-	vector<double> accBias_std;
+	vector<double> accBias_std(3);
 	if (n.getParam("accBias", accBias_std) && accBias_std.size() != 3)
 	{
 		accBias.resize(3);
@@ -121,7 +120,7 @@ void FullSlamConfig::initIMU(const ros::NodeHandle& n)
 	ROS_INFO_STREAM(
 				"Gyroscope bias" << (isGyroBiasFixed ? "" : " not") << " fixed");
 
-	vector<double> gyroBias_std;
+	vector<double> gyroBias_std(3);
 	if (n.getParam("gyroBias", gyroBias_std) && gyroBias_std.size() != 3)
 	{
 		gyroBias.resize(3);
@@ -148,14 +147,14 @@ void FullSlamConfig::initIMU(const ros::NodeHandle& n)
 void FullSlamConfig::initCamera(const ros::NodeHandle& n)
 {
 	//Camera calibration
-	vector<double> K_std;
+	vector<double> K_std(9);
 	if (!n.getParam("K", K_std) || K_std.size() != 9)
 	{
 		throw runtime_error("Incorrect initial pose or no initial pose specified");
 	}
 
-	K.resize(7);
-	K << K_std[0], K_std[1], K_std[2], K_std[3], K_std[4], K_std[5], K_std[6], K_std[7], K_std[8], K_std[9];
+	K.resize(9);
+	K << K_std[0], K_std[1], K_std[2], K_std[3], K_std[4], K_std[5], K_std[6], K_std[7], K_std[8];
 
 	//Set initial scale
 	n.param<double>("initialScale", initialScale, 4.0);

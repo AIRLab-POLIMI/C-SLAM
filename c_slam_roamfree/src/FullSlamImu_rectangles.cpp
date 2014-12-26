@@ -36,28 +36,16 @@ void FullSlamImu_rectangles::run()
 {
 	ros::NodeHandle n("~");
 
-	ros::Rate rate(5);
-
 	while (ros::ok())
 	{
-		//rate.sleep();
-
 		ros::spinOnce();
 
 		if (filter->getWindowLenght() > config.minWindowLenghtSecond
 					&& tracksHandler->getNActiveFeatures()
 								>= config.minActiveFeatures)
 		{
-
-			//filter->getNthOldestPose(0)->setFixed(true);
-
-			double curTs = filter->getNewestPose()->getTimestamp();
-			PoseVertexWrapper_Ptr cur;
-
-			//ROS_INFO("Run estimation");
-			bool ret = filter->estimate(config.iterationN);
-
-			filter->forgetOldNodes(2.5);
+			filter->getOldestPose()->setFixed(true);
+			filter->estimate(config.iterationN);
 		}
 
 		if (filter->getOldestPose())
