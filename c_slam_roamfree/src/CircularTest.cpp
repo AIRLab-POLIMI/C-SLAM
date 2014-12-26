@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 		{
 			publisher.publishTracks(H_WC, t);
 			publisher.publishGroundTruth(H_WC);
-			//publisher.publishGroundTruthLandmark();
+			publisher.publishGroundTruthLandmark();
 			publisher.publishGroundTruthLandmarkPoints();
 		}
 

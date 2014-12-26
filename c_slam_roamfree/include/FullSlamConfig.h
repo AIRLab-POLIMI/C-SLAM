@@ -21,62 +21,63 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef IMUHANDLER_H_
-#define IMUHANDLER_H_
+#ifndef FULLSLAMCONFIG_H_
+#define FULLSLAMCONFIG_H_
 
-#include <ROAMestimation/ROAMestimation.h>
-#include <ROAMimu/IMUIntegralHandler.h>
+#include <string>
+#include <Eigen/Dense>
+#include <ros/ros.h>
 
 namespace roamfree_c_slam
 {
-class ImuHandler
+class FullSlamConfig
 {
 public:
-	ImuHandler(ROAMestimation::FactorGraphFilter* filter, int imu_N, double imu_dt, bool isAccBiasFixed,
-				bool isGyroBiasFixed);
-	void addMeasurement(double za[3], double zw[3], double t);
+	FullSlamConfig();
 
-	inline void setBias(const Eigen::VectorXd& accBias,
-				const Eigen::VectorXd& gyroBias)
-	{
-		this->accBias = accBias;
-		this->gyroBias = gyroBias;
-	}
+	//Ros stuff
+	std::string trackedFrame;
+	std::string imuTopic;
 
-	inline void setSensorframe(const Eigen::VectorXd& T_OS_IMU,
-				const Eigen::VectorXd& x0)
-	{
-		this->T_OS_IMU = T_OS_IMU;
-		this->x0 = x0;
-	}
+	//Initial Pose
+	Eigen::VectorXd x0;
 
-	inline double getPoseRate() const
-	{
-		return 1.0 / (imu_N * imu_dt);
-	}
+	//Sensor relative pose
+	Eigen::VectorXd T_O_IMU;
+	Eigen::VectorXd T_O_CAMERA;
 
-private:
-	void initialize(double t);
-
-private:
-	ROAMestimation::FactorGraphFilter* filter;
-	ROAMimu::IMUIntegralHandler* imu;
-	bool initialized;
-
+	//Imu bias
 	bool isAccBiasFixed;
 	Eigen::VectorXd accBias;
-
 	bool isGyroBiasFixed;
 	Eigen::VectorXd gyroBias;
 
-	Eigen::VectorXd T_OS_IMU;
-	Eigen::VectorXd x0;
-
+	//Imu data
 	int imu_N;
 	double imu_dt;
 
+
+	//Camera calibration
+	Eigen::VectorXd K;
+
+	//Vision Stuff
+	double initialScale;
+	double minWindowLenghtSecond;
+	int minActiveFeatures;
+
+	//Optimization method
+	bool useGaussNewton;
+	int iterationN;
+
+private:
+	void initROS(const ros::NodeHandle& n);
+	void initPose(const ros::NodeHandle& n);
+	void initRoamfree(const ros::NodeHandle& n);
+	void initIMU(const ros::NodeHandle& n);
+	void initCamera(const ros::NodeHandle& n);
 };
 
 }
 
-#endif /* IMUHANDLER_H_ */
+
+#endif /* FULLSLAMCONFIG_H_ */

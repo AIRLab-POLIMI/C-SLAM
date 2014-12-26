@@ -28,21 +28,24 @@ include_directories(include
 		            ${Boost_INCLUDE_DIRS}  
 )
 
+add_library(localization STATIC
+            src/ImuHandler.cpp   
+            src/FullSlamImu.cpp
+	        src/FullSlamConfig.cpp)
+
 add_executable(c_localization
-               src/FullSlamImu.cpp
-	           src/FullSlamImu_FHP.cpp
-	           src/ImuHandler.cpp)
+               src/FullSlamImu_FHP.cpp)
 
 add_executable(c_localization_rectangles
-               src/FullSlamImu.cpp
 	           src/FullSlamImu_rectangles.cpp
-	           src/RectangleHandler.cpp
-	           src/ImuHandler.cpp)
+	           src/RectangleHandler.cpp)
 
 target_link_libraries(c_localization
+                      localization
                       ${catkin_LIBRARIES})
 
 target_link_libraries(c_localization_rectangles
+                      localization
                       ${catkin_LIBRARIES})
 
 add_executable(circular_test

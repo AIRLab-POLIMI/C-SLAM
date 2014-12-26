@@ -31,6 +31,7 @@
 
 #include <string>
 
+#include "FullSlamConfig.h"
 #include "ImuHandler.h"
 
 namespace roamfree_c_slam
@@ -39,7 +40,7 @@ namespace roamfree_c_slam
 class FullSlamImu
 {
 public:
-	FullSlamImu(std::string imuTopic);
+	FullSlamImu(FullSlamConfig& config);
 	virtual ~FullSlamImu();
 	virtual void run() = 0;
 
@@ -53,7 +54,7 @@ private:
 	void initRoamfree();
 
 protected:
-	const int iterationN = 1;
+	FullSlamConfig& config;
 
 protected:
 	ros::NodeHandle n;
@@ -64,9 +65,7 @@ protected:
 
 private:
 	ros::Subscriber imu_sub;
-
-	tf::Transform T_OC_tf; // transformation from robot to camera;
-	tf::TransformBroadcaster pose_tf_br;
+	tf::TransformBroadcaster br;
 
 
 };

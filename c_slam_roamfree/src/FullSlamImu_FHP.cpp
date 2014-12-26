@@ -14,8 +14,8 @@ using namespace ROAMestimation;
 namespace roamfree_c_slam
 {
 
-FullSlamImu_FHP::FullSlamImu_FHP(std::string imuTopic) :
-			FullSlamImu(imuTopic), tracksHandler(NULL)
+FullSlamImu_FHP::FullSlamImu_FHP(FullSlamConfig& config) :
+			FullSlamImu(config), tracksHandler(NULL)
 {
 	//setup the camera
 	initCamera();
@@ -43,13 +43,13 @@ void FullSlamImu_FHP::run()
 
 		ros::spinOnce();
 
-		if (filter->getWindowLenght() > waitWindowLengthSeconds
+		if (filter->getWindowLenght() > config.minWindowLenghtSecond
 					&& tracksHandler->getNActiveFeatures() >= 3)
 		{
 			filter->getNthOldestPose(0)->setFixed(true);
 
 			//ROS_INFO("Run estimation");
-			bool ret = filter->estimate(iterationN);
+			bool ret = filter->estimate(config.iterationN);
 		}
 
 		if (filter->getOldestPose())
@@ -69,7 +69,7 @@ void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2, 2);
 
-	/* compute the center of mass
+	/* compute the center of mass FIXME levami
 	 Eigen::VectorXd z(2);
 
 	 z
@@ -97,18 +97,18 @@ void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 void FullSlamImu_FHP::initCamera()
 {
-	tracksHandler = new ROAMvision::FHPFeatureHandler(FHPInitialDepth);
+	tracksHandler = new ROAMvision::FHPFeatureHandler(config.initialScale);
 	tracksHandler->setTimestampOffsetTreshold(
 				1.0 / 2.0 / imuHandler->getPoseRate());
 
-	//the camera intrinsic calibration matrix
-	Eigen::VectorXd CM(9);
+	//the camera intrinsic calibration matrix FIXME levami
+	/*Eigen::VectorXd CM(9);
 	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
 
 	Eigen::VectorXd T_OC(7);
-	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
+	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;*/
 
-	tracksHandler->init(filter, "Track", T_OC, CM);
+	tracksHandler->init(filter, "Track", config.T_O_CAMERA, config.K);
 }
 
 void FullSlamImu_FHP::publishFeatureMarkers()
@@ -123,7 +123,7 @@ void FullSlamImu_FHP::publishFeatureMarkers()
 	msg.header.frame_id = "/world";
 	msg.type = visualization_msgs::Marker::CUBE_LIST;
 	msg.frame_locked = false;
-	msg.ns = "c_slam_roamfree";
+	msg.ns = "c_slam";
 	msg.id = 0;
 	msg.action = visualization_msgs::Marker::ADD;
 
@@ -162,9 +162,10 @@ void FullSlamImu_FHP::publishFeatureMarkers()
 
 int main(int argc, char *argv[])
 {
-	ros::init(argc, argv, "roamfree_full_slam_imu");
+	ros::init(argc, argv, "c_localization");
 
-	roamfree_c_slam::FullSlamImu_FHP n(argv[1]);
+	roamfree_c_slam::FullSlamConfig config;
+	roamfree_c_slam::FullSlamImu_FHP n(config);
 
 	ROS_INFO("Localization node started");
 	n.run();

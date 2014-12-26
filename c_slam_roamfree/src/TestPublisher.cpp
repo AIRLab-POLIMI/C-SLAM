@@ -70,7 +70,7 @@ void TestPublisher::publishGroundTruthLandmark()
 	msg.type = visualization_msgs::Marker::CUBE_LIST;
 	//msg.lifetime = ros::Duration(0.2);
 	msg.frame_locked = false;
-	msg.ns = "roamfree_markers_gt";
+	msg.ns = "c_slam_gt";
 	msg.id = 1;
 	msg.action = visualization_msgs::Marker::ADD;
 
@@ -110,8 +110,8 @@ void TestPublisher::publishGroundTruthLandmarkPoints()
 	msg.type = visualization_msgs::Marker::SPHERE_LIST;
 	//msg.lifetime = ros::Duration(0.2);
 	msg.frame_locked = false;
-	msg.ns = "roamfree_markers_gt";
-	msg.id = 1;
+	msg.ns = "c_slam_gt";
+	msg.id = 2;
 	msg.action = visualization_msgs::Marker::ADD;
 
 	msg.color.r = 0.0;

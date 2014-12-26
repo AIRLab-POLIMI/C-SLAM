@@ -29,7 +29,7 @@ class FullSlamImu_rectangles : public FullSlamImu
 {
 
 public:
-	FullSlamImu_rectangles(std::string imuTopic);
+	FullSlamImu_rectangles(FullSlamConfig& config);
 	virtual ~FullSlamImu_rectangles();
 	void run();
 
@@ -41,10 +41,8 @@ private:
 	void publishFeatureMarkers();
 
 private:
-	ros::Subscriber tracks_sub;
-
-private:
 	RectangleHandler *tracksHandler;
+	ros::Subscriber tracks_sub;
 
 };
 

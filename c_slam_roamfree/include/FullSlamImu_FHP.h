@@ -20,7 +20,7 @@ class FullSlamImu_FHP : public FullSlamImu
 {
 
 public:
-	FullSlamImu_FHP(std::string imuTopic);
+	FullSlamImu_FHP(FullSlamConfig& config);
 	virtual ~FullSlamImu_FHP();
 	void run();
 
@@ -32,12 +32,7 @@ private:
 	void publishFeatureMarkers();
 
 private:
-	const double waitWindowLengthSeconds = 2.0;
-	const double FHPInitialDepth = 10.0;
-
 	ROAMvision::ImageFeatureHandler *tracksHandler;
-
-private:
 	ros::Subscriber tracks_sub;
 
 };

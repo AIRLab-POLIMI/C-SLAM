@@ -32,8 +32,8 @@ using namespace ROAMestimation;
 namespace roamfree_c_slam
 {
 
-FullSlamImu::FullSlamImu(std::string imuTopic) :
-			filter(NULL), imuHandler(NULL)
+FullSlamImu::FullSlamImu(FullSlamConfig& config) :
+			config(config), filter(NULL), imuHandler(NULL)
 {
 	//setup roamfree
 	initRoamfree();
@@ -42,11 +42,11 @@ FullSlamImu::FullSlamImu(std::string imuTopic) :
 	initIMU();
 
 	//subscribe to sensor topics
-	imu_sub = n.subscribe(imuTopic, 60000, &FullSlamImu::imuCb, this);
+	imu_sub = n.subscribe(config.imuTopic, 60000, &FullSlamImu::imuCb, this);
 
 	//advertise markers topic
 	markers_pub = n.advertise<visualization_msgs::Marker>(
-					"/visualization/features", 1);
+				"/visualization/features", 1);
 
 }
 
@@ -70,10 +70,10 @@ void FullSlamImu::publishPose()
 				tf::Quaternion(camera(4), camera(5), camera(6), camera(3)),
 				tf::Vector3(camera(0), camera(1), camera(2)));
 
-	pose_tf_br.sendTransform(
+	br.sendTransform(
 				tf::StampedTransform(T_WR_tf,
 							ros::Time(cameraPose_ptr->getTimestamp()), "world",
-							"camera_link"));
+							config.trackedFrame));
 
 }
 
@@ -100,19 +100,35 @@ void FullSlamImu::initRoamfree()
 	system("mkdir -p /tmp/roamfree/");
 	system("rm -f /tmp/roamfree/*.log");
 	filter->setDeadReckoning(false);
-	filter->setSolverMethod(LevenbergMarquardt);
+
+	if (config.useGaussNewton)
+	{
+		filter->setSolverMethod(GaussNewton);
+	}
+	else
+	{
+		filter->setSolverMethod(LevenbergMarquardt);
+	}
 }
 
 void FullSlamImu::initIMU()
 {
 	//setup the handlers
-	imuHandler = new ImuHandler(filter, false, false);
+	imuHandler = new ImuHandler(filter, config.imu_N, config.imu_dt, config.isAccBiasFixed,
+				config.isGyroBiasFixed);
 
-	/* Firefly initial pose and sensor pose
+	imuHandler->setSensorframe(config.T_O_IMU, config.x0);
+
+	if (config.accBias.size() == 3 && config.gyroBias.size() == 3)
+	{
+		imuHandler->setBias(config.accBias, config.gyroBias);
+	}
+
+	/* Firefly initial pose and sensor pose FIXME levami
 	 Eigen::VectorXd T_OS_IMU(7), x0(7);
 	 T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
 	 x0 << 0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5;
-	 imuHandler->setSensorframe(T_OS_IMU, x0);
+
 
 	 //Firefly bias
 	 Eigen::VectorXd accBias(3);

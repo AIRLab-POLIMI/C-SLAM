@@ -15,8 +15,8 @@ using namespace std;
 namespace roamfree_c_slam
 {
 
-FullSlamImu_rectangles::FullSlamImu_rectangles(std::string imuTopic) :
-			FullSlamImu(imuTopic), tracksHandler(NULL)
+FullSlamImu_rectangles::FullSlamImu_rectangles(FullSlamConfig& config) :
+			FullSlamImu(config), tracksHandler(NULL)
 {
 	//setup the camera
 	initCamera();
@@ -44,8 +44,8 @@ void FullSlamImu_rectangles::run()
 
 		ros::spinOnce();
 
-		if (filter->getWindowLenght() > 1.0
-					&& tracksHandler->getNActiveFeatures() >= 1)
+		if (filter->getWindowLenght() > config.minWindowLenghtSecond
+					&& tracksHandler->getNActiveFeatures() >= config.minActiveFeatures)
 		{
 
 			//filter->getNthOldestPose(0)->setFixed(true);
@@ -54,7 +54,7 @@ void FullSlamImu_rectangles::run()
 			PoseVertexWrapper_Ptr cur;
 
 			//ROS_INFO("Run estimation");
-			bool ret = filter->estimate(50);
+			bool ret = filter->estimate(config.iterationN);
 
 			filter->forgetOldNodes(2.5);
 		}
@@ -87,17 +87,10 @@ void FullSlamImu_rectangles::tracksCb(const c_slam_msgs::TrackedObject& msg)
 void FullSlamImu_rectangles::initCamera()
 {
 
-	tracksHandler = new RectangleHandler(2.0);
+	tracksHandler = new RectangleHandler(config.initialScale);
 	tracksHandler->setTimestampOffsetTreshold(1.0 / 5.0 / 2.0);
 
-	//the camera intrinsic calibration matrix
-	Eigen::VectorXd CM(9);
-	CM << 565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0;
-
-	Eigen::VectorXd T_OC(7);
-	T_OC << 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0;
-
-	tracksHandler->init(filter, "Track", T_OC, CM);
+	tracksHandler->init(filter, "Track", config.T_O_CAMERA, config.K);
 }
 
 void FullSlamImu_rectangles::publishFeatureMarkers()
@@ -114,9 +107,8 @@ void FullSlamImu_rectangles::publishFeatureMarkers()
 		msg.header.stamp = ros::Time::now();
 		msg.header.frame_id = "/world";
 		msg.type = visualization_msgs::Marker::CUBE;
-		//msg.lifetime = ros::Duration(0.2);
 		msg.frame_locked = false;
-		msg.ns = "roamfree_visualodometry";
+		msg.ns = "c_slam";
 		msg.id = k;
 		msg.action = visualization_msgs::Marker::ADD;
 
@@ -157,9 +149,11 @@ void FullSlamImu_rectangles::publishFeatureMarkers()
 
 int main(int argc, char *argv[])
 {
-	ros::init(argc, argv, "roamfree_full_slam_imu");
+	ros::init(argc, argv, "c_localization");
 
-	roamfree_c_slam::FullSlamImu_rectangles n(argv[1]);
+	roamfree_c_slam::FullSlamConfig config;
+
+	roamfree_c_slam::FullSlamImu_rectangles n(config);
 
 	ROS_INFO("Localization node started");
 	n.run();

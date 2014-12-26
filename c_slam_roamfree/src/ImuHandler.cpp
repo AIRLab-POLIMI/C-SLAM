@@ -31,28 +31,16 @@ using namespace ROAMestimation;
 namespace roamfree_c_slam
 {
 
-ImuHandler::ImuHandler(FactorGraphFilter* filter, bool isAccBiasFixed,
-			bool isGyroBiasFixed) :
-			filter(filter), isAccBiasFixed(isAccBiasFixed), accBias(3),
+ImuHandler::ImuHandler(FactorGraphFilter* filter, int imu_N, double imu_dt,
+			bool isAccBiasFixed, bool isGyroBiasFixed) :
+			filter(filter), imu_N(imu_N), imu_dt(imu_dt),
+			isAccBiasFixed(isAccBiasFixed), accBias(3),
 			isGyroBiasFixed(isGyroBiasFixed), gyroBias(3), T_OS_IMU(7), x0(7)
 {
-
-	ros::NodeHandle _node("~");
-
-	if (!_node.getParam("IMU_N_integration_steps", imu_N))
-	{
-		ROS_FATAL("parameter IMU_N_integration_steps undefined");
-	}
-
-	if (!_node.getParam("IMU_nominal_period", imu_dt))
-	{
-		ROS_FATAL("parameter IMU_nominal_period undefined");
-	}
-
 	initialized = false;
 
 	//imu centric by default
-	T_OS_IMU <<  0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
+	T_OS_IMU << 0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5;
 	x0 << 0.0, -1.0, 0.0, 0.5, -0.5, 0.5, -0.5;
 
 	//zero bias by default
@@ -62,7 +50,7 @@ ImuHandler::ImuHandler(FactorGraphFilter* filter, bool isAccBiasFixed,
 	//setup roamfree imu integral handler
 	imu = new ROAMimu::IMUIntegralHandler(imu_N, imu_dt); // instantiate the new handler
 
-	imu->getSensorNoises() = 1e-4*Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
+	imu->getSensorNoises() = 1e-4 * Eigen::Matrix<double, 6, 6>::Identity(); // init the sensor noises
 }
 
 void ImuHandler::addMeasurement(double za[3], double zw[3], double t)
