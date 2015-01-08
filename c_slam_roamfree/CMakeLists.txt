@@ -40,11 +40,19 @@ add_executable(c_localization_rectangles
 	           src/FullSlamImu_rectangles.cpp
 	           src/RectangleHandler.cpp)
 
+add_executable(c_localization_anchoredrectangles
+	           src/FullSlamImu_anchoredrectangles.cpp
+	           src/AnchoredRectangleHandler.cpp)
+
 target_link_libraries(c_localization
                       localization
                       ${catkin_LIBRARIES})
 
 target_link_libraries(c_localization_rectangles
+                      localization
+                      ${catkin_LIBRARIES})
+
+target_link_libraries(c_localization_anchoredrectangles
                       localization
                       ${catkin_LIBRARIES})
 
