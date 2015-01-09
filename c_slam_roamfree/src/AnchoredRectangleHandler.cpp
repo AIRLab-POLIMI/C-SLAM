@@ -180,7 +180,9 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 	FOqhat << FOq_e.w(), FOq_e.x(), FOq_e.y(), FOq_e.z();
 
 	// now initialize lower left corner homogeneous point
-	FOhphat << z[0], z[1], 1 / lambda;
+	FOhphat << z[0], z[1], 1.0;
+	FOhphat = _K.inverse() * FOhphat;
+	FOhphat(2) = 1.0 / lambda; // 1/d distance of the plane parallel to the image plane on which features are initialized.
 
 	//Compute frame transaltion
 	Eigen::Matrix3d omega = _K.transpose().inverse() * _K.inverse();
@@ -241,6 +243,8 @@ bool AnchoredRectangleHandler::getFeaturePoseInWorldFrame(long int id,
 
 	c.head(3) = Ow + R_WO.toRotationMatrix() * t_OC;
 	c.tail(4) << R_WO.w(), R_WO.x(), R_WO.y(), R_WO.z();
+
+	cout << c.transpose() << endl;
 
 	return true;
 }
