@@ -25,7 +25,7 @@
 		<rosparam param="K">[565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0]</rosparam>
 
 		<!-- Vision Stuff -->
-		<param name="initialScale" value="0.2" />
+		<param name="initialScale" value="2" />
 		<param name="minWindowLenghtSecond" value="2.0" />
 		<param name="minActiveFeatures" value="1" />
 

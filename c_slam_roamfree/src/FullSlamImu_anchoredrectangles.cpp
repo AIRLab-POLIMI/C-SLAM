@@ -116,6 +116,9 @@ void FullSlamImu_anchoredrectangles::publishFeatureMarkers()
 		ret = tracksHandler->getFeatureDimensions(ids[k], dim);
 		assert(ret);
 
+		cout << "Feature " << ids[k] << " dim (" << dim(0) << "," << dim(1) << ")" << endl;
+		cout << "Feature " << ids[k] << " pos (" << fw(0) << "," << fw(1) << "," << fw(2) << ")" << endl;
+
 		msg.pose.position.x = fw(0);
 		msg.pose.position.y = fw(1);
 		msg.pose.position.z = fw(2);
