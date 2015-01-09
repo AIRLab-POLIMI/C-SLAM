@@ -30,8 +30,8 @@
 		<param name="minActiveFeatures" value="1" />
 
 		<!-- Optimization method -->
-		<param name="useGaussNewton" value="False" />
-		<param name="iterationN" value="0" />
+		<param name="useGaussNewton" value="True" />
+		<param name="iterationN" value="50" />
 	</node>
 
 	<node name="circular_test" pkg="c_slam_roamfree" type="circular_test"

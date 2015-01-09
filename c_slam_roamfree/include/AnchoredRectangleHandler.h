@@ -75,6 +75,7 @@ protected:
 	double _timestampOffsetTreshold;
 
 	Eigen::Matrix3d _K;
+	double _fx, _fy;
 
 };
 

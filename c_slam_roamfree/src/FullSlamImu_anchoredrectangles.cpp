@@ -36,8 +36,12 @@ void FullSlamImu_anchoredrectangles::run()
 {
 	ros::NodeHandle n("~");
 
+	ros::Rate r(1);
+
 	while (ros::ok())
 	{
+		//r.sleep();
+
 		ros::spinOnce();
 
 		if (filter->getWindowLenght() > config.minWindowLenghtSecond
@@ -45,6 +49,8 @@ void FullSlamImu_anchoredrectangles::run()
 								>= config.minActiveFeatures)
 		{
 			filter->getOldestPose()->setFixed(true);
+
+			cerr << "Estimation.." << endl;
 			filter->estimate(config.iterationN);
 		}
 
@@ -116,8 +122,10 @@ void FullSlamImu_anchoredrectangles::publishFeatureMarkers()
 		ret = tracksHandler->getFeatureDimensions(ids[k], dim);
 		assert(ret);
 
+		/* debug output
 		cout << "Feature " << ids[k] << " dim (" << dim(0) << "," << dim(1) << ")" << endl;
 		cout << "Feature " << ids[k] << " pos (" << fw(0) << "," << fw(1) << "," << fw(2) << ")" << endl;
+		*/
 
 		msg.pose.position.x = fw(0);
 		msg.pose.position.y = fw(1);

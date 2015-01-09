@@ -24,15 +24,13 @@ using namespace std;
 using namespace ROAMestimation;
 
 AnchoredRectangleHandler::AnchoredRectangleHandler(double initialDepth) :
-			_lambda(initialDepth)
-{
+		_lambda(initialDepth) {
 	_timestampOffsetTreshold = 0;
 	_filter = NULL;
 }
 
 bool AnchoredRectangleHandler::init(FactorGraphFilter* f, const string &name,
-			const Eigen::VectorXd & T_OS, const Eigen::VectorXd & K)
-{
+		const Eigen::VectorXd & T_OS, const Eigen::VectorXd & K) {
 
 	_filter = f;
 	_sensorName = name;
@@ -50,60 +48,55 @@ bool AnchoredRectangleHandler::init(FactorGraphFilter* f, const string &name,
 	_filter->addConstantParameter(Matrix3D, "Camera_CM", K, true);
 
 	Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > KasMatrix(
-				K.data());
+			K.data());
 	_K = KasMatrix;
+
+	_fx = _K(0, 0);
+	_fy = _K(1, 1);
 
 	return true;
 
 }
 
 bool AnchoredRectangleHandler::addFeatureObservation(long int id, double t,
-			const Eigen::VectorXd &z, const Eigen::MatrixXd &cov)
-{
+		const Eigen::VectorXd &z, const Eigen::MatrixXd &cov) {
 
 	const string &sensor = getFeatureSensor(id);
 
 	// there must already exist a pose
 	PoseVertexWrapper_Ptr cur_frame = _filter->getNearestPoseByTimestamp(t);
-	if (!cur_frame)
-	{
+	if (!cur_frame) {
 		return false;
 	}
 
 	// time of the message must match the vertex found
-	if (fabs(t - cur_frame->getTimestamp()) > _timestampOffsetTreshold)
-	{
+	if (fabs(t - cur_frame->getTimestamp()) > _timestampOffsetTreshold) {
 		return false;
 	}
 
-	if (_features.find(id) == _features.end())
-	{
+	if (_features.find(id) == _features.end()) {
 		// we need to add a new sensor
 		initFeature(sensor, z, cur_frame, id);
 
-	}
-	else
-	{ // first time anchorFrame = curFrame so we can't add the edge
+	} else { // first time anchorFrame = curFrame so we can't add the edge
 		RectangleDescriptor &d = _features[id];
 
 		// only one reading per frame
-		if (d.lastFrame && cur_frame->sameVertexAs(d.lastFrame))
-		{
+		if (d.lastFrame && cur_frame->sameVertexAs(d.lastFrame)) {
 			return false;
 		}
 		d.lastFrame = cur_frame;
 
 		MeasurementEdgeWrapper_Ptr ret = _filter->addMeasurement(sensor, t, z,
-					cov, cur_frame);
+				cov, cur_frame);
 	}
 
 	return true;
 }
 
 bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
-			const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr av,
-			long int id)
-{
+		const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr av,
+		long int id) {
 
 	const Eigen::VectorXd &anchor_frame = av->getEstimate();
 	Eigen::VectorXd dim0(2), f0(7), foq0(4), fohp0(3);
@@ -115,15 +108,27 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
 	_filter->shareParameter("Camera_CM", sensor + "_CM");
 
 	_filter->addConstantParameter(Euclidean2D, sensor + "_Dim", 0.0, dim0,
-				false);
+			false);
 
 	_filter->poseVertexAsParameter(av, sensor + "_F");
 
 	_filter->addConstantParameter(Quaternion, sensor + "_FOq", 0.0, foq0,
-				false);
+			false);
 
 	_filter->addConstantParameter(Euclidean3D, sensor + "_FOhp", 0.0, fohp0,
-				false);
+			false);
+
+	// prior on homogeneous point
+
+	const double sigma_pixel = 1;
+
+	Eigen::MatrixXd prior_cov(3, 3);
+
+	prior_cov << sigma_pixel / pow(_fx, 2), 0, 0, 0, sigma_pixel / pow(_fy, 2), 0, 0, 0, pow(
+			_lambda / 3.0, 2);
+
+	_filter->addPriorOnConstantParameter(Euclidean3DPrior, sensor + "_FOhp",
+			fohp0, prior_cov);
 
 	//add to current track list
 	RectangleDescriptor &d = _features[id];
@@ -139,10 +144,9 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
 }
 
 void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
-			double lambda, const Eigen::VectorXd& z,
-			Eigen::VectorXd& shapeParamshat, Eigen::VectorXd& FOhphat,
-			Eigen::VectorXd &FOqhat)
-{
+		double lambda, const Eigen::VectorXd& z,
+		Eigen::VectorXd& shapeParamshat, Eigen::VectorXd& FOhphat,
+		Eigen::VectorXd &FOqhat) {
 
 	//Get the points
 	Eigen::Vector3d m1(z[0], z[1], 1);
@@ -155,9 +159,9 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 
 	//compute normals
 	double c2 = (m1.cross(m3).transpose() * m4)[0]
-				/ (m2.cross(m3).transpose() * m4)[0];
+			/ (m2.cross(m3).transpose() * m4)[0];
 	double c3 = (m1.cross(m3).transpose() * m2)[0]
-				/ (m4.cross(m3).transpose() * m2)[0];
+			/ (m4.cross(m3).transpose() * m2)[0];
 
 	Eigen::Vector3d n2 = c2 * m2 - m1;
 	Eigen::Vector3d n3 = c3 * m4 - m1;
@@ -187,8 +191,8 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 	//Compute frame transaltion
 	Eigen::Matrix3d omega = _K.transpose().inverse() * _K.inverse();
 	double ff = sqrt(
-				(n2.transpose() * omega * n2)[0]
-							/ (n3.transpose() * omega * n3)[0]);
+			(n2.transpose() * omega * n2)[0]
+					/ (n3.transpose() * omega * n3)[0]);
 
 	//compute shape parameters
 	Eigen::Vector3d X = _K * R1;
@@ -202,18 +206,16 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 }
 
 bool AnchoredRectangleHandler::getFeaturePoseInWorldFrame(long int id,
-			Eigen::VectorXd& c) const
-{
+		Eigen::VectorXd& c) const {
 
 	const string &sensor = getFeatureSensor(id);
 
 	ParameterWrapper_Ptr f_par = _filter->getParameterByName(sensor + "_F"); // anchor frame
 	ParameterWrapper_Ptr fohp_par = _filter->getParameterByName(
-				sensor + "_FOhp"); // anchor frame
+			sensor + "_FOhp"); // anchor frame
 	ParameterWrapper_Ptr foq_par = _filter->getParameterByName(sensor + "_FOq"); // anchor frame
 
-	if (!f_par || !fohp_par || !foq_par)
-	{
+	if (!f_par || !fohp_par || !foq_par) {
 		return false;
 	}
 
@@ -244,22 +246,18 @@ bool AnchoredRectangleHandler::getFeaturePoseInWorldFrame(long int id,
 	c.head(3) = Ow + R_WO.toRotationMatrix() * t_OC;
 	c.tail(4) << R_WO.w(), R_WO.x(), R_WO.y(), R_WO.z();
 
-	cout << c.transpose() << endl;
-
 	return true;
 }
 
 bool AnchoredRectangleHandler::getFeatureDimensions(long int id,
-			Eigen::VectorXd& dim) const
-{
+		Eigen::VectorXd& dim) const {
 	const string &sensor = getFeatureSensor(id);
 
 	ParameterWrapper_Ptr dim_par = _filter->getParameterByName(sensor + "_Dim"); // dimensions
 	ParameterWrapper_Ptr fohp_par = _filter->getParameterByName(
-				sensor + "_FOhp"); // we need also inverse depth for computing actual dimensions
+			sensor + "_FOhp"); // we need also inverse depth for computing actual dimensions
 
-	if (!dim_par)
-	{
+	if (!dim_par) {
 		return false;
 	}
 
@@ -271,44 +269,37 @@ bool AnchoredRectangleHandler::getFeatureDimensions(long int id,
 	return true;
 }
 
-long int AnchoredRectangleHandler::getNActiveFeatures() const
-{
+long int AnchoredRectangleHandler::getNActiveFeatures() const {
 	long int N = 0;
 
-	for (auto it = _features.begin(); it != _features.end(); ++it)
-	{
+	for (auto it = _features.begin(); it != _features.end(); ++it) {
 		N++;
 	}
 
 	return N;
 }
 
-bool AnchoredRectangleHandler::getFeaturesIds(std::vector<long int>& to) const
-{
+bool AnchoredRectangleHandler::getFeaturesIds(std::vector<long int>& to) const {
 	to.clear();
 
-	for (auto it = _features.begin(); it != _features.end(); ++it)
-	{
+	for (auto it = _features.begin(); it != _features.end(); ++it) {
 		to.push_back(it->first);
 	}
 
 	return true;
 }
 
-string AnchoredRectangleHandler::getFeatureSensor(long int id) const
-{
+string AnchoredRectangleHandler::getFeatureSensor(long int id) const {
 	stringstream s;
 	s << _sensorName << "_" << id;
 	return s.str();
 }
 
-void AnchoredRectangleHandler::setTimestampOffsetTreshold(double dt)
-{
+void AnchoredRectangleHandler::setTimestampOffsetTreshold(double dt) {
 	_timestampOffsetTreshold = dt;
 }
 
-AnchoredRectangleHandler::~AnchoredRectangleHandler()
-{
+AnchoredRectangleHandler::~AnchoredRectangleHandler() {
 
 }
 
