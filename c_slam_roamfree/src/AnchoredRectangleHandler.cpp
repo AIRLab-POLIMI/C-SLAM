@@ -27,6 +27,8 @@ AnchoredRectangleHandler::AnchoredRectangleHandler(double initialDepth) :
 		_lambda(initialDepth) {
 	_timestampOffsetTreshold = 0;
 	_filter = NULL;
+	_fx = 1;
+	_fy = 1;
 }
 
 bool AnchoredRectangleHandler::init(FactorGraphFilter* f, const string &name,
@@ -201,7 +203,7 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 	double w = ((X.transpose() * X).inverse() * X.transpose() * Y)[0];
 
 	//Write the results
-	shapeParamshat << ff, w * lambda;
+	shapeParamshat << ff, w / lambda;
 
 }
 
