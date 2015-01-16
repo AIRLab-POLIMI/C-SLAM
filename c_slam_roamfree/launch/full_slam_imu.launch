@@ -1,3 +1,6 @@
+<?xml version="1.0"?>
+
+<!-- Launch file to run FHP visual slam test -->
 <launch>
 
 	<param name="use_sim_time" value="False" />

@@ -51,6 +51,9 @@ void BaseLogic::handleImu(const sensor_msgs::Imu& imu)
 
 	tf::Quaternion quaternion(x, y, z, w);
 	tf::StampedTransform transform;
+	ros::Time now = ros::Time(0);
+	tfListener.waitForTransform(imu.header.frame_id, camera_frame_id, now,
+				ros::Duration(1.0));
 	tfListener.lookupTransform(imu.header.frame_id, camera_frame_id,
 				ros::Time(0), transform);
 	quaternion *= transform.getRotation();

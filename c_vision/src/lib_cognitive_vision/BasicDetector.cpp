@@ -61,9 +61,9 @@ void BasicDetector::deleteDetections()
 	}
 }
 
-void BasicDetector::detectLines(Mat& image, const Mat& mask)
+void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
 {
-	lineDetector.detect(image, roll, mask);
+	lineDetector.detect(image, roll, mask, showCanny);
 	verticalLines = lineDetector.getVerticalLines();
 	horizontalLines = lineDetector.getHorizontalLines();
 }

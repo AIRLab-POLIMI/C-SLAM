@@ -53,7 +53,7 @@ public:
 	virtual ~BasicDetector();
 
 protected:
-	void detectLines(cv::Mat& image, const cv::Mat& mask = cv::Mat());
+	void detectLines(cv::Mat& image, const cv::Mat& mask = cv::Mat(), bool showCanny = true);
 	void detectQuadrilaterals(bool skipCheck = false);
 
 private:

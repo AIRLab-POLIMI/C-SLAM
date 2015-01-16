@@ -1,3 +1,6 @@
+<?xml version="1.0"?>
+
+<!-- Launch file for ardrone quadrotor -->
 <launch>
 	<!-- Launches the AR.Drone driver -->
 	<node name="ardrone_driver" pkg="ardrone_autonomy" type="ardrone_driver" output="screen" clear_params="true">

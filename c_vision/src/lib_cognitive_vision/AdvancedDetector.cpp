@@ -38,7 +38,7 @@ void AdvancedDetector::detect(Mat& image, Mat& mask)
 	cvtColor(image, grayFrame, CV_BGR2GRAY);
 
 	//detect lines
-	detectLines(grayFrame, mask);
+	detectLines(grayFrame, mask, false);
 
 	//detect quadrilaterals and poles
 	detectQuadrilaterals(true);
