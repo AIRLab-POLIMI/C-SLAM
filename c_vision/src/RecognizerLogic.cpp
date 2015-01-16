@@ -44,8 +44,6 @@ RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&RecognizerLogic::handleCamera, this);
 	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack, this);
-
-	namedWindow("rectified");
 }
 
 void RecognizerLogic::handleCamera(const ImageConstPtr& msg,
@@ -69,7 +67,7 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
 		classify(cameraModel, roi);
-		display(objectImage);
+		//display(objectImage);
 	}
 	catch (cv_bridge::Exception& e)
 	{
@@ -101,94 +99,6 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 
 	classificator.labelFeatures();
 
-	rectify(classificator, cameraModel, roi);
-
-}
-
-void RecognizerLogic::rectify(ObjectClassificator& classificator,
-			PinholeCameraModel& cameraModel, Rect& roi)
-{
-	const vector<pair<vector<Point>, string> >& features =
-				classificator.getGoodFeatures();
-
-	vector<vector<Point> > rectifiedvector;
-	Point offset(roi.x, roi.y);
-
-	for (vector<pair<vector<Point>, string> >::const_iterator it =
-				features.begin(); it != features.end(); ++it)
-	{
-
-		if (it->second != "Handle")
-		{
-			const vector<Point>& quadrilateral = it->first;
-
-			//compute four image vetices
-			const Point& x = quadrilateral[0] + offset;
-			const Point& y = quadrilateral[1] + offset;
-			const Point& z = quadrilateral[2] + offset;
-			const Point& w = quadrilateral[3] + offset;
-
-			//stack vertices in a vector
-			vector<Point2f> imagePoints;
-			imagePoints.push_back(x);
-			imagePoints.push_back(y);
-			imagePoints.push_back(z);
-			imagePoints.push_back(w);
-
-			//Compute 4 lines
-			Vec3d h1, h2, v1, v2;
-			metric_rectification::findLine(x, y, h1);
-			metric_rectification::findLine(z, w, h2);
-			metric_rectification::findLine(x, w, v1);
-			metric_rectification::findLine(y, z, v2);
-
-			//compute vanishing points
-			Vec3d van1 = h1.cross(h2);
-			van1 = van1 / norm(van1);
-			Vec3d van2 = v1.cross(v2);
-			van2 = van2 / norm(van2);
-
-			//rectify points
-			Mat H = metric_rectification::metricRectify(
-						Mat(cameraModel.fullIntrinsicMatrix()), van1, van2);
-
-			vector<Point2f> rectified;
-
-			perspectiveTransform(imagePoints, rectified, H);
-
-			//find rotation, translation and scale
-			Point2f originP = rectified[0];
-			Point2f verticalP = rectified[3];
-			Vec3d origin(originP.x, originP.y, 1);
-			Vec3d vertical(verticalP.x, verticalP.y, 1);
-
-			Mat H2 = metric_rectification::getScaleTranslationAndRotation(
-						origin, vertical, 210);
-
-			vector<Point2f> rotatedAndScaled;
-
-			perspectiveTransform(rectified, rotatedAndScaled, H2);
-
-
-			//stack points to draw
-			vector<Point> newVec;
-
-			for (int i = 0; i < rotatedAndScaled.size(); i++)
-			{
-				newVec.push_back(rotatedAndScaled[i]);
-			}
-
-			rectifiedvector.push_back(newVec);
-		}
-	}
-
-	Mat rectifiedFrame(300, 300, CV_8UC3);
-
-	rectifiedFrame.setTo(Scalar(0, 0, 0));
-
-	drawContours(rectifiedFrame, rectifiedvector, -1, Scalar(0, 255, 0));
-
-	imshow("rectified", rectifiedFrame);
 }
 
 void RecognizerLogic::display(Mat& image)

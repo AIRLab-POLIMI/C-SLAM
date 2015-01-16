@@ -30,14 +30,16 @@
 using namespace std;
 using namespace cv;
 
-LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam& filterP) :
+LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP,
+			LFilterParam& filterP) :
 			cannyP(cannyP), houghP(houghP), filterP(filterP), viewer("Canny")
 {
 	horizontalLines = NULL;
 	verticalLines = NULL;
 }
 
-void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
+void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
+			bool showCanny)
 {
 	Mat tmp, canny;
 
@@ -47,7 +49,7 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 
 	Canny(input, tmp, low_thres, high_thres, cannyP.apertureSize, true);
 
-	if(mask.empty())
+	if (mask.empty())
 	{
 		canny = tmp;
 	}
@@ -67,10 +69,13 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 	verticalLines = filter.getVerticalLines();
 	horizontalLines = filter.getHorizontalLines();
 
-	Mat colored;
-	cvtColor(canny, colored, CV_GRAY2BGR);
-	viewer.setHorizontalLines(horizontalLines);
-	viewer.setVerticalLines(verticalLines);
-	viewer.display(colored);
+	if (showCanny)
+	{
+		Mat colored;
+		cvtColor(canny, colored, CV_GRAY2BGR);
+		viewer.setHorizontalLines(horizontalLines);
+		viewer.setVerticalLines(verticalLines);
+		viewer.display(colored);
+	}
 
 }

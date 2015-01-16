@@ -34,7 +34,7 @@ class LineDetector
 {
 public:
 	LineDetector(CannyParam& cannyP, HoughParam& houghP, LFilterParam& filterP);
-	void detect(cv::Mat& input, double roll, const cv::Mat& mask = cv::Mat());
+	void detect(cv::Mat& input, double roll, const cv::Mat& mask = cv::Mat(), bool showCanny = true);
 
 	std::vector<cv::Vec4i>* getVerticalLines()
 	{
