@@ -26,7 +26,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "MetricRectification.h"
+#include <c_slam_msgs/NamedPolygon.h>
 
 using namespace ros;
 using namespace sensor_msgs;
@@ -43,7 +43,9 @@ RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&RecognizerLogic::handleCamera, this);
-	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack, this);
+	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack,
+				this);
+	publisher = n.advertise<c_slam_msgs::NamedPolygon>("objects", 10);
 }
 
 void RecognizerLogic::handleCamera(const ImageConstPtr& msg,
@@ -98,6 +100,10 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 	callClassificationService(serviceCall);
 
 	classificator.labelFeatures();
+	const vector<pair<vector<Point>, string> >& features =
+				classificator.getGoodFeatures();
+
+	sendFeatures(features);
 
 }
 
@@ -129,8 +135,8 @@ void RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,
 	cv_ptr_color = toCvCopy(img, enc::BGR8);
 }
 
-void RecognizerLogic::getRoi(const c_slam_msgs::TrackedObject& track, Mat& input,
-			Rect& roi, Mat& image, Mat& mask)
+void RecognizerLogic::getRoi(const c_slam_msgs::TrackedObject& track,
+			Mat& input, Rect& roi, Mat& image, Mat& mask)
 {
 	vector<Point> polygon;
 
