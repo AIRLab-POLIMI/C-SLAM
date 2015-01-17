@@ -39,6 +39,9 @@ struct CannyParam
 {
 	double alpha;
 	int apertureSize;
+	int low;
+	int high;
+	int blur;
 };
 
 struct HoughParam

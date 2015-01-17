@@ -62,14 +62,18 @@ void ParameterServer::updateParameters(const ros::TimerEvent& event)
 	n.getParamCached("classifier/threshold", classifier.threshold);
 
 	//update line filter parameters
-	n.getParamCached("filter/maxDeltaHorizontal", lineFilter.maxDeltaHorizontal);
+	n.getParamCached("filter/maxDeltaHorizontal",
+				lineFilter.maxDeltaHorizontal);
 	n.getParamCached("filter/maxDeltaVertical", lineFilter.maxDeltaVertical);
 }
 
 void ParameterServer::getCanny()
 {
 	if (n.getParamCached("canny/alpha", canny.alpha)
-				&& n.getParamCached("canny/apertureSize", canny.apertureSize))
+				&& n.getParamCached("canny/apertureSize", canny.apertureSize)
+				&& n.getParamCached("canny/low", canny.low)
+				&& n.getParamCached("canny/high", canny.high)
+				&& n.getParamCached("canny/blur", canny.blur))
 		ROS_INFO("canny parameters setted");
 	else
 		ROS_WARN("canny parameters not setted");
@@ -114,9 +118,11 @@ void ParameterServer::getCluster()
 
 void ParameterServer::getLFilter()
 {
-	if (n.getParamCached("filter/maxDeltaHorizontal", lineFilter.maxDeltaHorizontal)
-					&& n.getParamCached("filter/maxDeltaVertical", lineFilter.maxDeltaVertical))
-			ROS_INFO("Line Filter parameters setted");
-		else
-			ROS_WARN("Line Filter parameters not setted");
+	if (n.getParamCached("filter/maxDeltaHorizontal",
+				lineFilter.maxDeltaHorizontal)
+				&& n.getParamCached("filter/maxDeltaVertical",
+							lineFilter.maxDeltaVertical))
+		ROS_INFO("Line Filter parameters setted");
+	else
+		ROS_WARN("Line Filter parameters not setted");
 }

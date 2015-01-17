@@ -27,6 +27,8 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <iostream>
+
 using namespace std;
 using namespace cv;
 
@@ -41,13 +43,16 @@ LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP,
 void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 			bool showCanny)
 {
-	Mat tmp, canny;
+	Mat tmp, blurred, canny;
 
-	double high_thres = threshold(input, tmp, 0, 255,
-				CV_THRESH_BINARY + CV_THRESH_OTSU);
-	double low_thres = high_thres * cannyP.alpha;
+	double high_thres = cannyP.high;/*threshold(input, tmp, 0, 255,
+				CV_THRESH_BINARY + CV_THRESH_OTSU);*/
+	double low_thres = cannyP.low;//high_thres * cannyP.alpha;
 
-	Canny(input, tmp, low_thres, high_thres, cannyP.apertureSize, true);
+	//cout << "High: " << high_thres << " Low: " << low_thres << endl;
+
+	blur(input, blurred, Size(cannyP.blur, cannyP.blur));
+	Canny(blurred, tmp, low_thres, high_thres, cannyP.apertureSize, true);
 
 	if (mask.empty())
 	{

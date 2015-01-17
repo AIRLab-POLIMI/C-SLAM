@@ -28,10 +28,14 @@ include_directories(include
 		            ${Boost_INCLUDE_DIRS}  
 )
 
+#Build localization library
+
 add_library(localization STATIC
             src/ImuHandler.cpp   
             src/FullSlamImu.cpp
 	        src/FullSlamConfig.cpp)
+
+#Build localization executables
 
 add_executable(c_localization
                src/FullSlamImu_FHP.cpp)
@@ -44,18 +48,6 @@ add_executable(c_localization_anchoredrectangles
 	           src/FullSlamImu_anchoredrectangles.cpp
 	           src/AnchoredRectangleHandler.cpp)
 
-target_link_libraries(c_localization
-                      localization
-                      ${catkin_LIBRARIES})
-
-target_link_libraries(c_localization_rectangles
-                      localization
-                      ${catkin_LIBRARIES})
-
-target_link_libraries(c_localization_anchoredrectangles
-                      localization
-                      ${catkin_LIBRARIES})
-
 add_executable(circular_test
                src/TestPublisher.cpp
                src/CircularTest.cpp)
@@ -67,6 +59,19 @@ add_executable(firefly_test
 add_executable(displayer
                src/Displayer.cpp)               
 
+#Link libraries
+
+target_link_libraries(c_localization
+                      localization
+                      ${catkin_LIBRARIES})
+
+target_link_libraries(c_localization_rectangles
+                      localization
+                      ${catkin_LIBRARIES})
+
+target_link_libraries(c_localization_anchoredrectangles
+                      localization
+                      ${catkin_LIBRARIES})
 target_link_libraries(circular_test ${catkin_LIBRARIES})
 target_link_libraries(firefly_test ${catkin_LIBRARIES})
 target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
@@ -74,6 +79,8 @@ target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_dependencies(c_localization ${catkin_EXPORTED_TARGETS})
 add_dependencies(c_localization_rectangles ${catkin_EXPORTED_TARGETS})
+add_dependencies(c_localization_anchoredrectangles ${catkin_EXPORTED_TARGETS})
 add_dependencies(circular_test ${catkin_EXPORTED_TARGETS})
+add_dependencies(firefly_test ${catkin_EXPORTED_TARGETS})
 add_dependencies(displayer ${catkin_EXPORTED_TARGETS})
 

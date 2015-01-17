@@ -24,13 +24,16 @@
 	    <!-- canny params -->
 		<param name="canny/alpha" value="0.2" />
 		<param name="canny/apertureSize" value="3" />
+		<param name="canny/low" value="15" />    <!-- 10 -->
+		<param name="canny/high" value="45" />   <!-- 30 -->
+		<param name="canny/blur" value="3" />
 		
 		<!-- hough params -->
 		<param name="hough/rho" value="1" />
-		<param name="hough/teta" value="1.0" />
-		<param name="hough/threshold" value="75" />
-		<param name="hough/minLineLenght" value="40" />
-		<param name="hough/maxLineGap" value="10" />
+		<param name="hough/teta" value="3.0" />
+		<param name="hough/threshold" value="50" />
+		<param name="hough/minLineLenght" value="30" />
+		<param name="hough/maxLineGap" value="20" />
 		
 		<!-- line filter params -->
 		<param name="filter/maxDeltaHorizontal" value="10" />
