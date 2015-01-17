@@ -39,9 +39,6 @@ add_library(cognitive_vision STATIC
 			${LIB_VISION_SOURCE_DIR}/ImageView.cpp 
 			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp)
 			
-#build the metric rectification library
-add_library(metric_rectification STATIC
-			${LIB_RECTIFICATION_SOURCE_DIR}/MetricRectification.cpp)
 			
 
 #build the recognition node
@@ -59,7 +56,6 @@ target_link_libraries(c_vision_detector cognitive_vision
 					  					${catkin_LIBRARIES})
 					  					
 target_link_libraries(c_vision_recognizer cognitive_vision
-									      metric_rectification 
 					  				      ${catkin_LIBRARIES})
 					  				      
 #add dependencies
