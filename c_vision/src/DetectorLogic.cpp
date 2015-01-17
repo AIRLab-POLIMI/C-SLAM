@@ -37,7 +37,7 @@ DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 {
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
-	detectionPublisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 10);
+	publisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 10);
 }
 
 void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
@@ -92,32 +92,5 @@ void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
 	viewer.display(cv_ptr->image);
 
 	detector.deleteDetections();
-}
-
-void DetectorLogic::sendFeatures(
-			const vector<pair<vector<Point>, string> >& features)
-{
-	for (vector<pair<vector<Point>, string> >::const_iterator i =
-				features.begin(); i != features.end(); ++i)
-	{
-		const vector<Point>& polygon = i->first;
-		const string& name = i->second;
-
-		c_slam_msgs::NamedPolygon message;
-
-		message.polygonLabel = name;
-
-		for (int i = 0; i < polygon.size(); i++)
-		{
-			geometry_msgs::Point32 point;
-			point.x = polygon[i].x;
-			point.y = polygon[i].y;
-			point.z = 0;
-
-			message.polygon.points.push_back(point);
-		}
-
-		detectionPublisher.publish(message);
-	}
 }
 

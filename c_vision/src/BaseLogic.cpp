@@ -25,7 +25,11 @@
 
 #include <tf/LinearMath/Quaternion.h>
 #include <tf/LinearMath/Matrix3x3.h>
-#include <angles/angles.h>
+
+#include <c_slam_msgs/NamedPolygon.h>
+
+using namespace std;
+using namespace cv;
 
 BaseLogic::BaseLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 			n(n), it(n), classifierParam(parameters.getClassifierParams())
@@ -86,6 +90,33 @@ void BaseLogic::callClassificationService(c_fuzzy::Classification& serviceCall)
 		ROS_ERROR("Service down, waiting reconnection...");
 		classificationService.waitForExistence();
 		connectToClassificationServer();
+	}
+}
+
+void BaseLogic::sendFeatures(
+			const vector<pair<vector<Point>, string> >& features)
+{
+	for (vector<pair<vector<Point>, string> >::const_iterator i =
+				features.begin(); i != features.end(); ++i)
+	{
+		const vector<Point>& polygon = i->first;
+		const string& name = i->second;
+
+		c_slam_msgs::NamedPolygon message;
+
+		message.polygonLabel = name;
+
+		for (int i = 0; i < polygon.size(); i++)
+		{
+			geometry_msgs::Point32 point;
+			point.x = polygon[i].x;
+			point.y = polygon[i].y;
+			point.z = 0;
+
+			message.polygon.points.push_back(point);
+		}
+
+		publisher.publish(message);
 	}
 }
 

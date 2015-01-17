@@ -41,6 +41,8 @@ public:
 protected:
 	void connectToClassificationServer();
 	void callClassificationService(c_fuzzy::Classification& serviceCall);
+	void sendFeatures(
+				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features);
 
 protected:
 	//Ros management
@@ -51,6 +53,8 @@ protected:
 	image_transport::Subscriber imageSubscriber;
 	tf::TransformListener tfListener;
 	ros::ServiceClient classificationService;
+
+	ros::Publisher publisher;
 
 	//envirorment data
 	std::string camera_frame_id;
