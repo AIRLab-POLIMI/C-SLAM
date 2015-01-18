@@ -30,8 +30,11 @@
 	      type="c_vision_recognizer" 
 	      output="screen">
 	    <!-- canny params -->
-		<param name="canny/alpha" value="0.05" />
+		<param name="canny/alpha" value="0.2" />
 		<param name="canny/apertureSize" value="3" />
+		<param name="canny/low" value="15" />    <!-- 10 -->
+		<param name="canny/high" value="45" />   <!-- 30 -->
+		<param name="canny/blur" value="3" />
 		
 		<!-- hough params -->
 		<param name="hough/rho" value="1" />
