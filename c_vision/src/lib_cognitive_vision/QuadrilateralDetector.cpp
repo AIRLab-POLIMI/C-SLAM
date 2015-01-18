@@ -40,32 +40,31 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 		Vec4i v1 = verticalLines[i];
 		Vec4i v2 = verticalLines[i + 1];
 		//find possible poles
-		if (!findPoles(v1, v2))
+		if (!findPoles(v1, v2) && hasSufficientVerticalOverlap(v1, v2))
 		{
 			//else find possible squares
 			for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
 			{
 				Vec4i h1 = horizontalLines[j];
-				for (size_t k = j + 1; k < horizontalLines.size(); k++)
-				{
-					vector<double> a(4);
-					vector<double> b(4);
-
-					Vec4i h2 = horizontalLines[k];
-					Point x, y, z, w;
-
-					x = findInterception(h1, v1, a[0], b[0], skipCheck);
-					y = findInterception(h1, v2, a[1], b[1], skipCheck);
-					z = findInterception(h2, v2, a[2], b[2], skipCheck);
-					w = findInterception(h2, v1, a[3], b[3], skipCheck);
-
-					if (skipCheck || isQuadrilateral(a, b))
+				if (isNotExternal(v1, v2, h1))
+					for (size_t k = j + 1; k < horizontalLines.size(); k++)
 					{
-						Rectangle rectangle(x, y, z, w);
-						rectangles->push_back(rectangle);
-					}
+						Vec4i h2 = horizontalLines[k];
 
-				}
+						if (isNotExternal(v1, v2, h2))
+						{
+							Point x, y, z, w;
+
+							x = findInterception(h1, v1);
+							y = findInterception(h1, v2);
+							z = findInterception(h2, v2);
+							w = findInterception(h2, v1);
+
+							Rectangle rectangle(x, y, z, w);
+							rectangles->push_back(rectangle);
+						}
+
+					}
 			}
 		}
 
@@ -73,8 +72,7 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 
 }
 
-Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
-			double& b, bool skipCheck)
+Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2)
 {
 	Vec3d p0, p1, p2, p3;
 	Vec3d hl, vl;
@@ -93,17 +91,6 @@ Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2, double& a,
 
 	p = hl.cross(vl);
 	p = p / p[2];
-
-	if (!skipCheck)
-	{
-		//Calculate the linear combination parameters
-		double xnear, xfar;
-		double ynear, yfar;
-		orderPoints(p[0], p0[0], p1[0], xnear, xfar);
-		orderPoints(p[1], p2[1], p3[1], ynear, yfar);
-		a = (p[0] - xnear) / (xfar - xnear);
-		b = (p[1] - ynear) / (yfar - ynear);
-	}
 
 	return Point(p[0], p[1]);
 
@@ -133,6 +120,36 @@ bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 
 }
 
+bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
+{
+	int min1 = min(v1[1], v1[3]);
+	int max1 = max(v1[1], v1[3]);
+	int l1 = max1 - min1;
+
+	int min2 = min(v2[1], v2[3]);
+	int max2 = max(v2[1], v2[3]);
+	int l2 = max1 - min1;
+
+	int overlap = max(0, min(max1, max2) - max(min1, min2));
+
+	double percentualOverlap = (double) overlap / min(l1, l2);
+
+	//TODO: compute real overlap % using angle
+	return percentualOverlap > 0.7;
+
+}
+
+bool QuadrilateralDetector::isNotExternal(Vec4i& v1, Vec4i& v2, Vec4i& h)
+{
+	int minh = min(h[0], h[2]);
+	int maxh = max(h[0], h[2]);
+
+	bool isAtLeft = maxh < v1[0] && maxh < v1[2];
+	bool isAtRight = minh > v2[0] && minh < v2[2];
+
+	return !(isAtLeft || isAtRight);
+}
+
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
 			Point& j)
 {
@@ -145,39 +162,5 @@ inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Vec3d& i,
 {
 	i = Vec3d(l[0], l[1], 1);
 	j = Vec3d(l[2], l[3], 1);
-}
-
-bool QuadrilateralDetector::isQuadrilateral(vector<double>& a,
-			vector<double>& b)
-{
-	int segmentCounter = 0;
-
-	segmentCounter += lineBelongToQuadrilateral(a[0], a[1]);
-	segmentCounter += lineBelongToQuadrilateral(a[3], a[2]);
-	segmentCounter += lineBelongToQuadrilateral(b[0], b[1]);
-	segmentCounter += lineBelongToQuadrilateral(b[3], b[2]);
-
-	return segmentCounter == 4;
-}
-
-bool QuadrilateralDetector::lineBelongToQuadrilateral(double a1, double a2)
-{
-	const double threshold = 0.4;
-	return abs(a1) < threshold && abs(a2) < threshold;
-}
-
-void QuadrilateralDetector::orderPoints(double p, double p1, double p2,
-			double& pnear, double& pfar)
-{
-	if (abs(p - p1) > abs(p - p2))
-	{
-		pfar = p1;
-		pnear = p2;
-	}
-	else
-	{
-		pfar = p2;
-		pnear = p1;
-	}
 }
 

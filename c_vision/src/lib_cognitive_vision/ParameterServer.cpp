@@ -43,6 +43,9 @@ void ParameterServer::updateParameters(const ros::TimerEvent& event)
 	//update Canny parameters
 	n.getParamCached("canny/alpha", canny.alpha);
 	n.getParamCached("canny/apertureSize", canny.apertureSize);
+	n.getParamCached("canny/low", canny.low);
+	n.getParamCached("canny/high", canny.high);
+	n.getParamCached("canny/blur", canny.blur);
 
 	//update cluster parameters
 	n.getParamCached("cluster/threshold", cluster.threshold);
