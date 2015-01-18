@@ -53,10 +53,13 @@ private:
 	inline void getPointsCoordinates(cv::Vec4i l, cv::Point& i, cv::Point& j);
 	inline void getPointsCoordinates(cv::Vec4i l, cv::Vec3d& i, cv::Vec3d& j);
 	cv::Point findInterception(cv::Vec4i l1, cv::Vec4i l2);
+	int getMidLine(const cv::Vec4i& v1, const cv::Vec4i& v2);
 	bool findPoles(cv::Vec4i l1, cv::Vec4i l2);
 	//Quadrilater checks
 	bool hasSufficientVerticalOverlap(cv::Vec4i& v1, cv::Vec4i& v2);
+	bool hasSufficientHorizontallOverlap(cv::Vec4i& h1, cv::Vec4i& h2);
 	bool isNotExternal(cv::Vec4i& v1, cv::Vec4i& v2, cv::Vec4i& h);
+	bool isAboveMidline(const cv::Vec4i& h, int midLine);
 
 private:
 	std::vector<Rectangle>* rectangles;

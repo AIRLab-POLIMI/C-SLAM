@@ -6,88 +6,76 @@
 	<arg name="camera_source" default="/ardrone" />
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
-	
-	
+
+
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
-		<node name="image_proc" 
-	              pkg="image_proc" 
-	              type="image_proc" />
+		<node name="image_proc" pkg="image_proc" type="image_proc" />
 	</group>
-	
+
 	<!-- System nodes -->
-	<node name="c_vision_detector" 
-	      pkg="c_vision" 
-	      type="c_vision_detector" 
-	      output="screen">
-	      
-	    <!-- canny params -->
+	<node name="c_vision_detector" pkg="c_vision" type="c_vision_detector"
+		output="screen">
+
+		<!-- canny params -->
 		<param name="canny/alpha" value="0.2" />
 		<param name="canny/apertureSize" value="3" />
-		<param name="canny/low" value="15" />    <!-- 10 -->
-		<param name="canny/high" value="45" />   <!-- 30 -->
-		<param name="canny/blur" value="3" />
-		
+		<param name="canny/low" value="12" /> <!-- 15 -->   <!-- 10 -->
+		<param name="canny/high" value="45" /> <!-- 45 -->  <!-- 30 -->
+		<param name="canny/blur" value="5" />
+
 		<!-- hough params -->
 		<param name="hough/rho" value="1" />
 		<param name="hough/teta" value="3.0" />
 		<param name="hough/threshold" value="50" />
 		<param name="hough/minLineLenght" value="30" />
-		<param name="hough/maxLineGap" value="20" />
-		
+		<param name="hough/maxLineGap" value="15" />
+
 		<!-- line filter params -->
 		<param name="filter/maxDeltaHorizontal" value="10" />
 		<param name="filter/maxDeltaVertical" value="5" />
-		
+
 		<!-- cluster params -->
 		<param name="cluster/threshold" value="30" />
 		<param name="cluster/minPoints" value="4" />
-		<param name="cluster/maxDistance" value="15.0" />		
-		
+		<param name="cluster/maxDistance" value="15.0" />
+
 		<!-- classifier params -->
 		<param name="classifier/threshold" value="0.2" />
-	</node>	
-	
-	<node name="c_vision_recognizer" 
-	      pkg="c_vision" 
-	      type="c_vision_recognizer" 
-	      output="screen">
-	    <!-- canny params -->
+	</node>
+
+	<node name="c_vision_recognizer" pkg="c_vision" type="c_vision_recognizer"
+		output="screen">
+		<!-- canny params -->
 		<param name="canny/alpha" value="0.2" />
 		<param name="canny/apertureSize" value="3" />
 		<param name="canny/low" value="15" />    <!-- 10 -->
 		<param name="canny/high" value="45" />   <!-- 30 -->
 		<param name="canny/blur" value="3" />
-		
+
 		<!-- hough params -->
 		<param name="hough/rho" value="1" />
 		<param name="hough/teta" value="1.0" />
 		<param name="hough/threshold" value="50" />
 		<param name="hough/minLineLenght" value="20" />
 		<param name="hough/maxLineGap" value="15" />
-		
+
 		<!-- line filter params -->
 		<param name="filter/maxDeltaHorizontal" value="10" />
 		<param name="filter/maxDeltaVertical" value="5" />
-		
+
 		<!-- cluster params -->
 		<param name="cluster/threshold" value="30" />
 		<param name="cluster/minPoints" value="4" />
-		<param name="cluster/maxDistance" value="15.0" />		
-		
+		<param name="cluster/maxDistance" value="15.0" />
+
 		<!-- classifier params -->
 		<param name="classifier/threshold" value="0.2" />
-	</node>	
-	
-	<node name="c_fuzzy_reasoner" 
-              pkg="c_fuzzy" 
-              type="c_fuzzy_reasoner" 
-              args="-c $(arg classifierkb) $(arg classifier)" 
-              output="screen"/>
-              
-    <node name="c_tracker" 
-		  pkg="c_tracking" 
-	      type="c_tracker" 
-	      output="screen" />
+	</node>
+
+	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner"
+		args="-c $(arg classifierkb) $(arg classifier)" output="screen" />
+
+	<node name="c_tracker" pkg="c_tracking" type="c_tracker" output="screen" />
 
 </launch> 

@@ -69,7 +69,8 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
 		classify(cameraModel, roi);
-		display(objectImage);
+		//display(objectImage);
+		detector.deleteDetections();
 	}
 	catch (cv_bridge::Exception& e)
 	{
@@ -114,8 +115,6 @@ void RecognizerLogic::display(Mat& image)
 	viewer.setClusters(detector.getClusters());
 	viewer.setRoll(roll);
 	viewer.display(image);
-
-	detector.deleteDetections();
 }
 
 void RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,

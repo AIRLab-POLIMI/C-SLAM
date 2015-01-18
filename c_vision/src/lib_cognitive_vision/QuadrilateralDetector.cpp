@@ -37,21 +37,27 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 {
 	for (size_t i = 0; i + 1 < verticalLines.size(); i++)
 	{	//i+1 instead size-1 to avoid integer overflow
-		Vec4i v1 = verticalLines[i];
-		Vec4i v2 = verticalLines[i + 1];
+		Vec4i& v1 = verticalLines[i];
+		Vec4i& v2 = verticalLines[i + 1];
+
 		//find possible poles
-		if (!findPoles(v1, v2) && hasSufficientVerticalOverlap(v1, v2))
+		if (hasSufficientVerticalOverlap(v1, v2))
 		{
+
+			int midLine = getMidLine(v1, v2);
+
 			//else find possible squares
 			for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
 			{
-				Vec4i h1 = horizontalLines[j];
-				if (isNotExternal(v1, v2, h1))
+				Vec4i& h1 = horizontalLines[j];
+				if (isNotExternal(v1, v2, h1) && isAboveMidline(h1, midLine))
 					for (size_t k = j + 1; k < horizontalLines.size(); k++)
 					{
-						Vec4i h2 = horizontalLines[k];
+						Vec4i& h2 = horizontalLines[k];
 
-						if (isNotExternal(v1, v2, h2))
+						if (isNotExternal(v1, v2, h2)
+									&& hasSufficientHorizontallOverlap(h1, h2)
+									&& !isAboveMidline(h2, midLine))
 						{
 							Point x, y, z, w;
 
@@ -120,6 +126,14 @@ bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 
 }
 
+int QuadrilateralDetector::getMidLine(const Vec4i& v1, const Vec4i& v2)
+{
+	int min1 = min(v1[1], v1[3]);
+	int max2 = max(v2[1], v2[3]);
+
+	return (min1 + max2) / 2;
+}
+
 bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
 {
 	int min1 = min(v1[1], v1[3]);
@@ -128,6 +142,26 @@ bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
 
 	int min2 = min(v2[1], v2[3]);
 	int max2 = max(v2[1], v2[3]);
+	int l2 = max1 - min1;
+
+	int overlap = max(0, min(max1, max2) - max(min1, min2));
+
+	double percentualOverlap = (double) overlap / min(l1, l2);
+
+	//TODO: compute real overlap % using angle
+	return percentualOverlap > 0.7;
+
+}
+
+bool QuadrilateralDetector::hasSufficientHorizontallOverlap(Vec4i& h1,
+			Vec4i& h2)
+{
+	int min1 = min(h1[0], h1[2]);
+	int max1 = max(h1[0], h1[2]);
+	int l1 = max1 - min1;
+
+	int min2 = min(h2[0], h2[2]);
+	int max2 = max(h2[0], h2[2]);
 	int l2 = max1 - min1;
 
 	int overlap = max(0, min(max1, max2) - max(min1, min2));
@@ -148,6 +182,11 @@ bool QuadrilateralDetector::isNotExternal(Vec4i& v1, Vec4i& v2, Vec4i& h)
 	bool isAtRight = minh > v2[0] && minh < v2[2];
 
 	return !(isAtLeft || isAtRight);
+}
+
+bool QuadrilateralDetector::isAboveMidline(const cv::Vec4i& h, int midLine)
+{
+	return h[0] < midLine && h[2] < midLine;
 }
 
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
