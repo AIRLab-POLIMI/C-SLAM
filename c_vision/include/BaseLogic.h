@@ -42,7 +42,7 @@ protected:
 	void connectToClassificationServer();
 	void callClassificationService(c_fuzzy::Classification& serviceCall);
 	void sendFeatures(
-				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features);
+				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features, const cv::Point& offset = cv::Point());
 
 protected:
 	//Ros management

@@ -94,7 +94,7 @@ void BaseLogic::callClassificationService(c_fuzzy::Classification& serviceCall)
 }
 
 void BaseLogic::sendFeatures(
-			const vector<pair<vector<Point>, string> >& features)
+			const vector<pair<vector<Point>, string> >& features, const Point& offset)
 {
 	for (vector<pair<vector<Point>, string> >::const_iterator i =
 				features.begin(); i != features.end(); ++i)
@@ -109,8 +109,8 @@ void BaseLogic::sendFeatures(
 		for (int i = 0; i < polygon.size(); i++)
 		{
 			geometry_msgs::Point32 point;
-			point.x = polygon[i].x;
-			point.y = polygon[i].y;
+			point.x = polygon[i].x + offset.x;
+			point.y = polygon[i].y + offset.y;
 			point.z = 0;
 
 			message.polygon.points.push_back(point);

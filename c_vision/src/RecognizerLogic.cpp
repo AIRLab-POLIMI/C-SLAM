@@ -103,7 +103,7 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
 
-	sendFeatures(features);
+	sendFeatures(features, Point(roi.x, roi.y));
 
 }
 
