@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	ros::NodeHandle n;
 	ros::NodeHandle nh("~");
 
-	ParameterServer parameterServer(nh);
+	ParameterServer parameterServer;
 	DetectorLogic dispatcher(n, parameterServer);
 
 	ros::spin();

@@ -30,9 +30,8 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "cognitive_vision");
 	ros::NodeHandle n;
-	ros::NodeHandle nh("~");
 
-	ParameterServer parameterServer(nh);
+	ParameterServer parameterServer;
 	RecognizerLogic logic(n, parameterServer);
 
 	ros::spin();

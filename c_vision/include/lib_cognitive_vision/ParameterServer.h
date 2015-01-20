@@ -24,9 +24,8 @@
 #ifndef PARAMETERSERVER_H_
 #define PARAMETERSERVER_H_
 
-#include <ros/ros.h>
-#include <opencv2/core/core.hpp>
-
+#include <dynamic_reconfigure/server.h>
+#include <c_vision/ParametersConfig.h>
 
 struct ClusterParam
 {
@@ -68,9 +67,7 @@ class ParameterServer
 {
 
 public:
-	ParameterServer(ros::NodeHandle& n);
-	void updateParameters(const ros::TimerEvent& event);
-
+	ParameterServer();
 
 	inline CannyParam& getCannyParams()
 	{
@@ -98,9 +95,13 @@ public:
 	}
 
 private:
-	ros::NodeHandle& n;
-	ros::Timer parameterTimer;
+	void update(c_vision::ParametersConfig &config, uint32_t level);
 
+private:
+	//Dynamic_reconfigure server
+	dynamic_reconfigure::Server<c_vision::ParametersConfig> server;
+
+	//Parameters
 	CannyParam canny;
 	HoughParam hough;
 	ClusterParam cluster;

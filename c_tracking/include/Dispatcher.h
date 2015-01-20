@@ -32,6 +32,8 @@
 #include <c_slam_msgs/NamedPolygon.h>
 #include <c_slam_msgs/TrackedObject.h>
 
+#include "ParameterServer.h"
+
 #include "Track.h"
 #include "CMTFeatureExtractor.h"
 
@@ -69,6 +71,9 @@ private:
 	image_transport::Subscriber imageSubscriber;
 	ros::Subscriber toTrackSubscriber;
 	ros::Publisher trackPublisher;
+
+	//Parameters
+	ParameterServer parameterServer;
 
 	//Last image pointer
 	cv_bridge::CvImagePtr cv_ptr;

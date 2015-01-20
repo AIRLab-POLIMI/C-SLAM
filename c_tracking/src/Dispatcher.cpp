@@ -32,7 +32,7 @@ using namespace std;
 using namespace cv;
 
 Dispatcher::Dispatcher(ros::NodeHandle& n) :
-			it(n)
+			it(n), featureExtractor(parameterServer.getExtraction())
 {
 	toTrackSubscriber = n.subscribe("to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);

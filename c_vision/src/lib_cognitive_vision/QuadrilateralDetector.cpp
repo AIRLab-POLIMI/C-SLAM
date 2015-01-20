@@ -149,7 +149,7 @@ bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
 	//TODO: compute real overlap % using angle
-	return percentualOverlap > 0.7;
+	return percentualOverlap > 0.6;
 
 }
 
@@ -169,7 +169,7 @@ bool QuadrilateralDetector::hasSufficientHorizontallOverlap(Vec4i& h1,
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
 	//TODO: compute real overlap % using angle
-	return percentualOverlap > 0.7;
+	return percentualOverlap > 0.4;
 
 }
 

@@ -29,6 +29,7 @@
 #include <sensor_msgs/Imu.h>
 #include <c_fuzzy/Classification.h>
 #include <tf/transform_listener.h>
+#include <opencv2/core/core.hpp>
 
 #include "ParameterServer.h"
 

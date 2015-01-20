@@ -4,12 +4,15 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 										cv_bridge 
 										image_transport
 										image_geometry
+										dynamic_reconfigure
 										c_slam_msgs
 										c_fuzzy
 										tf)
 find_package(OpenCV REQUIRED)
 
 project(c_vision)
+
+generate_dynamic_reconfigure_options(cfg/Parameters.cfg)
 
 catkin_package()
 
@@ -60,6 +63,6 @@ target_link_libraries(c_vision_recognizer cognitive_vision
 					  				      
 #add dependencies
 add_dependencies(cognitive_vision ${catkin_EXPORTED_TARGETS})
-add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS})
-add_dependencies(c_vision_recognizer ${catkin_EXPORTED_TARGETS})					  				      
+add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
+add_dependencies(c_vision_recognizer ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)					  				      
 					  				
