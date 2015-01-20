@@ -27,12 +27,15 @@
 #define CMTFEATUREEXTRACTOR_H_
 
 #include <opencv2/opencv.hpp>
+
+#include "ParameterServer.h"
 #include "InitializationData.h"
+
 
 class CMTFeatureExtractor
 {
 public:
-	CMTFeatureExtractor();
+	CMTFeatureExtractor(ExtractionParam& par);
 	void detect(cv::Mat im_gray);
 	void discriminateKeyPoints(cv::Mat im_gray, InitializationData& data);
 
@@ -56,9 +59,14 @@ private:
 	cv::Ptr<cv::FeatureDetector> detector;
 	cv::Ptr<cv::DescriptorExtractor> descriptorExtractor;
 
+	//Parameters
+	ExtractionParam& par;
+
 	//extracted data
 	std::vector<cv::KeyPoint> keypoints;
 	cv::Mat features;
+
+
 
 };
 

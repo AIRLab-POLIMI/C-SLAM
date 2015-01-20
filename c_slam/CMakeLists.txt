@@ -5,7 +5,6 @@ project(c_slam)
 
 catkin_package()
 
-
 #install launch files
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch

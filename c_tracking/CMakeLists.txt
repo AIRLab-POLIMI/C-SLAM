@@ -3,12 +3,15 @@ cmake_minimum_required(VERSION 2.8.3)
 find_package(catkin REQUIRED COMPONENTS roscpp 
                                         cv_bridge 
                                         image_transport
+                                        dynamic_reconfigure
                                         c_slam_msgs
                                         tf)
                                         
 find_package(OpenCV REQUIRED)
 
 project(c_tracking)
+
+generate_dynamic_reconfigure_options(cfg/Parameters.cfg)
 
 catkin_package()
 
@@ -19,6 +22,7 @@ add_executable(c_tracker src/CMT.cpp
                          src/CMTFeatureExtractor.cpp
                          src/CMTUtils.cpp
                          src/Dispatcher.cpp
+                         src/ParameterServer.cpp
                          src/main.cpp)
                                  
 #link libriaries
@@ -31,5 +35,5 @@ add_executable(object_selector src/ObjectSelector.cpp)
 target_link_libraries(object_selector ${catkin_LIBRARIES})
 
 #add dependencies
-add_dependencies(c_tracker ${catkin_EXPORTED_TARGETS})
+add_dependencies(c_tracker ${catkin_EXPORTED_TARGETS}  ${PROJECT_NAME}_gencfg)
 add_dependencies(object_selector ${catkin_EXPORTED_TARGETS})	

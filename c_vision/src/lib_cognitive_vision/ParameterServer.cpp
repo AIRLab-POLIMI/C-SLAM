@@ -25,104 +25,43 @@
 
 #include <angles/angles.h>
 
-ParameterServer::ParameterServer(ros::NodeHandle& n) :
-			n(n)
+ParameterServer::ParameterServer()
 {
-	getCanny();
-	getHough();
-	getCluster();
-	getClassifier();
-	getLFilter();
-
-	parameterTimer = n.createTimer(ros::Duration(1),
-				&ParameterServer::updateParameters, this);
+	dynamic_reconfigure::Server<c_vision::ParametersConfig>::CallbackType f;
+	f = boost::bind(&ParameterServer::update, this, _1, _2);
+	server.setCallback(f);
 }
 
-void ParameterServer::updateParameters(const ros::TimerEvent& event)
+void ParameterServer::update(c_vision::ParametersConfig &config,
+			uint32_t level)
 {
-	//update Canny parameters
-	n.getParamCached("canny/alpha", canny.alpha);
-	n.getParamCached("canny/apertureSize", canny.apertureSize);
+	//Setup canny parameters
+	canny.alpha = config.canny_alpha;
+	canny.apertureSize = config.canny_apertureSize;
+	canny.low = config.canny_low;
+	canny.high = config.canny_high;
+	canny.blur = config.canny_blur;
 
-	//update cluster parameters
-	n.getParamCached("cluster/threshold", cluster.threshold);
-	n.getParamCached("cluster/minPoints", cluster.minPoints);
-	n.getParamCached("cluster/maxDistance", cluster.maxDistance);
+	//Setup Hough parameters
+	hough.rho = config.hough_rho;
+	hough.teta = angles::from_degrees(config.hough_teta);
+	hough.threshold = config.hough_threshold;
+	hough.minLineLenght = config.hough_minLineLenght;
+	hough.maxLineGap = config.hough_maxLineGap;
 
-	//update hough parameters
-	double tetaDegrees;
-	n.getParamCached("hough/rho", hough.rho);
-	n.getParamCached("hough/teta", tetaDegrees);
-	hough.teta = angles::from_degrees(tetaDegrees);
-	n.getParamCached("hough/threshold", hough.threshold);
-	n.getParamCached("hough/minLineLenght", hough.minLineLenght);
-	n.getParamCached("hough/maxLineGap", hough.maxLineGap);
+	//Set linefilter parameters
+	lineFilter.maxDeltaHorizontal = config.filter_maxDeltaHorizontal;
+	lineFilter.maxDeltaVertical = config.filter_maxDeltaVertical;
 
-	//update classifiers parameters
-	n.getParamCached("classifier/threshold", classifier.threshold);
 
-	//update line filter parameters
-	n.getParamCached("filter/maxDeltaHorizontal",
-				lineFilter.maxDeltaHorizontal);
-	n.getParamCached("filter/maxDeltaVertical", lineFilter.maxDeltaVertical);
-}
+	//Setup clustering parameters
+	cluster.threshold = config.cluster_threshold;
+	cluster.minPoints = config.cluster_minPoints;
+	cluster.maxDistance = config.cluster_maxDistance;
 
-void ParameterServer::getCanny()
-{
-	if (n.getParamCached("canny/alpha", canny.alpha)
-				&& n.getParamCached("canny/apertureSize", canny.apertureSize)
-				&& n.getParamCached("canny/low", canny.low)
-				&& n.getParamCached("canny/high", canny.high)
-				&& n.getParamCached("canny/blur", canny.blur))
-		ROS_INFO("canny parameters setted");
-	else
-		ROS_WARN("canny parameters not setted");
-}
-
-void ParameterServer::getHough()
-{
-	double tetaDegrees;
-	if (n.getParamCached("hough/rho", hough.rho)
-				&& n.getParamCached("hough/teta", tetaDegrees)
-				&& n.getParamCached("hough/threshold", hough.threshold)
-				&& n.getParamCached("hough/minLineLenght", hough.minLineLenght)
-				&& n.getParamCached("hough/maxLineGap", hough.maxLineGap))
-	{
-		hough.teta = angles::from_degrees(tetaDegrees);
-		ROS_INFO("hough parameters setted");
-	}
-
-	else
-		ROS_WARN("hough parameters not setted");
+	//Setup classifier parameters
+	classifier.threshold = config.classifier_threshold;
 
 }
 
-void ParameterServer::getClassifier()
-{
-	if (n.getParamCached("classifier/threshold", classifier.threshold))
-		ROS_INFO("classifier parameters setted");
-	else
-		ROS_WARN("classifier parameters not setted");
 
-}
-
-void ParameterServer::getCluster()
-{
-	if (n.getParamCached("cluster/threshold", cluster.threshold)
-				&& n.getParamCached("cluster/minPoints", cluster.minPoints)
-				&& n.getParamCached("cluster/maxDistance", cluster.maxDistance))
-		ROS_INFO("cluster parameters setted");
-	else
-		ROS_WARN("cluster parameters not setted");
-}
-
-void ParameterServer::getLFilter()
-{
-	if (n.getParamCached("filter/maxDeltaHorizontal",
-				lineFilter.maxDeltaHorizontal)
-				&& n.getParamCached("filter/maxDeltaVertical",
-							lineFilter.maxDeltaVertical))
-		ROS_INFO("Line Filter parameters setted");
-	else
-		ROS_WARN("Line Filter parameters not setted");
-}

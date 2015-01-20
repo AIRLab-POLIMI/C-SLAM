@@ -29,20 +29,20 @@
 
 using namespace cv;
 
-CMTFeatureExtractor::CMTFeatureExtractor()
+CMTFeatureExtractor::CMTFeatureExtractor(ExtractionParam& par) : par(par)
 {
 	std::string detectorType = "Feature2D.BRISK";
 	std::string descriptorType = "Feature2D.BRISK";
 
 	//Initialise detector, descriptor, matcher
 	detector = Algorithm::create<FeatureDetector>(detectorType);
-	detector->set("thres", 10);
 	descriptorExtractor = Algorithm::create<DescriptorExtractor>(
 				descriptorType);
 }
 
 void CMTFeatureExtractor::detect(Mat im_gray)
 {
+	detector->set("thres", par.threshold);
 	detector->detect(im_gray, keypoints);
 	descriptorExtractor->compute(im_gray, keypoints, features);
 }
