@@ -149,7 +149,7 @@ bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
 	//TODO: compute real overlap % using angle
-	return percentualOverlap > 0.6;
+	return percentualOverlap > 0.9;
 
 }
 
@@ -169,24 +169,32 @@ bool QuadrilateralDetector::hasSufficientHorizontallOverlap(Vec4i& h1,
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
 	//TODO: compute real overlap % using angle
-	return percentualOverlap > 0.4;
+	return percentualOverlap > 0.9;
 
 }
 
 bool QuadrilateralDetector::isNotExternal(Vec4i& v1, Vec4i& v2, Vec4i& h)
 {
+	int min1 = min(v1[0], v1[2]);
+	int min2 = min(v2[0], v2[2]);
+	int minx = min(min1,min2);
+
+	int max1 = max(v1[0], v1[2]);
+	int max2 = max(v2[0], v2[2]);
+	int maxx = max(max1, max2);
+
 	int minh = min(h[0], h[2]);
 	int maxh = max(h[0], h[2]);
 
-	bool isAtLeft = maxh < v1[0] && maxh < v1[2];
-	bool isAtRight = minh > v2[0] && minh < v2[2];
+	bool isAtLeft = maxh < minx;
+	bool isAtRight = minh > maxx;
 
 	return !(isAtLeft || isAtRight);
 }
 
 bool QuadrilateralDetector::isAboveMidline(const cv::Vec4i& h, int midLine)
 {
-	return h[0] < midLine && h[2] < midLine;
+	return h[1] < midLine && h[3] < midLine;
 }
 
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
