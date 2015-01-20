@@ -31,7 +31,8 @@ using namespace cv;
 BasicDetector::BasicDetector(ParameterServer& parameters) :
 			lineDetector(parameters.getCannyParams(),
 						parameters.getHoughParams(),
-						parameters.getLFiltrerParams())
+						parameters.getLFiltrerParams()),
+			quadParams(parameters.getQuadDetectorParams())
 {
 	horizontalLines = NULL;
 	verticalLines = NULL;
@@ -70,7 +71,7 @@ void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
 
 void BasicDetector::detectQuadrilaterals(bool skipCheck)
 {
-	QuadrilateralDetector quadrilateralDetector;
+	QuadrilateralDetector quadrilateralDetector(quadParams);
 	quadrilateralDetector.detect(*verticalLines, *horizontalLines, true);
 	rectangles = quadrilateralDetector.getRectangles();
 	poles = quadrilateralDetector.getPoles();

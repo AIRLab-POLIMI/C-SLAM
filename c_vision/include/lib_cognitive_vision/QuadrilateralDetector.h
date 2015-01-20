@@ -28,13 +28,15 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
+#include "ParameterServer.h"
+
 #include "Rectangle.h"
 #include "Pole.h"
 
 class QuadrilateralDetector
 {
 public:
-	QuadrilateralDetector();
+	QuadrilateralDetector(QDetectorParam& quadP);
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
 				std::vector<cv::Vec4i>& horizontalLines, bool skipCheck = false);
@@ -64,7 +66,9 @@ private:
 private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
-	static const int polesFormFactor = 6;
+
+	//Params
+	QDetectorParam& quadP;
 
 };
 

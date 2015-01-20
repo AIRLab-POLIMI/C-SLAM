@@ -26,7 +26,8 @@
 using namespace cv;
 using namespace std;
 
-QuadrilateralDetector::QuadrilateralDetector()
+QuadrilateralDetector::QuadrilateralDetector(QDetectorParam& quadP) :
+			quadP(quadP)
 {
 	rectangles = new std::vector<Rectangle>();
 	poles = new std::vector<Pole>();
@@ -115,7 +116,7 @@ bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 	dx = max(norm(p0 - p2), norm(p1 - p3));
 	dy = max(norm(p0 - p1), norm(p2 - p3));
 
-	if (dy / dx > polesFormFactor)
+	if (dy / dx > quadP.polesFormFactor)
 	{
 		Pole pole(p0, p1, p2, p3);
 		poles->push_back(pole);
@@ -149,7 +150,7 @@ bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
 	//TODO: compute real overlap % using angle
-	return percentualOverlap > 0.9;
+	return percentualOverlap > quadP.verticalOverlap;
 
 }
 
@@ -169,7 +170,7 @@ bool QuadrilateralDetector::hasSufficientHorizontallOverlap(Vec4i& h1,
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
 	//TODO: compute real overlap % using angle
-	return percentualOverlap > 0.9;
+	return percentualOverlap > quadP.horizontalOverlap;
 
 }
 
@@ -177,7 +178,7 @@ bool QuadrilateralDetector::isNotExternal(Vec4i& v1, Vec4i& v2, Vec4i& h)
 {
 	int min1 = min(v1[0], v1[2]);
 	int min2 = min(v2[0], v2[2]);
-	int minx = min(min1,min2);
+	int minx = min(min1, min2);
 
 	int max1 = max(v1[0], v1[2]);
 	int max2 = max(v2[0], v2[2]);

@@ -60,6 +60,9 @@ private:
 	//detectors
 	LineDetector lineDetector;
 
+	//Parameter
+	QDetectorParam& quadParams;
+
 	//envirorment data
 	double roll;
 

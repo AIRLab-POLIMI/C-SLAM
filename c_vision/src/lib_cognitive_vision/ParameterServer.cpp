@@ -53,6 +53,10 @@ void ParameterServer::update(c_vision::ParametersConfig &config,
 	lineFilter.maxDeltaHorizontal = config.filter_maxDeltaHorizontal;
 	lineFilter.maxDeltaVertical = config.filter_maxDeltaVertical;
 
+	//set quadDetector parameters
+	quadDetector.verticalOverlap = config.quad_verticalOverlap;
+	quadDetector.horizontalOverlap = config.quad_horizontalOverlap;
+	quadDetector.polesFormFactor = config.quad_polesFormFactor;
 
 	//Setup clustering parameters
 	cluster.threshold = config.cluster_threshold;

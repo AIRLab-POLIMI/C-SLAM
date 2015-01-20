@@ -27,13 +27,6 @@
 #include <dynamic_reconfigure/server.h>
 #include <c_vision/ParametersConfig.h>
 
-struct ClusterParam
-{
-	int threshold;
-	int minPoints;
-	double maxDistance;
-};
-
 struct CannyParam
 {
 	double alpha;
@@ -58,6 +51,20 @@ struct LFilterParam
 	double maxDeltaHorizontal;
 };
 
+struct QDetectorParam
+{
+	double verticalOverlap;
+	double horizontalOverlap;
+	double polesFormFactor;
+};
+
+struct ClusterParam
+{
+	int threshold;
+	int minPoints;
+	double maxDistance;
+};
+
 struct ClassifierParam
 {
 	double threshold;
@@ -79,6 +86,16 @@ public:
 		return hough;
 	}
 
+	inline LFilterParam& getLFiltrerParams()
+	{
+		return lineFilter;
+	}
+
+	inline QDetectorParam& getQuadDetectorParams()
+	{
+		return quadDetector;
+	}
+
 	inline ClusterParam& getDBScanParams()
 	{
 		return cluster;
@@ -87,11 +104,6 @@ public:
 	inline ClassifierParam& getClassifierParams()
 	{
 		return classifier;
-	}
-
-	inline LFilterParam& getLFiltrerParams()
-	{
-		return lineFilter;
 	}
 
 private:
@@ -104,17 +116,11 @@ private:
 	//Parameters
 	CannyParam canny;
 	HoughParam hough;
+	LFilterParam lineFilter;
+	QDetectorParam quadDetector;
 	ClusterParam cluster;
 	ClassifierParam classifier;
-	LFilterParam lineFilter;
 
-private:
-
-	void getCanny();
-	void getHough();
-	void getClassifier();
-	void getCluster();
-	void getLFilter();
 };
 
 #endif /* PARAMETERSERVER_H_ */
