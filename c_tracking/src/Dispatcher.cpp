@@ -178,8 +178,14 @@ void Dispatcher::getPolygon(const c_slam_msgs::NamedPolygon& polygonMessage,
 	//scale polygon
 	for (int i = 0; i < polygon.size(); i++)
 	{
-		Point2f& cp = polygon[i];
-		cp = (1.1 * (cp - massCenter)) + massCenter;
+		BoundingBoxparam& par = parameterServer.getBoundingBox();
+
+		Point2f cp = polygon[i] - massCenter;
+
+		cp.x *= par.xScaling;
+		cp.y *= par.yScaling;
+
+		polygon[i] = cp + massCenter;
 	}
 }
 

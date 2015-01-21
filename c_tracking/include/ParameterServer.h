@@ -34,6 +34,12 @@ struct ExtractionParam
 	int threshold;
 };
 
+struct BoundingBoxparam
+{
+	double xScaling;
+	double yScaling;
+};
+
 class ParameterServer
 {
 public:
@@ -42,6 +48,11 @@ public:
 	inline ExtractionParam& getExtraction()
 	{
 		return extraction;
+	}
+
+	inline BoundingBoxparam& getBoundingBox()
+	{
+		return boundingBox;
 	}
 
 private:
@@ -53,6 +64,7 @@ private:
 
 	//parameters
 	ExtractionParam extraction;
+	BoundingBoxparam boundingBox;
 
 };
 
