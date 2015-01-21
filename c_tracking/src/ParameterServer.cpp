@@ -34,5 +34,9 @@ void ParameterServer::update(c_tracking::ParametersConfig &config,
 			uint32_t level)
 {
 	//set the extractor parameters
-	extraction.threshold = config.threshold;
+	extraction.threshold = config.extraction_threshold;
+
+	//Set bounding box parameters
+	boundingBox.xScaling = config.boundingBox_xScaling;
+	boundingBox.yScaling = config.boundingBox_yScaling;
 }

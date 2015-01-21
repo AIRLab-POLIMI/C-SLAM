@@ -18,7 +18,11 @@
 	<node name="c_tracker" 
 		  pkg="c_tracking" 
 	      type="c_tracker" 
-	      output="screen" />
+	      output="screen">
+	      <!-- Bounding Box parameters -->
+	      <param name="boundingBox_xScaling" value="1.0" />
+	      <param name="boundingBox_yScaling" value="1.0" />
+	      </node>
 	      
 	<node name="object_selector" 
 		  pkg="c_tracking" 
