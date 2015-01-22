@@ -55,6 +55,9 @@ private:
 	std::vector<cv::Vec4i>* horizontalLines;
 
 	ImageView viewer;
+
+	//FIXME temporary hack
+	void hackFunction(cv::Mat& canny);
 };
 
 #endif /* LINEDETECTOR_H_ */

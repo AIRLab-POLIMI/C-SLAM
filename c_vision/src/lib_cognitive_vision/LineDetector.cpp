@@ -40,6 +40,16 @@ LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP,
 	verticalLines = NULL;
 }
 
+void LineDetector::hackFunction(Mat& canny)
+{
+	//FIXME: delete this hack: it's a problem of current images
+	for (int i = 273; i < 273 + 124; i++)
+		for (int j = canny.rows - 10; j < canny.rows; j++)
+		{
+			canny.at<uchar>(j, i) = 0;
+		}
+}
+
 void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 			bool showCanny)
 {
@@ -54,9 +64,13 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 	blur(input, blurred, Size(cannyP.blur, cannyP.blur));
 	Canny(blurred, tmp, low_thres, high_thres, cannyP.apertureSize, true);
 
+
 	if (mask.empty())
 	{
 		canny = tmp;
+
+		//FIXME: delete this hack: it's a problem of current images
+		hackFunction(canny);
 	}
 	else
 	{

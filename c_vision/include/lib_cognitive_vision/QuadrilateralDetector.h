@@ -39,7 +39,8 @@ public:
 	QuadrilateralDetector(QDetectorParam& quadP);
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
-				std::vector<cv::Vec4i>& horizontalLines, bool skipCheck = false);
+				std::vector<cv::Vec4i>& horizontalLines,
+				bool skipCheck = false);
 
 	inline std::vector<Pole>* getPoles() const
 	{
@@ -62,6 +63,11 @@ private:
 	bool hasSufficientHorizontallOverlap(cv::Vec4i& h1, cv::Vec4i& h2);
 	bool isNotExternal(cv::Vec4i& v1, cv::Vec4i& v2, cv::Vec4i& h);
 	bool isAboveMidline(const cv::Vec4i& h, int midLine);
+	bool hasSufficientSupportV(cv::Vec4i& v, cv::Point a, cv::Point b);
+	bool hasSufficientSupportH(cv::Vec4i& h, cv::Point a, cv::Point b);
+	bool hasSufficientSupport(const cv::Point& x, const cv::Point& y,
+				const cv::Point& z, const cv::Point& w, cv::Vec4i& h1,
+				cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
 
 private:
 	std::vector<Rectangle>* rectangles;

@@ -56,6 +56,7 @@ struct QDetectorParam
 	double verticalOverlap;
 	double horizontalOverlap;
 	double polesFormFactor;
+	double segmentSupport;
 };
 
 struct ClusterParam

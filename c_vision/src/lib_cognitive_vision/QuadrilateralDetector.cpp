@@ -67,8 +67,12 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 							z = findInterception(h2, v2);
 							w = findInterception(h2, v1);
 
-							Rectangle rectangle(x, y, z, w);
-							rectangles->push_back(rectangle);
+							if (hasSufficientSupport(x, y, z, w, h1, h2, v1,
+										v2))
+							{
+								Rectangle rectangle(x, y, z, w);
+								rectangles->push_back(rectangle);
+							}
 						}
 
 					}
@@ -193,9 +197,42 @@ bool QuadrilateralDetector::isNotExternal(Vec4i& v1, Vec4i& v2, Vec4i& h)
 	return !(isAtLeft || isAtRight);
 }
 
-bool QuadrilateralDetector::isAboveMidline(const cv::Vec4i& h, int midLine)
+bool QuadrilateralDetector::isAboveMidline(const Vec4i& h, int midLine)
 {
 	return h[1] < midLine && h[3] < midLine;
+}
+
+bool QuadrilateralDetector::hasSufficientSupport(const Point& x, const Point& y,
+			const Point& z, const Point& w, Vec4i& h1, Vec4i& h2, Vec4i& v1,
+			Vec4i& v2)
+{
+	return hasSufficientSupportH(h1, x, y) && hasSufficientSupportH(h2, z, w)
+				&& hasSufficientSupportV(v1, x, w)
+				&& hasSufficientSupportV(v2, y, z);
+}
+
+bool QuadrilateralDetector::hasSufficientSupportV(Vec4i& v, Point a, Point b)
+{
+	int ymin = min(v[1], v[3]);
+	int ymax = max(v[1], v[3]);
+
+	int overlap = min(ymax, b.y) - max(ymin, a.y);
+
+	double percentualOverlap = (double) overlap / (b.y - a.y);
+
+	return percentualOverlap > quadP.segmentSupport;
+}
+
+bool QuadrilateralDetector::hasSufficientSupportH(Vec4i& h, Point a, Point b)
+{
+	int xmin = min(h[0], h[2]);
+	int xmax = max(h[0], h[2]);
+
+	int overlap = min(xmax, b.x) - max(xmin, a.x);
+
+	double percentualOverlap = (double) overlap / (b.x - a.x);
+
+	return percentualOverlap > quadP.segmentSupport;
 }
 
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,

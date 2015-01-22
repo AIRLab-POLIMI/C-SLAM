@@ -71,8 +71,16 @@ private:
 
 	void estimate(cv::Point2f& center, float& scaleEstimate, float& medRot);
 
-	void computeBoundingBox(const cv::Mat& im_gray, const cv::Point2f& center,
-				float rotationEstimate, float scaleEstimate);
+	bool isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features);
+
+	void matchKeyPoints(const cv::Point2f& center, float scaleEstimate,
+				float rotationEstimate, std::vector<cv::KeyPoint>& keypoints,
+				cv::Mat& features);
+
+	void selectKeyPoints();
+
+	void computeBoundingBox(const cv::Point2f& center, float rotationEstimate,
+				float scaleEstimate);
 
 private:
 	//algorithm
@@ -83,7 +91,9 @@ private:
 	int thrOutlier;
 	float thrConf;
 	float thrRatio;
-	int minimumKeypontsFraction;
+	//double minimumKeypontsFraction;
+	double minimumKeyPointsPercentage;
+	double keyFramePercentage;
 
 	bool estimateScale;
 	bool estimateRotation;

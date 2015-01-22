@@ -57,6 +57,7 @@ void ParameterServer::update(c_vision::ParametersConfig &config,
 	quadDetector.verticalOverlap = config.quad_verticalOverlap;
 	quadDetector.horizontalOverlap = config.quad_horizontalOverlap;
 	quadDetector.polesFormFactor = config.quad_polesFormFactor;
+	quadDetector.segmentSupport = config.quad_segmentSupport;
 
 	//Setup clustering parameters
 	cluster.threshold = config.cluster_threshold;
