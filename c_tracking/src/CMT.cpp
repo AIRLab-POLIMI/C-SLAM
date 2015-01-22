@@ -40,7 +40,7 @@ CMT::CMT()
 	thrConf = 0.75;
 	thrRatio = 0.8;
 	minimumKeyPointsPercentage = 0.33;
-	keyFramePercentage = 0.5;
+	keyFramePercentage = 0.7;
 
 	estimateScale = true;
 	estimateRotation = true;
@@ -331,7 +331,7 @@ void CMT::estimate(Point2f& center, float& scaleEstimate, float& medRot)
 bool CMT::isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features)
 {
 	bool notYetDetected = !found();
-	bool partiallyDisappeared = initialKeypointsNumber > trackedKeypoints.size();
+	bool partiallyDisappeared = initialKeypointsNumber * keyFramePercentage >= trackedKeypoints.size();
 	bool detectedFeatures = keypoints.size() > 0 && features.rows > 0;
 
 	return detectedFeatures && (notYetDetected || partiallyDisappeared);
