@@ -42,14 +42,15 @@ CMT::CMT()
 	minimumKeyPointsPercentage = 0.33;
 	keyFramePercentage = 0.7;
 
-	estimateScale = true;
-	estimateRotation = true;
-
 	initialKeypointsNumber = 0;
 
 	//initialize matcher
 	std::string matcherType = "BruteForce-Hamming";
 	descriptorMatcher = DescriptorMatcher::create(matcherType);
+
+	//initialize estimate
+	scale = 0;
+	rotation = 0;
 }
 
 void CMT::initialize(const Mat& im_gray0, InitializationData& data)
@@ -94,21 +95,21 @@ void CMT::initialize(const Mat& im_gray0, InitializationData& data)
 	}
 
 	//Find the center of selected keypoints
-	Point2f center(0, 0);
+	objCenter = Point2f(0, 0);
 	for (int i = 0; i < selected_keypoints.size(); i++)
-		center += selected_keypoints[i].pt;
-	center *= (1.0 / selected_keypoints.size());
+		objCenter += selected_keypoints[i].pt;
+	objCenter *= (1.0 / selected_keypoints.size());
 
 	//Remember the rectangle coordinates relative to the center
 	vector<Point2f>& polygon = data.polygon;
 
 	for (int i = 0; i < polygon.size(); i++)
-		relativePolygon.push_back(polygon[i] - center);
+		relativePolygon.push_back(polygon[i] - objCenter);
 
 	//Calculate springs of each keypoint
 	springs = vector<Point2f>();
 	for (int i = 0; i < selected_keypoints.size(); i++)
-		springs.push_back(selected_keypoints[i].pt - center);
+		springs.push_back(selected_keypoints[i].pt - objCenter);
 
 	//Set start image for tracking
 	im_prev = im_gray0.clone();
@@ -121,36 +122,26 @@ void CMT::initialize(const Mat& im_gray0, InitializationData& data)
 	//Remember number of initial keypoints
 	initialKeypointsNumber = selected_keypoints.size();
 
-	//save the center
-	objCenter = center;
 }
 
 void CMT::processFrame(const Mat& im_gray, vector<KeyPoint>& keypoints,
-			Mat& features)
+			Mat& features, bool forceKeyframe)
 {
 	track(im_gray);
 
 	//estimate center, scale and rotation
-	Point2f center;
-	float scaleEstimate;
-	float rotationEstimate;
-
-	estimate(center, scaleEstimate, rotationEstimate);
+	estimate();
 
 	//Clear the list of active keypoints
 	activeKeypoints.clear();
 
-	if (isKeyFrame(keypoints, features))
-		matchKeyPoints(center, scaleEstimate, rotationEstimate, keypoints,
-					features);
+	if (isKeyFrame(keypoints, features, forceKeyframe))
+		matchKeyPoints(keypoints, features);
 
 	selectKeyPoints();
 
 	//Update object state estimate
-	computeBoundingBox(center, rotationEstimate, scaleEstimate);
-
-	//save the center
-	objCenter = center;
+	computeBoundingBox();
 
 	//Save the image
 	im_prev = im_gray;
@@ -212,11 +203,11 @@ void CMT::track(const Mat& im_gray, int THR_FB)
 
 }
 
-void CMT::estimate(Point2f& center, float& scaleEstimate, float& medRot)
+void CMT::estimate()
 {
-	center = Point2f(NAN, NAN);
-	scaleEstimate = NAN;
-	medRot = NAN;
+	objCenter = Point2f(NAN, NAN);
+	scale = NAN;
+	rotation = NAN;
 
 	vector<pair<KeyPoint, int> > keypoints;
 
@@ -276,22 +267,19 @@ void CMT::estimate(Point2f& center, float& scaleEstimate, float& medRot)
 							angle);
 				angleDiffs.push_back(angleDiff);
 			}
-			scaleEstimate = median(scaleChange);
-			if (!estimateScale)
-				scaleEstimate = 1;
-			medRot = median(angleDiffs);
-			if (!estimateRotation)
-				medRot = 0;
+
+			scale = median(scaleChange);
+			rotation = median(angleDiffs);
 
 			std::vector<cv::Point2f> votes;
 			for (int i = 0; i < keypoints.size(); i++)
 				votes.push_back(
 							keypoints[i].first.pt
-										- scaleEstimate
+										- scale
 													* rotate(
 																springs[keypoints[i].second
 																			- 1],
-																medRot));
+																rotation));
 			//Compute linkage between pairwise distances
 			vector<Cluster> linkageData = linkage(votes);
 
@@ -319,26 +307,26 @@ void CMT::estimate(Point2f& center, float& scaleEstimate, float& medRot)
 
 			trackedKeypoints = newKeypoints;
 
-			center = Point2f(0, 0);
+			objCenter = Point2f(0, 0);
 			for (int i = 0; i < newVotes.size(); i++)
-				center += newVotes[i];
+				objCenter += newVotes[i];
 
-			center *= 1.0 / newVotes.size();
+			objCenter *= 1.0 / newVotes.size();
 		}
 	}
 }
 
-bool CMT::isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features)
+bool CMT::isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features, bool forcekeyframe)
 {
 	bool notYetDetected = !found();
-	bool partiallyDisappeared = initialKeypointsNumber * keyFramePercentage >= trackedKeypoints.size();
+	bool partiallyDisappeared = initialKeypointsNumber * keyFramePercentage
+				>= trackedKeypoints.size();
 	bool detectedFeatures = keypoints.size() > 0 && features.rows > 0;
 
-	return detectedFeatures && (notYetDetected || partiallyDisappeared);
+	return forcekeyframe || (detectedFeatures && (notYetDetected || partiallyDisappeared));
 }
 
-void CMT::matchKeyPoints(const Point2f& center, float scaleEstimate,
-			float rotationEstimate, vector<KeyPoint>& keypoints, Mat& features)
+void CMT::matchKeyPoints(vector<KeyPoint>& keypoints, Mat& features)
 {
 	//For each keypoint and its descriptor
 	for (int i = 0; i < keypoints.size(); i++)
@@ -380,7 +368,7 @@ void CMT::matchKeyPoints(const Point2f& center, float scaleEstimate,
 
 		//In a second step, try to match difficult keypoints
 		//If structural constraints are applicable
-		if (!(isnan(center.x) | isnan(center.y)))
+		if (!(isnan(objCenter.x) | isnan(objCenter.y)))
 		{
 			//Compute distances to initial descriptors
 			vector<DMatch> matches;
@@ -394,14 +382,13 @@ void CMT::matchKeyPoints(const Point2f& center, float scaleEstimate,
 							1 - matches[i].distance / descriptorLength);
 
 			//Compute the keypoint location relative to the object center
-			Point2f relative_location = keypoint.pt - center;
+			Point2f relative_location = keypoint.pt - objCenter;
 
 			//Compute the distances to all springs
 			vector<float> displacements;
 			for (int i = 0; i < springs.size(); i++)
 			{
-				Point2f p = (scaleEstimate
-							* rotate(springs[i], -rotationEstimate)
+				Point2f p = (scale * rotate(springs[i], -rotation)
 							- relative_location);
 				displacements.push_back(sqrt(p.dot(p)));
 			}
@@ -474,22 +461,19 @@ void CMT::selectKeyPoints()
 	}
 }
 
-void CMT::computeBoundingBox(const Point2f& center, float rotationEstimate,
-			float scaleEstimate)
+void CMT::computeBoundingBox()
 {
 	//Update object state estimate
 	trackedPolygon.clear();
-	if (!(isnan(center.x) | isnan(center.y))
+	if (!(isnan(objCenter.x) | isnan(objCenter.y))
 				&& activeKeypoints.size()
 							> initialKeypointsNumber
 										* minimumKeyPointsPercentage)
 	{
 		for (int i = 0; i < relativePolygon.size(); i++)
 		{
-			Point2f point = center
-						+ scaleEstimate
-									* rotate(relativePolygon[i],
-												rotationEstimate);
+			Point2f point = objCenter
+						+ scale * rotate(relativePolygon[i], rotation);
 			trackedPolygon.push_back(point);
 		}
 	}

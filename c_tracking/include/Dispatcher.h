@@ -28,6 +28,8 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/Imu.h>
+#include <tf/transform_listener.h>
 
 #include <c_slam_msgs/NamedPolygon.h>
 #include <c_slam_msgs/TrackedObject.h>
@@ -44,8 +46,10 @@ public:
 	void handleImage(const sensor_msgs::ImageConstPtr& msg);
 	void handleObjectTrackRequest(
 				const c_slam_msgs::NamedPolygon& polygonMessage);
+	void handleImu(const sensor_msgs::Imu& imu);
 
 private:
+	bool isInlier(Track& track);
 	void publishTrack(const uint64_t& id,
 				const std::vector<cv::Point2f>& polygon, const cv::Rect& roi,
 				const ros::Time& stamp);
@@ -71,6 +75,8 @@ private:
 	image_transport::Subscriber imageSubscriber;
 	ros::Subscriber toTrackSubscriber;
 	ros::Publisher trackPublisher;
+	ros::Subscriber imuSubscriber;
+	tf::TransformListener tfListener;
 
 	//Parameters
 	ParameterServer parameterServer;
@@ -85,7 +91,10 @@ private:
 	//display
 	std::string src_window;
 
+	//algorithm data
+	std::string camera_frame_id;
 	uint64_t nextId;
+	double roll;
 };
 
 #endif /* DISPATCHER_H_ */

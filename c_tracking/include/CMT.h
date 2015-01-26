@@ -36,7 +36,7 @@ public:
 	CMT();
 	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
 	virtual void processFrame(const cv::Mat& im_gray,
-				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features);
+				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features, bool forcekeyframe);
 
 	inline bool found() const
 	{
@@ -66,21 +66,24 @@ public:
 
 	virtual ~CMT();
 
+	double getRotation() const
+	{
+		return rotation;
+	}
+
 private:
 	void track(const cv::Mat& im_gray, int THR_FB = 20);
 
-	void estimate(cv::Point2f& center, float& scaleEstimate, float& medRot);
+	void estimate();
 
-	bool isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features);
+	bool isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features, bool forcekeyframe);
 
-	void matchKeyPoints(const cv::Point2f& center, float scaleEstimate,
-				float rotationEstimate, std::vector<cv::KeyPoint>& keypoints,
+	void matchKeyPoints(std::vector<cv::KeyPoint>& keypoints,
 				cv::Mat& features);
 
 	void selectKeyPoints();
 
-	void computeBoundingBox(const cv::Point2f& center, float rotationEstimate,
-				float scaleEstimate);
+	void computeBoundingBox();
 
 private:
 	//algorithm
@@ -91,12 +94,10 @@ private:
 	int thrOutlier;
 	float thrConf;
 	float thrRatio;
-	//double minimumKeypontsFraction;
+
 	double minimumKeyPointsPercentage;
 	double keyFramePercentage;
 
-	bool estimateScale;
-	bool estimateRotation;
 
 	//Object model data
 	cv::Mat selectedFeatures;
@@ -117,6 +118,8 @@ private:
 
 	//Polygon coordinates
 	cv::Point2f objCenter;
+	double scale;
+	double rotation;
 	std::vector<cv::Point2f> relativePolygon;
 	std::vector<cv::Point2f> trackedPolygon;
 

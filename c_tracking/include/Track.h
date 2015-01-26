@@ -27,10 +27,24 @@
 #include "CMT.h"
 
 #include <string>
+#include <angles/angles.h>
 
-class Track : public CMT
+class Track: public CMT
 {
 public:
+	Track()
+	{
+		outlier = false;
+		id = 0;
+		initialRotation = 0;
+	}
+
+	inline void processFrame(const cv::Mat& im_gray, std::vector<cv::KeyPoint>& keypoints,
+				cv::Mat& features)
+	{
+		CMT::processFrame(im_gray, keypoints, features, forceKeyFrame());
+	}
+
 	inline void setId(const uint64_t& id)
 	{
 		this->id = id;
@@ -51,11 +65,36 @@ public:
 		return label;
 	}
 
+	inline double getCurrentRotation() const
+	{
+		double currentEstimate = getRotation();
+		return angles::normalize_angle(initialRotation + currentEstimate);
+	}
+
+	inline void setInitialRotation(double initialRotation)
+	{
+		this->initialRotation = initialRotation;
+	}
+
+	inline void setOutlierFlag()
+	{
+		outlier = true;
+	}
+
+private:
+	inline bool forceKeyFrame()
+	{
+		bool force = outlier;
+		outlier = false;
+		return force;
+	}
+
+
 private:
 	std::string label;
 	uint64_t id;
+	double initialRotation;
+	bool outlier;
 };
-
-
 
 #endif /* TRACK_H_ */

@@ -23,6 +23,8 @@
 
 #include "ParameterServer.h"
 
+#include <angles/angles.h>
+
 ParameterServer::ParameterServer()
 {
 	dynamic_reconfigure::Server<c_tracking::ParametersConfig>::CallbackType f;
@@ -39,4 +41,7 @@ void ParameterServer::update(c_tracking::ParametersConfig &config,
 	//Set bounding box parameters
 	boundingBox.xScaling = config.boundingBox_xScaling;
 	boundingBox.yScaling = config.boundingBox_yScaling;
+
+	//Set the outlier rejection parameters
+	outlier.maxAngle = angles::from_degrees(config.outlier_maxAngle);
 }

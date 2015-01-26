@@ -26,6 +26,8 @@
 #include <string>
 #include <stdexcept>
 #include <angles/angles.h>
+#include <tf/LinearMath/Quaternion.h>
+#include <tf/LinearMath/Matrix3x3.h>
 
 namespace enc = sensor_msgs::image_encodings;
 using namespace std;
@@ -39,18 +41,23 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("tracks", 100);
 	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
+	imuSubscriber = n.subscribe("/ardrone/imu", 1, &Dispatcher::handleImu,
+				this);
 
 	src_window = "Cognitive Tracking";
 
 	namedWindow(src_window, CV_WINDOW_AUTOSIZE);
 
 	nextId = 0;
+	roll = 0.0;
 }
 
 void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 {
 	cv_bridge::CvImagePtr cv_ptr_color;
 	Mat coloredImage;
+
+	camera_frame_id = msg->header.frame_id;
 
 	try
 	{
@@ -77,7 +84,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 		Mat& grayImage = cv_ptr->image;
 		track.processFrame(grayImage, keypoints, features);
 
-		if (track.found())
+		if (track.found() && isInlier(track))
 		{
 			//extract roi
 			const vector<Point2f>& polygon = track.getTrackedPolygon();
@@ -126,6 +133,42 @@ void Dispatcher::handleObjectTrackRequest(
 	{
 		ROS_WARN("No Keypoints in the selected object, abort tracking");
 	}
+}
+
+void Dispatcher::handleImu(const sensor_msgs::Imu& imu)
+{
+	if (camera_frame_id.empty())
+		return;
+
+	double roll, pitch, yaw;
+	double x = imu.orientation.x;
+	double y = imu.orientation.y;
+	double z = imu.orientation.z;
+	double w = imu.orientation.w;
+
+	tf::Quaternion quaternion(x, y, z, w);
+	tf::StampedTransform transform;
+	ros::Time now = ros::Time(0);
+	tfListener.waitForTransform(imu.header.frame_id, camera_frame_id, now,
+				ros::Duration(1.0));
+	tfListener.lookupTransform(imu.header.frame_id, camera_frame_id,
+				ros::Time(0), transform);
+	quaternion *= transform.getRotation();
+
+	tf::Matrix3x3 rotationMatrix(quaternion);
+	rotationMatrix.getRPY(pitch, roll, yaw);
+
+	this->roll = -roll;
+}
+
+bool Dispatcher::isInlier(Track& track)
+{
+	OutlierParam& param = parameterServer.getOutlierParam();
+	double estimatedRotation = track.getCurrentRotation();
+
+	return abs(angles::shortest_angular_distance(estimatedRotation, roll))
+				<= param.maxAngle;
+
 }
 
 bool Dispatcher::isTrackedObject(vector<Point2f>& polygon, Point2f& massCenter)

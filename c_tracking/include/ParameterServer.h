@@ -40,6 +40,11 @@ struct BoundingBoxparam
 	double yScaling;
 };
 
+struct OutlierParam
+{
+	double maxAngle;
+};
+
 class ParameterServer
 {
 public:
@@ -55,6 +60,11 @@ public:
 		return boundingBox;
 	}
 
+	inline OutlierParam& getOutlierParam()
+	{
+		return outlier;
+	}
+
 private:
 	void update(c_tracking::ParametersConfig &config, uint32_t level);
 
@@ -65,6 +75,7 @@ private:
 	//parameters
 	ExtractionParam extraction;
 	BoundingBoxparam boundingBox;
+	OutlierParam outlier;
 
 };
 
