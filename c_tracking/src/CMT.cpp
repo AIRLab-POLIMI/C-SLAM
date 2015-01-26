@@ -33,14 +33,13 @@
 using namespace std;
 using namespace cv;
 
-CMT::CMT()
+CMT::CMT(MatchingParam& param) :
+			param(param)
 {
 	descriptorLength = 512;
 	thrOutlier = 20;
 	thrConf = 0.75;
 	thrRatio = 0.8;
-	minimumKeyPointsPercentage = 0.33;
-	keyFramePercentage = 0.7;
 
 	initialKeypointsNumber = 0;
 
@@ -316,14 +315,16 @@ void CMT::estimate()
 	}
 }
 
-bool CMT::isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features, bool forcekeyframe)
+bool CMT::isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features,
+			bool forcekeyframe)
 {
 	bool notYetDetected = !found();
-	bool partiallyDisappeared = initialKeypointsNumber * keyFramePercentage
-				>= trackedKeypoints.size();
+	bool partiallyDisappeared = initialKeypointsNumber
+				* param.keyframePercentage >= trackedKeypoints.size();
 	bool detectedFeatures = keypoints.size() > 0 && features.rows > 0;
 
-	return forcekeyframe || (detectedFeatures && (notYetDetected || partiallyDisappeared));
+	return forcekeyframe
+				|| (detectedFeatures && (notYetDetected || partiallyDisappeared));
 }
 
 void CMT::matchKeyPoints(vector<KeyPoint>& keypoints, Mat& features)
@@ -467,8 +468,7 @@ void CMT::computeBoundingBox()
 	trackedPolygon.clear();
 	if (!(isnan(objCenter.x) | isnan(objCenter.y))
 				&& activeKeypoints.size()
-							> initialKeypointsNumber
-										* minimumKeyPointsPercentage)
+							> initialKeypointsNumber * param.minPercentage)
 	{
 		for (int i = 0; i < relativePolygon.size(); i++)
 		{

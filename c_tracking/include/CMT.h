@@ -28,15 +28,17 @@
 
 #include <opencv2/opencv.hpp>
 #include "InitializationData.h"
+#include "ParameterServer.h"
 
 class CMT
 {
 
 public:
-	CMT();
+	CMT(MatchingParam& param);
 	virtual void initialize(const cv::Mat& im_gray0, InitializationData& data);
 	virtual void processFrame(const cv::Mat& im_gray,
-				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features, bool forcekeyframe);
+				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features,
+				bool forcekeyframe);
 
 	inline bool found() const
 	{
@@ -76,7 +78,8 @@ private:
 
 	void estimate();
 
-	bool isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features, bool forcekeyframe);
+	bool isKeyFrame(std::vector<cv::KeyPoint>& keypoints, cv::Mat& features,
+				bool forcekeyframe);
 
 	void matchKeyPoints(std::vector<cv::KeyPoint>& keypoints,
 				cv::Mat& features);
@@ -94,10 +97,7 @@ private:
 	int thrOutlier;
 	float thrConf;
 	float thrRatio;
-
-	double minimumKeyPointsPercentage;
-	double keyFramePercentage;
-
+	MatchingParam& param;
 
 	//Object model data
 	cv::Mat selectedFeatures;

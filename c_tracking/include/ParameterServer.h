@@ -45,6 +45,12 @@ struct OutlierParam
 	double maxAngle;
 };
 
+struct MatchingParam
+{
+	double minPercentage;
+	double keyframePercentage;
+};
+
 class ParameterServer
 {
 public:
@@ -65,6 +71,11 @@ public:
 		return outlier;
 	}
 
+	inline MatchingParam& getMatchingParam()
+	{
+		return matching;
+	}
+
 private:
 	void update(c_tracking::ParametersConfig &config, uint32_t level);
 
@@ -75,6 +86,7 @@ private:
 	//parameters
 	ExtractionParam extraction;
 	BoundingBoxparam boundingBox;
+	MatchingParam matching;
 	OutlierParam outlier;
 
 };

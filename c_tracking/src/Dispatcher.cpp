@@ -80,7 +80,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	//track
 	for (int i = 0; i < tracks.size(); i++)
 	{
-		Track& track = tracks[i];
+		Track& track = *tracks[i];
 		Mat& grayImage = cv_ptr->image;
 		track.processFrame(grayImage, keypoints, features);
 
@@ -122,10 +122,10 @@ void Dispatcher::handleObjectTrackRequest(
 
 		//setup tracker
 		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
-		Track track;
-		track.initialize(cv_ptr->image, data);
-		track.setId(nextId++);
-		track.setLabel(polygonMessage.polygonLabel);
+		Track* track = new Track(parameterServer);
+		track->initialize(cv_ptr->image, data);
+		track->setId(nextId++);
+		track->setLabel(polygonMessage.polygonLabel);
 		tracks.push_back(track);
 
 	}
@@ -161,6 +161,14 @@ void Dispatcher::handleImu(const sensor_msgs::Imu& imu)
 	this->roll = -roll;
 }
 
+Dispatcher::~Dispatcher()
+{
+	for(vector<Track*>::iterator it = tracks.begin(); it != tracks.end(); ++it)
+	{
+		delete *it;
+	}
+}
+
 bool Dispatcher::isInlier(Track& track)
 {
 	OutlierParam& param = parameterServer.getOutlierParam();
@@ -173,9 +181,9 @@ bool Dispatcher::isInlier(Track& track)
 
 bool Dispatcher::isTrackedObject(vector<Point2f>& polygon, Point2f& massCenter)
 {
-	for (vector<Track>::iterator it = tracks.begin(); it != tracks.end(); ++it)
+	for (vector<Track*>::iterator it = tracks.begin(); it != tracks.end(); ++it)
 	{
-		Track& track = *it;
+		Track& track = **it;
 		if (isSameObject(track, polygon, massCenter))
 		{
 			return true;

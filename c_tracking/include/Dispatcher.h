@@ -47,6 +47,7 @@ public:
 	void handleObjectTrackRequest(
 				const c_slam_msgs::NamedPolygon& polygonMessage);
 	void handleImu(const sensor_msgs::Imu& imu);
+	~Dispatcher();
 
 private:
 	bool isInlier(Track& track);
@@ -86,7 +87,7 @@ private:
 
 	//Tracks
 	CMTFeatureExtractor featureExtractor;
-	std::vector<Track> tracks;
+	std::vector<Track*> tracks;
 
 	//display
 	std::string src_window;

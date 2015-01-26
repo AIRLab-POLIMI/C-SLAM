@@ -32,15 +32,16 @@
 class Track: public CMT
 {
 public:
-	Track()
+	Track(ParameterServer& param) :
+				CMT(param.getMatchingParam())
 	{
 		outlier = false;
 		id = 0;
 		initialRotation = 0;
 	}
 
-	inline void processFrame(const cv::Mat& im_gray, std::vector<cv::KeyPoint>& keypoints,
-				cv::Mat& features)
+	inline void processFrame(const cv::Mat& im_gray,
+				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features)
 	{
 		CMT::processFrame(im_gray, keypoints, features, forceKeyFrame());
 	}
@@ -88,7 +89,6 @@ private:
 		outlier = false;
 		return force;
 	}
-
 
 private:
 	std::string label;

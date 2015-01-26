@@ -42,6 +42,10 @@ void ParameterServer::update(c_tracking::ParametersConfig &config,
 	boundingBox.xScaling = config.boundingBox_xScaling;
 	boundingBox.yScaling = config.boundingBox_yScaling;
 
+	//Set the matching parameters
+	matching.minPercentage = config.matching_minPercentage;
+	matching.keyframePercentage = config.matching_keyframePercentage;
+
 	//Set the outlier rejection parameters
 	outlier.maxAngle = angles::from_degrees(config.outlier_maxAngle);
 }
