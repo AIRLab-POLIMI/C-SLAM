@@ -49,6 +49,7 @@ struct MatchingParam
 {
 	double minPercentage;
 	double keyframePercentage;
+	double keyFrameMaxAngle;
 };
 
 class ParameterServer
@@ -66,12 +67,12 @@ public:
 		return boundingBox;
 	}
 
-	inline OutlierParam& getOutlierParam()
+	inline OutlierParam& getOutlier()
 	{
 		return outlier;
 	}
 
-	inline MatchingParam& getMatchingParam()
+	inline MatchingParam& getMatching()
 	{
 		return matching;
 	}

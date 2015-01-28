@@ -82,7 +82,7 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 	{
 		Track& track = *tracks[i];
 		Mat& grayImage = cv_ptr->image;
-		track.processFrame(grayImage, keypoints, features);
+		track.processFrame(grayImage, keypoints, features, roll);
 
 		if (track.found() && isInlier(track))
 		{
@@ -96,6 +96,10 @@ void Dispatcher::handleImage(const sensor_msgs::ImageConstPtr& msg)
 
 			//draw results
 			drawResults(coloredImage, roi, track);
+		}
+		else
+		{
+			track.setOutlierFlag();
 		}
 	}
 
@@ -122,10 +126,11 @@ void Dispatcher::handleObjectTrackRequest(
 
 		//setup tracker
 		featureExtractor.discriminateKeyPoints(cv_ptr->image, data);
-		Track* track = new Track(parameterServer);
+		Track* track = new Track(parameterServer.getMatching());
 		track->initialize(cv_ptr->image, data);
 		track->setId(nextId++);
 		track->setLabel(polygonMessage.polygonLabel);
+		track->setInitialRotation(roll);
 		tracks.push_back(track);
 
 	}
@@ -171,11 +176,8 @@ Dispatcher::~Dispatcher()
 
 bool Dispatcher::isInlier(Track& track)
 {
-	OutlierParam& param = parameterServer.getOutlierParam();
-	double estimatedRotation = track.getCurrentRotation();
-
-	return abs(angles::shortest_angular_distance(estimatedRotation, roll))
-				<= param.maxAngle;
+	OutlierParam& param = parameterServer.getOutlier();
+	return track.isRotationBounded(roll, param.maxAngle);
 
 }
 
@@ -196,7 +198,7 @@ bool Dispatcher::isTrackedObject(vector<Point2f>& polygon, Point2f& massCenter)
 bool Dispatcher::isSameObject(Track& track, vector<Point2f>& polygon,
 			Point2f& massCenter)
 {
-	if (!track.found())
+	if (!track.found() || !isInlier(track))
 		return false;
 
 	const vector<Point2f>& trackedPolygon = track.getTrackedPolygon();

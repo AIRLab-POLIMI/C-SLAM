@@ -32,8 +32,8 @@
 class Track: public CMT
 {
 public:
-	Track(ParameterServer& param) :
-				CMT(param.getMatchingParam())
+	Track(MatchingParam& param) :
+				CMT(param)
 	{
 		outlier = false;
 		id = 0;
@@ -41,9 +41,10 @@ public:
 	}
 
 	inline void processFrame(const cv::Mat& im_gray,
-				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features)
+				std::vector<cv::KeyPoint>& keypoints, cv::Mat& features,
+				double roll)
 	{
-		CMT::processFrame(im_gray, keypoints, features, forceKeyFrame());
+		CMT::processFrame(im_gray, keypoints, features, forceKeyFrame(roll));
 	}
 
 	inline void setId(const uint64_t& id)
@@ -82,11 +83,22 @@ public:
 		outlier = true;
 	}
 
-private:
-	inline bool forceKeyFrame()
+	inline bool isRotationBounded(double roll, double maxAngle)
 	{
-		bool force = outlier;
+		double estimatedRotation = getCurrentRotation();
+		double angularDistance = angles::shortest_angular_distance(
+					estimatedRotation, roll);
+		return std::abs(angularDistance) <= maxAngle;
+	}
+
+private:
+	inline bool forceKeyFrame(double roll)
+	{
+		bool force = outlier
+					|| !isRotationBounded(roll, param.keyFrameMaxAngle);
+
 		outlier = false;
+
 		return force;
 	}
 
@@ -95,6 +107,7 @@ private:
 	uint64_t id;
 	double initialRotation;
 	bool outlier;
+
 };
 
 #endif /* TRACK_H_ */

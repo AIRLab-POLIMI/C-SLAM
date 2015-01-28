@@ -97,7 +97,6 @@ private:
 	int thrOutlier;
 	float thrConf;
 	float thrRatio;
-	MatchingParam& param;
 
 	//Object model data
 	cv::Mat selectedFeatures;
@@ -125,6 +124,9 @@ private:
 
 	//Probably useless
 	std::vector<std::pair<cv::KeyPoint, int> > outliers;
+
+protected:
+	MatchingParam& param;
 };
 
 #endif // CMT_H

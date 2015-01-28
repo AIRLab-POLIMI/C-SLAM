@@ -45,6 +45,7 @@ void ParameterServer::update(c_tracking::ParametersConfig &config,
 	//Set the matching parameters
 	matching.minPercentage = config.matching_minPercentage;
 	matching.keyframePercentage = config.matching_keyframePercentage;
+	matching.keyFrameMaxAngle = angles::from_degrees(config.matching_keyFrameMaxAngle);
 
 	//Set the outlier rejection parameters
 	outlier.maxAngle = angles::from_degrees(config.outlier_maxAngle);
