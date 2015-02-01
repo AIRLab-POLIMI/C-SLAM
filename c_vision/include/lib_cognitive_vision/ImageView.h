@@ -39,7 +39,9 @@
 class ImageView
 {
 public:
+	ImageView();
 	ImageView(std::string viewName);
+	ImageView(std::size_t id);
 
 	~ImageView();
 

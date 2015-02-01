@@ -23,12 +23,41 @@
 
 #include "ImageView.h"
 
+#include <sstream>
+
 using namespace std;
 using namespace cv;
+
+ImageView::ImageView() :
+			viewName("")
+{
+	keyPoints = NULL;
+	clusters = NULL;
+	verticalLines = NULL;
+	horizontalLines = NULL;
+	rectangles = NULL;
+	poles = NULL;
+	roll = 0;
+}
 
 ImageView::ImageView(std::string viewName) :
 			viewName(viewName)
 {
+	namedWindow(viewName);
+	keyPoints = NULL;
+	clusters = NULL;
+	verticalLines = NULL;
+	horizontalLines = NULL;
+	rectangles = NULL;
+	poles = NULL;
+	roll = 0;
+}
+
+ImageView::ImageView(size_t id)
+{
+	stringstream ss;
+	ss << "Object " << id;
+	viewName = ss.str();
 	cv::namedWindow(viewName);
 	keyPoints = NULL;
 	clusters = NULL;
@@ -125,13 +154,13 @@ void ImageView::writeFeaturesClassifications(Mat& frame, Feature& feature)
 		Point featureCenter = feature.getCenter();
 		Size textSize = getTextSize(text, FONT_HERSHEY_SIMPLEX, 0.4, 1,
 					&baseline);
-		Point textOrigin(featureCenter.x - textSize.width/2,
+		Point textOrigin(featureCenter.x - textSize.width / 2,
 					featureCenter.y + currentHeightOffset + textSize.height);
 
 		putText(frame, text, textOrigin, FONT_HERSHEY_SIMPLEX, 0.4,
 					Scalar(0, 255, 0));
 
-		currentHeightOffset += 2*baseline + 3;
+		currentHeightOffset += 2 * baseline + 3;
 	}
 
 }

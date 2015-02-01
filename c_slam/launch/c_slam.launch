@@ -6,7 +6,7 @@
 	<arg name="camera_source" default="/ardrone" />
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
-
+	<param name="use_sim_time" value="true" />
 
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
@@ -48,7 +48,9 @@
 		output="screen">
 		<!-- canny params -->
 		<param name="canny/alpha" value="0.2" />
-		<param name="canny/apertureSize" value="3" />
+		<param name="canny/low" value="5" />
+		<param name="canny/high" value="30" />
+		<param name="canny/apertureSize" value="5" />
 		<param name="canny/low" value="15" />    <!-- 10 -->
 		<param name="canny/high" value="45" />   <!-- 30 -->
 		<param name="canny/blur" value="3" />

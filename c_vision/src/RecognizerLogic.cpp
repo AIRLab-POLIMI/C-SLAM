@@ -39,13 +39,18 @@ namespace enc = sensor_msgs::image_encodings;
 
 RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), infoCache(15), imageCache(15),
-			detector(parameters), viewer("ROI")
+			detector(parameters)
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&RecognizerLogic::handleCamera, this);
 	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack,
 				this);
 	publisher = n.advertise<c_slam_msgs::NamedPolygon>("objects", 10);
+
+	//TODO fixme
+	viewers[0] = ImageView(0);
+	/*viewers[1] = ImageView(1);
+	 viewers[2] = ImageView(2);*/
 }
 
 void RecognizerLogic::handleCamera(const ImageConstPtr& msg,
@@ -69,7 +74,7 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
 		classify(cameraModel, roi);
-		//display(objectImage);
+		display(objectImage, track.id);
 		detector.deleteDetections();
 	}
 	catch (cv_bridge::Exception& e)
@@ -108,13 +113,20 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 
 }
 
-void RecognizerLogic::display(Mat& image)
+void RecognizerLogic::display(Mat& image, size_t id)
 {
+	if (viewers.count(id) == 0)
+	{
+		viewers[id] = ImageView(id);
+	}
+
+	ImageView& viewer = viewers[id];
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
 	viewer.setClusters(detector.getClusters());
 	viewer.setRoll(roll);
 	viewer.display(image);
+
 }
 
 void RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,

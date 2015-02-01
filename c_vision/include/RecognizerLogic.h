@@ -38,6 +38,8 @@
 
 #include "ObjectClassificator.h"
 
+#include <map>
+
 class RecognizerLogic: public BaseLogic
 {
 public:
@@ -49,7 +51,7 @@ public:
 private:
 	void detect(cv::Mat& image, cv::Mat& mask);
 	void classify(image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
-	void display(cv::Mat& image);
+	void display(cv::Mat& image, std::size_t id);
 
 	void rectify(ObjectClassificator& classificator, image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
 
@@ -73,8 +75,8 @@ private:
 	//Object detection
 	AdvancedDetector detector;
 
-	//Data needed to display results
-	ImageView viewer;
+
+	std::map<std::size_t, ImageView> viewers;
 };
 
 #endif /* RECOGNIZERLOGIC_H_ */
