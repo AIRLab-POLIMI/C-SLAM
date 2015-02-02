@@ -32,13 +32,13 @@ AdvancedDetector::AdvancedDetector(ParameterServer& parameters) :
 	clusters = NULL;
 }
 
-void AdvancedDetector::detect(Mat& image, Mat& mask)
+void AdvancedDetector::detect(Mat& image, Mat& mask, bool showCanny)
 {
 	Mat grayFrame;
 	cvtColor(image, grayFrame, CV_BGR2GRAY);
 
 	//detect lines
-	detectLines(grayFrame, mask, false);
+	detectLines(grayFrame, mask, showCanny);
 
 	//detect quadrilaterals and poles
 	detectQuadrilaterals(true);

@@ -40,17 +40,16 @@ LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP,
 	verticalLines = NULL;
 }
 
-void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
-			bool showCanny)
+void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 {
-	Mat tmp, blurred, canny;
+	Mat tmp, blurred;
 
 	double high_thres;
 	double low_thres;
 
 	blur(input, blurred, Size(cannyP.blur, cannyP.blur));
 
-	if(cannyP.automatic)
+	if (cannyP.automatic)
 	{
 		high_thres = 0.7 * computeThreshold(blurred);
 		low_thres = high_thres * cannyP.alpha;
@@ -63,7 +62,6 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 
 	Canny(blurred, tmp, low_thres, high_thres, cannyP.apertureSize, true);
 
-
 	if (mask.empty())
 	{
 		canny = tmp;
@@ -73,6 +71,7 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 	}
 	else
 	{
+		canny = Mat(tmp.rows, tmp.cols, CV_8UC1,Scalar(0));
 		tmp.copyTo(canny, mask);
 	}
 
@@ -87,15 +86,15 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 	verticalLines = filter.getVerticalLines();
 	horizontalLines = filter.getHorizontalLines();
 
-	if (showCanny)
-	{
-		Mat colored;
-		cvtColor(canny, colored, CV_GRAY2BGR);
-		viewer.setHorizontalLines(horizontalLines);
-		viewer.setVerticalLines(verticalLines);
-		viewer.display(colored);
-	}
+}
 
+void LineDetector::display()
+{
+	Mat colored;
+	cvtColor(canny, colored, CV_GRAY2BGR);
+	viewer.setHorizontalLines(horizontalLines);
+	viewer.setVerticalLines(verticalLines);
+	viewer.display(colored);
 }
 
 int LineDetector::computeThreshold(cv::Mat& src)
@@ -125,5 +124,4 @@ void LineDetector::hackFunction(Mat& canny)
 			canny.at<uchar>(j, i) = 0;
 		}
 }
-
 

@@ -72,6 +72,11 @@ struct ClassifierParam
 	double threshold;
 };
 
+struct DisplayParam
+{
+	int currentObject;
+};
+
 class ParameterServer
 {
 
@@ -108,6 +113,11 @@ public:
 		return classifier;
 	}
 
+	inline DisplayParam& getDisplayParams()
+	{
+		return display;
+	}
+
 private:
 	void update(c_vision::ParametersConfig &config, uint32_t level);
 
@@ -122,6 +132,7 @@ private:
 	QDetectorParam quadDetector;
 	ClusterParam cluster;
 	ClassifierParam classifier;
+	DisplayParam display;
 
 };
 

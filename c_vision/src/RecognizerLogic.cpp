@@ -39,7 +39,7 @@ namespace enc = sensor_msgs::image_encodings;
 
 RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), infoCache(15), imageCache(15),
-			detector(parameters)
+			detector(parameters), dispP(parameters.getDisplayParams())
 {
 	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
 				&RecognizerLogic::handleCamera, this);
@@ -67,9 +67,9 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 	{
 		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
-		detect(objectImage, mask);
+		detect(objectImage, mask, track.id == dispP.currentObject);
 		classify(cameraModel, roi);
-		//display(objectImage, track.id);
+		display(objectImage, track.id);
 		detector.deleteDetections();
 	}
 	catch (cv_bridge::Exception& e)
@@ -82,12 +82,12 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 	}
 }
 
-void RecognizerLogic::detect(Mat& image, Mat& mask)
+void RecognizerLogic::detect(Mat& image, Mat& mask, bool showCanny)
 {
 	Mat greyFrame;
 
 	detector.setRoll(roll);
-	detector.detect(image, mask);
+	detector.detect(image, mask, showCanny);
 }
 
 void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
@@ -110,6 +110,9 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 
 void RecognizerLogic::display(Mat& image, size_t id)
 {
+	if(id != dispP.currentObject)
+		return;
+
 	if (viewers.count(id) == 0)
 	{
 		viewers[id] = ImageView(id);

@@ -33,7 +33,7 @@ class AdvancedDetector : public BasicDetector
 public:
 	AdvancedDetector(ParameterServer& parameters);
 
-	void detect(cv::Mat& image, cv::Mat& mask);
+	void detect(cv::Mat& image, cv::Mat& mask, bool showCanny);
 
 	virtual void deleteDetections();
 

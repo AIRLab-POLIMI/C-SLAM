@@ -68,6 +68,9 @@ void ParameterServer::update(c_vision::ParametersConfig &config,
 	//Setup classifier parameters
 	classifier.threshold = config.classifier_threshold;
 
+	//Setup display params
+	display.currentObject = config.displayer_currentObject;
+
 }
 
 

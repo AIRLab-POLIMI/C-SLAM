@@ -24,27 +24,6 @@
 		<!-- canny params -->
 		<param name="canny_automatic" value="True" />
 		<param name="canny_alpha" value="0.15" />
-		<param name="canny_apertureSize" value="5" />
-		<param name="canny_blur" value="5" />
-
-		<!-- hough params -->
-		<param name="hough_rho" value="1" />
-		<param name="hough_teta" value="1.0" />
-		<param name="hough_threshold" value="50" />
-		<param name="hough_minLineLenght" value="20" />
-		<param name="hough_maxLineGap" value="15" />
-
-		<!-- line filter params -->
-		<param name="filter_maxDeltaHorizontal" value="10.0" />
-		<param name="filter_maxDeltaVertical" value="5.0" />
-
-		<!-- cluster params -->
-		<param name="cluster_threshold" value="30" />
-		<param name="cluster_minPoints" value="4" />
-		<param name="cluster_maxDistance" value="15.0" />
-
-		<!-- classifier params -->
-		<param name="classifier_threshold" value="0.2" />
 	</node>
 
 	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner"

@@ -49,7 +49,7 @@ public:
 	void handleTrack(const c_slam_msgs::TrackedObject& track);
 
 private:
-	void detect(cv::Mat& image, cv::Mat& mask);
+	void detect(cv::Mat& image, cv::Mat& mask, bool showCanny);
 	void classify(image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
 	void display(cv::Mat& image, std::size_t id);
 
@@ -76,6 +76,8 @@ private:
 	AdvancedDetector detector;
 
 
+	//Visualization
+	DisplayParam& dispP;
 	std::map<std::size_t, ImageView> viewers;
 };
 
