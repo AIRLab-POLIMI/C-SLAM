@@ -47,6 +47,9 @@ public:
 	}
 
 private:
+	int computeThreshold(cv::Mat& src);
+
+private:
 	CannyParam& cannyP;
 	HoughParam& houghP;
 	LFilterParam& filterP;

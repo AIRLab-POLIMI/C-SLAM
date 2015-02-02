@@ -40,28 +40,27 @@ LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP,
 	verticalLines = NULL;
 }
 
-void LineDetector::hackFunction(Mat& canny)
-{
-	//FIXME: delete this hack: it's a problem of current images
-	for (int i = 273; i < 273 + 124; i++)
-		for (int j = canny.rows - 10; j < canny.rows; j++)
-		{
-			canny.at<uchar>(j, i) = 0;
-		}
-}
-
 void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 			bool showCanny)
 {
 	Mat tmp, blurred, canny;
 
-	double high_thres = cannyP.high;/*threshold(input, tmp, 0, 255,
-				CV_THRESH_BINARY + CV_THRESH_OTSU);*/
-	double low_thres = cannyP.low;//high_thres * cannyP.alpha;
-
-	//cout << "High: " << high_thres << " Low: " << low_thres << endl;
+	double high_thres;
+	double low_thres;
 
 	blur(input, blurred, Size(cannyP.blur, cannyP.blur));
+
+	if(cannyP.automatic)
+	{
+		high_thres = 0.7 * computeThreshold(blurred);
+		low_thres = high_thres * cannyP.alpha;
+	}
+	else
+	{
+		high_thres = cannyP.high;
+		low_thres = cannyP.low;
+	}
+
 	Canny(blurred, tmp, low_thres, high_thres, cannyP.apertureSize, true);
 
 
@@ -98,3 +97,33 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask,
 	}
 
 }
+
+int LineDetector::computeThreshold(cv::Mat& src)
+{
+	Mat tmp;
+
+	Mat dx, dy, g2, g;
+	Sobel(src, dx, CV_16S, 1, 0, cannyP.apertureSize, 1, 0, BORDER_REPLICATE);
+	Sobel(src, dy, CV_16S, 0, 1, cannyP.apertureSize, 1, 0, BORDER_REPLICATE);
+
+	g2 = dx.mul(dx) + dy.mul(dy);
+
+	g2.convertTo(g2, CV_64F);
+	sqrt(g2, g);
+	g.convertTo(g, CV_8UC1);
+
+	return threshold(g, tmp, 0, 255, CV_THRESH_BINARY + CV_THRESH_OTSU);
+
+}
+
+void LineDetector::hackFunction(Mat& canny)
+{
+	//FIXME: delete this hack: it's a problem of current images
+	for (int i = 273; i < 273 + 124; i++)
+		for (int j = canny.rows - 10; j < canny.rows; j++)
+		{
+			canny.at<uchar>(j, i) = 0;
+		}
+}
+
+

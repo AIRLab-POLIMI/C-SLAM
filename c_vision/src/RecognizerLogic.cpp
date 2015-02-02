@@ -46,11 +46,6 @@ RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack,
 				this);
 	publisher = n.advertise<c_slam_msgs::NamedPolygon>("objects", 10);
-
-	//TODO fixme
-	viewers[0] = ImageView(0);
-	/*viewers[1] = ImageView(1);
-	 viewers[2] = ImageView(2);*/
 }
 
 void RecognizerLogic::handleCamera(const ImageConstPtr& msg,
@@ -74,7 +69,7 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask);
 		classify(cameraModel, roi);
-		display(objectImage, track.id);
+		//display(objectImage, track.id);
 		detector.deleteDetections();
 	}
 	catch (cv_bridge::Exception& e)

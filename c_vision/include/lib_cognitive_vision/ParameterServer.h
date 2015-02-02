@@ -29,6 +29,7 @@
 
 struct CannyParam
 {
+	bool automatic;
 	double alpha;
 	int apertureSize;
 	int low;

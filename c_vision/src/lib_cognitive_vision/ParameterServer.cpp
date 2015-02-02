@@ -36,6 +36,7 @@ void ParameterServer::update(c_vision::ParametersConfig &config,
 			uint32_t level)
 {
 	//Setup canny parameters
+	canny.automatic = config.canny_automatic;
 	canny.alpha = config.canny_alpha;
 	canny.apertureSize = config.canny_apertureSize;
 	canny.low = config.canny_low;
