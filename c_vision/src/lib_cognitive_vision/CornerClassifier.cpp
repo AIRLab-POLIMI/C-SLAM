@@ -37,7 +37,8 @@ const size_t CornerClassifier::prototypeN =
 CornerClassifier::CornerClassifier(CornerClassParam& params) :
 			params(params)
 {
-	roll = 0;
+	sinR = 0;
+	cosR = 1;
 }
 
 bool CornerClassifier::isCompatibleCorner(const Mat& canny, const Point& point,
@@ -101,8 +102,8 @@ void CornerClassifier::addToBucket(cv::Point c, int x, int y, cv::Mat& hist)
 	int dxo = x - c.x;
 	int dyo = y - c.y;
 
-	int dx = dxo * cos(roll) - dyo * sin(roll);
-	int dy = dxo * sin(roll) + dyo * cos(roll);
+	int dx = dxo * cosR - dyo * sinR;
+	int dy = dxo * sinR + dyo * cosR;
 
 	//add to correct bucket
 	if (abs(dx) <= w)

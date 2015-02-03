@@ -66,11 +66,10 @@ class CornerClassifier
 public:
 	CornerClassifier(CornerClassParam& params);
 	bool isCompatibleCorner(const cv::Mat& canny, const cv::Point& point, CornerType type);
-
 	void setRoll(double roll)
 	{
-		this->roll = roll;
-
+		sinR = std::sin(roll);
+		cosR = std::cos(roll);
 	}
 private:
 	void computeHistogram(const cv::Mat& canny, const cv::Point& point,
@@ -83,7 +82,8 @@ private:
 
 private:
 	CornerClassParam& params;
-	double roll;
+	double sinR;
+	double cosR;
 
 private:
 	static const std::vector<cv::Mat> cornerPrototypes;
