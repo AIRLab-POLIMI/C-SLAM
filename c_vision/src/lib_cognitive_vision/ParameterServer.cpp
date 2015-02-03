@@ -60,6 +60,10 @@ void ParameterServer::update(c_vision::ParametersConfig &config,
 	quadDetector.polesFormFactor = config.quad_polesFormFactor;
 	quadDetector.segmentSupport = config.quad_segmentSupport;
 
+	//set up corner classifier params
+	cornerClass.kernelSize = config.corner_kernelSize;
+	cornerClass.bucketWidth = config.corner_bucketWidth;
+
 	//Setup clustering parameters
 	cluster.threshold = config.cluster_threshold;
 	cluster.minPoints = config.cluster_minPoints;

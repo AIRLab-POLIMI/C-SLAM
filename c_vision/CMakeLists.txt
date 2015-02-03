@@ -33,6 +33,7 @@ add_library(cognitive_vision STATIC
 			${LIB_VISION_SOURCE_DIR}/Rectangle.cpp
 			${LIB_VISION_SOURCE_DIR}/DBSCAN.cpp
             ${LIB_VISION_SOURCE_DIR}/ClusterDetector.cpp
+            ${LIB_VISION_SOURCE_DIR}/CornerClassifier.cpp
 			${LIB_VISION_SOURCE_DIR}/QuadrilateralDetector.cpp
 			${LIB_VISION_SOURCE_DIR}/LineDetector.cpp 
 			${LIB_VISION_SOURCE_DIR}/LineFilter.cpp

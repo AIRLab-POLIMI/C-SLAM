@@ -62,7 +62,7 @@ private:
 	ImageView viewer;
 
 	//FIXME temporary hack
-	void hackFunction(cv::Mat& canny);
+	void maskImage(cv::Mat& canny);
 };
 
 #endif /* LINEDETECTOR_H_ */

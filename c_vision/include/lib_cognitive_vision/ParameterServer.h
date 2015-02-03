@@ -60,6 +60,12 @@ struct QDetectorParam
 	double segmentSupport;
 };
 
+struct CornerClassParam
+{
+	int kernelSize;
+	int bucketWidth;
+};
+
 struct ClusterParam
 {
 	int threshold;
@@ -130,6 +136,7 @@ private:
 	HoughParam hough;
 	LFilterParam lineFilter;
 	QDetectorParam quadDetector;
+	CornerClassParam cornerClass;
 	ClusterParam cluster;
 	ClassifierParam classifier;
 	DisplayParam display;
