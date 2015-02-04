@@ -46,11 +46,13 @@ enum CornerType
 	// I corners
 	NS,
 	WE,
-	// T-corners
+	// T corners
 	NWE,
 	SWE,
 	NSW,
 	NSE,
+	// Empty corners
+	EMPTY,
 	// X corners
 	NSWE
 };
@@ -68,7 +70,7 @@ public:
 	bool isCompatibleCorner(const cv::Point& point, CornerType type);
 private:
 	void computeHistogram(const cv::Point& point, cv::Mat& hist);
-	void addToBucket(const cv::Point& c, const cv::Point& min, const cv::Point& curr, cv::Mat& hist);
+	void addToBucket(const cv::Point& c, const cv::Point& current, cv::Mat& hist);
 	CornerType findNearestNeighbour(const cv::Mat& hist);
 
 private:

@@ -28,7 +28,8 @@
 using namespace std;
 using namespace cv;
 
-const vector<Mat> CornerClassifier::cornerPrototypes(CornerClassifier::initPrototypes());
+const vector<Mat> CornerClassifier::cornerPrototypes(
+			CornerClassifier::initPrototypes());
 
 const size_t CornerClassifier::prototypeN =
 			CornerClassifier::cornerPrototypes.size();
@@ -46,7 +47,8 @@ bool CornerClassifier::isCompatibleCorner(const Point& point, CornerType type)
 	Mat hist;
 	computeHistogram(point, hist);
 	CornerType classifiedCorner = findNearestNeighbour(hist);
-	bool same = classifiedCorner == type || classifiedCorner == NSWE;
+	bool same = classifiedCorner == type || classifiedCorner == NSWE
+				|| classifiedCorner == EMPTY;
 
 	switch (type)
 	{
@@ -75,34 +77,33 @@ void CornerClassifier::computeHistogram(const Point& point, Mat& hist)
 	int maxX = min(canny.cols, point.x + params.kernelSize);
 	int minY = max(0, point.y - params.kernelSize);
 	int maxY = min(canny.rows, point.y + params.kernelSize);
-	Point minP(minX, minY);
 
-	Mat roi = canny(Range(minY, maxY), Range(minX, maxX));
 	Mat histPlain = Mat(1, 4, CV_32FC1, Scalar(0.0));
 	hist = Mat(1, 4, CV_32FC1);
 
-	for (int i = 0; i < roi.rows; ++i)
+	for (int i = minY; i < maxY; ++i)
 	{
-		uchar* p = roi.ptr<uchar>(i);
-		for (int j = 0; j < roi.cols; ++j)
+		const uchar* p = canny.ptr<uchar>(i);
+		for (int j = minX; j < maxX; ++j)
 		{
 			if (p[j])
-				addToBucket(point, minP, Point(j, i), histPlain);
+				addToBucket(point, Point(j, i), histPlain);
 		}
 	}
 
 	normalize(histPlain, hist);
 }
 
-void CornerClassifier::addToBucket(const Point& c, const Point& min, const Point& curr, Mat& hist)
+void CornerClassifier::addToBucket(const Point& c, const Point& current,
+			Mat& hist)
 {
 	//get params
 	const int w = params.bucketWidth;
 	const int k = params.kernelSize;
 
 	//Rotate coordinates
-	int dxo = curr.x + min.x - c.x;
-	int dyo = curr.y + min.y - c.y;
+	int dxo = current.x - c.x;
+	int dyo = current.y - c.y;
 
 	int dx = dxo * cosR - dyo * sinR;
 	int dy = dxo * sinR + dyo * cosR;
@@ -112,22 +113,22 @@ void CornerClassifier::addToBucket(const Point& c, const Point& min, const Point
 	{
 		if (dy >= -k && dy <= -w)
 		{
-			hist.at<uchar>(0, N) += 1.0;
+			hist.at<float>(0, N) += 1.0;
 		}
 		else if (dy >= w && dy <= k)
 		{
-			hist.at<uchar>(0, S) += 1.0;
+			hist.at<float>(0, S) += 1.0;
 		}
 	}
 	else if (abs(dy) <= w)
 	{
 		if (dx >= -k && dx <= -w)
 		{
-			hist.at<uchar>(0, W) += 1.0;
+			hist.at<float>(0, W) += 1.0;
 		}
 		else if (dx >= w && dx <= k)
 		{
-			hist.at<uchar>(0, E) += 1.0;
+			hist.at<float>(0, E) += 1.0;
 		}
 	}
 
@@ -135,7 +136,6 @@ void CornerClassifier::addToBucket(const Point& c, const Point& min, const Point
 
 CornerType CornerClassifier::findNearestNeighbour(const Mat& hist)
 {
-	cout << hist << endl;
 	vector<double> distances(prototypeN);
 	for (size_t i = 0; i < cornerPrototypes.size(); i++)
 	{
@@ -194,6 +194,11 @@ vector<Mat> CornerClassifier::initPrototypes()
 	float dataNSE[4] =
 	{ 1.0 / 3, 1.0 / 3, 0, 1.0 / 3 };
 	prototypes[NSE] = Mat(1, 4, CV_32FC1, dataNSE).clone();
+
+	//Empty corners
+	float dataEMPTY[4] =
+	{ 0, 0, 0, 0 };
+	prototypes[EMPTY] = Mat(1, 4, CV_32FC1, dataEMPTY).clone();
 
 	// X corners
 	float dataNSWE[4] =

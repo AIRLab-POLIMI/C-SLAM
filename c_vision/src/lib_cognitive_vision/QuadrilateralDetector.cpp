@@ -245,7 +245,7 @@ bool QuadrilateralDetector::hasSuficientCorners(cv::Point& x, cv::Point& y,
 	cornerCount += cornerClassifier.isCompatibleCorner(z, NW) ? 1 : 0;
 	cornerCount += cornerClassifier.isCompatibleCorner(w, NE) ? 1 : 0;
 
-	return cornerCount >= 3;
+	return cornerCount == 4;
 }
 
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
