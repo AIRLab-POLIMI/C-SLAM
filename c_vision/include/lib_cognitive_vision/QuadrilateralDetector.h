@@ -33,10 +33,12 @@
 #include "Rectangle.h"
 #include "Pole.h"
 
+#include "CornerClassifier.h"
+
 class QuadrilateralDetector
 {
 public:
-	QuadrilateralDetector(QDetectorParam& quadP);
+	QuadrilateralDetector(QDetectorParam& quadP, CornerClassifier& cornerClassifier);
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
 				std::vector<cv::Vec4i>& horizontalLines,
@@ -68,10 +70,14 @@ private:
 	bool hasSufficientSupport(const cv::Point& x, const cv::Point& y,
 				const cv::Point& z, const cv::Point& w, cv::Vec4i& h1,
 				cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
+	bool hasSuficientCorners(cv::Point& x, cv::Point& y, cv::Point& z,
+				cv::Point& w);
 
 private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
+
+	CornerClassifier& cornerClassifier;
 
 	//Params
 	QDetectorParam& quadP;

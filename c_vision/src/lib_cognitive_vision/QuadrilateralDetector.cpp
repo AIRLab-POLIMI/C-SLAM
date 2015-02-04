@@ -26,8 +26,9 @@
 using namespace cv;
 using namespace std;
 
-QuadrilateralDetector::QuadrilateralDetector(QDetectorParam& quadP) :
-			quadP(quadP)
+QuadrilateralDetector::QuadrilateralDetector(QDetectorParam& quadP,
+			CornerClassifier& cornerClassifier) :
+			quadP(quadP), cornerClassifier(cornerClassifier)
 {
 	rectangles = new std::vector<Rectangle>();
 	poles = new std::vector<Pole>();
@@ -67,8 +68,7 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 							z = findInterception(h2, v2);
 							w = findInterception(h2, v1);
 
-							if (hasSufficientSupport(x, y, z, w, h1, h2, v1,
-										v2))
+							if (hasSuficientCorners(x, y, z, w))
 							{
 								Rectangle rectangle(x, y, z, w);
 								rectangles->push_back(rectangle);
@@ -233,6 +233,19 @@ bool QuadrilateralDetector::hasSufficientSupportH(Vec4i& h, Point a, Point b)
 	double percentualOverlap = (double) overlap / (b.x - a.x);
 
 	return percentualOverlap > quadP.segmentSupport;
+}
+
+bool QuadrilateralDetector::hasSuficientCorners(cv::Point& x, cv::Point& y,
+			cv::Point& z, cv::Point& w)
+{
+	int cornerCount = 0;
+
+	cornerCount += cornerClassifier.isCompatibleCorner(x, SE) ? 1 : 0;
+	cornerCount += cornerClassifier.isCompatibleCorner(y, SW) ? 1 : 0;
+	cornerCount += cornerClassifier.isCompatibleCorner(z, NW) ? 1 : 0;
+	cornerCount += cornerClassifier.isCompatibleCorner(w, NE) ? 1 : 0;
+
+	return cornerCount >= 3;
 }
 
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,

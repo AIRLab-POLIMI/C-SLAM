@@ -57,11 +57,12 @@ protected:
 	void detectQuadrilaterals(bool skipCheck = false);
 
 private:
-	//detectors
+	//detectors and classifiers
 	LineDetector lineDetector;
 
 	//Parameter
 	QDetectorParam& quadParams;
+	CornerClassParam& cornerParams;
 
 	//envirorment data
 	double roll;

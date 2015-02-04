@@ -124,6 +124,11 @@ public:
 		return display;
 	}
 
+	inline CornerClassParam& getCornerClassParams()
+	{
+		return cornerClass;
+	}
+
 private:
 	void update(c_vision::ParametersConfig &config, uint32_t level);
 

@@ -25,6 +25,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include "QuadrilateralDetector.h"
+#include "CornerClassifier.h"
 
 using namespace cv;
 
@@ -32,7 +33,8 @@ BasicDetector::BasicDetector(ParameterServer& parameters) :
 			lineDetector(parameters.getCannyParams(),
 						parameters.getHoughParams(),
 						parameters.getLFiltrerParams()),
-			quadParams(parameters.getQuadDetectorParams())
+			quadParams(parameters.getQuadDetectorParams()),
+			cornerParams(parameters.getCornerClassParams())
 {
 	horizontalLines = NULL;
 	verticalLines = NULL;
@@ -75,7 +77,8 @@ void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
 
 void BasicDetector::detectQuadrilaterals(bool skipCheck)
 {
-	QuadrilateralDetector quadrilateralDetector(quadParams);
+	CornerClassifier cornerClassifier(cornerParams, lineDetector.getCanny(), roll);
+	QuadrilateralDetector quadrilateralDetector(quadParams, cornerClassifier);
 	quadrilateralDetector.detect(*verticalLines, *horizontalLines, true);
 	rectangles = quadrilateralDetector.getRectangles();
 	poles = quadrilateralDetector.getPoles();

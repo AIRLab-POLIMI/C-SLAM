@@ -55,26 +55,20 @@ enum CornerType
 	NSWE
 };
 
-
 enum Bucket
 {
-	N=0, S=1, W=2, E=3
+	N = 0, S = 1, W = 2, E = 3
 };
 
 class CornerClassifier
 {
 public:
-	CornerClassifier(CornerClassParam& params);
-	bool isCompatibleCorner(const cv::Mat& canny, const cv::Point& point, CornerType type);
-	void setRoll(double roll)
-	{
-		sinR = std::sin(roll);
-		cosR = std::cos(roll);
-	}
+	CornerClassifier(CornerClassParam& params, const cv::Mat& canny,
+				double roll);
+	bool isCompatibleCorner(const cv::Point& point, CornerType type);
 private:
-	void computeHistogram(const cv::Mat& canny, const cv::Point& point,
-				cv::Mat& hist);
-	void addToBucket(cv::Point c, int x, int y, cv::Mat& hist);
+	void computeHistogram(const cv::Point& point, cv::Mat& hist);
+	void addToBucket(const cv::Point& c, const cv::Point& min, const cv::Point& curr, cv::Mat& hist);
 	CornerType findNearestNeighbour(const cv::Mat& hist);
 
 private:
@@ -84,6 +78,7 @@ private:
 	CornerClassParam& params;
 	double sinR;
 	double cosR;
+	const cv::Mat& canny;
 
 private:
 	static const std::vector<cv::Mat> cornerPrototypes;

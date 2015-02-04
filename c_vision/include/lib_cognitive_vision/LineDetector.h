@@ -47,6 +47,11 @@ public:
 		return horizontalLines;
 	}
 
+	const cv::Mat& getCanny()
+	{
+		return canny;
+	}
+
 private:
 	int computeThreshold(cv::Mat& src);
 
