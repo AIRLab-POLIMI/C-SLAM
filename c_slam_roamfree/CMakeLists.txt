@@ -22,7 +22,7 @@ catkin_package()
 
 set(CMAKE_CXX_FLAGS "-g -std=c++11 ${OTHERS_DEFINE}")
 
-include_directories(include 
+include_directories(include                     
                     ${catkin_INCLUDE_DIRS}
 		            ${EIGEN3_INCLUDE_DIR}
 		            ${Boost_INCLUDE_DIRS}  
@@ -49,15 +49,15 @@ add_executable(c_localization_anchoredrectangles
 	           src/AnchoredRectangleHandler.cpp)
 
 add_executable(circular_test
-               src/TestPublisher.cpp
-               src/CircularTest.cpp)
+               src/test/TestPublisher.cpp
+               src/test/CircularTest.cpp)
                
 add_executable(firefly_test
-               src/TestPublisher.cpp
-               src/FireflyTest.cpp)
+               src/test/TestPublisher.cpp
+               src/test/FireflyTest.cpp)
                
 add_executable(displayer
-               src/Displayer.cpp)               
+               src/display/Displayer.cpp)               
 
 #Link libraries
 

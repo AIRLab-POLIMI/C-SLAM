@@ -21,7 +21,7 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TestPublisher.h"
+#include "test/TestPublisher.h"
 
 #include <tf_conversions/tf_eigen.h>
 
