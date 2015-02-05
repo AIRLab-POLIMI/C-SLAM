@@ -88,7 +88,7 @@ public:
 		//Publish results
 		publishTracks(H_WC, pose_msg.header.stamp.toSec());
 		publishGroundTruth(H_WC);
-		publishGroundTruthLandmark();
+		publishGroundTruthLandmarkPoints();
 	}
 
 private:

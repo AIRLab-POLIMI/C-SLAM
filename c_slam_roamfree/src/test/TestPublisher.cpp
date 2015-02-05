@@ -22,6 +22,7 @@
  */
 
 #include "test/TestPublisher.h"
+#include "test/RectangleGenerator.h"
 
 #include <tf_conversions/tf_eigen.h>
 #include <visualization_msgs/Marker.h>
@@ -202,7 +203,10 @@ void TestPublisher::setTracksCircle(double r)
 		trackCM << x, y, z;
 		tracksCM.push_back(trackCM);
 
-		createRotatedRectangle(theta, w, h, x, y, z, tracks[i]);
+		RectangleGenerator gen(w, h);
+		gen.setPosition(x, y, z);
+		gen.setRPY(0, 0, theta + M_PI / 2);
+		gen.generateTrack(tracks[i]);
 
 		theta += 2 * M_PI / numTracks;
 	}
@@ -247,7 +251,11 @@ void TestPublisher::setTracksSquare(double r)
 		double z = cm[i][2];
 
 		double theta = atan2(y, x);
-		createRotatedRectangle(theta, w, h, x, y, z, tracks[i]);
+
+		RectangleGenerator gen(w, h);
+		gen.setPosition(x, y, z);
+		gen.setRPY(0, 0, theta + M_PI / 2);
+		gen.generateTrack(tracks[i]);
 	}
 }
 
@@ -261,18 +269,15 @@ void TestPublisher::setTracksCarpet()
 
 		while (y < 25.0)
 		{
-			Eigen::Vector4d track;
-			track << x, y, 0.0, 1.0;
-
 			tracks.resize(tracks.size() + 1);
 
-			for (int k = 0; k < 4; k++)
-			{  // four superimposed points
-				tracks[tracks.size() - 1].push_back(track);
-			}
+			RectangleGenerator gen(0, 0);
+			gen.setPosition(x, y, 0);
+			gen.setRPY(0, M_PI / 2, 0);
+			gen.generateTrack(tracks[tracks.size() - 1]);
 
 			Eigen::Vector3d trackCM;
-			trackCM = track.head(3);
+			trackCM << x, y, 0.0;
 			tracksCM.push_back(trackCM);
 
 			y += 5.0;

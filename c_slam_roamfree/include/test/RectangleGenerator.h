@@ -25,19 +25,40 @@
 #define INCLUDE_TEST_RECTANGLEGENERATOR_H_
 
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 namespace roamfree_c_slam
 {
 
-class Rectangle
-{
-
-};
-
 class RectangleGenerator
 {
 public:
-	void addRectangle(Rectangle& r);
+	RectangleGenerator(double w, double h);
+	void setPosition(double x, double y, double z);
+	void setRPY(double roll, double pitch, double yaw);
+
+	void generateTrack(std::vector<Eigen::Vector4d>& track);
+
+
+private:
+	void getObjectCoordinates(int i, Eigen::Vector3d& Mi_O);
+	void getQuaternion(Eigen::Quaterniond& q);
+	void getTranslation(Eigen::Vector3d& t);
+
+private:
+	//rectangle dimensions
+	double w;
+	double h;
+
+	//rectanglePosition
+	double x;
+	double y;
+	double z;
+
+	//set RPY
+	double roll;
+	double pitch;
+	double yaw;
 };
 
 
