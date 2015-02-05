@@ -31,8 +31,93 @@ using namespace cv;
 const vector<Mat> CornerClassifier::cornerPrototypes(
 			CornerClassifier::initPrototypes());
 
-const size_t CornerClassifier::prototypeN =
-			CornerClassifier::cornerPrototypes.size();
+ostream &operator<<(ostream& output, const CornerType& type)
+{
+
+	switch (type)
+	{
+		case NW:
+			output << "NW";
+			break;
+		case NE:
+			output << "NE";
+			break;
+		case SW:
+			output << "SW";
+			break;
+		case SE:
+			output << "SE";
+			break;
+		case N:
+			output << "N";
+			break;
+		case S:
+			output << "S";
+			break;
+		case W:
+			output << "W";
+			break;
+		case E:
+			output << "E";
+			break;
+		case NS:
+			output << "NS";
+			break;
+		case WE:
+			output << "WE";
+			break;
+		case NWE:
+			output << "NWE";
+			break;
+		case SWE:
+			output << "SWE";
+			break;
+		case NSW:
+			output << "NSW";
+			break;
+		case NSE:
+			output << "NSE";
+			break;
+		case EMPTY:
+			output << "EMPTY";
+			break;
+		case NSWE:
+			output << "NSWE";
+			break;
+	}
+
+	return output;
+}
+
+CornerResult::CornerResult(CornerType type) :
+			type(type)
+{
+
+}
+
+bool CornerResult::isCompatible(CornerType type)
+{
+	bool same = this->type == type || this->type == NSWE || this->type == EMPTY;
+
+	switch (type)
+	{
+		case NW:
+			return same || this->type == NWE || this->type == NSW;
+
+		case NE:
+			return same || this->type == NWE || this->type == NSE;
+
+		case SW:
+			return same || this->type == SWE || this->type == NSW;
+
+		case SE:
+			return same || this->type == SWE || this->type == NSE;
+
+		default:
+			return same;
+
+	}
+}
 
 CornerClassifier::CornerClassifier(CornerClassParam& params, const Mat& canny,
 			double roll) :
@@ -42,33 +127,13 @@ CornerClassifier::CornerClassifier(CornerClassParam& params, const Mat& canny,
 	cosR = std::cos(-roll);
 }
 
-bool CornerClassifier::isCompatibleCorner(const Point& point, CornerType type)
+CornerResult CornerClassifier::getResult(const Point& point)
 {
 	Mat hist;
 	computeHistogram(point, hist);
-	CornerType classifiedCorner = findNearestNeighbour(hist);
-	bool same = classifiedCorner == type || classifiedCorner == NSWE
-				|| classifiedCorner == EMPTY;
+	CornerType type = findNearestNeighbour(hist);
 
-	switch (type)
-	{
-		case NW:
-			return same || classifiedCorner == NWE || classifiedCorner == NSW;
-
-		case NE:
-			return same || classifiedCorner == NWE || classifiedCorner == NSE;
-
-		case SW:
-			return same || classifiedCorner == SWE || classifiedCorner == NSW;
-
-		case SE:
-			return same || classifiedCorner == SWE || classifiedCorner == NSE;
-
-		default:
-			return same;
-
-	}
-
+	return CornerResult(type);
 }
 
 void CornerClassifier::computeHistogram(const Point& point, Mat& hist)
@@ -91,7 +156,7 @@ void CornerClassifier::computeHistogram(const Point& point, Mat& hist)
 		}
 	}
 
-	normalize(histPlain, hist);
+	normalize(histPlain, hist, 1.0, 0.0, NORM_L1);
 }
 
 void CornerClassifier::addToBucket(const Point& c, const Point& current,
@@ -113,22 +178,22 @@ void CornerClassifier::addToBucket(const Point& c, const Point& current,
 	{
 		if (dy >= -k && dy <= -w)
 		{
-			hist.at<float>(0, N) += 1.0;
+			hist.at<float>(0, NORTH) += 1.0;
 		}
 		else if (dy >= w && dy <= k)
 		{
-			hist.at<float>(0, S) += 1.0;
+			hist.at<float>(0, SOUTH) += 1.0;
 		}
 	}
 	else if (abs(dy) <= w)
 	{
 		if (dx >= -k && dx <= -w)
 		{
-			hist.at<float>(0, W) += 1.0;
+			hist.at<float>(0, WEST) += 1.0;
 		}
 		else if (dx >= w && dx <= k)
 		{
-			hist.at<float>(0, E) += 1.0;
+			hist.at<float>(0, EAST) += 1.0;
 		}
 	}
 
@@ -136,7 +201,10 @@ void CornerClassifier::addToBucket(const Point& c, const Point& current,
 
 CornerType CornerClassifier::findNearestNeighbour(const Mat& hist)
 {
-	vector<double> distances(prototypeN);
+	if (norm(hist, NORM_L1) == 0)
+		return EMPTY;
+
+	vector<double> distances(cornerPrototypes.size());
 	for (size_t i = 0; i < cornerPrototypes.size(); i++)
 	{
 		distances[i] = compareHist(hist, cornerPrototypes[i],
@@ -170,6 +238,22 @@ vector<Mat> CornerClassifier::initPrototypes()
 	prototypes[SE] = Mat(1, 4, CV_32FC1, dataSE).clone();
 
 	// I corners
+	float dataN[4] =
+	{ 1, 0, 0, 0 };
+	prototypes[N] = Mat(1, 4, CV_32FC1, dataN).clone();
+
+	float dataS[4] =
+	{ 0, 1, 0, 0 };
+	prototypes[S] = Mat(1, 4, CV_32FC1, dataS).clone();
+
+	float dataW[4] =
+	{ 0, 0, 1, 0 };
+	prototypes[W] = Mat(1, 4, CV_32FC1, dataW).clone();
+
+	float dataE[4] =
+	{0, 0, 0, 1 };
+	prototypes[E] = Mat(1, 4, CV_32FC1, dataE).clone();
+
 	float dataNS[4] =
 	{ 1.0 / 2, 1.0 / 2, 0, 0 };
 	prototypes[NS] = Mat(1, 4, CV_32FC1, dataNS).clone();
@@ -194,11 +278,6 @@ vector<Mat> CornerClassifier::initPrototypes()
 	float dataNSE[4] =
 	{ 1.0 / 3, 1.0 / 3, 0, 1.0 / 3 };
 	prototypes[NSE] = Mat(1, 4, CV_32FC1, dataNSE).clone();
-
-	//Empty corners
-	float dataEMPTY[4] =
-	{ 0, 0, 0, 0 };
-	prototypes[EMPTY] = Mat(1, 4, CV_32FC1, dataEMPTY).clone();
 
 	// X corners
 	float dataNSWE[4] =

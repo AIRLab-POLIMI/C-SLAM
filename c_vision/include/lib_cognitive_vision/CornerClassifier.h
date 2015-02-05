@@ -44,6 +44,10 @@ enum CornerType
 	SW,
 	SE,
 	// I corners
+	N,
+	S,
+	W,
+	E,
 	NS,
 	WE,
 	// T corners
@@ -51,15 +55,30 @@ enum CornerType
 	SWE,
 	NSW,
 	NSE,
-	// Empty corners
-	EMPTY,
 	// X corners
-	NSWE
+	NSWE,
+	// Empty corners
+	EMPTY
 };
 
-enum Bucket
+class CornerResult
 {
-	N = 0, S = 1, W = 2, E = 3
+public:
+	CornerResult(CornerType type);
+	bool isCompatible(CornerType type);
+
+	inline bool isEmpty()
+	{
+		return type == EMPTY;
+	}
+
+	inline int countEmpty()
+	{
+		return isEmpty() ? 1 : 0;
+	}
+
+private:
+	CornerType type;
 };
 
 class CornerClassifier
@@ -67,7 +86,7 @@ class CornerClassifier
 public:
 	CornerClassifier(CornerClassParam& params, const cv::Mat& canny,
 				double roll);
-	bool isCompatibleCorner(const cv::Point& point, CornerType type);
+	CornerResult getResult(const cv::Point& point);
 private:
 	void computeHistogram(const cv::Point& point, cv::Mat& hist);
 	void addToBucket(const cv::Point& c, const cv::Point& current, cv::Mat& hist);
@@ -84,7 +103,12 @@ private:
 
 private:
 	static const std::vector<cv::Mat> cornerPrototypes;
-	static const std::size_t prototypeN;
+
+private:
+	enum Bucket
+	{
+		NORTH = 0, SOUTH = 1, WEST = 2, EAST = 3
+	};
 
 };
 

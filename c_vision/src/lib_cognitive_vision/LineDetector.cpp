@@ -51,7 +51,7 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 
 	if (cannyP.automatic)
 	{
-		high_thres = 0.7 * computeThreshold(blurred);
+		high_thres = 0.6 * computeThreshold(blurred);
 		low_thres = high_thres * cannyP.alpha;
 	}
 	else

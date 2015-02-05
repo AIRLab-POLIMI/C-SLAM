@@ -68,7 +68,9 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 							z = findInterception(h2, v2);
 							w = findInterception(h2, v1);
 
-							if (hasSuficientCorners(x, y, z, w))
+							if (hasSuficientCorners(x, y, z, w)
+										&& hasSufficientSupport(x, y, z, w, h1,
+													h2, v1, v2))
 							{
 								Rectangle rectangle(x, y, z, w);
 								rectangles->push_back(rectangle);
@@ -238,14 +240,18 @@ bool QuadrilateralDetector::hasSufficientSupportH(Vec4i& h, Point a, Point b)
 bool QuadrilateralDetector::hasSuficientCorners(cv::Point& x, cv::Point& y,
 			cv::Point& z, cv::Point& w)
 {
-	int cornerCount = 0;
+	CornerResult xRes = cornerClassifier.getResult(x);
+	CornerResult yRes = cornerClassifier.getResult(y);
+	CornerResult zRes = cornerClassifier.getResult(z);
+	CornerResult wRes = cornerClassifier.getResult(w);
 
-	cornerCount += cornerClassifier.isCompatibleCorner(x, SE) ? 1 : 0;
-	cornerCount += cornerClassifier.isCompatibleCorner(y, SW) ? 1 : 0;
-	cornerCount += cornerClassifier.isCompatibleCorner(z, NW) ? 1 : 0;
-	cornerCount += cornerClassifier.isCompatibleCorner(w, NE) ? 1 : 0;
+	bool compatible = xRes.isCompatible(SE) && yRes.isCompatible(SW)
+				&& zRes.isCompatible(NE) && wRes.isCompatible(NW);
 
-	return cornerCount == 4;
+	int emptyCount = xRes.countEmpty() + yRes.countEmpty() + zRes.countEmpty()
+				+ wRes.countEmpty();
+
+	return compatible && emptyCount <= 1;
 }
 
 inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
