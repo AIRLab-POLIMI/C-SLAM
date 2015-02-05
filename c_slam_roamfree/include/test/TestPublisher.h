@@ -37,6 +37,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
+namespace roamfree_c_slam
+{
 class TestPublisher
 {
 public:
@@ -76,5 +78,7 @@ protected:
 
 	Eigen::Matrix3d K;
 };
+
+}
 
 #endif /* TESTPUBLISHER_H_ */

@@ -23,6 +23,9 @@
 using namespace std;
 using namespace ROAMestimation;
 
+namespace roamfree_c_slam
+{
+
 RectangleHandler::RectangleHandler(double initialDepth) :
 		_lambda(initialDepth) {
 	_timestampOffsetTreshold = 0;
@@ -249,6 +252,8 @@ void RectangleHandler::setTimestampOffsetTreshold(double dt) {
 
 RectangleHandler::~RectangleHandler()
 {
+
+}
 
 }
 

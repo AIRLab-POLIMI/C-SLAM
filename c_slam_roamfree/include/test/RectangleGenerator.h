@@ -24,11 +24,22 @@
 #ifndef INCLUDE_TEST_RECTANGLEGENERATOR_H_
 #define INCLUDE_TEST_RECTANGLEGENERATOR_H_
 
-class RectangleGenerator
+#include <Eigen/Dense>
+
+namespace roamfree_c_slam
+{
+
+class Rectangle
 {
 
 };
 
+class RectangleGenerator
+{
+public:
+	void addRectangle(Rectangle& r);
+};
 
 
+}
 #endif /* INCLUDE_TEST_RECTANGLEGENERATOR_H_ */

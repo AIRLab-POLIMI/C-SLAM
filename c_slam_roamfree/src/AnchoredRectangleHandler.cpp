@@ -23,6 +23,9 @@
 using namespace std;
 using namespace ROAMestimation;
 
+namespace roamfree_c_slam
+{
+
 AnchoredRectangleHandler::AnchoredRectangleHandler(double initialDepth) :
 		_lambda(initialDepth) {
 	_timestampOffsetTreshold = 0;
@@ -302,6 +305,8 @@ void AnchoredRectangleHandler::setTimestampOffsetTreshold(double dt) {
 }
 
 AnchoredRectangleHandler::~AnchoredRectangleHandler() {
+
+}
 
 }
 

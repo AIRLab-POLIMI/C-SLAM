@@ -24,6 +24,9 @@
 
 #include "ROAMestimation/ROAMestimation.h"
 
+namespace roamfree_c_slam
+{
+
 class RectangleHandler
 {
 
@@ -79,5 +82,7 @@ protected:
 	Eigen::Matrix3d _K;
 
 };
+
+}
 
 #endif /* RECTANGLEHANDLER_H_ */

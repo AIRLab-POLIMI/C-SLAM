@@ -24,6 +24,9 @@
 
 #include "ROAMestimation/ROAMestimation.h"
 
+namespace roamfree_c_slam
+{
+
 class AnchoredRectangleHandler {
 
 public:
@@ -78,5 +81,7 @@ protected:
 	double _fx, _fy;
 
 };
+
+}
 
 #endif /* ANCHOREDRECTANGLEHANDLER_H_ */

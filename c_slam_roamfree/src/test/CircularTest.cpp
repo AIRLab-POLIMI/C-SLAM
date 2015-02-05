@@ -27,6 +27,8 @@
 
 using namespace std;
 
+namespace roamfree_c_slam
+{
 class CircularTestPublisher : public TestPublisher
 {
 public:
@@ -56,6 +58,7 @@ private:
 	ros::Publisher imuPublisher;
 };
 
+}
 
 
 void computeCameraPose(Eigen::Matrix4d& H, double t, double theta0, double w0,
@@ -91,7 +94,7 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "circular_test");
 
-	CircularTestPublisher publisher;
+	roamfree_c_slam::CircularTestPublisher publisher;
 
 	//IMU data
 	double r = 1; // meters

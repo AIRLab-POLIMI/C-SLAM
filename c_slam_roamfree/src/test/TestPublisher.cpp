@@ -28,6 +28,9 @@
 
 using namespace std;
 
+namespace roamfree_c_slam
+{
+
 TestPublisher::TestPublisher()
 {
 	trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 6000);
@@ -333,4 +336,6 @@ void TestPublisher::createRotatedRectangle(const double theta, const double w,
 
 		track.push_back(trackVertex);
 	}
+}
+
 }

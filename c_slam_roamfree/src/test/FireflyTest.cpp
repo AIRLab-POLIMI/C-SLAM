@@ -42,6 +42,8 @@
 
 using namespace std;
 
+namespace roamfree_c_slam
+{
 class FireflyTestPublisher: public TestPublisher
 {
 public:
@@ -93,11 +95,13 @@ private:
 	ros::Subscriber gtSubscriber;
 };
 
+}
+
 int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "firefly_test");
 
-	FireflyTestPublisher publisher;
+	roamfree_c_slam::FireflyTestPublisher publisher;
 
 	publisher.setTracksCarpet();
 
