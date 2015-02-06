@@ -37,7 +37,8 @@ add_library(localization STATIC
 	        
 add_library(testing STATIC
             src/test/RectangleGenerator.cpp
-            src/test/TestPublisher.cpp)
+            src/test/TestPublisher.cpp
+            src/test/FireflyTestPublisher.cpp)
 
 #Build localization executables
 add_executable(c_localization
@@ -54,12 +55,13 @@ add_executable(c_localization_anchoredrectangles
 #build test
 
 add_executable(circular_test
-               src/test/TestPublisher.cpp
                src/test/CircularTest.cpp)
                
 add_executable(firefly_test
-               src/test/TestPublisher.cpp
                src/test/FireflyTest.cpp)
+               
+add_executable(firefly_room_test
+               src/test/FireflyRoomTest.cpp)
 
 #build displayer               
 add_executable(displayer
@@ -78,8 +80,11 @@ target_link_libraries(c_localization_rectangles
 target_link_libraries(c_localization_anchoredrectangles
                       localization
                       ${catkin_LIBRARIES})
+                      
 target_link_libraries(circular_test testing ${catkin_LIBRARIES})
 target_link_libraries(firefly_test testing ${catkin_LIBRARIES})
+target_link_libraries(firefly_room_test testing ${catkin_LIBRARIES})
+
 target_link_libraries(displayer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 #Add message dependencies
@@ -89,5 +94,6 @@ add_dependencies(c_localization_anchoredrectangles ${catkin_EXPORTED_TARGETS})
 add_dependencies(testing ${catkin_EXPORTED_TARGETS})
 add_dependencies(circular_test ${catkin_EXPORTED_TARGETS})
 add_dependencies(firefly_test ${catkin_EXPORTED_TARGETS})
+add_dependencies(firefly_room_test ${catkin_EXPORTED_TARGETS})
 add_dependencies(displayer ${catkin_EXPORTED_TARGETS})
 

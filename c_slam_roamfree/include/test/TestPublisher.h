@@ -55,6 +55,7 @@ public:
 	void setTracksCircle(double r);
 	void setTracksSquare(double r);
 	void setTracksCarpet();
+	void setTrackRoom();
 
 private:
 	void createRotatedRectangle(const double theta, const double w, const double h,

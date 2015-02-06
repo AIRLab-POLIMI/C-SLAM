@@ -2,7 +2,7 @@
  * c_slam_roamfree,
  *
  *
- * Copyright (C) 2014 Davide Tateo
+ * Copyright (C) 2015 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_slam_roamfree.
@@ -24,16 +24,12 @@
 #include <ros/ros.h>
 #include "test/FireflyTestPublisher.h"
 
-using namespace std;
-
-
 int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "firefly_test");
 
 	roamfree_c_slam::FireflyTestPublisher publisher;
-
-	publisher.setTracksCarpet();
+	publisher.setTrackRoom();
 
 	ros::spin();
 

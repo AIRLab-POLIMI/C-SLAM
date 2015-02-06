@@ -2,7 +2,7 @@
  * c_slam_roamfree,
  *
  *
- * Copyright (C) 2014 Davide Tateo
+ * Copyright (C) 2015 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_slam_roamfree.
@@ -21,21 +21,27 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ros/ros.h>
-#include "test/FireflyTestPublisher.h"
+#ifndef INCLUDE_TEST_FIREFLYTESTPUBLISHER_H_
+#define INCLUDE_TEST_FIREFLYTESTPUBLISHER_H_
 
-using namespace std;
+#include "test/TestPublisher.h"
 
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
-int main(int argc, char *argv[])
+namespace roamfree_c_slam
 {
-	ros::init(argc, argv, "firefly_test");
+class FireflyTestPublisher: public TestPublisher
+{
+public:
 
-	roamfree_c_slam::FireflyTestPublisher publisher;
+	FireflyTestPublisher();
+	void handleGTdata(const geometry_msgs::PoseWithCovarianceStamped& pose_msg);
 
-	publisher.setTracksCarpet();
+private:
+	ros::Subscriber gtSubscriber;
+};
 
-	ros::spin();
-
-	return 0;
 }
+
+
+#endif /* INCLUDE_TEST_FIREFLYTESTPUBLISHER_H_ */
