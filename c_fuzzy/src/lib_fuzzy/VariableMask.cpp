@@ -50,10 +50,9 @@ void VariableMasks::updateVariableMask(Variable& variable,
 
 void VariableMasks::normalizeVariableMasks(size_t size)
 {
-	for (MasksVector::iterator it = variableMasks.begin();
-			it != variableMasks.end(); ++it)
+	for (auto& mask : variableMasks)
 	{
-		it->resize(size, false);
+		mask.resize(size, false);
 	}
 }
 

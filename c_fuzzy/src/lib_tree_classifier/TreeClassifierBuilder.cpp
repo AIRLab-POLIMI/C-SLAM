@@ -78,7 +78,7 @@ VariableList* TreeClassifierBuilder::buildVariableList(VariableList* list,
 
 	list = eventuallyInitialize(list);
 
-	pair<VariableList::iterator, bool> ret = list->insert(variable);
+	auto&& ret = list->insert(variable);
 
 	if (!ret.second)
 	{
@@ -221,12 +221,10 @@ void TreeClassifierBuilder::checkSuperClass(const string& name,
 
 void TreeClassifierBuilder::checkConsistency()
 {
-	ClassList::iterator it;
-
-	for (it = classifier->begin(); it != classifier->end(); ++it)
+	for (auto& it : *classifier)
 	{
-		string name = it->first;
-		FuzzyClass* fuzzyClass = it->second;
+		string name = it.first;
+		FuzzyClass* fuzzyClass = it.second;
 		checkFeatureList(*fuzzyClass);
 	}
 }
@@ -237,11 +235,10 @@ void TreeClassifierBuilder::checkFeatureList(FuzzyClass& fuzzyClass)
 
 	if (featuresPointer != NULL)
 	{
-		FuzzyFeatureList::iterator it;
 		FuzzyFeatureList& features = *featuresPointer;
-		for (it = features.begin(); it != features.end(); ++it)
+		for (auto& it : features)
 		{
-			FuzzyFeature& feature = **it;
+			FuzzyFeature& feature = *it;
 			switch (feature.getFeatureType())
 			{
 				case SIM_F:

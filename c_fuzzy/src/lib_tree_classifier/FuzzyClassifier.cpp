@@ -75,16 +75,13 @@ void FuzzyClassifier::setupClassifier()
 	vector<size_t> order;
 	rGraph->getReasonigOrder(order);
 
-	for (vector<size_t>::iterator i = order.begin(); i != order.end(); i++)
+	for (auto index : order)
 	{
-		size_t index = *i;
 		const vector<string>& nodeNames = rGraph->getNodeNames(index);
 		ClassList list;
 
-		for (vector<string>::const_iterator j = nodeNames.begin();
-					j != nodeNames.end(); ++j)
+		for (auto& name : nodeNames)
 		{
-			string name = *j;
 			FuzzyClass* fuzzyClass = classList[name];
 			list[name] = fuzzyClass;
 		}

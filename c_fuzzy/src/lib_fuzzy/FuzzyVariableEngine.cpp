@@ -71,10 +71,10 @@ void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
 {
 	checkNameSpaceExistence(nameSpace);
 
-	for (DomainTable::iterator it = domain.begin(); it != domain.end(); ++it)
+	for (auto& it : domain)
 	{
-		string domainName = it->first;
-		MFTablePtr mfTable = it->second;
+		string domainName = it.first;
+		MFTablePtr mfTable = it.second;
 		DomainTable& domainTable = *namespaceTable[nameSpace];
 		if (domainTable.count(domainName) == 0)
 		{
@@ -94,15 +94,14 @@ void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
 void FuzzyVariableEngine::joinDomains(MFTablePtr oldMfTable,
 			MFTablePtr newMfTable, string& nameSpace, string& domainName)
 {
-	for (MFTable::iterator it = newMfTable->begin(); it != newMfTable->end();
-				++it)
+	for (auto& it : *newMfTable)
 	{
-		const string& label = it->first;
+		const string& label = it.first;
 
 		if (oldMfTable->count(label) == 0)
 		{
 			MFTable& tableRef = *oldMfTable;
-			tableRef[label] = it->second;
+			tableRef[label] = it.second;
 		}
 	}
 
@@ -113,11 +112,10 @@ void FuzzyVariableEngine::buildDomain(vector<string> variables)
 	DomainTable& domainMap = *domainTable;
 	mfTable = make_shared<MFTable>();
 
-	for (vector<string>::iterator it = variables.begin(); it != variables.end();
-				it++)
+	for (auto& var : variables)
 	{
-		domainMap[*it] = mfTable;
-		Variable variable(currentNamespace, *it);
+		domainMap[var] = mfTable;
+		Variable variable(currentNamespace, var);
 		variableMasks.newVariableMask(variable);
 	}
 }
@@ -134,15 +132,15 @@ void FuzzyVariableEngine::updateVariableMask(Variable& var, size_t rule)
 void FuzzyVariableEngine::updateVariableMask(vector<Variable>& vars,
 			size_t rule)
 {
-	for (vector<Variable>::iterator it = vars.begin(); it != vars.end(); ++it)
+	for (auto& var : vars)
 	{
 
-		if (!variableMasks.contains(*it))
+		if (!variableMasks.contains(var))
 		{
-			variableMasks.newVariableMask(*it);
+			variableMasks.newVariableMask(var);
 		}
 
-		variableMasks.updateVariableMask(*it, rule);
+		variableMasks.updateVariableMask(var, rule);
 	}
 }
 

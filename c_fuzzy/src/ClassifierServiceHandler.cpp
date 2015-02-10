@@ -118,10 +118,9 @@ void ClassifierServiceHandler::addInputs(vector<ObjectInstance>& objects,
 		ObjectInstance& instance = objects[i];
 		instance.id = input.id;
 		vector<InputVariable>& map = input.variables;
-		for (vector<InputVariable>::iterator j = map.begin(); j != map.end();
-					++j)
+		for (auto& inputVariable : map)
 		{
-			instance.properties[j->name] = j->value;
+			instance.properties[inputVariable.name] = inputVariable.value;
 		}
 
 		reasoner->addInstance(&instance);

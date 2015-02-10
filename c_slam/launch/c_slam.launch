@@ -27,7 +27,8 @@
 	</node>
 
 	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner"
-		args="-c $(arg classifierkb) $(arg classifier)" output="screen" />
+		  args="-c $(arg classifierkb) $(arg classifier)" 
+		  output="screen"/>
 
 	<node name="c_tracker" pkg="c_tracking" type="c_tracker" output="screen" >
 	</node>

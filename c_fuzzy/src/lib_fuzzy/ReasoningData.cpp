@@ -58,16 +58,14 @@ void FuzzyAggregator::addValue(string nameSpace, string output,
 AggregationMap FuzzyAggregator::getAggregations()
 {
 	AggregationMap aggregationsOutput;
-	for (AggregationMap::iterator it1 = aggregationMap.begin();
-				it1 != aggregationMap.end(); ++it1)
+	for (auto& it1 : aggregationMap)
 	{
-		string nameSpace = it1->first;
-		DomainAggregationMap& domainAggregation = it1->second;
-		for (DomainAggregationMap::iterator it2 = domainAggregation.begin();
-					it2 != domainAggregation.end(); ++it2)
+		string nameSpace = it1.first;
+		DomainAggregationMap& domainAggregation = it1.second;
+		for (auto& it2 : domainAggregation)
 		{
-			string domain = it2->first;
-			DataMap& dataMap = it2->second;
+			string domain = it2.first;
+			DataMap& dataMap = it2.second;
 			aggregationsOutput[nameSpace][domain] = getAggregation(dataMap);
 		}
 
@@ -98,15 +96,15 @@ DataMap FuzzyAggregator::createDataMap(string mfLabel, double value,
 DataMap FuzzyAggregator::getAggregation(DataMap outputs)
 {
 	DataMap outputMap;
-	for (DataMap::iterator it = outputs.begin(); it != outputs.end(); ++it)
+	for (auto& it : outputs)
 	{
 		FuzzyData output;
 
-		output.cardinality = it->second.cardinality;
-		output.value = it->second.value;
-		output.weight = it->second.weight / output.cardinality;
+		output.cardinality = it.second.cardinality;
+		output.value = it.second.value;
+		output.weight = it.second.weight / output.cardinality;
 
-		outputMap[it->first] = output;
+		outputMap[it.first] = output;
 	}
 
 	return outputMap;

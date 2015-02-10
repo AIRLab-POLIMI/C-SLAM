@@ -30,21 +30,19 @@ OutputTable Defuzzyfier::defuzzify(AggregationMap& aggregatedData)
 {
 	OutputTable results;
 
-	for (AggregationMap::iterator k = aggregatedData.begin();
-				k != aggregatedData.end(); ++k)
+	for (auto& k : aggregatedData)
 	{
-		string nameSpace = k->first;
-		DomainAggregationMap& domainMap = k->second;
+		string nameSpace = k.first;
+		DomainAggregationMap& domainMap = k.second;
 
-		for (DomainAggregationMap::iterator i = domainMap.begin();
-					i != domainMap.end(); ++i)
+		for (auto& i : domainMap)
 		{
-			string output = i->first;
-			DataMap& dataMap = i->second;
+			string output = i.first;
+			DataMap& dataMap = i.second;
 			double product = 0, weight = 0, value = 0;
-			for (DataMap::iterator j = dataMap.begin(); j != dataMap.end(); ++j)
+			for (auto& j : dataMap)
 			{
-				FuzzyData& data = j->second;
+				FuzzyData& data = j.second;
 				weight += data.weight;
 				value += data.value;
 				product += data.weight * data.value;
@@ -94,10 +92,10 @@ void FuzzyReasoner::addInput(Variable variable, int value)
 
 void FuzzyReasoner::addInput(string nameSpace, InputMembers& members)
 {
-	for(InputMembers::iterator it = members.begin(); it != members.end(); ++it)
+	for(auto& it : members)
 	{
-		Variable input(nameSpace, it->first);
-		addInput(input, it->second);
+		Variable input(nameSpace, it.first);
+		addInput(input, it.second);
 	}
 }
 

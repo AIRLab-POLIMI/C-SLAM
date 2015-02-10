@@ -54,27 +54,25 @@ bool ReasonerServiceHandler::reasoningCallback(Reasoning::Request& request,
 			Reasoning::Response& response)
 {
 	FuzzyReasoner reasoner(*knowledgeBase);
-	vector<c_fuzzy::InputVariable>::iterator it;
 
-	for (it = request.inputs.begin(); it != request.inputs.end(); ++it)
+	for (InputVariable& var : request.inputs)
 	{
-		reasoner.addInput(it->name, it->value);
+		reasoner.addInput(var.name, var.value);
 	}
 
 	OutputTable results = reasoner.run();
 
-	for (OutputTable::iterator i = results.begin(); i != results.end(); ++i)
+	for (auto& i : results)
 	{
-		DomainOutputTable& table = i->second;
+		DomainOutputTable& table = i.second;
 
-		for (DomainOutputTable::iterator j = table.begin(); j != table.end();
-					++j)
+		for (auto& j : table)
 		{
 			DefuzzyfiedOutput output;
-			output.className = i->first;
-			output.name = j->first;
-			output.value = j->second.value;
-			output.truth = j->second.truth;
+			output.className = i.first;
+			output.name = j.first;
+			output.value = j.second.value;
+			output.truth = j.second.truth;
 			response.results.push_back(output);
 		}
 	}

@@ -79,12 +79,11 @@ ObjectProperties VariableGenerator::getGeneratedProperties(
 
 void VariableGenerator::generateMatches(ObjectProperties& generated)
 {
-	for (MatchVarMap::iterator it = matchVars.begin(); it != matchVars.end();
-				++it)
+	for (auto& it : matchVars)
 	{
 
-		string varName = it->first;
-		MatchVar& match = it->second;
+		string varName = it.first;
+		MatchVar& match = it.second;
 		Variable& var = match.var;
 		Variable& target = match.target;
 
@@ -96,10 +95,10 @@ void VariableGenerator::generateMatches(ObjectProperties& generated)
 
 void VariableGenerator::generateOns(ObjectProperties& generated)
 {
-	for (OnVarMap::iterator it = onVars.begin(); it != onVars.end(); ++it)
+	for (auto& it : onVars)
 	{
-		string varName = it->first;
-		OnVar& on = it->second;
+		string varName = it.first;
+		OnVar& on = it.second;
 		Variable& var = on.var;
 		Variable& min = on.min;
 		Variable& max = on.max;
@@ -113,11 +112,10 @@ void VariableGenerator::generateOns(ObjectProperties& generated)
 
 void VariableGenerator::generateInverses(ObjectProperties& generated)
 {
-	for (InverseVarMap::iterator it = inverseVars.begin();
-				it != inverseVars.end(); ++it)
+	for (auto& it : inverseVars)
 	{
-		string varName = it->first;
-		InverseVar& inverse = it->second;
+		string varName = it.first;
+		InverseVar& inverse = it.second;
 		Variable& target = inverse.target;
 		Variable& min = inverse.min;
 		Variable& max = inverse.max;
