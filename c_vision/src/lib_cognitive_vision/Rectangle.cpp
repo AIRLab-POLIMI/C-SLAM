@@ -28,8 +28,8 @@
 using namespace cv;
 using namespace std;
 
-Rectangle::Rectangle(Point x, Point y, Point z, Point w) :
-			x(x), y(y), z(z), w(w)
+Rectangle::Rectangle(Point x, Point y, Point z, Point w, Eigen::Matrix3d& omega) :
+			x(x), y(y), z(z), w(w), omega(omega)
 {
 }
 
@@ -58,15 +58,35 @@ void Rectangle::setFeature(Mat& R)
 	Point& z = transformedPoints[2];
 	Point& w = transformedPoints[3];
 
-	int deltaX = (norm(x - y) + norm(w - z)) / 2;
-	int deltaY = (norm(x - w) + norm(y - z)) / 2;
-	if (deltaX != 0)
-	{
-		featureMap["xMax"] = z.x;
-		featureMap["yMax"] = z.y;
-		featureMap["xMin"] = x.x;
-		featureMap["yMin"] = x.y;
-		featureMap["formFactor"] = 1000 * deltaY / deltaX;
-		featureMap["area"] = contourArea(getPointsVector());
-	}
+	featureMap["xMax"] = z.x;
+	featureMap["yMax"] = z.y;
+	featureMap["xMin"] = x.x;
+	featureMap["yMin"] = x.y;
+	featureMap["formFactor"] = 1000 * computeFormFactor();
+	featureMap["area"] = contourArea(getPointsVector());
+
+}
+
+double Rectangle::computeFormFactor()
+{
+	//Get the points
+	Eigen::Vector3d m1(x.x, x.y, 1);
+	Eigen::Vector3d m2(y.x, y.y, 1);
+	Eigen::Vector3d m3(z.x, z.y, 1);
+	Eigen::Vector3d m4(w.x, w.y, 1);
+
+	//compute normals
+	double c2 = (m1.cross(m3).transpose() * m4)[0]
+				/ (m2.cross(m3).transpose() * m4)[0];
+	double c3 = (m1.cross(m3).transpose() * m2)[0]
+				/ (m4.cross(m3).transpose() * m2)[0];
+
+	Eigen::Vector3d n2 = c2 * m2 - m1;
+	Eigen::Vector3d n3 = c3 * m4 - m1;
+
+	//Compute frame transaltion
+	double ff2 = (n2.transpose() * omega * n2)[0]
+				/ (n3.transpose() * omega * n3)[0];
+
+	return sqrt(ff2);
 }

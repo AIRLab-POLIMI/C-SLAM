@@ -24,7 +24,7 @@ CLASS WhiteBoard extends Rectangle
 END_CLASS
 
 CLASS LargeWhiteBoard extends Rectangle
-	area is VeryBig;
+	area is Huge;
 	formFactor is VeryWide;
 END_CLASS
 

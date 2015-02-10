@@ -38,9 +38,9 @@ TestPublisher::TestPublisher()
 	markersPublisher = n.advertise<visualization_msgs::Marker>(
 				"/visualization/features", 1);
 
-	K << 565.59102697808, 0.0, 337.839450567586, //
-	0.0, 563.936510489792, 199.522081717361, //
-	0.0, 0.0, 1.0;
+	K << 460.890258789062, 0.0, 343.462058902507,
+	/* */0.0, 529.505432128906, 201.160554159542,
+	/* */0.0, 0.0, 1.0;
 }
 
 void TestPublisher::publishGroundTruth(Eigen::Matrix4d& H)

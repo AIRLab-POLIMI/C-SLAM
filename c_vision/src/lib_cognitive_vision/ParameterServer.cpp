@@ -24,16 +24,34 @@
 #include "ParameterServer.h"
 
 #include <angles/angles.h>
+#include <ros/ros.h>
+#include <vector>
+
+using namespace std;
 
 ParameterServer::ParameterServer()
 {
 	dynamic_reconfigure::Server<c_vision::ParametersConfig>::CallbackType f;
 	f = boost::bind(&ParameterServer::update, this, _1, _2);
 	server.setCallback(f);
+
+	vector<double> K_std(9);
+	if (!ros::param::get("K", K_std) || K_std.size() != 9)
+	{
+		throw runtime_error(
+					"Incorrect initial pose or no initial pose specified");
+	}
+
+	quadDetector.K;
+	quadDetector.K << K_std[0], K_std[1], K_std[2],
+	/*              */K_std[3], K_std[4], K_std[5],
+	/*              */K_std[6], K_std[7], K_std[8];
+
+	quadDetector.omega = quadDetector.K.transpose().inverse()
+				* quadDetector.K.inverse();
 }
 
-void ParameterServer::update(c_vision::ParametersConfig &config,
-			uint32_t level)
+void ParameterServer::update(c_vision::ParametersConfig &config, uint32_t level)
 {
 	//Setup canny parameters
 	canny.automatic = config.canny_automatic;
@@ -76,5 +94,4 @@ void ParameterServer::update(c_vision::ParametersConfig &config,
 	display.currentObject = config.displayer_currentObject;
 
 }
-
 

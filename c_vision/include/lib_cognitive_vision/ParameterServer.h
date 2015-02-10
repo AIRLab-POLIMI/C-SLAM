@@ -26,6 +26,7 @@
 
 #include <dynamic_reconfigure/server.h>
 #include <c_vision/ParametersConfig.h>
+#include <Eigen/Dense>
 
 struct CannyParam
 {
@@ -58,6 +59,9 @@ struct QDetectorParam
 	double horizontalOverlap;
 	double polesFormFactor;
 	double segmentSupport;
+
+	Eigen::Matrix3d K;
+	Eigen::Matrix3d omega;
 };
 
 struct CornerClassParam

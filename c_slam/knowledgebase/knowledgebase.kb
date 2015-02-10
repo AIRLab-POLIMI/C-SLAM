@@ -2,11 +2,11 @@
 
 FUZZIFY_CLASS Rectangle
 	FUZZIFY formFactor
-		VeryNarrow := tra(2600, 2700, 2900, 3000);
-		Narrow := tra(1900, 2000, 2600, 2700);
-		Medium := tra(900, 1000, 1100, 1500); 
-		Wide := tra(850, 900, 920, 970);
-		VeryWide := tra(700, 800, 850, 900);
+		VeryNarrow := tra(310, 350, 400, 410);
+		Narrow := tra(400, 410, 500, 530);
+		Medium := tra(700, 900, 1000, 1200); 
+		Wide := tra(1000, 1200, 1400, 1500);
+		VeryWide := tra(2000, 2600, 3000, 3100);
 	END_FUZZIFY
 	
 	FUZZIFY area

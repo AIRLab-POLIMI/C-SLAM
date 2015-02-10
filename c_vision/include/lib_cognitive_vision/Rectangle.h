@@ -25,21 +25,26 @@
 #define RECTANGLE_H_
 
 #include "Feature.h"
+#include <Eigen/Dense>
 
 class Rectangle: public Feature
 {
 public:
-	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w);
+	Rectangle(cv::Point x, cv::Point y, cv::Point z, cv::Point w, Eigen::Matrix3d& omega);
 	virtual std::vector<cv::Point> getPointsVector();
 	virtual cv::Point getCenter();
 	virtual void setFeature(cv::Mat& R);
 
+private:
+	double computeFormFactor();
 
 private:
 	cv::Point x;
 	cv::Point y;
 	cv::Point z;
 	cv::Point w;
+
+	Eigen::Matrix3d omega;
 
 };
 

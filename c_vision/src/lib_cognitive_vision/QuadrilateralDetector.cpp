@@ -72,7 +72,7 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 										&& hasSufficientSupport(x, y, z, w, h1,
 													h2, v1, v2))
 							{
-								Rectangle rectangle(x, y, z, w);
+								Rectangle rectangle(x, y, z, w, quadP.omega);
 								rectangles->push_back(rectangle);
 							}
 						}

@@ -7,6 +7,8 @@
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	<param name="use_sim_time" value="true" />
+	
+	<rosparam param="K">[460.890258789062, 0.0, 343.462058902507, 0.0, 529.505432128906, 201.160554159542, 0.0, 0.0, 1.0]</rosparam>
 
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">

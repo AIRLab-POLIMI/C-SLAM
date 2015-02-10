@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 										c_fuzzy
 										tf)
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 project(c_vision)
 
@@ -19,7 +20,8 @@ catkin_package()
 include_directories(include 
 					include/lib_cognitive_vision
 					include/lib_metric_rectification
-					${catkin_INCLUDE_DIRS})
+					${catkin_INCLUDE_DIRS}
+					${EIGEN3_INCLUDE_DIR})
 					
 set(LIB_VISION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_cognitive_vision)
 set(LIB_RECTIFICATION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_metric_rectification)

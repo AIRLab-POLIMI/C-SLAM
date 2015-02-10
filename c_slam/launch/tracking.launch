@@ -7,6 +7,8 @@
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	
+	<rosparam param="K">[565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0]</rosparam>
+	
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
 		<node name="image_proc" 
