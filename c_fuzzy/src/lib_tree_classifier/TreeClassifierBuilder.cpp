@@ -109,13 +109,13 @@ ConstantList* TreeClassifierBuilder::buildCostantList(ConstantList* list,
 	return list;
 }
 
-FuzzyFeature* TreeClassifierBuilder::buildSimpleFeature(string variable,
+FuzzyConstraint* TreeClassifierBuilder::buildSimpleFeature(string variable,
 			string fuzzyLabel)
 {
-	return new FuzzySimpleFeature(variable, fuzzyLabel);
+	return new FuzzySimpleConstraint(variable, fuzzyLabel);
 }
 
-FuzzyFeature* TreeClassifierBuilder::buildSimpleRelation(
+FuzzyConstraint* TreeClassifierBuilder::buildSimpleRelation(
 			vector<string>& labelList)
 {
 	string className = labelList[0];
@@ -126,7 +126,7 @@ FuzzyFeature* TreeClassifierBuilder::buildSimpleRelation(
 	return new FuzzySimpleRelation(className, member, matchingVar, fuzzyLabel);
 }
 
-FuzzyFeature* TreeClassifierBuilder::buildComplexRelation(
+FuzzyConstraint* TreeClassifierBuilder::buildComplexRelation(
 			vector<string>& labelList)
 {
 	string className = labelList[0];
@@ -140,7 +140,7 @@ FuzzyFeature* TreeClassifierBuilder::buildComplexRelation(
 
 }
 
-FuzzyFeature* TreeClassifierBuilder::buildInverseRelation(
+FuzzyConstraint* TreeClassifierBuilder::buildInverseRelation(
 			vector<string>& labelList)
 {
 	string variable = labelList[0];
@@ -154,16 +154,16 @@ FuzzyFeature* TreeClassifierBuilder::buildInverseRelation(
 
 }
 
-FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
-			FuzzyFeatureList* list, vector<string>& labelList, FeatureType type)
+FuzzyConstraintsList* TreeClassifierBuilder::buildFeaturesList(
+			FuzzyConstraintsList* list, vector<string>& labelList, FeatureType type)
 {
-	FuzzyFeature* feature;
+	FuzzyConstraint* feature;
 
 	list = eventuallyInitialize(list);
 
 	switch (type)
 	{
-		case SIM_F:
+		case SIM_C:
 			feature = buildSimpleFeature(labelList[0], labelList[1]);
 			break;
 
@@ -190,7 +190,7 @@ FuzzyFeatureList* TreeClassifierBuilder::buildFeaturesList(
 
 void TreeClassifierBuilder::buildClass(string name, string superClassName,
 			VariableList* variables, ConstantList* constants,
-			FuzzyFeatureList* featureList, bool hidden)
+			FuzzyConstraintsList* featureList, bool hidden)
 {
 	variables = eventuallyInitialize(variables);
 	constants = eventuallyInitialize(constants);
@@ -231,17 +231,17 @@ void TreeClassifierBuilder::checkConsistency()
 
 void TreeClassifierBuilder::checkFeatureList(FuzzyClass& fuzzyClass)
 {
-	FuzzyFeatureList* featuresPointer = fuzzyClass.getfeatureList();
+	FuzzyConstraintsList* featuresPointer = fuzzyClass.getfeatureList();
 
 	if (featuresPointer != NULL)
 	{
-		FuzzyFeatureList& features = *featuresPointer;
+		FuzzyConstraintsList& features = *featuresPointer;
 		for (auto& it : features)
 		{
-			FuzzyFeature& feature = *it;
-			switch (feature.getFeatureType())
+			FuzzyConstraint& feature = *it;
+			switch (feature.getConstraintType())
 			{
-				case SIM_F:
+				case SIM_C:
 					checkVariable(fuzzyClass, feature.getVariables()[0]);
 					break;
 
@@ -290,7 +290,7 @@ void TreeClassifierBuilder::checkRelationVar(string relatedVariable,
 }
 
 void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
-			FuzzyFeature& relation)
+			FuzzyConstraint& relation)
 {
 	string object = relation.getRelationObject();
 
@@ -304,7 +304,7 @@ void TreeClassifierBuilder::checkRelation(FuzzyClass& fuzzyClass,
 
 	FuzzyClass& relatedClass = *classifier->getClass(object);
 
-	if (relation.getFeatureType() == INV_R)
+	if (relation.getConstraintType() == INV_R)
 	{
 		vector<string> relatedVariables = relation.getVariables();
 

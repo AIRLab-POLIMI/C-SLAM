@@ -285,11 +285,11 @@ namespace tc {
       // fuzzyClassElements
       char dummy2[sizeof(ElementsList)];
 
-      // fuzzyFeature
-      char dummy3[sizeof(FuzzyFeatureData)];
+      // fuzzyConstraint
+      char dummy3[sizeof(FuzzyConstraintData)];
 
-      // fuzzyFeatures
-      char dummy4[sizeof(FuzzyFeatureList*)];
+      // fuzzyConstraints
+      char dummy4[sizeof(FuzzyConstraintsList*)];
 
       // variables
       // variableList
@@ -301,12 +301,12 @@ namespace tc {
       // ID
       // VAR_ID
       // fuzzySuperclass
-      // fuzzyConstraint
+      // fuzzyLabelConstraint
       // fuzzyDegree
       // var
       char dummy7[sizeof(std::string)];
 
-      // fuzzySimpleFeature
+      // fuzzySimpleConstraint
       // fuzzySimpleRelation
       // fuzzyComplexRelation
       // fuzzyInverseRelation
@@ -392,9 +392,9 @@ namespace tc {
 
   basic_symbol (typename Base::kind_type t, const ElementsList v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const FuzzyFeatureData v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const FuzzyConstraintData v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const FuzzyFeatureList* v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const FuzzyConstraintsList* v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const VariableList* v, const location_type& l);
 
@@ -841,12 +841,12 @@ namespace tc {
         value.copy< ElementsList > (other.value);
         break;
 
-      case 34: // fuzzyFeature
-        value.copy< FuzzyFeatureData > (other.value);
+      case 34: // fuzzyConstraint
+        value.copy< FuzzyConstraintData > (other.value);
         break;
 
-      case 33: // fuzzyFeatures
-        value.copy< FuzzyFeatureList* > (other.value);
+      case 33: // fuzzyConstraints
+        value.copy< FuzzyConstraintsList* > (other.value);
         break;
 
       case 31: // variables
@@ -861,13 +861,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         value.copy< std::string > (other.value);
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation
@@ -900,12 +900,12 @@ namespace tc {
         value.copy< ElementsList > (v);
         break;
 
-      case 34: // fuzzyFeature
-        value.copy< FuzzyFeatureData > (v);
+      case 34: // fuzzyConstraint
+        value.copy< FuzzyConstraintData > (v);
         break;
 
-      case 33: // fuzzyFeatures
-        value.copy< FuzzyFeatureList* > (v);
+      case 33: // fuzzyConstraints
+        value.copy< FuzzyConstraintsList* > (v);
         break;
 
       case 31: // variables
@@ -920,13 +920,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         value.copy< std::string > (v);
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation
@@ -963,14 +963,14 @@ namespace tc {
   {}
 
   template <typename Base>
-   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const FuzzyFeatureData v, const location_type& l)
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const FuzzyConstraintData v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
   {}
 
   template <typename Base>
-   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const FuzzyFeatureList* v, const location_type& l)
+   TreeClassifierParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const FuzzyConstraintsList* v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1029,12 +1029,12 @@ namespace tc {
         value.template destroy< ElementsList > ();
         break;
 
-      case 34: // fuzzyFeature
-        value.template destroy< FuzzyFeatureData > ();
+      case 34: // fuzzyConstraint
+        value.template destroy< FuzzyConstraintData > ();
         break;
 
-      case 33: // fuzzyFeatures
-        value.template destroy< FuzzyFeatureList* > ();
+      case 33: // fuzzyConstraints
+        value.template destroy< FuzzyConstraintsList* > ();
         break;
 
       case 31: // variables
@@ -1049,13 +1049,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         value.template destroy< std::string > ();
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation
@@ -1085,12 +1085,12 @@ namespace tc {
         value.move< ElementsList > (s.value);
         break;
 
-      case 34: // fuzzyFeature
-        value.move< FuzzyFeatureData > (s.value);
+      case 34: // fuzzyConstraint
+        value.move< FuzzyConstraintData > (s.value);
         break;
 
-      case 33: // fuzzyFeatures
-        value.move< FuzzyFeatureList* > (s.value);
+      case 33: // fuzzyConstraints
+        value.move< FuzzyConstraintsList* > (s.value);
         break;
 
       case 31: // variables
@@ -1105,13 +1105,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         value.move< std::string > (s.value);
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation

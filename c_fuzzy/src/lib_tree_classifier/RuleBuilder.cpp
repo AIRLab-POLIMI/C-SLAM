@@ -48,15 +48,15 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 
 	vector<Variable> variables;
 
-	FuzzyFeatureList& features = *fuzzyClass.getfeatureList();
+	FuzzyConstraintsList& features = *fuzzyClass.getfeatureList();
 
-	FuzzyFeatureList::reverse_iterator start = features.rbegin();
-	FuzzyFeatureList::reverse_iterator end = features.rend();
+	FuzzyConstraintsList::reverse_iterator start = features.rbegin();
+	FuzzyConstraintsList::reverse_iterator end = features.rend();
 
-	for (FuzzyFeatureList::reverse_iterator i = start; i != end; ++i)
+	for (FuzzyConstraintsList::reverse_iterator i = start; i != end; ++i)
 	{
-		FuzzyFeature* feature = *i;
-		FeatureBuilt featureBuilt = buildFeatureRule(*feature);
+		FuzzyConstraint* feature = *i;
+		ConstraintBuilt featureBuilt = buildFeatureRule(*feature);
 		NodePtr featureRule = featureBuilt.first;
 		variables.push_back(featureBuilt.second);
 		if (i == start)
@@ -93,13 +93,13 @@ void RuleBuilder::fixNameSpace(FuzzyClass& fuzzyClass)
 	}
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildFeatureRule(FuzzyFeature& feature)
+RuleBuilder::ConstraintBuilt RuleBuilder::buildFeatureRule(FuzzyConstraint& feature)
 {
-	switch (feature.getFeatureType())
+	switch (feature.getConstraintType())
 	{
-		case SIM_F:
+		case SIM_C:
 			return buildSimpleFeatureRule(
-						static_cast<FuzzySimpleFeature&>(feature));
+						static_cast<FuzzySimpleConstraint&>(feature));
 		case SIM_R:
 			return buildSimpleRelationRule(
 						static_cast<FuzzySimpleRelation&>(feature));
@@ -110,12 +110,12 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeatureRule(FuzzyFeature& feature)
 			return buildInverseRelationRule(
 						static_cast<FuzzyInverseRelation&>(feature));
 		default:
-			return FeatureBuilt(NULL, Variable("", ""));
+			return ConstraintBuilt(NULL, Variable("", ""));
 	}
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleFeatureRule(
-			FuzzySimpleFeature& feature)
+RuleBuilder::ConstraintBuilt RuleBuilder::buildSimpleFeatureRule(
+			FuzzySimpleConstraint& feature)
 {
 	string varName = feature.getVariables().back();
 	string label = feature.getFuzzyLabel();
@@ -124,11 +124,11 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleFeatureRule(
 				varName, label);
 	Variable var(currentClass, varName);
 
-	return FeatureBuilt(is, var);
+	return ConstraintBuilt(is, var);
 
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleRelationRule(
+RuleBuilder::ConstraintBuilt RuleBuilder::buildSimpleRelationRule(
 			FuzzySimpleRelation& relation)
 {
 	string varName = relation.getVariables().back();
@@ -146,7 +146,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleRelationRule(
 	return buildFeature(generatedVar, label, true);
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildComplexRelationRule(
+RuleBuilder::ConstraintBuilt RuleBuilder::buildComplexRelationRule(
 			FuzzyComplexRelation& relation)
 {
 	string varMin = relation.getVariables()[0];
@@ -163,7 +163,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildComplexRelationRule(
 	return buildFeature(generatedVar, label, false);
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildInverseRelationRule(
+RuleBuilder::ConstraintBuilt RuleBuilder::buildInverseRelationRule(
 			FuzzyInverseRelation& relation)
 {
 	string variable = relation.getRelationVariable();
@@ -181,7 +181,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildInverseRelationRule(
 	return buildFeature(generatedVar, label, false);
 }
 
-RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
+RuleBuilder::ConstraintBuilt RuleBuilder::buildFeature(string& generatedVar,
 			string& label, bool simple)
 {
 	Variable var(currentClass, generatedVar);
@@ -207,7 +207,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
 		node = buildCrispOn(var);
 	}
 
-	return FeatureBuilt(node, var);
+	return ConstraintBuilt(node, var);
 }
 
 NodePtr RuleBuilder::buildRHS()

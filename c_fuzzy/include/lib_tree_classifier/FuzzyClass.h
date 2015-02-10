@@ -28,7 +28,7 @@
 #include <set>
 #include <vector>
 
-#include "FuzzyFeatures.h"
+#include "FuzzyConstraints.h"
 
 typedef std::set<std::string> VariableList;
 typedef std::map<std::string, std::string> ConstantList;
@@ -39,7 +39,7 @@ class FuzzyClass
 public:
 	FuzzyClass(std::string name, FuzzyClass* superClass,
 				VariableList* variables, ConstantList* constants,
-				FuzzyFeatureList* features, bool hidden) :
+				FuzzyConstraintsList* features, bool hidden) :
 				name(name), superClass(superClass), variables(variables),
 				constants(constants), features(features), hidden(hidden)
 	{
@@ -55,7 +55,7 @@ public:
 		return features->size() == 0;
 	}
 
-	inline FuzzyFeatureList* getfeatureList()
+	inline FuzzyConstraintsList* getfeatureList()
 	{
 		return features;
 	}
@@ -111,7 +111,7 @@ private:
 	FuzzyClass* superClass;
 	VariableList* variables;
 	ConstantList* constants;
-	FuzzyFeatureList* features;
+	FuzzyConstraintsList* features;
 	bool hidden;
 };
 

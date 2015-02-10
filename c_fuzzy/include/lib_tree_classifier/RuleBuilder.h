@@ -35,7 +35,7 @@
 #include "VariableGenerator.h"
 
 class FuzzyClass;
-class FuzzySimpleFeature;
+class FuzzySimpleConstraint;
 class FuzzySimpleRelation;
 class FuzzyComplexRelation;
 class FuzzyInverseRelation;
@@ -43,19 +43,19 @@ class FuzzyInverseRelation;
 class RuleBuilder
 {
 private:
-	typedef std::pair<NodePtr, Variable> FeatureBuilt;
+	typedef std::pair<NodePtr, Variable> ConstraintBuilt;
 public:
 	RuleBuilder(FuzzyKnowledgeBase& knowledgeBase);
 	VariableGenerator* buildClassRule(FuzzyClass& fuzzyClass);
 
 private:
 	void fixNameSpace(FuzzyClass& fuzzyClass);
-	FeatureBuilt buildFeatureRule(FuzzyFeature& feature);
-	FeatureBuilt buildSimpleFeatureRule(FuzzySimpleFeature& feature);
-	FeatureBuilt buildSimpleRelationRule(FuzzySimpleRelation& relation);
-	FeatureBuilt buildComplexRelationRule(FuzzyComplexRelation& relation);
-	FeatureBuilt buildInverseRelationRule(FuzzyInverseRelation& relation);
-	FeatureBuilt buildFeature(std::string& generatedVar, std::string& label,
+	ConstraintBuilt buildFeatureRule(FuzzyConstraint& feature);
+	ConstraintBuilt buildSimpleFeatureRule(FuzzySimpleConstraint& feature);
+	ConstraintBuilt buildSimpleRelationRule(FuzzySimpleRelation& relation);
+	ConstraintBuilt buildComplexRelationRule(FuzzyComplexRelation& relation);
+	ConstraintBuilt buildInverseRelationRule(FuzzyInverseRelation& relation);
+	ConstraintBuilt buildFeature(std::string& generatedVar, std::string& label,
 				bool simple);
 	NodePtr buildRHS();
 	NodePtr buildCrispMatch(Variable var);

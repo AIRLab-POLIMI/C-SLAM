@@ -260,12 +260,12 @@ namespace tc {
         value.move< ElementsList > (that.value);
         break;
 
-      case 34: // fuzzyFeature
-        value.move< FuzzyFeatureData > (that.value);
+      case 34: // fuzzyConstraint
+        value.move< FuzzyConstraintData > (that.value);
         break;
 
-      case 33: // fuzzyFeatures
-        value.move< FuzzyFeatureList* > (that.value);
+      case 33: // fuzzyConstraints
+        value.move< FuzzyConstraintsList* > (that.value);
         break;
 
       case 31: // variables
@@ -280,13 +280,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         value.move< std::string > (that.value);
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation
@@ -317,12 +317,12 @@ namespace tc {
         value.copy< ElementsList > (that.value);
         break;
 
-      case 34: // fuzzyFeature
-        value.copy< FuzzyFeatureData > (that.value);
+      case 34: // fuzzyConstraint
+        value.copy< FuzzyConstraintData > (that.value);
         break;
 
-      case 33: // fuzzyFeatures
-        value.copy< FuzzyFeatureList* > (that.value);
+      case 33: // fuzzyConstraints
+        value.copy< FuzzyConstraintsList* > (that.value);
         break;
 
       case 31: // variables
@@ -337,13 +337,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         value.copy< std::string > (that.value);
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation
@@ -590,12 +590,12 @@ namespace tc {
         yylhs.value.build< ElementsList > ();
         break;
 
-      case 34: // fuzzyFeature
-        yylhs.value.build< FuzzyFeatureData > ();
+      case 34: // fuzzyConstraint
+        yylhs.value.build< FuzzyConstraintData > ();
         break;
 
-      case 33: // fuzzyFeatures
-        yylhs.value.build< FuzzyFeatureList* > ();
+      case 33: // fuzzyConstraints
+        yylhs.value.build< FuzzyConstraintsList* > ();
         break;
 
       case 31: // variables
@@ -610,13 +610,13 @@ namespace tc {
       case 3: // ID
       case 4: // VAR_ID
       case 26: // fuzzySuperclass
-      case 39: // fuzzyConstraint
+      case 39: // fuzzyLabelConstraint
       case 40: // fuzzyDegree
       case 41: // var
         yylhs.value.build< std::string > ();
         break;
 
-      case 35: // fuzzySimpleFeature
+      case 35: // fuzzySimpleConstraint
       case 36: // fuzzySimpleRelation
       case 37: // fuzzyComplexRelation
       case 38: // fuzzyInverseRelation
@@ -643,7 +643,7 @@ namespace tc {
   case 4:
 #line 87 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				builder.buildClass(yystack_[5].value.as< std::string > (), yystack_[4].value.as< std::string > (), yystack_[2].value.as< ElementsList > ().first, yystack_[2].value.as< ElementsList > ().second, yystack_[1].value.as< FuzzyFeatureList* > (), yystack_[3].value.as< bool > ());
+				builder.buildClass(yystack_[5].value.as< std::string > (), yystack_[4].value.as< std::string > (), yystack_[2].value.as< ElementsList > ().first, yystack_[2].value.as< ElementsList > ().second, yystack_[1].value.as< FuzzyConstraintsList* > (), yystack_[3].value.as< bool > ());
 			}
 #line 649 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -777,7 +777,7 @@ namespace tc {
   case 20:
 #line 174 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< FuzzyFeatureList* > () = builder.buildFeaturesList(yystack_[0].value.as< FuzzyFeatureList* > (), yystack_[2].value.as< FuzzyFeatureData > ().first, yystack_[2].value.as< FuzzyFeatureData > ().second);
+				yylhs.value.as< FuzzyConstraintsList* > () = builder.buildFeaturesList(yystack_[0].value.as< FuzzyConstraintsList* > (), yystack_[2].value.as< FuzzyConstraintData > ().first, yystack_[2].value.as< FuzzyConstraintData > ().second);
 			}
 #line 783 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -785,7 +785,7 @@ namespace tc {
   case 21:
 #line 178 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< FuzzyFeatureList* > () = NULL;
+				yylhs.value.as< FuzzyConstraintsList* > () = NULL;
 			}
 #line 791 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -793,8 +793,8 @@ namespace tc {
   case 22:
 #line 184 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< FuzzyFeatureData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
-				yylhs.value.as< FuzzyFeatureData > ().second = SIM_F;
+				yylhs.value.as< FuzzyConstraintData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
+				yylhs.value.as< FuzzyConstraintData > ().second = SIM_C;
 			}
 #line 800 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -802,8 +802,8 @@ namespace tc {
   case 23:
 #line 189 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< FuzzyFeatureData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
-				yylhs.value.as< FuzzyFeatureData > ().second = SIM_R;
+				yylhs.value.as< FuzzyConstraintData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
+				yylhs.value.as< FuzzyConstraintData > ().second = SIM_R;
 			}
 #line 809 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -811,8 +811,8 @@ namespace tc {
   case 24:
 #line 194 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< FuzzyFeatureData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
-				yylhs.value.as< FuzzyFeatureData > ().second = COM_R;
+				yylhs.value.as< FuzzyConstraintData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
+				yylhs.value.as< FuzzyConstraintData > ().second = COM_R;
 			}
 #line 818 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -820,8 +820,8 @@ namespace tc {
   case 25:
 #line 199 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.y" // lalr1.cc:847
     {
-				yylhs.value.as< FuzzyFeatureData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
-				yylhs.value.as< FuzzyFeatureData > ().second = INV_R;
+				yylhs.value.as< FuzzyConstraintData > ().first = yystack_[0].value.as< std::vector<std::string>  > ();
+				yylhs.value.as< FuzzyConstraintData > ().second = INV_R;
 			}
 #line 827 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp" // lalr1.cc:847
     break;
@@ -1283,9 +1283,9 @@ namespace tc {
   "COMMA", "LPAR", "RPAR", "EQUAL", "$accept", "fuzzyClassifiers",
   "fuzzyClass", "fuzzySuperclass", "hiddenFlag", "fuzzyClassElements",
   "constants", "constantList", "variables", "variableList",
-  "fuzzyFeatures", "fuzzyFeature", "fuzzySimpleFeature",
+  "fuzzyConstraints", "fuzzyConstraint", "fuzzySimpleConstraint",
   "fuzzySimpleRelation", "fuzzyComplexRelation", "fuzzyInverseRelation",
-  "fuzzyConstraint", "fuzzyDegree", "var", YY_NULLPTR
+  "fuzzyLabelConstraint", "fuzzyDegree", "var", YY_NULLPTR
   };
 
 #if YYDEBUG

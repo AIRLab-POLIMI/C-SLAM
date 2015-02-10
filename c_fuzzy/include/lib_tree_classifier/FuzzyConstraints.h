@@ -5,23 +5,23 @@
  *      Author: dave
  */
 
-#ifndef FUZZYFEATURES_H_
-#define FUZZYFEATURES_H_
+#ifndef FUZZYCONSTRAINTS_H_
+#define FUZZYCONSTRAINTS_H_
 
 #include <string>
 #include <vector>
 
 enum FeatureType
 {
-	SIM_F, SIM_R, COM_R, INV_R
+	SIM_C, SIM_R, COM_R, INV_R
 };
 
-typedef std::pair<std::vector<std::string>, FeatureType> FuzzyFeatureData;
+typedef std::pair<std::vector<std::string>, FeatureType> FuzzyConstraintData;
 
-class FuzzyFeature
+class FuzzyConstraint
 {
 public:
-	FuzzyFeature(std::string fuzzyLabel) :
+	FuzzyConstraint(std::string fuzzyLabel) :
 			fuzzyLabel(fuzzyLabel)
 	{
 	}
@@ -31,7 +31,7 @@ public:
 		return fuzzyLabel;
 	}
 
-	virtual FeatureType getFeatureType() = 0;
+	virtual FeatureType getConstraintType() = 0;
 
 	virtual std::vector<std::string> getVariables() = 0;
 
@@ -39,7 +39,7 @@ public:
 
 	virtual std::string getRelationVariable() = 0;
 
-	virtual ~FuzzyFeature()
+	virtual ~FuzzyConstraint()
 	{
 	}
 
@@ -48,17 +48,17 @@ private:
 
 };
 
-class FuzzySimpleFeature: public FuzzyFeature
+class FuzzySimpleConstraint: public FuzzyConstraint
 {
 public:
-	FuzzySimpleFeature(std::string variable, std::string fuzzyLabel) :
-			FuzzyFeature(fuzzyLabel), variable(variable)
+	FuzzySimpleConstraint(std::string variable, std::string fuzzyLabel) :
+			FuzzyConstraint(fuzzyLabel), variable(variable)
 	{
 	}
 
-	virtual FeatureType getFeatureType()
+	virtual FeatureType getConstraintType()
 	{
-		return SIM_F;
+		return SIM_C;
 	}
 
 	virtual std::vector<std::string> getVariables()
@@ -82,16 +82,16 @@ private:
 	std::string variable;
 };
 
-class FuzzyRelation: public FuzzyFeature
+class FuzzyRelation: public FuzzyConstraint
 {
 public:
 	FuzzyRelation(std::string className, std::string member,
 			std::string fuzzyLabel) :
-			FuzzyFeature(fuzzyLabel), className(className), member(member)
+			FuzzyConstraint(fuzzyLabel), className(className), member(member)
 	{
 	}
 
-	virtual FeatureType getFeatureType() = 0;
+	virtual FeatureType getConstraintType() = 0;
 
 	virtual std::string getRelationObject()
 	{
@@ -119,7 +119,7 @@ public:
 	{
 	}
 
-	virtual FeatureType getFeatureType()
+	virtual FeatureType getConstraintType()
 	{
 		return SIM_R;
 	}
@@ -147,7 +147,7 @@ public:
 	{
 	}
 
-	virtual FeatureType getFeatureType()
+	virtual FeatureType getConstraintType()
 	{
 		return COM_R;
 	}
@@ -175,7 +175,7 @@ public:
 	{
 	}
 
-	virtual FeatureType getFeatureType()
+	virtual FeatureType getConstraintType()
 	{
 		return INV_R;
 	}
@@ -193,6 +193,6 @@ private:
 	std::string member2;
 };
 
-typedef std::vector<FuzzyFeature*> FuzzyFeatureList;
+typedef std::vector<FuzzyConstraint*> FuzzyConstraintsList;
 
-#endif /* FUZZYFEATURES_H_ */
+#endif /* FUZZYCONSTRAINTS_H_ */

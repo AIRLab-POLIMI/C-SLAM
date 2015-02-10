@@ -68,13 +68,13 @@
 
 %type <bool> hiddenFlag
 %type <std::string> var
-%type <std::string> fuzzySuperclass fuzzyConstraint fuzzyDegree
-%type <FuzzyFeatureData> fuzzyFeature;
-%type <std::vector<std::string> > fuzzySimpleFeature fuzzySimpleRelation fuzzyComplexRelation fuzzyInverseRelation
+%type <std::string> fuzzySuperclass fuzzyLabelConstraint fuzzyDegree
+%type <FuzzyConstraintData> fuzzyConstraint;
+%type <std::vector<std::string> > fuzzySimpleConstraint fuzzySimpleRelation fuzzyComplexRelation fuzzyInverseRelation
 %type <VariableList*> variables variableList
 %type <ConstantList*> constants constantList
 %type <ElementsList> fuzzyClassElements
-%type <FuzzyFeatureList*> fuzzyFeatures
+%type <FuzzyConstraintsList*> fuzzyConstraints
  
 
 %%
@@ -83,7 +83,7 @@ fuzzyClassifiers	: fuzzyClass fuzzyClassifiers
 			| fuzzyClass
 			;
 
-fuzzyClass		: CLASS ID fuzzySuperclass hiddenFlag fuzzyClassElements fuzzyFeatures END_CLASS
+fuzzyClass		: CLASS ID fuzzySuperclass hiddenFlag fuzzyClassElements fuzzyConstraints END_CLASS
 			{
 				builder.buildClass($2, $3, $5.first, $5.second, $6, $4);
 			}
@@ -170,7 +170,7 @@ variableList		: var SEMICOLON variableList
 			;
 
 
-fuzzyFeatures		: fuzzyFeature SEMICOLON fuzzyFeatures
+fuzzyConstraints	: fuzzyConstraint SEMICOLON fuzzyConstraints
 			{
 				$$ = builder.buildFeaturesList($3, $1.first, $1.second);
 			}
@@ -180,10 +180,10 @@ fuzzyFeatures		: fuzzyFeature SEMICOLON fuzzyFeatures
 			}
 			;
 
-fuzzyFeature		: fuzzySimpleFeature
+fuzzyConstraint		: fuzzySimpleConstraint
 			{
 				$$.first = $1;
-				$$.second = SIM_F;
+				$$.second = SIM_C;
 			}
 			| fuzzySimpleRelation
 			{
@@ -202,7 +202,7 @@ fuzzyFeature		: fuzzySimpleFeature
 			}
 			;
 
-fuzzySimpleFeature	: var IS ID
+fuzzySimpleConstraint	: var IS ID
 			{
 				$$.push_back($1);
 				$$.push_back($3);
@@ -218,7 +218,7 @@ fuzzySimpleRelation	: ID PERIOD var MATCH var fuzzyDegree
 			}
 			;
 
-fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR
+fuzzyComplexRelation	: ID PERIOD var fuzzyLabelConstraint ON LPAR var COMMA var RPAR
 			{
 				$$.push_back($1);
 				$$.push_back($3);
@@ -228,7 +228,7 @@ fuzzyComplexRelation	: ID PERIOD var fuzzyConstraint ON LPAR var COMMA var RPAR
 			}
 			;
 			
-fuzzyInverseRelation	: var fuzzyConstraint ON ID LPAR var COMMA var RPAR
+fuzzyInverseRelation	: var fuzzyLabelConstraint ON ID LPAR var COMMA var RPAR
 			{
 				$$.push_back($1);
 				$$.push_back($4);
@@ -239,7 +239,7 @@ fuzzyInverseRelation	: var fuzzyConstraint ON ID LPAR var COMMA var RPAR
 			;
 
 
-fuzzyConstraint		: IS ID
+fuzzyLabelConstraint	: IS ID
 			{
 				$$ = $2;
 			}

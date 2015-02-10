@@ -51,16 +51,16 @@ public:
 	VariableList* buildVariableList(VariableList* list, std::string variable);
 	ConstantList* buildCostantList(ConstantList* list, std::string constant,
 			std::string value);
-	FuzzyFeatureList* buildFeaturesList(FuzzyFeatureList* list,
+	FuzzyConstraintsList* buildFeaturesList(FuzzyConstraintsList* list,
 			std::vector<std::string>& labelList, FeatureType type);
-	FuzzyFeature* buildSimpleFeature(std::string variable,
+	FuzzyConstraint* buildSimpleFeature(std::string variable,
 			std::string fuzzyLabel);
-	FuzzyFeature* buildSimpleRelation(std::vector<std::string>& labelList);
-	FuzzyFeature* buildComplexRelation(std::vector<std::string>& labelList);
-	FuzzyFeature* buildInverseRelation(std::vector<std::string>& labelList);
+	FuzzyConstraint* buildSimpleRelation(std::vector<std::string>& labelList);
+	FuzzyConstraint* buildComplexRelation(std::vector<std::string>& labelList);
+	FuzzyConstraint* buildInverseRelation(std::vector<std::string>& labelList);
 	void buildClass(std::string name, std::string superClassName,
 			VariableList* variables, ConstantList* constants,
-			FuzzyFeatureList* featureList, bool hidden);
+			FuzzyConstraintsList* featureList, bool hidden);
 
 private:
 	void checkConsistency();
@@ -68,7 +68,7 @@ private:
 			const std::string& superClassName, FuzzyClass* superClass);
 	void checkFeatureList(FuzzyClass& fuzzyClass);
 	void checkVariable(FuzzyClass& fuzzyClass, std::string variable);
-	void checkRelation(FuzzyClass& fuzzyClass, FuzzyFeature& relation);
+	void checkRelation(FuzzyClass& fuzzyClass, FuzzyConstraint& relation);
 	void checkRelationVar(std::string relatedVariable, FuzzyClass& relatedClass,
 			FuzzyClass& fuzzyClass);
 
