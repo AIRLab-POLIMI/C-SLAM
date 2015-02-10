@@ -43,7 +43,7 @@ class FuzzyInverseRelation;
 class RuleBuilder
 {
 private:
-	typedef std::pair<Node*, Variable> FeatureBuilt;
+	typedef std::pair<NodePtr, Variable> FeatureBuilt;
 public:
 	RuleBuilder(FuzzyKnowledgeBase& knowledgeBase);
 	VariableGenerator* buildClassRule(FuzzyClass& fuzzyClass);
@@ -57,10 +57,10 @@ private:
 	FeatureBuilt buildInverseRelationRule(FuzzyInverseRelation& relation);
 	FeatureBuilt buildFeature(std::string& generatedVar, std::string& label,
 				bool simple);
-	Node* buildRHS();
-	Node* buildCrispMatch(Variable var);
-	Node* buildCrispOn(Variable var);
-	Node* buildComplexRelation(Variable var, std::string& label);
+	NodePtr buildRHS();
+	NodePtr buildCrispMatch(Variable var);
+	NodePtr buildCrispOn(Variable var);
+	NodePtr buildComplexRelation(Variable var, std::string& label);
 	void addDomain(const std::string& domain, const std::string& label,
 				FuzzyMF* table);
 

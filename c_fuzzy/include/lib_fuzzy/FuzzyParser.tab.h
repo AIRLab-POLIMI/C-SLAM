@@ -284,7 +284,7 @@ namespace fz {
       // fuzzyComparison
       // fuzzyPredicateCall
       // fuzzyAssignment
-      char dummy1[sizeof(Node*)];
+      char dummy1[sizeof(NodePtr)];
 
       // variable
       char dummy2[sizeof(Variable)];
@@ -385,7 +385,7 @@ namespace fz {
 
   basic_symbol (typename Base::kind_type t, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const Node* v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const NodePtr v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const Variable v, const location_type& l);
 
@@ -842,7 +842,7 @@ namespace fz {
       case 47: // fuzzyComparison
       case 48: // fuzzyPredicateCall
       case 49: // fuzzyAssignment
-        value.copy< Node* > (other.value);
+        value.copy< NodePtr > (other.value);
         break;
 
       case 50: // variable
@@ -891,7 +891,7 @@ namespace fz {
       case 47: // fuzzyComparison
       case 48: // fuzzyPredicateCall
       case 49: // fuzzyAssignment
-        value.copy< Node* > (v);
+        value.copy< NodePtr > (v);
         break;
 
       case 50: // variable
@@ -935,7 +935,7 @@ namespace fz {
   {}
 
   template <typename Base>
-   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Node* v, const location_type& l)
+   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const NodePtr v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -996,7 +996,7 @@ namespace fz {
       case 47: // fuzzyComparison
       case 48: // fuzzyPredicateCall
       case 49: // fuzzyAssignment
-        value.template destroy< Node* > ();
+        value.template destroy< NodePtr > ();
         break;
 
       case 50: // variable
@@ -1042,7 +1042,7 @@ namespace fz {
       case 47: // fuzzyComparison
       case 48: // fuzzyPredicateCall
       case 49: // fuzzyAssignment
-        value.move< Node* > (s.value);
+        value.move< NodePtr > (s.value);
         break;
 
       case 50: // variable

@@ -24,7 +24,7 @@
 #include "FuzzyRule.h"
 #include <iostream>
 
-FuzzyRule::FuzzyRule(Node* antecedent, Node* conseguent) :
+FuzzyRule::FuzzyRule(NodePtr antecedent, NodePtr conseguent) :
 			antecedent(antecedent), conseguent(conseguent)
 {
 }
@@ -34,10 +34,4 @@ double FuzzyRule::evaluate(ReasoningData reasoningData)
 	reasoningData.truthValue = antecedent->evaluate(reasoningData);
 	conseguent->evaluate(reasoningData);
 	return reasoningData.truthValue;
-}
-
-FuzzyRule::~FuzzyRule()
-{
-	delete antecedent;
-	delete conseguent;
 }

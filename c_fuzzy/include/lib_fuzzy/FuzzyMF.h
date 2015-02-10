@@ -26,7 +26,7 @@
 
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "Node.h"
 
@@ -49,7 +49,7 @@ protected:
 	}
 
 public:
-	static const double FUZZY_MAX_V = 1.0, FUZZY_MIN_V = 0;
+	static constexpr double FUZZY_MAX_V = 1.0, FUZZY_MIN_V = 0;
 };
 
 /**
@@ -155,13 +155,13 @@ private:
 	int value;
 };
 
-typedef boost::shared_ptr<FuzzyMF> FuzzyMFPtr;
+typedef std::shared_ptr<FuzzyMF> FuzzyMFPtr;
 
 typedef std::map<std::string, FuzzyMFPtr> MFTable;
-typedef boost::shared_ptr<MFTable> MFTablePtr;
+typedef std::shared_ptr<MFTable> MFTablePtr;
 
 typedef std::map<std::string, MFTablePtr> DomainTable;
-typedef boost::shared_ptr<DomainTable> DomainTablePtr;
+typedef std::shared_ptr<DomainTable> DomainTablePtr;
 
 typedef std::map<std::string, DomainTablePtr> NamespaceTable;
 

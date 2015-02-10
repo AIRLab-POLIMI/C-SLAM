@@ -71,10 +71,10 @@
 %token <std::string> F_LABEL
 %token <int> PARAMETER
 
-%type <Node*> wellFormedFormula
-%type <Node*> fuzzyComparison
-%type <Node*> fuzzyAssignment
-%type <Node*> fuzzyPredicateCall
+%type <NodePtr> wellFormedFormula
+%type <NodePtr> fuzzyComparison
+%type <NodePtr> fuzzyAssignment
+%type <NodePtr> fuzzyPredicateCall
 %type <Variable> variable
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList

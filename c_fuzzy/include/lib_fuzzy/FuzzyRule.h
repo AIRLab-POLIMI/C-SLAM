@@ -29,13 +29,12 @@
 class FuzzyRule: public Node
 {
 public:
-	FuzzyRule(Node* antecedent, Node* conseguent);
+	FuzzyRule(NodePtr antecedent, NodePtr conseguent);
 	double evaluate(ReasoningData reasoningData);
-	~FuzzyRule();
 
 private:
-	Node* antecedent;
-	Node* conseguent;
+	NodePtr antecedent;
+	NodePtr conseguent;
 
 };
 

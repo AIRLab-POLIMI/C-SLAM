@@ -37,26 +37,23 @@ class FuzzyKnowledgeBase
 public:
 	FuzzyKnowledgeBase(FuzzyVariableEngine* variables,
 			FuzzyPredicateEngine* predicates,
-			std::vector<Node*>* knowledgeBase);
+			std::vector<NodePtr>* knowledgeBase);
 	size_t size();
 	VariableMasks& getMasks();
 	NamespaceTable& getNamespaceTable();
 	Node& operator[](size_t i);
 
-	void addRule(Node* fuzzyRule, std::vector<Variable>& vars);
+	void addRule(NodePtr fuzzyRule, std::vector<Variable>& vars);
 	void addDomains(std::string& nameSpace, DomainTable& domain);
-	Node* getPredicateInstance(std::string& nameSpace, std::string& predicateName,
+	NodePtr getPredicateInstance(std::string& nameSpace, std::string& predicateName,
 			Variable variable);
 
 	~FuzzyKnowledgeBase();
 
 private:
-	void deleteRules();
-
-private:
 	FuzzyVariableEngine* variables;
 	FuzzyPredicateEngine* predicates;
-	std::vector<Node*>* knowledgeBase;
+	std::vector<NodePtr>* knowledgeBase;
 };
 
 #endif /* FUZZYKNOWLEDGEBASE_H_ */

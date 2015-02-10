@@ -34,6 +34,9 @@ endif()
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
+#Set c++11 flag
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 #set the folder of lib_fuzzy and lib_tree_classifier
 set(LIB_FUZZY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_fuzzy)
 set(LIB_TREE_CLASSIFIER_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/lib_tree_classifier)

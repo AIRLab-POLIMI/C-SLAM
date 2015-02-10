@@ -26,7 +26,7 @@
 using namespace std;
 
 FuzzyKnowledgeBase::FuzzyKnowledgeBase(FuzzyVariableEngine* variables,
-		FuzzyPredicateEngine* predicates, std::vector<Node*>* knowledgeBase) :
+		FuzzyPredicateEngine* predicates, std::vector<NodePtr>* knowledgeBase) :
 		variables(variables), predicates(predicates), knowledgeBase(
 				knowledgeBase)
 {
@@ -52,7 +52,7 @@ Node& FuzzyKnowledgeBase::operator[](const size_t i)
 	return *knowledgeBase->at(i);
 }
 
-void FuzzyKnowledgeBase::addRule(Node* fuzzyRule,
+void FuzzyKnowledgeBase::addRule(NodePtr fuzzyRule,
 		vector<Variable>& vars)
 {
 
@@ -69,16 +69,8 @@ void FuzzyKnowledgeBase::addDomains(string& nameSpace, DomainTable& domain)
 	variables->addDomains(nameSpace, domain);
 }
 
-void FuzzyKnowledgeBase::deleteRules()
-{
-	for (vector<Node*>::iterator it = knowledgeBase->begin();
-			it != knowledgeBase->end(); ++it)
-	{
-		delete *it;
-	}
-}
 
-Node* FuzzyKnowledgeBase::getPredicateInstance(string& nameSpace,
+NodePtr FuzzyKnowledgeBase::getPredicateInstance(string& nameSpace,
 		string& predicateName, Variable variable)
 {
 	PredicateInstance instance = predicates->getPredicateInstance(nameSpace,
@@ -93,8 +85,6 @@ FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
 {
 	delete variables;
 	delete predicates;
-	//FIXME memory leak. Problem in predicates...
-	//deleteRules();
 	delete knowledgeBase;
 }
 

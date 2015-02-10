@@ -26,10 +26,9 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <boost/make_shared.hpp>
+#include <memory>
 
 using namespace std;
-using namespace boost;
 
 FuzzyVariableEngine::FuzzyVariableEngine()
 {

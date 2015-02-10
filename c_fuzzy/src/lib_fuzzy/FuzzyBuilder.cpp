@@ -58,7 +58,7 @@ void FuzzyBuilder::parse(const char *filename)
 	//initialize knowledge base data
 	varEngine = new FuzzyVariableEngine();
 	predicateEngine = new FuzzyPredicateEngine();
-	ruleList = new std::vector<Node*>();
+	ruleList = new std::vector<NodePtr>();
 	parsingPredicate = false;
 
 	//parse file
@@ -79,9 +79,9 @@ FuzzyKnowledgeBase* FuzzyBuilder::createKnowledgeBase()
 	return new FuzzyKnowledgeBase(varEngine, predicateEngine, ruleList);
 }
 
-void FuzzyBuilder::buildRule(Node* antecedent, Node* conseguent)
+void FuzzyBuilder::buildRule(NodePtr antecedent, NodePtr conseguent)
 {
-	Node* rule = new FuzzyRule(antecedent, conseguent);
+	NodePtr rule = make_shared<FuzzyRule>(antecedent, conseguent);
 	ruleList->push_back(rule);
 }
 
@@ -97,49 +97,49 @@ void FuzzyBuilder::exitPredicate()
 	parsingPredicate = false;
 }
 
-void FuzzyBuilder::buildPredicate(std::string predicateName, Node* definition)
+void FuzzyBuilder::buildPredicate(std::string predicateName, NodePtr definition)
 {
 	predicateEngine->buildPredicate(predicateName, definition);
 }
 
 //Fuzzy operators
-Node* FuzzyBuilder::buildAnd(Node* left, Node* right)
+NodePtr FuzzyBuilder::buildAnd(NodePtr left, NodePtr right)
 {
-	return new FuzzyAnd(left, right);
+	return make_shared<FuzzyAnd>(left, right);
 }
 
-Node* FuzzyBuilder::buildOr(Node* left, Node* right)
+NodePtr FuzzyBuilder::buildOr(NodePtr left, NodePtr right)
 {
-	return new FuzzyOr(left, right);
+	return make_shared<FuzzyOr>(left, right);
 }
 
-Node* FuzzyBuilder::buildNot(Node* operand)
+NodePtr FuzzyBuilder::buildNot(NodePtr operand)
 {
-	return new FuzzyNot(operand);
+	return make_shared<FuzzyNot>(operand);
 }
 
-Node* FuzzyBuilder::buildIs(Variable classMember, string mfLabel)
+NodePtr FuzzyBuilder::buildIs(Variable classMember, string mfLabel)
 {
 	string nameSpace = classMember.nameSpace;
 	string domain = classMember.domain;
 	varEngine->updateVariableMask(classMember, ruleList->size());
-	return new FuzzyIs(varEngine->getTable(), nameSpace, domain, mfLabel);
+	return make_shared<FuzzyIs>(varEngine->getTable(), nameSpace, domain, mfLabel);
 }
 
-Node* FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
+NodePtr FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
 {
-	return new FuzzyTemplateIs(varEngine->getTable(), "", domain, mfLabel);
+	return make_shared<FuzzyTemplateIs>(varEngine->getTable(), "", domain, mfLabel);
 }
 
-Node* FuzzyBuilder::buildAssignment(Variable classMember, string label)
+NodePtr FuzzyBuilder::buildAssignment(Variable classMember, string label)
 {
 	string nameSpace = classMember.nameSpace;
 	string output = classMember.domain;
-	return new FuzzyAssignment(varEngine->getTable(), nameSpace, output, label);
+	return make_shared<FuzzyAssignment>(varEngine->getTable(), nameSpace, output, label);
 }
 
 //fuzzy predicates
-Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
+NodePtr FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
 			Variable variable)
 {
 	PredicateInstance instance = predicateEngine->getPredicateInstance(
@@ -150,7 +150,7 @@ Node* FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
 	return instance.first;
 }
 
-Node* FuzzyBuilder::getPredicateInstance(string predicateName,
+NodePtr FuzzyBuilder::getPredicateInstance(string predicateName,
 			Variable variable)
 {
 	return getPredicateInstance("", predicateName, variable);

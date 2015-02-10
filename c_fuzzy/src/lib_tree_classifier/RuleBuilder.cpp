@@ -28,10 +28,9 @@
 #include "FuzzyOperator.h"
 #include "FuzzyRule.h"
 
-#include <boost/make_shared.hpp>
+#include <memory>
 
 using namespace std;
-using namespace boost;
 
 RuleBuilder::RuleBuilder(FuzzyKnowledgeBase& knowledgeBase) :
 			knowledgeBase(knowledgeBase), generator(NULL)
@@ -44,8 +43,8 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 	currentClass = fuzzyClass.getName();
 	generator = new VariableGenerator();
 
-	Node* lhs;
-	Node* rhs;
+	NodePtr lhs;
+	NodePtr rhs;
 
 	vector<Variable> variables;
 
@@ -58,7 +57,7 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 	{
 		FuzzyFeature* feature = *i;
 		FeatureBuilt featureBuilt = buildFeatureRule(*feature);
-		Node* featureRule = featureBuilt.first;
+		NodePtr featureRule = featureBuilt.first;
 		variables.push_back(featureBuilt.second);
 		if (i == start)
 		{
@@ -66,13 +65,13 @@ VariableGenerator* RuleBuilder::buildClassRule(FuzzyClass& fuzzyClass)
 		}
 		else
 		{
-			lhs = new FuzzyAnd(featureRule, lhs);
+			lhs = make_shared<FuzzyAnd>(featureRule, lhs);
 		}
 
 	}
 
 	rhs = buildRHS();
-	Node* rule = new FuzzyRule(lhs, rhs);
+	NodePtr rule = make_shared<FuzzyRule>(lhs, rhs);
 
 	knowledgeBase.addRule(rule, variables);
 
@@ -121,7 +120,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleFeatureRule(
 	string varName = feature.getVariables().back();
 	string label = feature.getFuzzyLabel();
 
-	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), currentClass,
+	NodePtr is = make_shared<FuzzyIs>(knowledgeBase.getNamespaceTable(), currentClass,
 				varName, label);
 	Variable var(currentClass, varName);
 
@@ -142,7 +141,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildSimpleRelationRule(
 	string generatedVar = generator->addMatchVariable(variable, target);
 
 	Variable var(currentClass, generatedVar);
-	Node* node;
+	NodePtr node;
 
 	return buildFeature(generatedVar, label, true);
 }
@@ -186,7 +185,7 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
 			string& label, bool simple)
 {
 	Variable var(currentClass, generatedVar);
-	Node* node;
+	NodePtr node;
 
 	if (!label.empty())
 	{
@@ -211,39 +210,39 @@ RuleBuilder::FeatureBuilt RuleBuilder::buildFeature(string& generatedVar,
 	return FeatureBuilt(node, var);
 }
 
-Node* RuleBuilder::buildRHS()
+NodePtr RuleBuilder::buildRHS()
 {
 	addDomain(currentClass, "$True", FuzzyMFEngine::buildSgt(1));
-	return new FuzzyAssignment(knowledgeBase.getNamespaceTable(), currentClass,
+	return make_shared<FuzzyAssignment>(knowledgeBase.getNamespaceTable(), currentClass,
 				currentClass, "$True");
 }
 
-Node* RuleBuilder::buildCrispMatch(Variable var)
+NodePtr RuleBuilder::buildCrispMatch(Variable var)
 {
 	addDomain(var.domain, "$Perfect", FuzzyMFEngine::buildSgt(0));
 
-	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), var.nameSpace,
+	NodePtr is = make_shared<FuzzyIs>(knowledgeBase.getNamespaceTable(), var.nameSpace,
 				var.domain, "$Perfect");
 
 	return is;
 }
 
-Node* RuleBuilder::buildCrispOn(Variable var)
+NodePtr RuleBuilder::buildCrispOn(Variable var)
 {
 	addDomain(var.domain, "$Into", FuzzyMFEngine::buildInt(0, 100));
 
-	Node* is = new FuzzyIs(knowledgeBase.getNamespaceTable(), var.nameSpace,
+	NodePtr is = make_shared<FuzzyIs>(knowledgeBase.getNamespaceTable(), var.nameSpace,
 				var.domain, "$Into");
 
 	return is;
 }
 
-Node* RuleBuilder::buildComplexRelation(Variable var, string& label)
+NodePtr RuleBuilder::buildComplexRelation(Variable var, string& label)
 {
-	Node* fuzzyRule = knowledgeBase.getPredicateInstance(currentClass, label, var);
-	Node* boundCheck = buildCrispOn(var);
+	NodePtr fuzzyRule = knowledgeBase.getPredicateInstance(currentClass, label, var);
+	NodePtr boundCheck = buildCrispOn(var);
 
-	return new FuzzyAnd(boundCheck, fuzzyRule);
+	return make_shared<FuzzyAnd>(boundCheck, fuzzyRule);
 }
 
 //TODO levare da qui? nel caso levare pure using e include

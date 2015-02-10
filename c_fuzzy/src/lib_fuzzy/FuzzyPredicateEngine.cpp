@@ -26,10 +26,9 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <boost/make_shared.hpp>
+#include <memory>
 
 using namespace std;
-using namespace boost;
 
 FuzzyPredicateEngine::FuzzyPredicateEngine()
 {
@@ -78,7 +77,7 @@ void FuzzyPredicateEngine::addTemplateMF(string label, FuzzyMF* mf)
 	mfTable[label] = FuzzyMFPtr(mf);
 }
 
-void FuzzyPredicateEngine::buildPredicate(string name, Node* rule)
+void FuzzyPredicateEngine::buildPredicate(string name, NodePtr rule)
 {
 	PredicateData data;
 	data.templateVar = currentTemplateVar;
@@ -93,7 +92,7 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 			&& predicateMap[nameSpace].count(predicate) == 1)
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
-		Node* predicate = data.definition->instantiate(variable);
+		NodePtr predicate = data.definition->instantiate(variable);
 		DomainTablePtr domains = instantiatePredicateVar(nameSpace,
 				data.templateVar, variable.domain);
 		return PredicateInstance(predicate, domains);

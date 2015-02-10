@@ -27,6 +27,7 @@
 #include <string>
 #include <utility>
 #include <stdexcept>
+#include <memory>
 
 #include "ReasoningData.h"
 #include "Variable.h"
@@ -36,6 +37,9 @@
  * Used to organize computation in trees
  *
  */
+class Node;
+typedef std::shared_ptr<Node> NodePtr;
+
 class Node
 {
 public:
@@ -49,7 +53,7 @@ public:
 		return (int) evaluate(reasoningData);
 	}
 
-	virtual Node* instantiate(Variable variable)
+	virtual NodePtr instantiate(Variable variable)
 	{
 		throwUnimplementedException();
 		return NULL;

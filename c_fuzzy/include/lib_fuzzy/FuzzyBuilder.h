@@ -48,12 +48,12 @@ public:
 public:
 
 	//Function to add a rule to the rulebase
-	void buildRule(Node* antecedent, Node* Conseguent);
+	void buildRule(NodePtr antecedent, NodePtr Conseguent);
 
 	//Function to add predicates to the rulebase
 	void enterPredicate(std::string templateVar);
 	void exitPredicate();
-	void buildPredicate(std::string predicateName, Node* definition);
+	void buildPredicate(std::string predicateName, NodePtr definition);
 
 	//Functions to manage namespaces
 	void setNameSpace(std::string nameSpace);
@@ -64,17 +64,17 @@ public:
 	void buildDomain(std::vector<std::string> variables);
 
 	//Functions to build fuzzy operators
-	Node* buildAnd(Node* left, Node* right);
-	Node* buildOr(Node* left, Node* right);
-	Node* buildNot(Node* operand);
-	Node* buildAssignment(Variable variable, std::string label);
-	Node* buildIs(Variable variable, std::string mfLabel);
-	Node* buildTemplateIs(std::string templateDomain, std::string mfLabel);
+	NodePtr buildAnd(NodePtr left, NodePtr right);
+	NodePtr buildOr(NodePtr left, NodePtr right);
+	NodePtr buildNot(NodePtr operand);
+	NodePtr buildAssignment(Variable variable, std::string label);
+	NodePtr buildIs(Variable variable, std::string mfLabel);
+	NodePtr buildTemplateIs(std::string templateDomain, std::string mfLabel);
 
 	//Functions to get predicate instances
-	Node* getPredicateInstance(std::string nameSpace, std::string predicateName,
+	NodePtr getPredicateInstance(std::string nameSpace, std::string predicateName,
 			Variable variable);
-	Node* getPredicateInstance(std::string predicateName, Variable variable);
+	NodePtr getPredicateInstance(std::string predicateName, Variable variable);
 
 	//Function to build fuzzy MF
 	void buildMF(std::string name, std::string shape,
@@ -85,7 +85,7 @@ private:
 	//Data needed to build the knowledgeBase
 	FuzzyVariableEngine* varEngine;
 	FuzzyPredicateEngine* predicateEngine;
-	std::vector<Node*>* ruleList;
+	std::vector<NodePtr>* ruleList;
 
 	//Parser state
 	bool parsingPredicate;
