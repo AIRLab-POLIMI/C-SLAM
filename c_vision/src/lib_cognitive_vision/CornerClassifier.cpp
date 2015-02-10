@@ -124,8 +124,8 @@ CornerClassifier::CornerClassifier(CornerClassParam& params, const Mat& canny,
 			params(params), canny(canny)
 {
 	//TODO check if the roll sign id correct
-	sinR = std::sin(roll);
-	cosR = std::cos(roll);
+	sinR = std::sin(-roll);
+	cosR = std::cos(-roll);
 }
 
 CornerResult CornerClassifier::getResult(const Point& point)
