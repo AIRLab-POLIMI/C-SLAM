@@ -46,7 +46,7 @@ public:
 	void addRule(NodePtr fuzzyRule, std::vector<Variable>& vars);
 	void addDomains(std::string& nameSpace, DomainTable& domain);
 	NodePtr getPredicateInstance(std::string& nameSpace, std::string& predicateName,
-			Variable variable);
+			std::vector<Variable>& variable);
 
 	~FuzzyKnowledgeBase();
 

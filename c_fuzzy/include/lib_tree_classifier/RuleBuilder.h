@@ -60,7 +60,7 @@ private:
 	NodePtr buildRHS();
 	NodePtr buildCrispMatch(Variable var);
 	NodePtr buildCrispOn(Variable var);
-	NodePtr buildComplexRelation(Variable var, std::string& label);
+	NodePtr buildComplexRelation(std::vector<Variable>& variableVector, std::string& label);
 	void addDomain(const std::string& domain, const std::string& label,
 				FuzzyMF* table);
 

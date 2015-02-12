@@ -25,7 +25,7 @@
 #define NODE_H_
 
 #include <string>
-#include <utility>
+#include <vector>
 #include <stdexcept>
 #include <memory>
 
@@ -53,7 +53,7 @@ public:
 		return (int) evaluate(reasoningData);
 	}
 
-	virtual NodePtr instantiate(Variable variable)
+	virtual NodePtr instantiate(std::vector<Variable>& variable)
 	{
 		throwUnimplementedException();
 		return NULL;

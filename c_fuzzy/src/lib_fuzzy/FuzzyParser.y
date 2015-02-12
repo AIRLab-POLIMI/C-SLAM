@@ -76,10 +76,12 @@
 %type <NodePtr> fuzzyAssignment
 %type <NodePtr> fuzzyPredicateCall
 %type <Variable> variable
+%type <std::vector<Variable>> variableList variableListHelper
 %type <std::vector<int>> shape
 %type <std::vector<int>> parametersList
 %type <std::vector<std::string>> fuzzyId
 %type <std::string> var templateVar
+%type <std::vector<std::string>> templateVarList templateVarListHelper
 
 %left OP_AND
 %left OP_OR
@@ -107,7 +109,7 @@ fuzzyClassDefinitions	: fuzzySet fuzzyClassDefinitions
 			| /* Empty */
 			;
 
-fuzzyPredicate 		: FUZZIFY_PREDICATE templateVar { builder.enterPredicate($2); } fuzzyPredicateList fuzzyTemplateSet END_FUZZIFY_PREDICATE
+fuzzyPredicate 		: FUZZIFY_PREDICATE templateVarList { builder.enterPredicate($2); } fuzzyPredicateList fuzzyTemplateSet END_FUZZIFY_PREDICATE
 			{
 				builder.exitPredicate();
 			}
@@ -214,11 +216,11 @@ fuzzyComparison		: OPEN_B variable IS ID CLOSE_B
 			}
 			;
 			
-fuzzyPredicateCall	: ID PERIOD ID OPEN_B variable CLOSE_B
+fuzzyPredicateCall	: ID PERIOD ID OPEN_B variableList CLOSE_B
 			{
 				$$ = builder.getPredicateInstance($1, $3, $5);
 			}
-			| ID OPEN_B variable CLOSE_B
+			| ID OPEN_B variableList CLOSE_B
 			{
 				$$ = builder.getPredicateInstance($1, $3);
 			}
@@ -242,6 +244,29 @@ variable		: ID PERIOD var
 			}
 			;
 
+variableList		: variableListHelper
+			{
+				$$ = $1;
+			}
+			|  /* Empty */
+			{
+			
+			}
+			;
+			
+variableListHelper	: variable COMMA variableListHelper
+			{
+				$$ = $3;
+				$$.push_back($1);
+			}
+			| variable
+			{
+				$$.push_back($1);
+			}
+			;
+			
+
+
 var 			: ID
 			{
 				$$ = $1;
@@ -251,10 +276,31 @@ var 			: ID
 				$$ = $1;
 			}
 			;
-
+			
 templateVar 		: QUESTION var
 			{
 				$$ = $2;
+			}
+			;
+			
+templateVarList		: templateVarListHelper
+			{
+				$$ = $1;
+			}
+			| /* Empty */
+			{
+			
+			}
+			;
+			
+templateVarListHelper	: templateVar COMMA templateVarListHelper
+			{
+				$$ = $3;
+				$$.push_back($1);
+			}
+			| templateVar
+			{
+				$$.push_back($1);
 			}
 			;
 

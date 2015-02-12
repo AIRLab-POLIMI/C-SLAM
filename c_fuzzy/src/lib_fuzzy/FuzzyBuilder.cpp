@@ -67,9 +67,9 @@ void FuzzyBuilder::parse(const char *filename)
 		throw runtime_error("Parse Failed");
 	}
 
-	if(scanner)
+	if (scanner)
 		delete scanner;
-	if(parser)
+	if (parser)
 		delete parser;
 }
 
@@ -86,9 +86,9 @@ void FuzzyBuilder::buildRule(NodePtr antecedent, NodePtr conseguent)
 }
 
 //Predicates
-void FuzzyBuilder::enterPredicate(std::string templateVar)
+void FuzzyBuilder::enterPredicate(std::vector<std::string> templateVarList)
 {
-	predicateEngine->enterPredicate(templateVar);
+	predicateEngine->enterPredicate(templateVarList);
 	parsingPredicate = true;
 }
 
@@ -123,37 +123,45 @@ NodePtr FuzzyBuilder::buildIs(Variable classMember, string mfLabel)
 	string nameSpace = classMember.nameSpace;
 	string domain = classMember.domain;
 	varEngine->updateVariableMask(classMember, ruleList->size());
-	return make_shared<FuzzyIs>(varEngine->getTable(), nameSpace, domain, mfLabel);
+	return make_shared<FuzzyIs>(varEngine->getTable(), nameSpace, domain,
+				mfLabel);
 }
 
 NodePtr FuzzyBuilder::buildTemplateIs(string domain, string mfLabel)
 {
-	return make_shared<FuzzyTemplateIs>(varEngine->getTable(), "", domain, mfLabel);
+	size_t domainIndex = predicateEngine->getTemplateVarIndex(domain);
+	return make_shared<FuzzyTemplateIs>(varEngine->getTable(), domainIndex,
+				mfLabel);
 }
 
 NodePtr FuzzyBuilder::buildAssignment(Variable classMember, string label)
 {
 	string nameSpace = classMember.nameSpace;
 	string output = classMember.domain;
-	return make_shared<FuzzyAssignment>(varEngine->getTable(), nameSpace, output, label);
+	return make_shared<FuzzyAssignment>(varEngine->getTable(), nameSpace,
+				output, label);
 }
 
 //fuzzy predicates
-NodePtr FuzzyBuilder::getPredicateInstance(string nameSpace, string predicateName,
-			Variable variable)
+NodePtr FuzzyBuilder::getPredicateInstance(string nameSpace,
+			string predicateName, vector<Variable>& variables)
 {
 	PredicateInstance instance = predicateEngine->getPredicateInstance(
-				nameSpace, predicateName, variable);
-	varEngine->addDomains(variable.nameSpace, *instance.second);
-	varEngine->updateVariableMask(variable, ruleList->size());
+				nameSpace, predicateName, variables);
+
+	for (size_t i = 0; i < variables.size(); i++)
+	{
+		varEngine->addDomains(variables[i].nameSpace, *instance.second[i]);
+		varEngine->updateVariableMask(variables[i], ruleList->size());
+	}
 
 	return instance.first;
 }
 
 NodePtr FuzzyBuilder::getPredicateInstance(string predicateName,
-			Variable variable)
+			vector<Variable>& variables)
 {
-	return getPredicateInstance("", predicateName, variable);
+	return getPredicateInstance("", predicateName, variables);
 }
 
 //Function to enter a namespace

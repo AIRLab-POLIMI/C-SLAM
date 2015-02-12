@@ -51,7 +51,7 @@ public:
 	void buildRule(NodePtr antecedent, NodePtr Conseguent);
 
 	//Function to add predicates to the rulebase
-	void enterPredicate(std::string templateVar);
+	void enterPredicate(std::vector<std::string> templateVarList);
 	void exitPredicate();
 	void buildPredicate(std::string predicateName, NodePtr definition);
 
@@ -73,8 +73,8 @@ public:
 
 	//Functions to get predicate instances
 	NodePtr getPredicateInstance(std::string nameSpace, std::string predicateName,
-			Variable variable);
-	NodePtr getPredicateInstance(std::string predicateName, Variable variable);
+			std::vector<Variable>& variables);
+	NodePtr getPredicateInstance(std::string predicateName, std::vector<Variable>& variables);
 
 	//Function to build fuzzy MF
 	void buildMF(std::string name, std::string shape,

@@ -184,18 +184,21 @@ RuleBuilder::ConstraintBuilt RuleBuilder::buildInverseRelationRule(
 RuleBuilder::ConstraintBuilt RuleBuilder::buildFeature(string& generatedVar,
 			string& label, bool simple)
 {
+	vector<Variable> variableVector;
 	Variable var(currentClass, generatedVar);
+	variableVector.push_back(var);
+
 	NodePtr node;
 
 	if (!label.empty())
 	{
 		if(simple)
 		{
-			node = knowledgeBase.getPredicateInstance(currentClass, label, var);
+			node = knowledgeBase.getPredicateInstance(currentClass, label, variableVector);
 		}
 		else
 		{
-			node = buildComplexRelation(var, label);
+			node = buildComplexRelation(variableVector, label);
 		}
 	}
 	else if (simple)
@@ -237,10 +240,10 @@ NodePtr RuleBuilder::buildCrispOn(Variable var)
 	return is;
 }
 
-NodePtr RuleBuilder::buildComplexRelation(Variable var, string& label)
+NodePtr RuleBuilder::buildComplexRelation(vector<Variable>& variableVector, string& label)
 {
-	NodePtr fuzzyRule = knowledgeBase.getPredicateInstance(currentClass, label, var);
-	NodePtr boundCheck = buildCrispOn(var);
+	NodePtr fuzzyRule = knowledgeBase.getPredicateInstance(currentClass, label, variableVector);
+	NodePtr boundCheck = buildCrispOn(variableVector[0]);
 
 	return make_shared<FuzzyAnd>(boundCheck, fuzzyRule);
 }

@@ -26,9 +26,10 @@
 using namespace std;
 
 FuzzyKnowledgeBase::FuzzyKnowledgeBase(FuzzyVariableEngine* variables,
-		FuzzyPredicateEngine* predicates, std::vector<NodePtr>* knowledgeBase) :
-		variables(variables), predicates(predicates), knowledgeBase(
-				knowledgeBase)
+			FuzzyPredicateEngine* predicates,
+			std::vector<NodePtr>* knowledgeBase) :
+			variables(variables), predicates(predicates),
+			knowledgeBase(knowledgeBase)
 {
 }
 
@@ -52,8 +53,7 @@ Node& FuzzyKnowledgeBase::operator[](const size_t i)
 	return *knowledgeBase->at(i);
 }
 
-void FuzzyKnowledgeBase::addRule(NodePtr fuzzyRule,
-		vector<Variable>& vars)
+void FuzzyKnowledgeBase::addRule(NodePtr fuzzyRule, vector<Variable>& vars)
 {
 
 	size_t currentRule = knowledgeBase->size();
@@ -69,14 +69,17 @@ void FuzzyKnowledgeBase::addDomains(string& nameSpace, DomainTable& domain)
 	variables->addDomains(nameSpace, domain);
 }
 
-
 NodePtr FuzzyKnowledgeBase::getPredicateInstance(string& nameSpace,
-		string& predicateName, Variable variable)
+			string& predicateName, vector<Variable>& variables)
 {
 	PredicateInstance instance = predicates->getPredicateInstance(nameSpace,
-			predicateName, variable);
-	variables->addDomains(variable.nameSpace, *instance.second);
-	this->variables->updateVariableMask(variable, knowledgeBase->size());
+				predicateName, variables);
+
+	for (size_t i = 0; i < variables.size(); i++)
+	{
+		this->variables->addDomains(variables[i].nameSpace, *instance.second[i]);
+		this->variables->updateVariableMask(variables[i], knowledgeBase->size());
+	}
 
 	return instance.first;
 }

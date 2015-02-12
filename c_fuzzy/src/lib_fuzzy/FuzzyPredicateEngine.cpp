@@ -25,6 +25,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <algorithm>
 
 #include <memory>
 
@@ -34,7 +35,6 @@ FuzzyPredicateEngine::FuzzyPredicateEngine()
 {
 	table[""] = make_shared<DomainTable>();
 	currentNamespace = "";
-	currentTemplateVar = "";
 }
 
 void FuzzyPredicateEngine::enterNamespace(string nameSpace)
@@ -47,18 +47,19 @@ void FuzzyPredicateEngine::enterNamespace(string nameSpace)
 	}
 }
 
-void FuzzyPredicateEngine::enterPredicate(string templateVariable)
+void FuzzyPredicateEngine::enterPredicate(vector<string> templateVariableList)
 {
-	currentTemplateVar = templateVariable;
+	currentTemplateVarList = templateVariableList;
 }
 
-void FuzzyPredicateEngine::buildDomain(std::string templateVar)
+void FuzzyPredicateEngine::buildDomain(string templateVar)
 {
 	DomainTable& domainTable = *table[currentNamespace];
 
 	if (domainTable.count(templateVar) == 0)
 	{
 		domainTable[templateVar] = make_shared<MFTable>();
+		currentTemplateVar = templateVar;
 	}
 	else
 	{
@@ -80,28 +81,35 @@ void FuzzyPredicateEngine::addTemplateMF(string label, FuzzyMF* mf)
 void FuzzyPredicateEngine::buildPredicate(string name, NodePtr rule)
 {
 	PredicateData data;
-	data.templateVar = currentTemplateVar;
+	data.templateVarList = currentTemplateVarList;
 	data.definition = rule;
 	predicateMap[currentNamespace][name] = data;
 }
 
 PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
-		string predicate, Variable variable)
+			string predicate, vector<Variable>& variables)
 {
 	if (predicateMap.count(nameSpace) == 1
-			&& predicateMap[nameSpace].count(predicate) == 1)
+				&& predicateMap[nameSpace].count(predicate) == 1)
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
-		NodePtr predicate = data.definition->instantiate(variable);
-		DomainTablePtr domains = instantiatePredicateVar(nameSpace,
-				data.templateVar, variable.domain);
-		return PredicateInstance(predicate, domains);
+		NodePtr predicate = data.definition->instantiate(variables);
+		vector<DomainTablePtr> domainsList;
+
+		for (size_t i = 0; i < variables.size(); i++)
+		{
+			DomainTablePtr domains = instantiatePredicateVar(nameSpace,
+						data.templateVarList[i], variables[i].domain);
+			domainsList.push_back(domains);
+		}
+
+		return PredicateInstance(predicate, domainsList);
 	}
 
 	stringstream ss;
 	ss << "Predicate instantiation failed: predicate '";
 
-	if(!nameSpace.empty())
+	if (!nameSpace.empty())
 	{
 		ss << nameSpace << ".";
 	}
@@ -111,13 +119,28 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 }
 
 PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string predicate,
-		Variable variable)
+			vector<Variable>& variable)
 {
 	return getPredicateInstance("", predicate, variable);
 }
 
+size_t FuzzyPredicateEngine::getTemplateVarIndex(string templateVar)
+{
+	const auto it = find(currentTemplateVarList.begin(),
+				currentTemplateVarList.end(), templateVar);
+
+	if (it == currentTemplateVarList.end())
+	{
+		stringstream ss;
+		ss << "Predicate instantiation failed: template variable '";
+		ss << templateVar << "' doesn't exists";
+		throw runtime_error(ss.str());
+	}
+
+	return distance(currentTemplateVarList.begin(), it);
+}
 DomainTablePtr FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
-		string templateVar, string variable)
+			string templateVar, string variable)
 {
 	DomainTable& templateDomain = *table[nameSpace];
 	MFTablePtr mfTable = templateDomain[templateVar];
@@ -127,3 +150,4 @@ DomainTablePtr FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
 
 	return domain;
 }
+

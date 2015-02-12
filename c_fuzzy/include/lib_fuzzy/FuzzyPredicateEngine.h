@@ -26,11 +26,12 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include "Node.h"
 #include "FuzzyMF.h"
 
-typedef std::pair<NodePtr, DomainTablePtr> PredicateInstance;
+typedef std::pair<NodePtr, std::vector<DomainTablePtr>> PredicateInstance;
 
 class FuzzyPredicateEngine
 {
@@ -38,7 +39,7 @@ class FuzzyPredicateEngine
 private:
 	struct PredicateData
 	{
-		std::string templateVar;
+		std::vector<std::string> templateVarList;
 		NodePtr definition;
 	};
 
@@ -49,14 +50,15 @@ public:
 	FuzzyPredicateEngine();
 
 	void enterNamespace(std::string nameSpace);
-	void enterPredicate(std::string templateVariable);
+	void enterPredicate(std::vector<std::string> templateVariableList);
 	void buildDomain(std::string templateVar);
 	void addTemplateMF(std::string label, FuzzyMF* mf);
 	void buildPredicate(std::string name, NodePtr rule);
 	PredicateInstance getPredicateInstance(std::string predicate,
-			Variable variable);
+				std::vector<Variable>& variable);
 	PredicateInstance getPredicateInstance(std::string nameSpace, std::string predicate,
-			Variable variable);
+				std::vector<Variable>& variable);
+	size_t getTemplateVarIndex(std::string templateVar);
 
 
 private:
@@ -68,6 +70,7 @@ private:
 	NamespaceTable table;
 	std::string currentNamespace;
 	std::string currentTemplateVar;
+	std::vector<std::string> currentTemplateVarList;
 
 };
 

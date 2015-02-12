@@ -299,12 +299,18 @@ namespace fz {
       // templateVar
       char dummy4[sizeof(std::string)];
 
+      // variableList
+      // variableListHelper
+      char dummy5[sizeof(std::vector<Variable>)];
+
       // shape
       // parametersList
-      char dummy5[sizeof(std::vector<int>)];
+      char dummy6[sizeof(std::vector<int>)];
 
       // fuzzyId
-      char dummy6[sizeof(std::vector<std::string>)];
+      // templateVarList
+      // templateVarListHelper
+      char dummy7[sizeof(std::vector<std::string>)];
 };
 
     /// Symbol semantic values.
@@ -392,6 +398,8 @@ namespace fz {
   basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const std::vector<Variable> v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::vector<int> v, const location_type& l);
 
@@ -657,7 +665,7 @@ namespace fz {
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short int yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -751,10 +759,10 @@ namespace fz {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 107,     ///< Last index in yytable_.
-      yynnts_ = 27,  ///< Number of nonterminal symbols.
+      yylast_ = 113,     ///< Last index in yytable_.
+      yynnts_ = 31,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 16, ///< Termination state number.
+      yyfinal_ = 18, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 26  ///< Number of tokens.
@@ -856,9 +864,14 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 51: // var
-      case 52: // templateVar
+      case 53: // var
+      case 54: // templateVar
         value.copy< std::string > (other.value);
+        break;
+
+      case 51: // variableList
+      case 52: // variableListHelper
+        value.copy< std::vector<Variable> > (other.value);
         break;
 
       case 42: // shape
@@ -867,6 +880,8 @@ namespace fz {
         break;
 
       case 40: // fuzzyId
+      case 55: // templateVarList
+      case 56: // templateVarListHelper
         value.copy< std::vector<std::string> > (other.value);
         break;
 
@@ -905,9 +920,14 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 51: // var
-      case 52: // templateVar
+      case 53: // var
+      case 54: // templateVar
         value.copy< std::string > (v);
+        break;
+
+      case 51: // variableList
+      case 52: // variableListHelper
+        value.copy< std::vector<Variable> > (v);
         break;
 
       case 42: // shape
@@ -916,6 +936,8 @@ namespace fz {
         break;
 
       case 40: // fuzzyId
+      case 55: // templateVarList
+      case 56: // templateVarListHelper
         value.copy< std::vector<std::string> > (v);
         break;
 
@@ -957,6 +979,13 @@ namespace fz {
 
   template <typename Base>
    FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+   FuzzyParser ::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::vector<Variable> v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1010,9 +1039,14 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 51: // var
-      case 52: // templateVar
+      case 53: // var
+      case 54: // templateVar
         value.template destroy< std::string > ();
+        break;
+
+      case 51: // variableList
+      case 52: // variableListHelper
+        value.template destroy< std::vector<Variable> > ();
         break;
 
       case 42: // shape
@@ -1021,6 +1055,8 @@ namespace fz {
         break;
 
       case 40: // fuzzyId
+      case 55: // templateVarList
+      case 56: // templateVarListHelper
         value.template destroy< std::vector<std::string> > ();
         break;
 
@@ -1056,9 +1092,14 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 51: // var
-      case 52: // templateVar
+      case 53: // var
+      case 54: // templateVar
         value.move< std::string > (s.value);
+        break;
+
+      case 51: // variableList
+      case 52: // variableListHelper
+        value.move< std::vector<Variable> > (s.value);
         break;
 
       case 42: // shape
@@ -1067,6 +1108,8 @@ namespace fz {
         break;
 
       case 40: // fuzzyId
+      case 55: // templateVarList
+      case 56: // templateVarListHelper
         value.move< std::vector<std::string> > (s.value);
         break;
 
@@ -1272,7 +1315,7 @@ namespace fz {
 
 #line 5 "/home/dave/CognitiveSlam/src/c_fuzzy/src/lib_fuzzy/FuzzyParser.y" // lalr1.cc:372
 } // fz
-#line 1276 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
+#line 1319 "/home/dave/CognitiveSlam/src/c_fuzzy/include/lib_fuzzy/FuzzyParser.tab.h" // lalr1.cc:372
 
 
 

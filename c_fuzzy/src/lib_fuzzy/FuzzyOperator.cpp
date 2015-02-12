@@ -29,7 +29,8 @@ FuzzyOperator::~FuzzyOperator()
 {
 }
 
-BinaryFuzzyOperator::BinaryFuzzyOperator(NodePtr leftOperand, NodePtr rightOperand) :
+BinaryFuzzyOperator::BinaryFuzzyOperator(NodePtr leftOperand,
+			NodePtr rightOperand) :
 			leftOperand(leftOperand), rightOperand(rightOperand)
 {
 }
@@ -46,10 +47,10 @@ double FuzzyAnd::evaluate(ReasoningData reasoningData)
 	return (a < b) ? a : b;
 }
 
-NodePtr FuzzyAnd::instantiate(Variable variable)
+NodePtr FuzzyAnd::instantiate(vector<Variable>& variables)
 {
-	NodePtr left = leftOperand->instantiate(variable);
-	NodePtr right = rightOperand->instantiate(variable);
+	NodePtr left = leftOperand->instantiate(variables);
+	NodePtr right = rightOperand->instantiate(variables);
 	return make_shared<FuzzyAnd>(left, right);
 }
 
@@ -65,10 +66,10 @@ double FuzzyOr::evaluate(ReasoningData reasoningData)
 	return (a > b) ? a : b;
 }
 
-NodePtr FuzzyOr::instantiate(Variable variable)
+NodePtr FuzzyOr::instantiate(vector<Variable>& variables)
 {
-	NodePtr left = leftOperand->instantiate(variable);
-	NodePtr right = rightOperand->instantiate(variable);
+	NodePtr left = leftOperand->instantiate(variables);
+	NodePtr right = rightOperand->instantiate(variables);
 	return make_shared<FuzzyOr>(left, right);
 }
 
@@ -82,14 +83,14 @@ double FuzzyNot::evaluate(ReasoningData reasoningData)
 	return (1 - operand->evaluate(reasoningData));
 }
 
-NodePtr FuzzyNot::instantiate(Variable variable)
+NodePtr FuzzyNot::instantiate(vector<Variable>& variables)
 {
-	NodePtr op = operand->instantiate(variable);
+	NodePtr op = operand->instantiate(variables);
 	return make_shared<FuzzyNot>(op);
 }
 
-FuzzyIs::FuzzyIs(NamespaceTable& lookUpTable, string nameSpace,
-			string label, string mfLabel) :
+FuzzyIs::FuzzyIs(NamespaceTable& lookUpTable, string nameSpace, string label,
+			string mfLabel) :
 			lookUpTable(lookUpTable), nameSpace(nameSpace), label(label),
 			mfLabel(mfLabel)
 {
@@ -105,15 +106,15 @@ double FuzzyIs::evaluate(ReasoningData reasoningData)
 	return mFunction->evaluate(reasoningData);
 }
 
-NodePtr FuzzyIs::instantiate(Variable variable)
+NodePtr FuzzyIs::instantiate(vector<Variable>& variables)
 {
 	return make_shared<FuzzyIs>(*this);
 }
 
 FuzzyTemplateIs::FuzzyTemplateIs(NamespaceTable& lookUpTable,
-			string nameSpace, string templateVar, string mfLabel) :
-			lookUpTable(lookUpTable), nameSpace(nameSpace),
-			templateVar(templateVar), mfLabel(mfLabel)
+			size_t templateVarIndex, string mfLabel) :
+			lookUpTable(lookUpTable),
+			templateVarIndex(templateVarIndex), mfLabel(mfLabel)
 {
 }
 
@@ -122,14 +123,15 @@ double FuzzyTemplateIs::evaluate(ReasoningData reasoningData)
 	throw runtime_error("Evaluation of a non-instantiated template");
 }
 
-NodePtr FuzzyTemplateIs::instantiate(Variable variable)
+NodePtr FuzzyTemplateIs::instantiate(vector<Variable>& variables)
 {
-	return make_shared<FuzzyIs>(lookUpTable, variable.nameSpace, variable.domain,
-				mfLabel);
+	return make_shared<FuzzyIs>(lookUpTable,
+				variables[templateVarIndex].nameSpace,
+				variables[templateVarIndex].domain, mfLabel);
 }
 
-FuzzyAssignment::FuzzyAssignment(NamespaceTable& lookUpTable,
-			string nameSpace, string name, string mfLabel) :
+FuzzyAssignment::FuzzyAssignment(NamespaceTable& lookUpTable, string nameSpace,
+			string name, string mfLabel) :
 			lookUpTable(lookUpTable), nameSpace(nameSpace), output(name),
 			mfLabel(mfLabel)
 {
