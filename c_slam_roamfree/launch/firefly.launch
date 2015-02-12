@@ -33,7 +33,7 @@
 
 		<!-- Imu data -->
 		<param name="imu_N" value="10" />
-		<param name="imu_dt" value="0.02" />
+		<param name="imu_dt" value="0.01" />
 
 		<!-- Camera calibration -->
 		<rosparam param="K">[460.890258789062, 0.0, 343.462058902507, 0.0, 529.505432128906, 201.160554159542, 0.0, 0.0, 1.0]</rosparam>
