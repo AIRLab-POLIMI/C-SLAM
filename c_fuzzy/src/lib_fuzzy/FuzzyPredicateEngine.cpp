@@ -35,6 +35,7 @@ FuzzyPredicateEngine::FuzzyPredicateEngine()
 {
 	table[""] = make_shared<DomainTable>();
 	currentNamespace = "";
+	currentDomainDefCount = 0;
 }
 
 void FuzzyPredicateEngine::enterNamespace(string nameSpace)
@@ -49,7 +50,23 @@ void FuzzyPredicateEngine::enterNamespace(string nameSpace)
 
 void FuzzyPredicateEngine::enterPredicate(vector<string> templateVariableList)
 {
+	currentDomainDefCount = 0;
 	currentTemplateVarList = templateVariableList;
+
+	for (auto& var : currentTemplateVarList)
+	{
+		if (count(currentTemplateVarList.begin(), currentTemplateVarList.end(),
+					var) != 1)
+		{
+			stringstream ss;
+			ss
+						<< "Error: in predicate signature, multiple definition of template variable "
+						<< var;
+			if (!currentNamespace.empty())
+				ss << " in class " << currentNamespace;
+			throw runtime_error(ss.str());
+		}
+	}
 }
 
 void FuzzyPredicateEngine::buildDomain(string templateVar)
@@ -60,6 +77,7 @@ void FuzzyPredicateEngine::buildDomain(string templateVar)
 	{
 		domainTable[templateVar] = make_shared<MFTable>();
 		currentTemplateVar = templateVar;
+		currentDomainDefCount++;
 	}
 	else
 	{
@@ -80,30 +98,53 @@ void FuzzyPredicateEngine::addTemplateMF(string label, FuzzyMF* mf)
 
 void FuzzyPredicateEngine::buildPredicate(string name, NodePtr rule)
 {
-	PredicateData data;
-	data.templateVarList = currentTemplateVarList;
-	data.definition = rule;
-	predicateMap[currentNamespace][name] = data;
+	if (predicateMap[currentNamespace].count(name) == 0)
+	{
+		PredicateData data;
+		data.templateVarList = currentTemplateVarList;
+		data.definition = rule;
+		predicateMap[currentNamespace][name] = data;
+	}
+	else
+	{
+		stringstream ss;
+		ss << "Error: redefinition of predicate " << name;
+		if (!currentNamespace.empty())
+			ss << " in class " << currentNamespace;
+		throw runtime_error(ss.str());
+	}
 }
 
 PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 			string predicate, vector<Variable>& variables)
 {
+	bool wrongArity = false;
+	int arity = 0;
+
 	if (predicateMap.count(nameSpace) == 1
 				&& predicateMap[nameSpace].count(predicate) == 1)
 	{
 		PredicateData data = predicateMap[nameSpace][predicate];
-		NodePtr predicate = data.definition->instantiate(variables);
-		vector<DomainTablePtr> domainsList;
 
-		for (size_t i = 0; i < variables.size(); i++)
+		if (data.templateVarList.size() == variables.size())
 		{
-			DomainTablePtr domains = instantiatePredicateVar(nameSpace,
-						data.templateVarList[i], variables[i].domain);
-			domainsList.push_back(domains);
-		}
+			NodePtr predicate = data.definition->instantiate(variables);
+			vector<DomainTablePtr> domainsList;
 
-		return PredicateInstance(predicate, domainsList);
+			for (size_t i = 0; i < variables.size(); i++)
+			{
+				DomainTablePtr domains = instantiatePredicateVar(nameSpace,
+							data.templateVarList[i], variables[i].domain);
+				domainsList.push_back(domains);
+			}
+
+			return PredicateInstance(predicate, domainsList);
+		}
+		else
+		{
+			wrongArity = true;
+			arity = data.templateVarList.size();
+		}
 	}
 
 	stringstream ss;
@@ -114,7 +155,13 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 		ss << nameSpace << ".";
 	}
 
-	ss << predicate << "' doesn't exists";
+	ss << predicate;
+
+	if (wrongArity)
+		ss << "' has arity " << arity << ", instead " << variables.size()
+					<< " parameters where provided.";
+	else
+		ss << "' doesn't exists";
 	throw runtime_error(ss.str());
 }
 
@@ -139,6 +186,20 @@ size_t FuzzyPredicateEngine::getTemplateVarIndex(string templateVar)
 
 	return distance(currentTemplateVarList.begin(), it);
 }
+
+void FuzzyPredicateEngine::checkPredicateConsistency()
+{
+	if (currentDomainDefCount != currentTemplateVarList.size())
+	{
+		stringstream ss;
+		ss << "Error: missing definition of template variables ";
+		ss << "defined " << currentDomainDefCount << " , "
+					<< currentTemplateVarList.size() << " to be defined";
+
+		throw runtime_error(ss.str());
+	}
+}
+
 DomainTablePtr FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
 			string templateVar, string variable)
 {

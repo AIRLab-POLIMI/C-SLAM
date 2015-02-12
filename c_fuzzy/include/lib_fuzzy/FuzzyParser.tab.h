@@ -759,8 +759,8 @@ namespace fz {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 113,     ///< Last index in yytable_.
-      yynnts_ = 31,  ///< Number of nonterminal symbols.
+      yylast_ = 110,     ///< Last index in yytable_.
+      yynnts_ = 32,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 18, ///< Termination state number.
       yyterror_ = 1,
@@ -846,14 +846,14 @@ namespace fz {
   {
       switch (other.type_get ())
     {
-      case 46: // wellFormedFormula
-      case 47: // fuzzyComparison
-      case 48: // fuzzyPredicateCall
-      case 49: // fuzzyAssignment
+      case 47: // wellFormedFormula
+      case 48: // fuzzyComparison
+      case 49: // fuzzyPredicateCall
+      case 50: // fuzzyAssignment
         value.copy< NodePtr > (other.value);
         break;
 
-      case 50: // variable
+      case 51: // variable
         value.copy< Variable > (other.value);
         break;
 
@@ -864,24 +864,24 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 53: // var
-      case 54: // templateVar
+      case 54: // var
+      case 55: // templateVar
         value.copy< std::string > (other.value);
         break;
 
-      case 51: // variableList
-      case 52: // variableListHelper
+      case 52: // variableList
+      case 53: // variableListHelper
         value.copy< std::vector<Variable> > (other.value);
         break;
 
-      case 42: // shape
-      case 43: // parametersList
+      case 43: // shape
+      case 44: // parametersList
         value.copy< std::vector<int> > (other.value);
         break;
 
-      case 40: // fuzzyId
-      case 55: // templateVarList
-      case 56: // templateVarListHelper
+      case 41: // fuzzyId
+      case 56: // templateVarList
+      case 57: // templateVarListHelper
         value.copy< std::vector<std::string> > (other.value);
         break;
 
@@ -902,14 +902,14 @@ namespace fz {
     (void) v;
       switch (this->type_get ())
     {
-      case 46: // wellFormedFormula
-      case 47: // fuzzyComparison
-      case 48: // fuzzyPredicateCall
-      case 49: // fuzzyAssignment
+      case 47: // wellFormedFormula
+      case 48: // fuzzyComparison
+      case 49: // fuzzyPredicateCall
+      case 50: // fuzzyAssignment
         value.copy< NodePtr > (v);
         break;
 
-      case 50: // variable
+      case 51: // variable
         value.copy< Variable > (v);
         break;
 
@@ -920,24 +920,24 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 53: // var
-      case 54: // templateVar
+      case 54: // var
+      case 55: // templateVar
         value.copy< std::string > (v);
         break;
 
-      case 51: // variableList
-      case 52: // variableListHelper
+      case 52: // variableList
+      case 53: // variableListHelper
         value.copy< std::vector<Variable> > (v);
         break;
 
-      case 42: // shape
-      case 43: // parametersList
+      case 43: // shape
+      case 44: // parametersList
         value.copy< std::vector<int> > (v);
         break;
 
-      case 40: // fuzzyId
-      case 55: // templateVarList
-      case 56: // templateVarListHelper
+      case 41: // fuzzyId
+      case 56: // templateVarList
+      case 57: // templateVarListHelper
         value.copy< std::vector<std::string> > (v);
         break;
 
@@ -1021,14 +1021,14 @@ namespace fz {
     // Type destructor.
     switch (yytype)
     {
-      case 46: // wellFormedFormula
-      case 47: // fuzzyComparison
-      case 48: // fuzzyPredicateCall
-      case 49: // fuzzyAssignment
+      case 47: // wellFormedFormula
+      case 48: // fuzzyComparison
+      case 49: // fuzzyPredicateCall
+      case 50: // fuzzyAssignment
         value.template destroy< NodePtr > ();
         break;
 
-      case 50: // variable
+      case 51: // variable
         value.template destroy< Variable > ();
         break;
 
@@ -1039,24 +1039,24 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 53: // var
-      case 54: // templateVar
+      case 54: // var
+      case 55: // templateVar
         value.template destroy< std::string > ();
         break;
 
-      case 51: // variableList
-      case 52: // variableListHelper
+      case 52: // variableList
+      case 53: // variableListHelper
         value.template destroy< std::vector<Variable> > ();
         break;
 
-      case 42: // shape
-      case 43: // parametersList
+      case 43: // shape
+      case 44: // parametersList
         value.template destroy< std::vector<int> > ();
         break;
 
-      case 40: // fuzzyId
-      case 55: // templateVarList
-      case 56: // templateVarListHelper
+      case 41: // fuzzyId
+      case 56: // templateVarList
+      case 57: // templateVarListHelper
         value.template destroy< std::vector<std::string> > ();
         break;
 
@@ -1074,14 +1074,14 @@ namespace fz {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 46: // wellFormedFormula
-      case 47: // fuzzyComparison
-      case 48: // fuzzyPredicateCall
-      case 49: // fuzzyAssignment
+      case 47: // wellFormedFormula
+      case 48: // fuzzyComparison
+      case 49: // fuzzyPredicateCall
+      case 50: // fuzzyAssignment
         value.move< NodePtr > (s.value);
         break;
 
-      case 50: // variable
+      case 51: // variable
         value.move< Variable > (s.value);
         break;
 
@@ -1092,24 +1092,24 @@ namespace fz {
       case 3: // ID
       case 4: // VAR_ID
       case 24: // F_LABEL
-      case 53: // var
-      case 54: // templateVar
+      case 54: // var
+      case 55: // templateVar
         value.move< std::string > (s.value);
         break;
 
-      case 51: // variableList
-      case 52: // variableListHelper
+      case 52: // variableList
+      case 53: // variableListHelper
         value.move< std::vector<Variable> > (s.value);
         break;
 
-      case 42: // shape
-      case 43: // parametersList
+      case 43: // shape
+      case 44: // parametersList
         value.move< std::vector<int> > (s.value);
         break;
 
-      case 40: // fuzzyId
-      case 55: // templateVarList
-      case 56: // templateVarListHelper
+      case 41: // fuzzyId
+      case 56: // templateVarList
+      case 57: // templateVarListHelper
         value.move< std::vector<std::string> > (s.value);
         break;
 

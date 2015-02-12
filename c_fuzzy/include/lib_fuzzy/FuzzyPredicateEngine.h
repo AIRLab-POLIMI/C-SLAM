@@ -59,6 +59,7 @@ public:
 	PredicateInstance getPredicateInstance(std::string nameSpace, std::string predicate,
 				std::vector<Variable>& variable);
 	size_t getTemplateVarIndex(std::string templateVar);
+	void checkPredicateConsistency();
 
 
 private:
@@ -70,6 +71,7 @@ private:
 	NamespaceTable table;
 	std::string currentNamespace;
 	std::string currentTemplateVar;
+	size_t currentDomainDefCount;
 	std::vector<std::string> currentTemplateVarList;
 
 };

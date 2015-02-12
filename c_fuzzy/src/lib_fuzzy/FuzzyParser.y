@@ -109,7 +109,7 @@ fuzzyClassDefinitions	: fuzzySet fuzzyClassDefinitions
 			| /* Empty */
 			;
 
-fuzzyPredicate 		: FUZZIFY_PREDICATE templateVarList { builder.enterPredicate($2); } fuzzyPredicateList fuzzyTemplateSet END_FUZZIFY_PREDICATE
+fuzzyPredicate 		: FUZZIFY_PREDICATE templateVarList { builder.enterPredicate($2); } fuzzyPredicateList fuzzytemplateSetList END_FUZZIFY_PREDICATE
 			{
 				builder.exitPredicate();
 			}
@@ -124,7 +124,12 @@ fuzzyPredicateDef 	: ID LIKE wellFormedFormula END_RULE
 				builder.buildPredicate($1, $3);
 			}
 			;
-
+			
+			
+fuzzytemplateSetList	: fuzzyTemplateSet fuzzytemplateSetList
+			| /* Empty */
+			;
+			
 fuzzyTemplateSet	: FUZZIFY templateVar { builder.buildDomain($2); } fuzzyTerm END_FUZZIFY
 			;
 

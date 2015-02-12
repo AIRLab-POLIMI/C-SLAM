@@ -89,6 +89,24 @@ FUZZIFY_CLASS TestDefuzzify
 
 END_FUZZIFY_CLASS
 
+FUZZIFY_PREDICATE
+		Nullary := (TestNewPredicates.in is Ok);
+END_FUZZIFY_PREDICATE
+
+FUZZIFY_CLASS TestNewPredicates
+	
+	FUZZIFY in
+		Ok := tol(0, 60);
+		Ko := tor(40,100);
+	END_FUZZIFY
+	
+
+	FUZZIFY out
+		Ok := sgt(100);
+		Ko := sgt(200);
+	END_FUZZIFY
+
+END_FUZZIFY_CLASS
 
 /* Knowledge base */
 if (Input is Near) then (Output1 is Ok); 
@@ -106,5 +124,4 @@ if (TestClass.prova is Random) then (TestClass.bam is Ok);
 //Test defuzzification on classes
 if (TestDefuzzify.Prova is Near) then (TestDefuzzify.out is Near);
 if (TestDefuzzify.Prova is Medium) then (TestDefuzzify.out is Medium);
-if (TestDefuzzify.Prova is Far) then (TestDefuzzify.out is Far);
-
+if Nullary() then (TestDefuzzify.out is Far);

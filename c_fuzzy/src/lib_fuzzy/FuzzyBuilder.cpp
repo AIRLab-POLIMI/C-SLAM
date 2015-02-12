@@ -94,6 +94,7 @@ void FuzzyBuilder::enterPredicate(std::vector<std::string> templateVarList)
 
 void FuzzyBuilder::exitPredicate()
 {
+	predicateEngine->checkPredicateConsistency();
 	parsingPredicate = false;
 }
 

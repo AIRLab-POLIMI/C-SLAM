@@ -115,10 +115,10 @@ add_dependencies(fuzzy HeadersFuzzy)
 add_dependencies(fuzzy HeadersTreeClassifier)
 
 #build test applications
-add_executable(prova src/testReasoner.cpp)
+add_executable(test_reasoner src/testReasoner.cpp)
 add_executable(test_classifier src/testClassifier.cpp)
 
-target_link_libraries(prova fuzzy)
+target_link_libraries(test_reasoner fuzzy)
 target_link_libraries(test_classifier tree_classifier fuzzy)
 
 #clean all remaining headers
