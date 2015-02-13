@@ -50,7 +50,7 @@ void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
 		cv_ptr = cv_bridge::toCvCopy(msg, enc::BGR8);
 
 		detect(cv_ptr);
-		classify();
+		classify(msg->header.stamp);
 		display(cv_ptr);
 
 	}
@@ -66,7 +66,7 @@ void DetectorLogic::detect(const cv_bridge::CvImagePtr& cv_ptr)
 	detector.detect(cv_ptr->image);
 }
 
-void DetectorLogic::classify()
+void DetectorLogic::classify(ros::Time t)
 {
 	c_fuzzy::Classification serviceCall;
 
@@ -80,7 +80,7 @@ void DetectorLogic::classify()
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
 
-	sendFeatures(features);
+	sendFeatures(features, t);
 
 }
 

@@ -41,7 +41,7 @@ public:
 
 private:
 	void detect(const cv_bridge::CvImagePtr& cv_ptr);
-	void classify();
+	void classify(ros::Time t);
 	void display(const cv_bridge::CvImagePtr& cv_ptr);
 
 private:

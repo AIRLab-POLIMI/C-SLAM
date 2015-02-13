@@ -65,10 +65,10 @@ void RecognizerLogic::handleTrack(const c_slam_msgs::TrackedObject& track)
 
 	try
 	{
-		getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
+		ros::Time t = getImageData(track, cv_ptr, cv_ptr_color, cameraModel);
 		getRoi(track, cv_ptr_color->image, roi, objectImage, mask);
 		detect(objectImage, mask, track.id == dispP.currentObject);
-		classify(cameraModel, roi);
+		classify(cameraModel, roi, t, track.id);
 		display(objectImage, track.id);
 		detector.deleteDetections();
 	}
@@ -90,7 +90,7 @@ void RecognizerLogic::detect(Mat& image, Mat& mask, bool showCanny)
 	detector.detect(image, mask, showCanny);
 }
 
-void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
+void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi, ros::Time t, size_t id)
 {
 	c_fuzzy::Classification serviceCall;
 	ObjectClassificator classificator(serviceCall, classifierParam);
@@ -104,7 +104,7 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi)
 	const vector<pair<vector<Point>, string> >& features =
 				classificator.getGoodFeatures();
 
-	sendFeatures(features);
+	sendFeatures(features, t, id);
 
 }
 
@@ -127,13 +127,14 @@ void RecognizerLogic::display(Mat& image, size_t id)
 
 }
 
-void RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,
+ros::Time RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,
 			CvImagePtr& cv_ptr, CvImagePtr& cv_ptr_color,
 			PinholeCameraModel& cameraModel)
 {
 	Time t = track.imageStamp + Duration(0, 100);
 	const ImageConstPtr& img = imageCache.getElemBeforeTime(t);
 	const CameraInfoConstPtr& info_msg = infoCache.getElemBeforeTime(t);
+
 
 	if (img == NULL || info_msg == NULL)
 		throw runtime_error("No valid image/info pairs in cache");
@@ -142,6 +143,8 @@ void RecognizerLogic::getImageData(const c_slam_msgs::TrackedObject& track,
 
 	cv_ptr = toCvCopy(img, enc::MONO8);
 	cv_ptr_color = toCvCopy(img, enc::BGR8);
+
+	return img->header.stamp;
 }
 
 void RecognizerLogic::getRoi(const c_slam_msgs::TrackedObject& track,

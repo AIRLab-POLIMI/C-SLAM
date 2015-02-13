@@ -94,16 +94,18 @@ void BaseLogic::callClassificationService(c_fuzzy::Classification& serviceCall)
 }
 
 void BaseLogic::sendFeatures(
-			const vector<pair<vector<Point>, string> >& features)
+			const vector<pair<vector<Point>, string> >& features, ros::Time t, size_t id)
 {
-	for (vector<pair<vector<Point>, string> >::const_iterator i =
-				features.begin(); i != features.end(); ++i)
+	for (size_t i = 0; i < features.size(); i++)
 	{
-		const vector<Point>& polygon = i->first;
-		const string& name = i->second;
+		const vector<Point>& polygon = features[i].first;
+		const string& name = features[i].second;
 
 		c_slam_msgs::NamedPolygon message;
 
+		message.header.frame_id = camera_frame_id;
+		message.header.stamp = t;
+		message.id = id;
 		message.polygonLabel = name;
 
 		for (int i = 0; i < polygon.size(); i++)

@@ -31,6 +31,7 @@
 
 #include <sensor_msgs/Imu.h>
 #include <c_slam_msgs/TrackedObject.h>
+#include <c_slam_msgs/NamedPolygon.h>
 
 #include <tf/transform_broadcaster.h>
 
@@ -68,10 +69,13 @@ private:
 
 	bool trackVisible(std::vector<Eigen::Vector4d>& track,
 				const Eigen::Matrix4d& H_CW);
+	bool rectangleVisible(std::vector<Eigen::Vector4d>& track,
+				const Eigen::Matrix4d& H_CW);
 
 protected:
 	ros::NodeHandle n;
 	ros::Publisher trackPublisher;
+	ros::Publisher rectanglePublisher;
 	ros::Publisher markersPublisher;
 	tf::TransformBroadcaster br;
 

@@ -50,13 +50,15 @@ public:
 
 private:
 	void detect(cv::Mat& image, cv::Mat& mask, bool showCanny);
-	void classify(image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
+	void classify(image_geometry::PinholeCameraModel& cameraModel,
+				cv::Rect& roi, ros::Time t, size_t id);
 	void display(cv::Mat& image, std::size_t id);
 
-	void rectify(ObjectClassificator& classificator, image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
+	void rectify(ObjectClassificator& classificator,
+				image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
 
 private:
-	void getImageData(const c_slam_msgs::TrackedObject& track,
+	ros::Time getImageData(const c_slam_msgs::TrackedObject& track,
 				cv_bridge::CvImagePtr& cv_ptr,
 				cv_bridge::CvImagePtr& cv_ptr_color,
 				image_geometry::PinholeCameraModel& cameraModel);
@@ -74,7 +76,6 @@ private:
 
 	//Object detection
 	AdvancedDetector detector;
-
 
 	//Visualization
 	DisplayParam& dispP;

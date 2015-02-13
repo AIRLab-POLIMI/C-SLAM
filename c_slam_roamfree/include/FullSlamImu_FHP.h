@@ -32,6 +32,10 @@ private:
 	void publishFeatureMarkers();
 
 private:
+	//FIXME only for tests with track
+	bool pointInImage(Eigen::VectorXd& z);
+
+private:
 	ROAMvision::ImageFeatureHandler *tracksHandler;
 	ros::Subscriber tracks_sub;
 

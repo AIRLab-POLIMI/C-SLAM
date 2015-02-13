@@ -69,29 +69,15 @@ void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2, 2);
 
-	/* compute the center of mass FIXME levami
-	 Eigen::VectorXd z(2);
-
-	 z
-	 << 0.25
-	 * (msg.polygon.points[0].x + msg.polygon.points[1].x
-	 + msg.polygon.points[2].x + msg.polygon.points[3].x), 0.25
-	 * (msg.polygon.points[0].y + msg.polygon.points[1].y
-	 + msg.polygon.points[2].y + msg.polygon.points[3].y);
-
-	 tracksHandler->addFeatureObservation(msg.id, t, z, cov);
-	 //*/
-
-	//
 	for (int k = 0; k < 4; k++)
 	{
 		Eigen::VectorXd z(2);
 
 		z << msg.polygon.points[k].x, msg.polygon.points[k].y;
 
-		tracksHandler->addFeatureObservation(msg.id * 4 + k, t, z, cov);
+		if (pointInImage(z))
+			tracksHandler->addFeatureObservation(msg.id * 4 + k, t, z, cov);
 	}
-	//*/
 
 }
 
@@ -149,6 +135,12 @@ void FullSlamImu_FHP::publishFeatureMarkers()
 	}
 
 	markers_pub.publish(msg);
+}
+
+bool FullSlamImu_FHP::pointInImage(Eigen::VectorXd& z)
+{
+	//FIXME
+	return !(z(0) < 0 || z(1) < 0 || z(0) >= 640 || z(1) >= 360);
 }
 
 } /* namespace roamfree_c_slam */

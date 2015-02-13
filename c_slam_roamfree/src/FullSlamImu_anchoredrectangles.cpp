@@ -22,7 +22,7 @@ FullSlamImu_anchoredrectangles::FullSlamImu_anchoredrectangles(FullSlamConfig& c
 	initCamera();
 
 	//subscribe to sensor topics
-	tracks_sub = n.subscribe("/tracks", 60000,
+	tracks_sub = n.subscribe("/objects", 60000,
 				&FullSlamImu_anchoredrectangles::tracksCb, this);
 }
 
@@ -63,11 +63,11 @@ void FullSlamImu_anchoredrectangles::run()
 
 }
 
-void FullSlamImu_anchoredrectangles::tracksCb(const c_slam_msgs::TrackedObject& msg)
+void FullSlamImu_anchoredrectangles::tracksCb(const c_slam_msgs::NamedPolygon& msg)
 {
 	//ROS_INFO("Tracks callback");
 
-	double t = msg.imageStamp.toSec();
+	double t = msg.header.stamp.toSec();
 
 	// compute the center of mass
 	Eigen::VectorXd z(8);

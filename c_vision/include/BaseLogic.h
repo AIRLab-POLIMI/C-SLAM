@@ -43,7 +43,8 @@ protected:
 	void connectToClassificationServer();
 	void callClassificationService(c_fuzzy::Classification& serviceCall);
 	void sendFeatures(
-				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features);
+				const std::vector<std::pair<std::vector<cv::Point>, std::string> >& features,
+				ros::Time t, size_t id = 0);
 
 protected:
 	//Ros management
@@ -61,7 +62,6 @@ protected:
 	std::string camera_frame_id;
 	double roll;
 	cv::Mat R;
-
 
 	//parameters
 	ClassifierParam& classifierParam;

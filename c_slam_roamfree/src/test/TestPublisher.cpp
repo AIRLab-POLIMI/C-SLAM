@@ -35,6 +35,7 @@ namespace roamfree_c_slam
 TestPublisher::TestPublisher()
 {
 	trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("/tracks", 6000);
+	rectanglePublisher = n.advertise<c_slam_msgs::NamedPolygon>("/objects", 6000);
 	markersPublisher = n.advertise<visualization_msgs::Marker>(
 				"/visualization/features", 1);
 
@@ -229,12 +230,17 @@ void TestPublisher::publishTracks(const Eigen::Matrix4d& H_WC, double t)
 
 	for (int i = 0; i < tracks.size(); i++)
 	{
-		if (trackVisible(tracks[i], H_CW))
+		bool isRectangleVisible = rectangleVisible(tracks[i], H_CW);
+
+		if (isRectangleVisible || trackVisible(tracks[i], H_CW))
 		{
 			c_slam_msgs::TrackedObject msg;
+			c_slam_msgs::NamedPolygon msgRect;
 
 			msg.id = i;
 			msg.imageStamp.fromSec(t);
+			msgRect.id = i;
+			msgRect.header.stamp.fromSec(t);
 
 			for (int j = 0; j < tracks[i].size(); j++)
 			{
@@ -248,9 +254,15 @@ void TestPublisher::publishTracks(const Eigen::Matrix4d& H_WC, double t)
 				point.y = homogeneusPoint(1);
 
 				msg.polygon.points.push_back(point);
+				msgRect.polygon.points.push_back(point);
+
+
 			}
 
 			trackPublisher.publish(msg);
+
+			if(isRectangleVisible)
+				rectanglePublisher.publish(msgRect);
 		}
 
 	}
@@ -491,6 +503,21 @@ bool TestPublisher::trackVisible(vector<Eigen::Vector4d>& track,
 	}
 
 	return false;
+
+}
+
+bool TestPublisher::rectangleVisible(vector<Eigen::Vector4d>& track,
+			const Eigen::Matrix4d& H_CW)
+{
+	for (int i = 0; i < track.size(); i++)
+	{
+		if (!pointVisible(track[i], H_CW))
+		{
+			return false;
+		}
+	}
+
+	return true;
 
 }
 

@@ -14,7 +14,7 @@
 #include <tf/tf.h>
 
 #include <sensor_msgs/Imu.h>
-#include <c_slam_msgs/TrackedObject.h>
+#include <c_slam_msgs/NamedPolygon.h>
 
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
@@ -34,7 +34,7 @@ public:
 	void run();
 
 protected:
-	void tracksCb(const c_slam_msgs::TrackedObject &msg);
+	void tracksCb(const c_slam_msgs::NamedPolygon &msg);
 
 private:
 	void initCamera();
