@@ -50,7 +50,7 @@ void FullSlamImu_anchoredrectangles::run()
 		{
 			filter->getOldestPose()->setFixed(true);
 
-			cerr << "Estimation.." << endl;
+			//cerr << "Estimation.." << endl;
 			filter->estimate(config.iterationN);
 		}
 

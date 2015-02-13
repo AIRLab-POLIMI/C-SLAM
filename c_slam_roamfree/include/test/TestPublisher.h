@@ -49,7 +49,9 @@ public:
 
 	void publishGroundTruth(Eigen::Matrix4d& H);
 	void publishGroundTruthLandmark();
+	void publishGroundTruthLandmarkName();
 	void publishGroundTruthLandmarkPoints();
+	void publishGroundTruthLandmarkPointsName();
 
 public:
 	void setTracksCircle(double r);

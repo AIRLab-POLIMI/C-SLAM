@@ -105,6 +105,41 @@ void TestPublisher::publishGroundTruthLandmark()
 	markersPublisher.publish(msg);
 }
 
+void TestPublisher::publishGroundTruthLandmarkName()
+{
+	int id = 0;
+	for (int i = 0; i < tracksCM.size(); i++)
+	{
+
+		visualization_msgs::Marker msg;
+
+		msg.header.stamp = ros::Time::now();
+		msg.header.frame_id = "/world";
+		msg.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+		//msg.lifetime = ros::Duration(0.2);
+		msg.frame_locked = false;
+		msg.ns = "c_slam_gt_name";
+		msg.id = id++;
+		msg.action = visualization_msgs::Marker::ADD;
+
+		msg.color.r = 1.0;
+		msg.color.g = 1.0;
+		msg.color.b = 0.0;
+		msg.color.a = 1.0;
+
+		msg.scale.z = 0.10;
+
+		msg.pose.position.x = tracksCM[i](0);
+		msg.pose.position.y = tracksCM[i](1);
+		msg.pose.position.z = tracksCM[i](2);
+
+		msg.text = "Landmark_" + std::to_string(i);
+
+		markersPublisher.publish(msg);
+
+	}
+}
+
 void TestPublisher::publishGroundTruthLandmarkPoints()
 {
 	visualization_msgs::Marker msg;
@@ -148,6 +183,43 @@ void TestPublisher::publishGroundTruthLandmarkPoints()
 	}
 
 	markersPublisher.publish(msg);
+}
+
+void TestPublisher::publishGroundTruthLandmarkPointsName()
+{
+	int id = 0;
+	for (int i = 0; i < tracks.size(); i++)
+	{
+		for (int j = 0; j < tracks[i].size(); j++)
+		{
+			visualization_msgs::Marker msg;
+
+			msg.header.stamp = ros::Time::now();
+			msg.header.frame_id = "/world";
+			msg.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+			//msg.lifetime = ros::Duration(0.2);
+			msg.frame_locked = false;
+			msg.ns = "c_slam_gt_points_name";
+			msg.id = id++;
+			msg.action = visualization_msgs::Marker::ADD;
+
+			msg.color.r = 1.0;
+			msg.color.g = 1.0;
+			msg.color.b = 0.0;
+			msg.color.a = 1.0;
+
+			msg.scale.z = 0.10;
+
+			msg.pose.position.x = tracks[i][j](0);
+			msg.pose.position.y = tracks[i][j](1);
+			msg.pose.position.z = tracks[i][j](2) + 0.1;
+
+			msg.text = "M" + std::to_string(j + 1);
+
+			markersPublisher.publish(msg);
+		}
+	}
+
 }
 
 void TestPublisher::publishTracks(const Eigen::Matrix4d& H_WC, double t)
@@ -199,14 +271,10 @@ void TestPublisher::setTracksCircle(double r)
 		double y = r * sin(theta);
 		double z = 0;
 
-		Eigen::Vector3d trackCM;
-		trackCM << x, y, z;
-		tracksCM.push_back(trackCM);
-
 		RectangleGenerator gen(w, h);
 		gen.setPosition(x, y, z);
 		gen.setRPY(0, 0, theta + M_PI / 2);
-		gen.generateTrack(tracks[i]);
+		gen.generateTrack(tracks, tracksCM);
 
 		theta += 2 * M_PI / numTracks;
 	}
@@ -238,14 +306,8 @@ void TestPublisher::setTracksSquare(double r)
 	{ 0.0, -2.0, -0.3 },
 	{ 1.0, -2.0, 0.3 } };
 
-	tracks.resize(numTracks);
-
 	for (int i = 0; i < numTracks; i++)
 	{
-		Eigen::Vector3d trackCM;
-		trackCM << cm[i][0], cm[i][1], cm[i][2];
-		tracksCM.push_back(trackCM);
-
 		double x = cm[i][0];
 		double y = cm[i][1];
 		double z = cm[i][2];
@@ -255,7 +317,7 @@ void TestPublisher::setTracksSquare(double r)
 		RectangleGenerator gen(w, h);
 		gen.setPosition(x, y, z);
 		gen.setRPY(0, 0, theta + M_PI / 2);
-		gen.generateTrack(tracks[i]);
+		gen.generateTrack(tracks, tracksCM);
 	}
 }
 
@@ -269,16 +331,10 @@ void TestPublisher::setTracksCarpet()
 
 		while (y < 25.0)
 		{
-			tracks.resize(tracks.size() + 1);
-
 			RectangleGenerator gen(0, 0);
 			gen.setPosition(x, y, 0);
 			gen.setRPY(0, M_PI / 2, 0);
-			gen.generateTrack(tracks[tracks.size() - 1]);
-
-			Eigen::Vector3d trackCM;
-			trackCM << x, y, 0.0;
-			tracksCM.push_back(trackCM);
+			gen.generateTrack(tracks, tracksCM);
 
 			y += 5.0;
 		}
@@ -294,141 +350,119 @@ void TestPublisher::setTrackRoom()
 	RectangleGenerator door1(0.8, 2.2);
 	door1.setPosition(8.6, 0, 1.1);
 	door1.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	door1.generateTrack(tracks[tracks.size() - 1]);
+	door1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator door2(0.8, 2.2);
 	door2.setPosition(0, -4, 1.1);
 	door2.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	door2.generateTrack(tracks[tracks.size() - 1]);
+	door2.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator door3(0.8, 2.2);
 	door3.setPosition(-3, 8, 1.1);
-	door3.setRPY(0, 0, M_PI / 4);
-	tracks.resize(tracks.size() + 1);
-	door3.generateTrack(tracks[tracks.size() - 1]);
+	door3.setRPY(0, 0, - 3* M_PI / 4);
+	door3.generateTrack(tracks, tracksCM);
 
 	//Whiteboards
 	RectangleGenerator whiteboard1(1.2, 0.8);
 	whiteboard1.setPosition(8.6, -1.8, 1.4);
 	whiteboard1.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	whiteboard1.generateTrack(tracks[tracks.size() - 1]);
+	whiteboard1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator whiteboard2(1.3, 0.75);
 	whiteboard2.setPosition(3.6, 12.3, 1.4);
-	whiteboard2.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	whiteboard2.generateTrack(tracks[tracks.size() - 1]);
+	whiteboard2.setRPY(0, 0, -M_PI);
+	whiteboard2.generateTrack(tracks, tracksCM);
 
 	//CabinetDoors
 	RectangleGenerator cabinetDoor1(1, 2.0);
 	cabinetDoor1.setPosition(8.0, 1.5, 1);
 	cabinetDoor1.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	cabinetDoor1.generateTrack(tracks[tracks.size() - 1]);
+	cabinetDoor1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator cabinetDoor2(1, 2.0);
 	cabinetDoor2.setPosition(8.0, 2.55, 1);
 	cabinetDoor2.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	cabinetDoor2.generateTrack(tracks[tracks.size() - 1]);
+	cabinetDoor2.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator cabinetDoor3(1, 2.0);
 	cabinetDoor3.setPosition(8.0, 3.7, 1);
 	cabinetDoor3.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	cabinetDoor3.generateTrack(tracks[tracks.size() - 1]);
+	cabinetDoor3.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator cabinetDoor4(1, 2.0);
 	cabinetDoor4.setPosition(8.0, 4.75, 1);
 	cabinetDoor4.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	cabinetDoor4.generateTrack(tracks[tracks.size() - 1]);
+	cabinetDoor4.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator cabinetDoor5(1, 2.0);
 	cabinetDoor5.setPosition(6, 12.3, 1);
-	cabinetDoor5.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	cabinetDoor5.generateTrack(tracks[tracks.size() - 1]);
+	cabinetDoor5.setRPY(0, 0, -M_PI);
+	cabinetDoor5.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator cabinetDoor6(1, 2.0);
 	cabinetDoor6.setPosition(7.05, 12.3, 1);
-	cabinetDoor6.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	cabinetDoor6.generateTrack(tracks[tracks.size() - 1]);
+	cabinetDoor6.setRPY(0, 0, -M_PI);
+	cabinetDoor6.generateTrack(tracks, tracksCM);
 
 	//Cabinet
 	RectangleGenerator cabinet1(2.5, 1.9);
 	cabinet1.setPosition(8.0, 8.63, 1);
 	cabinet1.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	cabinet1.generateTrack(tracks[tracks.size() - 1]);
+	cabinet1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator cabinet2(2.6, 1.96);
 	cabinet2.setPosition(6.83, -3.6, 1);
 	cabinet2.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	cabinet2.generateTrack(tracks[tracks.size() - 1]);
+	cabinet2.generateTrack(tracks, tracksCM);
 
 	//Windows
 	RectangleGenerator window1(0.6, 1.2);
 	window1.setPosition(4, -4, 1.4);
 	window1.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	window1.generateTrack(tracks[tracks.size() - 1]);
+	window1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator window2(0.6, 1.2);
 	window2.setPosition(-4, -4, 1.4);
 	window2.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	window2.generateTrack(tracks[tracks.size() - 1]);
+	window2.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator window3(0.6, 1.2);
 	window3.setPosition(-5, 0, 1.4);
-	window3.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	window3.generateTrack(tracks[tracks.size() - 1]);
+	window3.setRPY(0, 0, -M_PI / 2);
+	window3.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator window4(0.6, 1.2);
 	window4.setPosition(-5, 2.5, 1.4);
-	window4.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	window4.generateTrack(tracks[tracks.size() - 1]);
+	window4.setRPY(0, 0, -M_PI / 2);
+	window4.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator window5(0.6, 1.2);
 	window5.setPosition(-5, 5, 1.4);
-	window5.setRPY(0, 0, M_PI / 2);
-	tracks.resize(tracks.size() + 1);
-	window5.generateTrack(tracks[tracks.size() - 1]);
+	window5.setRPY(0, 0, -M_PI / 2);
+	window5.generateTrack(tracks, tracksCM);
 
 	//Pictures
 	RectangleGenerator picture1(0.3, 0.75);
 	picture1.setPosition(-3 + 3 / 2 * sqrt(2.0), 8 + 3 / 2 * sqrt(2.0), 1.1);
-	picture1.setRPY(0, M_PI / 12, M_PI / 4);
-	tracks.resize(tracks.size() + 1);
-	picture1.generateTrack(tracks[tracks.size() - 1]);
+	picture1.setRPY(0, M_PI / 12, -3 * M_PI / 4);
+	picture1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator picture2(0.3, 0.75);
 	picture2.setPosition(-3 + 3.5 / 2 * sqrt(2.0), 8 + 3.5 / 2 * sqrt(2.0),
 				1.1);
-	picture2.setRPY(0, M_PI / 13, M_PI / 4);
-	tracks.resize(tracks.size() + 1);
-	picture2.generateTrack(tracks[tracks.size() - 1]);
+	picture2.setRPY(0, M_PI / 13, -3 * M_PI / 4);
+	picture2.generateTrack(tracks, tracksCM);
 
 	//fan coils
 	RectangleGenerator fanCoil1(1.5, 0.4);
 	fanCoil1.setPosition(2.38, -3.8, 0.2);
 	fanCoil1.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	fanCoil1.generateTrack(tracks[tracks.size() - 1]);
+	fanCoil1.generateTrack(tracks, tracksCM);
 
 	RectangleGenerator fanCoil2(1.5, 0.4);
 	fanCoil2.setPosition(-2.38, -3.8, 0.2);
 	fanCoil2.setRPY(0, 0, 0);
-	tracks.resize(tracks.size() + 1);
-	fanCoil2.generateTrack(tracks[tracks.size() - 1]);
+	fanCoil2.generateTrack(tracks, tracksCM);
 
 }
 

@@ -37,7 +37,8 @@ public:
 	void setPosition(double x, double y, double z);
 	void setRPY(double roll, double pitch, double yaw);
 
-	void generateTrack(std::vector<Eigen::Vector4d>& track);
+	void generateTrack(std::vector<std::vector<Eigen::Vector4d>>& trackVector,
+				std::vector<Eigen::Vector3d>& trackCM);
 
 
 private:

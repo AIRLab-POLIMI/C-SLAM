@@ -68,7 +68,10 @@ void FireflyTestPublisher::handleGTdata(
 	//Publish results
 	publishTracks(H_WC, pose_msg.header.stamp.toSec());
 	publishGroundTruth(H_WC);
+
+	publishGroundTruthLandmarkName();
 	publishGroundTruthLandmarkPoints();
+	publishGroundTruthLandmarkPointsName();
 }
 
 }

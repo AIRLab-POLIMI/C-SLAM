@@ -48,15 +48,19 @@ void RectangleGenerator::setRPY(double roll, double pitch, double yaw)
 	this->yaw = yaw;
 }
 
-void RectangleGenerator::generateTrack(vector<Eigen::Vector4d>& track)
+void RectangleGenerator::generateTrack(
+			vector<vector<Eigen::Vector4d>>& trackVector,
+			vector<Eigen::Vector3d>& trackCM)
 {
+	vector<Eigen::Vector4d> track;
+
 	Eigen::Quaterniond q;
 	getQuaternion(q);
 
 	Eigen::Vector3d t;
 	getTranslation(t);
 
-	for(int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		Eigen::Vector3d Mi_O;
 		Eigen::Vector4d Mi_W;
@@ -68,6 +72,8 @@ void RectangleGenerator::generateTrack(vector<Eigen::Vector4d>& track)
 		track.push_back(Mi_W);
 	}
 
+	trackVector.push_back(track);
+	trackCM.push_back(t);
 
 }
 
