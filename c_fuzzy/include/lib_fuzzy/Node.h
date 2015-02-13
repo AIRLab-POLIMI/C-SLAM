@@ -59,6 +59,8 @@ public:
 		return NULL;
 	}
 
+	virtual void findVariables(std::vector<Variable>& variables) = 0;
+
 	virtual ~Node()
 	{
 	}

@@ -103,6 +103,7 @@ void FuzzyPredicateEngine::buildPredicate(string name, NodePtr rule)
 		PredicateData data;
 		data.templateVarList = currentTemplateVarList;
 		data.definition = rule;
+		rule->findVariables(data.extraVariables);
 		predicateMap[currentNamespace][name] = data;
 	}
 	else
@@ -138,7 +139,8 @@ PredicateInstance FuzzyPredicateEngine::getPredicateInstance(string nameSpace,
 				domainsList.push_back(domains);
 			}
 
-			return PredicateInstance(predicate, domainsList);
+			return PredicateInstance(predicate, domainsList,
+						data.extraVariables);
 		}
 		else
 		{
@@ -211,4 +213,3 @@ DomainTablePtr FuzzyPredicateEngine::instantiatePredicateVar(string nameSpace,
 
 	return domain;
 }
-

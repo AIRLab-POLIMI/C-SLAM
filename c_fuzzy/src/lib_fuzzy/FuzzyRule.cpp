@@ -35,3 +35,8 @@ double FuzzyRule::evaluate(ReasoningData reasoningData)
 	conseguent->evaluate(reasoningData);
 	return reasoningData.truthValue;
 }
+
+void FuzzyRule::findVariables(std::vector<Variable>& variables)
+{
+	antecedent->findVariables(variables);
+}

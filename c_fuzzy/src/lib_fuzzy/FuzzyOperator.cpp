@@ -35,6 +35,12 @@ BinaryFuzzyOperator::BinaryFuzzyOperator(NodePtr leftOperand,
 {
 }
 
+void BinaryFuzzyOperator::findVariables(std::vector<Variable>& variables)
+{
+	leftOperand->findVariables(variables);
+	rightOperand->findVariables(variables);
+}
+
 FuzzyAnd::FuzzyAnd(NodePtr left, NodePtr right) :
 			BinaryFuzzyOperator(left, right)
 {
@@ -89,6 +95,12 @@ NodePtr FuzzyNot::instantiate(vector<Variable>& variables)
 	return make_shared<FuzzyNot>(op);
 }
 
+void FuzzyNot::findVariables(std::vector<Variable>& variables)
+{
+	operand->findVariables(variables);
+}
+
+
 FuzzyIs::FuzzyIs(NamespaceTable& lookUpTable, string nameSpace, string label,
 			string mfLabel) :
 			lookUpTable(lookUpTable), nameSpace(nameSpace), label(label),
@@ -111,6 +123,11 @@ NodePtr FuzzyIs::instantiate(vector<Variable>& variables)
 	return make_shared<FuzzyIs>(*this);
 }
 
+void FuzzyIs::findVariables(std::vector<Variable>& variables)
+{
+	variables.push_back(Variable(nameSpace, label));
+}
+
 FuzzyTemplateIs::FuzzyTemplateIs(NamespaceTable& lookUpTable,
 			size_t templateVarIndex, string mfLabel) :
 			lookUpTable(lookUpTable),
@@ -130,6 +147,11 @@ NodePtr FuzzyTemplateIs::instantiate(vector<Variable>& variables)
 				variables[templateVarIndex].domain, mfLabel);
 }
 
+void FuzzyTemplateIs::findVariables(std::vector<Variable>& variables)
+{
+	//NO operation to be done
+}
+
 FuzzyAssignment::FuzzyAssignment(NamespaceTable& lookUpTable, string nameSpace,
 			string name, string mfLabel) :
 			lookUpTable(lookUpTable), nameSpace(nameSpace), output(name),
@@ -147,5 +169,10 @@ double FuzzyAssignment::evaluate(ReasoningData reasoningData)
 	reasoningData.aggregator.addValue(nameSpace, output, mfLabel, truthValue,
 				result);
 	return result;
+}
+
+void FuzzyAssignment::findVariables(std::vector<Variable>& variables)
+{
+	throwUnimplementedException();
 }
 

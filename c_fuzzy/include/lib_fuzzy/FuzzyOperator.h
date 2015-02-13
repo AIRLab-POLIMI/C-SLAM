@@ -47,6 +47,7 @@ class BinaryFuzzyOperator: public FuzzyOperator
 {
 public:
 	BinaryFuzzyOperator(NodePtr leftOperand, NodePtr rightOperand);
+	void findVariables(std::vector<Variable>& variables);
 
 protected:
 	NodePtr leftOperand;
@@ -90,6 +91,7 @@ public:
 	FuzzyNot(NodePtr operand);
 	double evaluate(ReasoningData reasoningData);
 	NodePtr instantiate(std::vector<Variable>& variables);
+	void findVariables(std::vector<Variable>& variables);
 
 private:
 	NodePtr operand;
@@ -107,6 +109,7 @@ public:
 				std::string label, std::string mfLabel);
 	double evaluate(ReasoningData reasoningData);
 	NodePtr instantiate(std::vector<Variable>& variables);
+	void findVariables(std::vector<Variable>& variables);
 
 private:
 	NamespaceTable& lookUpTable;
@@ -127,6 +130,7 @@ public:
 				std::string mfLabel);
 	double evaluate(ReasoningData reasoningData);
 	NodePtr instantiate(std::vector<Variable>& variables);
+	void findVariables(std::vector<Variable>& variables);
 
 private:
 	NamespaceTable& lookUpTable;
@@ -145,6 +149,7 @@ public:
 	FuzzyAssignment(NamespaceTable& lookUpTable, std::string nameSpace,
 				std::string name, std::string mfLabel);
 	double evaluate(ReasoningData reasoningData);
+	void findVariables(std::vector<Variable>& variables);
 
 private:
 	NamespaceTable& lookUpTable;

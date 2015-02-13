@@ -27,6 +27,11 @@ FuzzyMF::~FuzzyMF()
 {
 }
 
+void FuzzyMF::findVariables(std::vector<Variable>& variables)
+{
+	throwUnimplementedException();
+}
+
 TolMF::TolMF(int top, int bottom) :
 			top(top), bottom(bottom)
 {

@@ -31,6 +31,7 @@ class FuzzyRule: public Node
 public:
 	FuzzyRule(NodePtr antecedent, NodePtr conseguent);
 	double evaluate(ReasoningData reasoningData);
+	void findVariables(std::vector<Variable>& variables);
 
 private:
 	NodePtr antecedent;

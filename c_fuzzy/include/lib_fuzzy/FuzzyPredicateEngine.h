@@ -31,7 +31,21 @@
 #include "Node.h"
 #include "FuzzyMF.h"
 
-typedef std::pair<NodePtr, std::vector<DomainTablePtr>> PredicateInstance;
+//typedef std::pair<NodePtr, std::vector<DomainTablePtr>> PredicateInstance;
+
+struct PredicateInstance
+{
+	PredicateInstance(NodePtr rule, std::vector<DomainTablePtr>& domains,
+				std::vector<Variable>& extraVariables) :
+				rule(rule), domains(domains), extraVariables(extraVariables)
+	{
+	}
+
+	NodePtr rule;
+	std::vector<DomainTablePtr> domains;
+	std::vector<Variable> extraVariables;
+
+};
 
 class FuzzyPredicateEngine
 {
@@ -41,6 +55,7 @@ private:
 	{
 		std::vector<std::string> templateVarList;
 		NodePtr definition;
+		std::vector<Variable> extraVariables;
 	};
 
 	typedef std::map<std::string, PredicateData> PredicateNameMap;
@@ -56,15 +71,14 @@ public:
 	void buildPredicate(std::string name, NodePtr rule);
 	PredicateInstance getPredicateInstance(std::string predicate,
 				std::vector<Variable>& variable);
-	PredicateInstance getPredicateInstance(std::string nameSpace, std::string predicate,
-				std::vector<Variable>& variable);
+	PredicateInstance getPredicateInstance(std::string nameSpace,
+				std::string predicate, std::vector<Variable>& variable);
 	size_t getTemplateVarIndex(std::string templateVar);
 	void checkPredicateConsistency();
 
-
 private:
-	DomainTablePtr instantiatePredicateVar(std::string nameSpace, std::string templateVar,
-			std::string variable);
+	DomainTablePtr instantiatePredicateVar(std::string nameSpace,
+				std::string templateVar, std::string variable);
 
 private:
 	PredicateMap predicateMap;

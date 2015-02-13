@@ -152,11 +152,16 @@ NodePtr FuzzyBuilder::getPredicateInstance(string nameSpace,
 
 	for (size_t i = 0; i < variables.size(); i++)
 	{
-		varEngine->addDomains(variables[i].nameSpace, *instance.second[i]);
+		varEngine->addDomains(variables[i].nameSpace, *instance.domains[i]);
 		varEngine->updateVariableMask(variables[i], ruleList->size());
 	}
 
-	return instance.first;
+	for(auto& extraVariable : instance.extraVariables)
+	{
+		varEngine->updateVariableMask(extraVariable, ruleList->size());
+	}
+
+	return instance.rule;
 }
 
 NodePtr FuzzyBuilder::getPredicateInstance(string predicateName,

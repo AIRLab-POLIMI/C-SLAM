@@ -56,17 +56,6 @@ void FuzzyVariableEngine::addMF(string& label, FuzzyMF* mf)
 	map[label] = FuzzyMFPtr(mf);
 }
 
-void FuzzyVariableEngine::checkNameSpaceExistence(string& nameSpace)
-{
-	if (namespaceTable.count(nameSpace) == 0)
-	{
-		stringstream ss;
-		ss << "Error: non existing class " << nameSpace << endl;
-		ss << "You must define a namespace in the knowledgeBase for each class";
-		throw runtime_error(ss.str());
-	}
-}
-
 void FuzzyVariableEngine::addDomains(string& nameSpace, DomainTable& domain)
 {
 	checkNameSpaceExistence(nameSpace);
@@ -152,6 +141,17 @@ NamespaceTable& FuzzyVariableEngine::getTable()
 VariableMasks& FuzzyVariableEngine::getMasks()
 {
 	return variableMasks;
+}
+
+void FuzzyVariableEngine::checkNameSpaceExistence(string& nameSpace)
+{
+	if (namespaceTable.count(nameSpace) == 0)
+	{
+		stringstream ss;
+		ss << "Error: non existing class " << nameSpace << endl;
+		ss << "You must define a namespace in the knowledgeBase for each class";
+		throw runtime_error(ss.str());
+	}
 }
 
 void FuzzyVariableEngine::initializeNamespaces()

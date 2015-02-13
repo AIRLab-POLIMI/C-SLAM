@@ -40,6 +40,7 @@ class FuzzyMF: public Node
 public:
 	virtual double defuzzify(double level) = 0;
 	virtual ~FuzzyMF();
+	void findVariables(std::vector<Variable>& variables);
 
 protected:
 	double inline line(int x1, double y1, int x2, double y2, int x)

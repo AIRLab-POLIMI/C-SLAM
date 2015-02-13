@@ -77,11 +77,19 @@ NodePtr FuzzyKnowledgeBase::getPredicateInstance(string& nameSpace,
 
 	for (size_t i = 0; i < variables.size(); i++)
 	{
-		this->variables->addDomains(variables[i].nameSpace, *instance.second[i]);
-		this->variables->updateVariableMask(variables[i], knowledgeBase->size());
+		this->variables->addDomains(variables[i].nameSpace,
+					*instance.domains[i]);
+		this->variables->updateVariableMask(variables[i],
+					knowledgeBase->size());
 	}
 
-	return instance.first;
+	for (auto& extraVariable : instance.extraVariables)
+	{
+		this->variables->updateVariableMask(extraVariable,
+					knowledgeBase->size());
+	}
+
+	return instance.rule;
 }
 
 FuzzyKnowledgeBase::~FuzzyKnowledgeBase()
