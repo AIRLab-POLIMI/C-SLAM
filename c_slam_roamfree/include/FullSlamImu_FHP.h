@@ -36,7 +36,7 @@ private:
 	bool pointInImage(Eigen::VectorXd& z);
 
 private:
-	ROAMvision::ImageFeatureHandler *tracksHandler;
+	ROAMvision::FHPFeatureHandlerBootstrap *tracksHandler;
 	ros::Subscriber tracks_sub;
 
 };

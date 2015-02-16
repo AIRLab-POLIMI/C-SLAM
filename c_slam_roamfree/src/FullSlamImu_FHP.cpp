@@ -37,6 +37,29 @@ void FullSlamImu_FHP::run()
 
 	ros::Rate rate(5);
 
+	while (ros::ok() && !tracksHandler->bootstrapCompleted())
+	{
+		ros::spinOnce();
+
+		if (filter->getWindowLenght() > config.minWindowLenghtSecond
+					&& tracksHandler->getNActiveFeatures() >= 3)
+		{
+			filter->getNthOldestPose(0)->setFixed(true);
+
+			//ROS_INFO("Run estimation");
+			bool ret = filter->estimate(config.iterationN);
+		}
+
+		if (filter->getOldestPose())
+		{
+			publishFeatureMarkers();
+			publishPose();
+		}
+
+	}
+
+	std::cerr << ("Bootstrap completed!-------------------------------------------------------------------------") << std::endl;
+
 	while (ros::ok())
 	{
 		//rate.sleep();
@@ -83,7 +106,8 @@ void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 void FullSlamImu_FHP::initCamera()
 {
-	tracksHandler = new ROAMvision::FHPFeatureHandler(config.initialScale);
+	tracksHandler = new ROAMvision::FHPFeatureHandlerBootstrap(
+				config.initialScale);
 	tracksHandler->setTimestampOffsetTreshold(
 				1.0 / 2.0 / imuHandler->getPoseRate());
 
