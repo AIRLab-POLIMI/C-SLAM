@@ -42,12 +42,15 @@ void FullSlamImu_FHP::run()
 		ros::spinOnce();
 
 		if (filter->getWindowLenght() > config.minWindowLenghtSecond
-					&& tracksHandler->getNActiveFeatures() >= 3)
+					/*&& tracksHandler->getNActiveFeatures() >= 3*/)
 		{
-			filter->getNthOldestPose(0)->setFixed(true);
+			filter->getOldestPose()->setFixed(true);
+			tracksHandler->fixImmutableFeaturePoses(
+			 filter->getOldestPose()->getEstimate(), 1.0);
 
 			//ROS_INFO("Run estimation");
-			bool ret = filter->estimate(config.iterationN);
+			/*std::cerr << "Run estimation" << std::endl;
+			bool ret = filter->estimate(config.iterationN);*/
 		}
 
 		if (filter->getOldestPose())
@@ -58,7 +61,7 @@ void FullSlamImu_FHP::run()
 
 	}
 
-	std::cerr << ("Bootstrap completed!-------------------------------------------------------------------------") << std::endl;
+	std::cerr << ("Bootstrap completed") << std::endl;
 
 	while (ros::ok())
 	{
