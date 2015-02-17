@@ -24,7 +24,7 @@
 
 #include "ROAMestimation/ROAMestimation.h"
 
-namespace roamfree_c_slam
+namespace ROAMvision
 {
 
 class RectangleHandler

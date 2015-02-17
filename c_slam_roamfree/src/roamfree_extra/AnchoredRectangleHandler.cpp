@@ -24,7 +24,7 @@
 using namespace std;
 using namespace ROAMestimation;
 
-namespace roamfree_c_slam
+namespace ROAMvision
 {
 
 AnchoredRectangleHandler::AnchoredRectangleHandler(double initialDepth) :

@@ -23,7 +23,7 @@
 using namespace std;
 using namespace ROAMestimation;
 
-namespace roamfree_c_slam
+namespace ROAMvision
 {
 
 RectangleHandler::RectangleHandler(double initialDepth) :

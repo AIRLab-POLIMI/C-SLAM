@@ -10,6 +10,7 @@
 #include <visualization_msgs/Marker.h>
 
 using namespace ROAMestimation;
+using namespace ROAMvision;
 using namespace std;
 
 namespace roamfree_c_slam

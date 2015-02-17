@@ -41,7 +41,7 @@ private:
 	void publishFeatureMarkers();
 
 private:
-	RectangleHandler *tracksHandler;
+	ROAMvision::RectangleHandler *tracksHandler;
 	ros::Subscriber tracks_sub;
 
 };
