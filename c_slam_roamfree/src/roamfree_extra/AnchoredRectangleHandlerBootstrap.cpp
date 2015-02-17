@@ -53,7 +53,6 @@ bool AnchoredRectangleHandlerBootstrap::addFeatureObservation(long int id,
 void AnchoredRectangleHandlerBootstrap::fixImmutableFeaturePoses(
 			const Eigen::VectorXd &pose, double percentageThreshold)
 {
-	cerr << "fixImmutableFeaturePoses" << endl;
 	map<double, unsigned int> candidates;
 
 	for (auto& feature : _objects)
