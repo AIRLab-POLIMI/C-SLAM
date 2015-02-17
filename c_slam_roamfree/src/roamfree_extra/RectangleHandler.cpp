@@ -16,7 +16,7 @@
  *      Author: davide
  */
 
-#include "RectangleHandler.h"
+#include "roamfree_extra/RectangleHandler.h"
 
 #include <iostream>
 

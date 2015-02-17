@@ -20,7 +20,7 @@
 #include <tf/transform_broadcaster.h>
 
 #include "FullSlamImu.h"
-#include "RectangleHandler.h"
+#include "roamfree_extra/RectangleHandler.h"
 
 namespace roamfree_c_slam
 {

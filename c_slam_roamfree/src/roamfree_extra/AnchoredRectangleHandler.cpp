@@ -16,7 +16,7 @@
  *      Author: davide
  */
 
-#include "AnchoredRectangleHandler.h"
+#include "roamfree_extra/AnchoredRectangleHandler.h"
 
 #include <iostream>
 #include <Eigen/Dense>

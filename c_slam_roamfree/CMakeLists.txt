@@ -35,6 +35,11 @@ add_library(localization STATIC
             src/FullSlamImu.cpp
 	        src/FullSlamConfig.cpp)
 	        
+add_library(roamfree_extra STATIC
+            src/roamfree_extra/ObjectInitializationStrategy.cpp            
+	        src/roamfree_extra/RectangleHandler.cpp
+            src/roamfree_extra/AnchoredRectangleHandler.cpp)
+            	        
 add_library(testing STATIC
             src/test/RectangleGenerator.cpp
             src/test/TestPublisher.cpp
@@ -45,12 +50,10 @@ add_executable(c_localization
                src/FullSlamImu_FHP.cpp)
 
 add_executable(c_localization_rectangles
-	           src/FullSlamImu_rectangles.cpp
-	           src/RectangleHandler.cpp)
+	           src/FullSlamImu_rectangles.cpp)
 
 add_executable(c_localization_anchoredrectangles
-	           src/FullSlamImu_anchoredrectangles.cpp
-	           src/AnchoredRectangleHandler.cpp)
+	           src/FullSlamImu_anchoredrectangles.cpp)
 
 #build test
 
@@ -75,10 +78,12 @@ target_link_libraries(c_localization
 
 target_link_libraries(c_localization_rectangles
                       localization
+                      roamfree_extra
                       ${catkin_LIBRARIES})
 
 target_link_libraries(c_localization_anchoredrectangles
                       localization
+                      roamfree_extra
                       ${catkin_LIBRARIES})
                       
 target_link_libraries(circular_test testing ${catkin_LIBRARIES})
