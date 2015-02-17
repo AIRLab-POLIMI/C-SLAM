@@ -26,25 +26,23 @@
 
 #include "ObjectInitializationStrategy.h"
 
-namespace ROAMvision {
+namespace ROAMvision
+{
 
-class ObjectSufficientParallax: public ObjectInitializationStrategy {
+class ObjectSufficientParallax: public ObjectInitializationStrategy
+{
 
 public:
-	ObjectSufficientParallax(double minParallax, double initialDepth,
-			const ObservationMap &zHistory, const double *K);
+	ObjectSufficientParallax(double minParallax,
+				const ObjectObservationMap &zHistory, const double *K);
 
-	virtual bool initialize(Eigen::VectorXd &HP);
+	virtual bool initialize();
 
 protected:
 	double _traveled;
-	double _initialDepth;
 	double _minParallax;
 };
 
 }
-
-
-
 
 #endif /* INCLUDE_ROAMFREE_EXTRA_OBJECTSUFFICIENTPARALLAX_H_ */

@@ -39,7 +39,7 @@ public:
 	bool isInitialized;
 	ObjectInitializationStrategy *initStrategy;
 
-	ObservationMap zHistory;
+	ObjectObservationMap zHistory;
 
 	ROAMestimation::PoseVertexWrapper_Ptr anchorFrame, lastFrame;
 

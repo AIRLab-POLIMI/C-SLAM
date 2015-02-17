@@ -22,3 +22,22 @@
  */
 
 #include "roamfree_extra/ObjectSufficientParallax.h"
+
+using namespace std;
+
+namespace ROAMvision
+{
+
+ObjectSufficientParallax::ObjectSufficientParallax(double minParallax,
+			const ObjectObservationMap& zHistory, const double *K) :
+			ObjectInitializationStrategy(zHistory, K),
+			_minParallax(minParallax), _traveled(0.0)
+{
+}
+
+bool ObjectSufficientParallax::initialize()
+{
+	return false;
+}
+
+}

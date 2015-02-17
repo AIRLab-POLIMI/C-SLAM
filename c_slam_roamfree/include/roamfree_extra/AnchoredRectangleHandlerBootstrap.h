@@ -49,7 +49,7 @@ protected:
 
 	void voteFixedPoseCandidates(
 			std::map<double, unsigned int>& candidates,
-			ObservationMap& map);
+			ObjectObservationMap& map);
 
 	bool _bootstrap;
 };

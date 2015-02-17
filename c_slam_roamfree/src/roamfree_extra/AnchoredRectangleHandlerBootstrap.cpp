@@ -21,32 +21,41 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_OBJECTINITIALIZATIONSTRATEGY_H_
-#define INCLUDE_OBJECTINITIALIZATIONSTRATEGY_H_
-
-#include "ObjectObservationDescriptor.h"
+#include "roamfree_extra/AnchoredRectangleHandlerBootstrap.h"
 
 namespace ROAMvision
 {
-class ObjectInitializationStrategy
+AnchoredRectangleHandlerBootstrap::AnchoredRectangleHandlerBootstrap(
+			double initialDepth) :
+			AnchoredRectangleHandler(initialDepth)
 {
+	_bootstrap = true;
+}
 
-public:
-
-	ObjectInitializationStrategy(const ObjectObservationMap &zHistory,
-				const double *K);
-
-	virtual ~ObjectInitializationStrategy();
-
-	virtual bool initialize() = 0;
-
-protected:
-	const ObjectObservationMap &_zHistory;
-	const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> _K;
-
-};
+bool AnchoredRectangleHandlerBootstrap::addFeatureObservation(long int id,
+			double t, const Eigen::VectorXd &z, const Eigen::MatrixXd &cov)
+{
 
 }
 
+void AnchoredRectangleHandlerBootstrap::fixImmutableFeaturePoses(
+			const Eigen::VectorXd &pose, double percentageThreshold)
+{
 
-#endif /* INCLUDE_OBJECTINITIALIZATIONSTRATEGY_H_ */
+}
+
+bool AnchoredRectangleHandlerBootstrap::initFeature(const std::string& sensor,
+			const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv,
+			long int id)
+{
+
+}
+
+void AnchoredRectangleHandlerBootstrap::voteFixedPoseCandidates(
+			std::map<double, unsigned int>& candidates,
+			ObjectObservationMap& map)
+{
+
+}
+
+}

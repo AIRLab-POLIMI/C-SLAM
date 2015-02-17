@@ -19,6 +19,8 @@ c_fuzzy/src/lib_tree_classifier/location.hh
 c_fuzzy/src/lib_tree_classifier/position.hh
 c_fuzzy/src/lib_tree_classifier/stack.hh
 
+# symbolic link
+c_slam/bags
 # Python precompiled files #
 ############################
 *.pyc

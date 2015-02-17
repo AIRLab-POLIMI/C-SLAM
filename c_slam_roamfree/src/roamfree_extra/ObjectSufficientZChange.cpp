@@ -21,5 +21,24 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ObjectSufficientZChange.h"
+#include "roamfree_extra/ObjectSufficientZChange.h"
 
+using namespace std;
+
+namespace ROAMvision
+{
+
+ObjectSufficientZChange::ObjectSufficientZChange(double minZChange,
+			const ObjectObservationMap& zHistory, const double *K) :
+			ObjectInitializationStrategy(zHistory, K), _minZChange(minZChange),
+			_zChange(0.0)
+{
+}
+
+bool ObjectSufficientZChange::initialize(Eigen::VectorXd& HP)
+{
+
+	return false;
+}
+
+}

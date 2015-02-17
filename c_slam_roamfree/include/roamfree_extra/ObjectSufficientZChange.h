@@ -28,21 +28,20 @@
 
 namespace ROAMvision
 {
-class ObjectSufficientZChange: public ObjectInitializationStrategy {
+class ObjectSufficientZChange: public ObjectInitializationStrategy
+{
 
 public:
-	ObjectSufficientZChange(double minZChange, double initialDepth,
-			const ObservationMap &zHistory, const double *K);
+	ObjectSufficientZChange(double minZChange,
+				const ObjectObservationMap &zHistory, const double *K);
 
 	virtual bool initialize(Eigen::VectorXd &HP);
 
 protected:
 	double _zChange;
-	double _initialDepth;
 	double _minZChange;
 };
 
 }
-
 
 #endif /* INCLUDE_ROAMFREE_EXTRA_OBJECTSUFFICIENTZCHANGE_H_ */
