@@ -147,11 +147,11 @@ bool AnchoredRectangleHandler::addFeatureObservation(long int id, double t,
 }
 
 bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
-			const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr av,
+			const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv,
 			long int id)
 {
 
-	const Eigen::VectorXd &anchor_frame = av->getEstimate();
+	const Eigen::VectorXd &anchor_frame = pv->getEstimate();
 	Eigen::VectorXd dim0(2), f0(7), foq0(4), fohp0(3);
 
 	initRectangle(anchor_frame, _lambda, z, dim0, fohp0, foq0);
@@ -163,7 +163,7 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
 	_filter->addConstantParameter(Euclidean2D, sensor + "_Dim", 0.0, dim0,
 				false);
 
-	_filter->poseVertexAsParameter(av, sensor + "_F");
+	_filter->poseVertexAsParameter(pv, sensor + "_F");
 
 	_filter->addConstantParameter(Quaternion, sensor + "_FOq", 0.0, foq0,
 				false);
@@ -171,8 +171,7 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
 	_filter->addConstantParameter(Euclidean3D, sensor + "_FOhp", 0.0, fohp0,
 				false);
 
-// prior on homogeneous point
-
+	// prior on homogeneous point
 	const double sigma_pixel = 1;
 
 	Eigen::MatrixXd prior_cov(3, 3);
@@ -183,16 +182,16 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
 	_filter->addPriorOnConstantParameter(Euclidean3DPrior, sensor + "_FOhp",
 				fohp0, prior_cov);
 
-//add to current track list
+	//add to current track list
 	ObjectTrackDescriptor &d = _objects[id];
 
-	d.anchorFrame = av;
+	d.anchorFrame = pv;
 	d.isInitialized = false;
 	d.initStrategy = new ObjectSufficientParallax(0.25, d.zHistory, _K.data());
 
-//_filter->setRobustKernel(sensor, true, 3.0);
+	//_filter->setRobustKernel(sensor, true, 3.0);
 
-	cerr << "[RectangleHandler] New rectangle, id " << id << endl;
+	cerr << "[AnchoredRectangleHandler] New rectangle, id " << id << endl;
 
 	return true;
 }
@@ -203,7 +202,7 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 			Eigen::VectorXd &FOqhat)
 {
 
-//Get the points
+	//Get the points
 	Eigen::Vector3d m1(z[0], z[1], 1);
 	Eigen::Vector3d m2(z[2], z[3], 1);
 	Eigen::Vector3d m3(z[4], z[5], 1);
@@ -212,7 +211,7 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 	Eigen::Vector3d Ft(Fw[0], Fw[1], Fw[2]);
 	Eigen::Quaterniond Fq(Fw[3], Fw[4], Fw[5], Fw[6]);
 
-//compute normals
+	//compute normals
 	double c2 = (m1.cross(m3).transpose() * m4)[0]
 				/ (m2.cross(m3).transpose() * m4)[0];
 	double c3 = (m1.cross(m3).transpose() * m2)[0]
@@ -221,7 +220,7 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 	Eigen::Vector3d n2 = c2 * m2 - m1;
 	Eigen::Vector3d n3 = c3 * m4 - m1;
 
-//Compute rotation matrix columns
+	//Compute rotation matrix columns
 	Eigen::Vector3d R1 = _K.inverse() * n2;
 	R1 = R1 / R1.norm();
 
@@ -230,32 +229,32 @@ void AnchoredRectangleHandler::initRectangle(const Eigen::VectorXd& Fw,
 
 	Eigen::Vector3d R3 = R1.cross(R2);
 
-//Compute rotation from camera to object
+	//Compute rotation from camera to object
 	Eigen::Matrix3d R;
 	R << R1, R2, R3;
 	Eigen::Quaterniond FOq_e(R);
 
-// and initialize the of the object with respect to the anchor frame
+	// and initialize the of the object with respect to the anchor frame
 	FOqhat << FOq_e.w(), FOq_e.x(), FOq_e.y(), FOq_e.z();
 
-// now initialize lower left corner homogeneous point
+	// now initialize lower left corner homogeneous point
 	FOhphat << z[0], z[1], 1.0;
 	FOhphat = _K.inverse() * FOhphat;
 	FOhphat(2) = 1.0 / lambda; // 1/d distance of the plane parallel to the image plane on which features are initialized.
 
-//Compute frame transaltion
+	//Compute frame transaltion
 	Eigen::Matrix3d omega = _K.transpose().inverse() * _K.inverse();
 	double ff = sqrt(
 				(n2.transpose() * omega * n2)[0]
 							/ (n3.transpose() * omega * n3)[0]);
 
-//compute shape parameters
+	//compute shape parameters
 	Eigen::Vector3d X = _K * R1;
 	Eigen::Vector3d Y = c2 * lambda * m2 - lambda * m1;
 
 	double w = ((X.transpose() * X).inverse() * X.transpose() * Y)[0];
 
-//Write the results
+	//Write the results
 	shapeParamshat << ff, w / lambda;
 
 }
@@ -283,7 +282,7 @@ bool AnchoredRectangleHandler::getFeaturePoseInWorldFrame(long int id,
 
 	Eigen::Quaterniond Fq_e(fw(3), fw(4), fw(5), fw(6)); // anchor frame orientation wrt world
 
-// compute the position of the lower left corner of the object starting from anchor frame and homogeneous point
+	// compute the position of the lower left corner of the object starting from anchor frame and homogeneous point
 
 	Eigen::Vector3d FOhp_e;
 	FOhp_e << FOhp(0), FOhp(1), 1.0; // construct a proper homogeneous point from the first two components of the parameter
@@ -291,7 +290,7 @@ bool AnchoredRectangleHandler::getFeaturePoseInWorldFrame(long int id,
 	Eigen::Vector3d Ow;
 	Ow = fw.head(3) + 1 / FOhp(2) * (Fq_e.toRotationMatrix() * FOhp_e);
 
-// orientation of the object
+	// orientation of the object
 	Eigen::Quaterniond FOq_e(FOq(0), FOq(1), FOq(2), FOq(3));
 	Eigen::Quaterniond R_WO = Fq_e * FOq_e;
 
@@ -334,7 +333,10 @@ long int AnchoredRectangleHandler::getNActiveFeatures() const
 
 	for (auto it = _objects.begin(); it != _objects.end(); ++it)
 	{
-		N++;
+		if (it->second.isInitialized)
+		{
+			N++;
+		}
 	}
 
 	return N;

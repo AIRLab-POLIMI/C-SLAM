@@ -35,10 +35,9 @@ public:
 	ObjectSufficientZChange(double minZChange,
 				const ObjectObservationMap &zHistory, const double *K);
 
-	virtual bool initialize(Eigen::VectorXd &HP);
+	virtual bool initialize();
 
 protected:
-	double _zChange;
 	double _minZChange;
 };
 
