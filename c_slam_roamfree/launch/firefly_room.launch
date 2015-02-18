@@ -12,7 +12,7 @@
 	
     <node name="c_localization" 
           pkg="c_slam_roamfree" 
-          type="c_localization_anchoredrectangles"  
+          type="c_localization"  
           output="screen" 
           launch-prefix="">
     
