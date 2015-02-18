@@ -129,10 +129,8 @@ bool AnchoredRectangleHandler::addFeatureObservation(long int id, double t,
 			d.zHistory.clear();
 			d.isInitialized = true;
 
-#			ifdef DEBUG_PRINT_VISION_INFO_MESSAGES
 			cerr << "[AnchoredRectangleHandler] Ready to estimate depth for track " << id
 			<< endl;
-#			endif
 		}
 	}
 	else

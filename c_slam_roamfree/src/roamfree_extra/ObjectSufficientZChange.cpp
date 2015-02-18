@@ -42,11 +42,12 @@ bool ObjectSufficientZChange::initialize()
 	if (_zHistory.size() >= 2)
 	{
 
-		for (auto i = _zHistory.begin(); i !=  prev(_zHistory.end()); i++)
+		for (auto i = _zHistory.begin(); i != prev(_zHistory.end()); i++)
 		{
 			for (auto j = next(i); j != _zHistory.end(); j++)
 			{
-				zChange = std::max(zChange, (i->second.z - j->second.z).norm());
+				zChange = std::max(zChange,
+							(i->second.z - j->second.z).norm() / 4);
 			}
 		}
 
@@ -54,7 +55,8 @@ bool ObjectSufficientZChange::initialize()
 
 	if (zChange > _minZChange)
 	{
-		cerr << "sufficient Z change = " << zChange << "min = " << _minZChange << endl;
+		cerr << "sufficient Z change = " << zChange << "min = " << _minZChange
+					<< endl;
 		return true;
 	}
 
