@@ -11,7 +11,7 @@ x(:, 1) = x(:, 1) / 1e9;
 
 % compute deltaDelta
 deltaDeltaAR = cell(size(xAR, 1) - 1, 1);
-timesAR = matchingTimes(xhatRectangles(:, 1)', x(:, 1)');
+timesAR = matchingTimes(xAR(:, 1)', x(:, 1)');
 for i=2:size(timesAR, 2)
     T2 = poseMatrix(tAR(i, :)',  qAR(i, :));
     T1 = poseMatrix(tAR(i - 1, :)',  qAR(i - 1, :));
@@ -43,11 +43,10 @@ for i=2:size(timesFHP, 2)
 end
 
 % Print trajectories
-set(0,'CurrentFigure',1)
+figure(1)
 clf
 hold on
 
 plotTrajectory(tFHP, qFHP, 'm');
 plotTrajectory(tAR, qAR, 'b');
-
-
+plotTrajectory(tgt, qgt, 'k');
