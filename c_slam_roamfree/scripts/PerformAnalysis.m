@@ -4,7 +4,7 @@ clf
 clear
 
 %% load pose results
-addpath('./lib/math','./lib/parser')
+addpath('./lib/math','./lib/parser', './lib/loaders', './lib/plot', './lib/time')
 [x, xAR, xFHP] = loadDataset('.');
 x(:, 1) = x(:, 1) / 1e9;
 
