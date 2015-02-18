@@ -27,6 +27,8 @@
 #include <tf_conversions/tf_eigen.h>
 #include <visualization_msgs/Marker.h>
 
+#include <iomanip>
+
 using namespace std;
 
 namespace roamfree_c_slam
@@ -545,6 +547,24 @@ void TestPublisher::createRotatedRectangle(const double theta, const double w,
 		trackVertex << xp, yp, zp, 1;
 
 		track.push_back(trackVertex);
+	}
+}
+
+void TestPublisher::printGTInfo()
+{
+	cout.precision(numeric_limits<double>::digits10 + 1);
+	for(auto& track : tracks)
+	{
+		auto& vertex = track[0];
+		cout << vertex(0) << "," << vertex(1) << "," << vertex(2) << ",";
+
+		for(auto it = track.begin() + 1 ; it != track.end(); it++)
+		{
+			auto& vertex = *it;
+			cout << "," << vertex(0) << "," << vertex(1) << "," << vertex(2);
+		}
+
+		cout << endl;
 	}
 }
 

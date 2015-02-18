@@ -22,6 +22,7 @@
  */
 
 #include <ros/ros.h>
+#include <string>
 #include "test/FireflyTestPublisher.h"
 
 int main(int argc, char *argv[])
@@ -30,6 +31,12 @@ int main(int argc, char *argv[])
 
 	roamfree_c_slam::FireflyTestPublisher publisher;
 	publisher.setTrackRoom();
+
+	if (argc > 1 && argv[1] == std::string("print"))
+	{
+		publisher.printGTInfo();
+		return 0;
+	}
 
 	ros::spin();
 

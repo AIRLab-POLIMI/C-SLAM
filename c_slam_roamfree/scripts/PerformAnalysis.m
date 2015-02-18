@@ -1,6 +1,9 @@
 %% Script to analize SLAM performaces on FHP and AnchoredRectangle
+clc
+clf
+clear
 
-% load pose results
+%% load pose results
 addpath('./lib/math','./lib/parser')
 [x, xAR, xFHP] = loadDataset('.');
 x(:, 1) = x(:, 1) / 1e9;
@@ -42,7 +45,13 @@ for i=2:size(timesFHP, 2)
     deltaDeltaFHP{i - 1} = deltaGT^-1 * deltaT;
 end
 
-% Print trajectories
+%% Load landmarks results
+numRectangles = 22;
+landmarksGT = loadLandmarksGT('.');
+tracksFHP = loadTracks('.', numRectangles*4); 
+tracksAR = loadRectangles('.', numRectangles);
+
+%% Print trajectories and landmarks
 figure(1)
 clf
 hold on
@@ -50,3 +59,9 @@ hold on
 plotTrajectory(tFHP, qFHP, 'm');
 plotTrajectory(tAR, qAR, 'b');
 plotTrajectory(tgt, qgt, 'k');
+
+for i = 1:size(landmarksGT,1)
+   plotLandmark(landmarksGT(i, :), i, 'rx', 'k');   
+end
+
+axis equal

@@ -60,6 +60,9 @@ public:
 	void setTracksCarpet();
 	void setTrackRoom();
 
+public:
+	void printGTInfo();
+
 private:
 	void createRotatedRectangle(const double theta, const double w, const double h,
 				double x, double y, double z, std::vector<Eigen::Vector4d>& track);
