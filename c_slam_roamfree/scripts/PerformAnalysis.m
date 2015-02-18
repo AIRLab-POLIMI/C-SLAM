@@ -9,6 +9,7 @@ x(:, 1) = x(:, 1) / 1e9;
 [tAR, qAR] = getPose(xAR, 'pose');
 [tFHP, qFHP] = getPose(xFHP, 'pose');
 
+% compute deltaDelta
 deltaDeltaAR = cell(size(xAR, 1) - 1, 1);
 timesAR = matchingTimes(xhatRectangles(:, 1)', x(:, 1)');
 for i=2:size(timesAR, 2)
@@ -40,4 +41,13 @@ for i=2:size(timesFHP, 2)
     
     deltaDeltaFHP{i - 1} = deltaGT^-1 * deltaT;
 end
+
+% Print trajectories
+set(0,'CurrentFigure',1)
+clf
+hold on
+
+plotTrajectory(tFHP, qFHP, 'm');
+plotTrajectory(tAR, qAR, 'b');
+
 
