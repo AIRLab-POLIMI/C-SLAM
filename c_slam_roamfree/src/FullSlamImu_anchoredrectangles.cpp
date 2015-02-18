@@ -8,6 +8,7 @@
 #include "FullSlamImu_anchoredrectangles.h"
 
 #include <visualization_msgs/Marker.h>
+#include <roscpp/Empty.h>
 
 using namespace ROAMestimation;
 using namespace ROAMvision;
@@ -16,7 +17,8 @@ using namespace std;
 namespace roamfree_c_slam
 {
 
-FullSlamImu_anchoredrectangles::FullSlamImu_anchoredrectangles(FullSlamConfig& config) :
+FullSlamImu_anchoredrectangles::FullSlamImu_anchoredrectangles(
+			FullSlamConfig& config) :
 			FullSlamImu(config), tracksHandler(NULL)
 {
 	//setup the camera
@@ -37,22 +39,52 @@ void FullSlamImu_anchoredrectangles::run()
 {
 	ros::NodeHandle n("~");
 
-	ros::Rate r(1);
+	ros::Rate rate(5);
+
+	while (ros::ok() && !tracksHandler->bootstrapCompleted())
+	{
+		ros::spinOnce();
+
+		if (filter->getOldestPose()
+		/*&& tracksHandler->getNActiveFeatures() >= 3*/)
+		{
+			filter->getOldestPose()->setFixed(true);
+			tracksHandler->fixImmutableFeaturePoses(
+						filter->getOldestPose()->getEstimate(), 1.0);
+
+			//ROS_INFO("Run estimation");
+			/*std::cerr << "Run estimation" << std::endl;
+			 bool ret = filter->estimate(config.iterationN);*/
+		}
+
+		if (filter->getOldestPose())
+		{
+			publishFeatureMarkers();
+			publishPose();
+		}
+
+	}
+
+	std::cerr << ("Bootstrap completed") << std::endl;
 
 	while (ros::ok())
 	{
-		//r.sleep();
+		rate.sleep();
 
 		ros::spinOnce();
 
 		if (filter->getWindowLenght() > config.minWindowLenghtSecond
-					&& tracksHandler->getNActiveFeatures()
-								>= config.minActiveFeatures)
+					&& tracksHandler->getNActiveFeatures() >= 3)
 		{
-			filter->getOldestPose()->setFixed(true);
+			filter->getNthOldestPose(0)->setFixed(true);
 
-			//cerr << "Estimation.." << endl;
-			filter->estimate(config.iterationN);
+			//ROS_INFO("Run estimation");
+
+			roscpp::Empty answ;
+
+			ros::service::call("/pause_bag", answ);
+			bool ret = filter->estimate(config.iterationN);
+			ros::service::call("/unpause_bag", answ);
 		}
 
 		if (filter->getOldestPose())
@@ -64,7 +96,8 @@ void FullSlamImu_anchoredrectangles::run()
 
 }
 
-void FullSlamImu_anchoredrectangles::tracksCb(const c_slam_msgs::NamedPolygon& msg)
+void FullSlamImu_anchoredrectangles::tracksCb(
+			const c_slam_msgs::NamedPolygon& msg)
 {
 	//ROS_INFO("Tracks callback");
 
@@ -83,7 +116,7 @@ void FullSlamImu_anchoredrectangles::tracksCb(const c_slam_msgs::NamedPolygon& m
 void FullSlamImu_anchoredrectangles::initCamera()
 {
 
-	tracksHandler = new AnchoredRectangleHandler(config.initialScale);
+	tracksHandler = new AnchoredRectangleHandlerBootstrap(config.initialScale);
 	tracksHandler->setTimestampOffsetTreshold(1.0 / 5.0 / 2.0);
 
 	tracksHandler->init(filter, "Track", config.T_O_CAMERA, config.K);
@@ -124,9 +157,9 @@ void FullSlamImu_anchoredrectangles::publishFeatureMarkers()
 		assert(ret);
 
 		/* debug output
-		cout << "Feature " << ids[k] << " dim (" << dim(0) << "," << dim(1) << ")" << endl;
-		cout << "Feature " << ids[k] << " pos (" << fw(0) << "," << fw(1) << "," << fw(2) << ")" << endl;
-		*/
+		 cout << "Feature " << ids[k] << " dim (" << dim(0) << "," << dim(1) << ")" << endl;
+		 cout << "Feature " << ids[k] << " pos (" << fw(0) << "," << fw(1) << "," << fw(2) << ")" << endl;
+		 */
 
 		msg.pose.position.x = fw(0);
 		msg.pose.position.y = fw(1);
@@ -154,6 +187,19 @@ int main(int argc, char *argv[])
 
 	try
 	{
+		// wait for the service to appear
+		// (but NOT with ros::Duration(xx)::sleep(), use_sim_time might be set)
+
+		ROS_INFO("wait for the bag_controller");
+		while (!ros::service::exists("/unpause_bag", false))
+		{
+			sleep(1.0);
+		}
+
+		ROS_INFO("starting playback");
+		roscpp::Empty answ;
+		ros::service::call("/unpause_bag", answ);
+
 		roamfree_c_slam::FullSlamConfig config;
 
 		roamfree_c_slam::FullSlamImu_anchoredrectangles n(config);

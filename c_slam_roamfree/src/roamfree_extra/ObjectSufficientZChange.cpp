@@ -21,5 +21,47 @@
  *  along with c_slam_roamfree.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ObjectSufficientZChange.h"
+#include "roamfree_extra/ObjectSufficientZChange.h"
 
+#include <iostream> //TODO levami
+
+using namespace std;
+
+namespace ROAMvision
+{
+
+ObjectSufficientZChange::ObjectSufficientZChange(double minZChange,
+			const ObjectObservationMap& zHistory, const double *K) :
+			ObjectInitializationStrategy(zHistory, K), _minZChange(minZChange)
+{
+}
+
+bool ObjectSufficientZChange::initialize()
+{
+	double zChange = 0;
+	if (_zHistory.size() >= 2)
+	{
+
+		for (auto i = _zHistory.begin(); i != prev(_zHistory.end()); i++)
+		{
+			for (auto j = next(i); j != _zHistory.end(); j++)
+			{
+				zChange = std::max(zChange,
+							(i->second.z - j->second.z).norm() / 4);
+			}
+		}
+
+	}
+
+	if (zChange > _minZChange)
+	{
+		cerr << "sufficient Z change = " << zChange << "min = " << _minZChange
+					<< endl;
+		return true;
+	}
+
+	return false;
+
+}
+
+}

@@ -20,7 +20,7 @@
 #include <tf/transform_broadcaster.h>
 
 #include "FullSlamImu.h"
-#include "roamfree_extra/AnchoredRectangleHandler.h"
+#include "roamfree_extra/AnchoredRectangleHandlerBootstrap.h"
 
 namespace roamfree_c_slam
 {
@@ -41,7 +41,7 @@ private:
 	void publishFeatureMarkers();
 
 private:
-	ROAMvision::AnchoredRectangleHandler *tracksHandler;
+	ROAMvision::AnchoredRectangleHandlerBootstrap *tracksHandler;
 	ros::Subscriber tracks_sub;
 
 };

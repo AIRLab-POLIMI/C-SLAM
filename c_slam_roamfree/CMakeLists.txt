@@ -36,9 +36,12 @@ add_library(localization STATIC
 	        src/FullSlamConfig.cpp)
 	        
 add_library(roamfree_extra STATIC
-            src/roamfree_extra/ObjectInitializationStrategy.cpp            
+            src/roamfree_extra/ObjectInitializationStrategy.cpp
+            src/roamfree_extra/ObjectSufficientZChange.cpp
+            src/roamfree_extra/ObjectSufficientParallax.cpp           
 	        src/roamfree_extra/RectangleHandler.cpp
-            src/roamfree_extra/AnchoredRectangleHandler.cpp)
+            src/roamfree_extra/AnchoredRectangleHandler.cpp
+            src/roamfree_extra/AnchoredRectangleHandlerBootstrap.cpp)
             	        
 add_library(testing STATIC
             src/test/RectangleGenerator.cpp

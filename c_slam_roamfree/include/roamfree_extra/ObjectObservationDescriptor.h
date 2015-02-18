@@ -38,7 +38,7 @@ class ObjectObservationDescriptor
 public:
 	double t;
 	ROAMestimation::PoseVertexWrapper_Ptr pose;
-	std::vector<Eigen::Vector2d> z;
+	Eigen::Matrix<double, 8, 1> z;
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

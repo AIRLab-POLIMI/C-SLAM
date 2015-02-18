@@ -38,7 +38,7 @@ public:
 
 	virtual ~ObjectInitializationStrategy();
 
-	virtual bool initialize(Eigen::VectorXd &HP) = 0;
+	virtual bool initialize() = 0;
 
 protected:
 	const ObjectObservationMap &_zHistory;

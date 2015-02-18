@@ -24,22 +24,25 @@
 
 #include "ROAMestimation/ROAMestimation.h"
 
+#include "ObjectTrackDescriptor.h"
+
 namespace ROAMvision
 {
 
-class AnchoredRectangleHandler {
+class AnchoredRectangleHandler
+{
 
 public:
 	AnchoredRectangleHandler(double initialDepth);
 
 	virtual bool init(ROAMestimation::FactorGraphFilter* f,
-			const std::string &name, const Eigen::VectorXd & T_OS,
-			const Eigen::VectorXd & K);
+				const std::string &name, const Eigen::VectorXd & T_OS,
+				const Eigen::VectorXd & K);
 	virtual bool addFeatureObservation(long int id, double t,
-			const Eigen::VectorXd &z, const Eigen::MatrixXd &cov);
+				const Eigen::VectorXd &z, const Eigen::MatrixXd &cov);
 
 	virtual bool getFeaturePoseInWorldFrame(long int id,
-			Eigen::VectorXd &lw) const;
+				Eigen::VectorXd &lw) const;
 	virtual bool getFeatureDimensions(long int id, Eigen::VectorXd &dim) const;
 	virtual long int getNActiveFeatures() const;
 	bool getFeaturesIds(std::vector<long int>& to) const;
@@ -49,28 +52,21 @@ public:
 	virtual ~AnchoredRectangleHandler();
 
 protected:
-
-	class RectangleDescriptor {
-	public:
-		ROAMestimation::PoseVertexWrapper_Ptr anchorFrame, lastFrame;
-
-		int nObservations;
-	};
-
 	virtual bool initFeature(const std::string& sensor,
-			const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr av,
-			long int id);
+				const Eigen::VectorXd& z,
+				ROAMestimation::PoseVertexWrapper_Ptr av, long int id);
+
 	void initRectangle(const Eigen::VectorXd& Fw, double lambda,
-			const Eigen::VectorXd& z, Eigen::VectorXd& shapeParams,
-			Eigen::VectorXd &FOhp, Eigen::VectorXd& FOq);
+				const Eigen::VectorXd& z, Eigen::VectorXd& shapeParams,
+				Eigen::VectorXd &FOhp, Eigen::VectorXd& FOq);
 
 	std::string getFeatureSensor(long int id) const;
 
+	typedef std::map<long unsigned int, ObjectTrackDescriptor> ObjectMap;
+
 	double _lambda; // initial depth
 
-	typedef std::map<long unsigned int, RectangleDescriptor> FeatureMap;
-
-	FeatureMap _features;
+	ObjectMap _objects;
 
 	ROAMestimation::FactorGraphFilter* _filter;
 	std::string _sensorName;
