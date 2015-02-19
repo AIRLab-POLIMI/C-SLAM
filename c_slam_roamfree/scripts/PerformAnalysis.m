@@ -72,7 +72,8 @@ for i = 1:numRectangles
         [ti, qi] = getAnchorFrame(xAR, logAR_HP);
         [rayi, omegai] = getHP(logAR_HP);
         [wbari, ffi] = getDimensions(logAR_Dim);
-        qri = getRectangleRotation(logAR_q);
+        qri_f = getRectangleRotation(logAR_q);
+        qri = quatprod(qi, qri_f);
         
         tri = hpcartesian(ti', qi, rayi', omegai);
         rectanglesAR{i} = ARcartesian(tri, qri, wbari, ffi, omegai);      
