@@ -96,10 +96,10 @@ bool AnchoredRectangleHandlerBootstrap::initFeature(const std::string& sensor,
 
 		_filter->poseVertexAsParameter(pv, sensor + "_F");
 
-		_filter->addConstantParameter(Quaternion, sensor + "_FOq", 0.0, foq0,
+		_filter->addConstantParameter(Quaternion, sensor + "_FOq", pv->getTimestamp(), foq0,
 					false);
 
-		_filter->addConstantParameter(Euclidean3D, sensor + "_FOhp", 0.0, fohp0,
+		_filter->addConstantParameter(Euclidean3D, sensor + "_FOhp", pv->getTimestamp(), fohp0,
 					false);
 
 		// prior on homogeneous point

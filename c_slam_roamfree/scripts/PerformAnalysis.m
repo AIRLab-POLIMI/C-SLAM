@@ -69,10 +69,10 @@ for i = 1:numRectangles
     logAR_HP = tracksAR{i}{3};
     logAR_q = tracksAR{i}{4};
     if ~isempty(logAR_HP)
-        %[ti, qi] = getAnchorFrame(xAR, logAR_HP);
-        %[rayi, omegai] = getHP(tracksFHP{i}{2});
+        [ti, qi] = getAnchorFrame(xAR, logAR_HP);
+        [rayi, omegai] = getHP(logAR_HP{i}{2});
         
-        %ti = hpcartesian(ti', qi, rayi', omegai);
+        ti = hpcartesian(ti', qi, rayi', omegai);
         
         %rectanglesAR{i} =       
     else

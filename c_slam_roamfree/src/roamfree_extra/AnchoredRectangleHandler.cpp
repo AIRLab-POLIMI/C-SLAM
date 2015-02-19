@@ -185,7 +185,7 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
 
 	d.anchorFrame = pv;
 	d.isInitialized = false;
-	d.initStrategy = new ObjectSufficientParallax(0, d.zHistory, _K.data());
+	d.initStrategy = new ObjectSufficientParallax(0.2, d.zHistory, _K.data());
 
 	//_filter->setRobustKernel(sensor, true, 3.0);
 
