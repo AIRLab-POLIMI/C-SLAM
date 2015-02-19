@@ -70,11 +70,12 @@ for i = 1:numRectangles
     logAR_q = tracksAR{i}{4};
     if ~isempty(logAR_HP)
         [ti, qi] = getAnchorFrame(xAR, logAR_HP);
-        [rayi, omegai] = getHP(logAR_HP{i}{2});
+        [rayi, omegai] = getHP(logAR_HP);
+        [wbari, ffi] = getDimensions(logAR_Dim);
+        qri = getRectangleRotation(logAR_q);
         
-        ti = hpcartesian(ti', qi, rayi', omegai);
-        
-        %rectanglesAR{i} =       
+        tri = hpcartesian(ti', qi, rayi', omegai);
+        rectanglesAR{i} = ARcartesian(tri, qri, wbari, ffi, omegai);      
     else
         rectanglesAR{i} = [];
     end
@@ -96,5 +97,14 @@ end
 
 %plot fhp 3d points
 plot3(pointsFHP(:, 1), pointsFHP(:, 2), pointsFHP(:, 3), 'mo');
+
+%plot rectangles
+for i = 1:size(rectanglesAR,1)
+    if ~isempty(rectanglesAR{i})
+        rect = rectanglesAR{i};
+        rect = [rect; rect(1, :)];
+        line(rect(:,1), rect(:,2), rect(:,3), 'Color', 'r');
+    end
+end
 
 axis equal

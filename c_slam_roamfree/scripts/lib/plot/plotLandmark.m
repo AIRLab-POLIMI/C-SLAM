@@ -6,7 +6,7 @@ M2 = landmark(4:6);
 M3 = landmark(7:9);
 M4 = landmark(10:12);
 
-CM = (M1 +M2+M3+M4)/4;
+CM = (M1 + M2 + M3 + M4)/4;
 
 text(CM(1), CM(2), CM(3), strcat('LandMark', int2str(index)), 'HorizontalAlignment', 'Center');
 
