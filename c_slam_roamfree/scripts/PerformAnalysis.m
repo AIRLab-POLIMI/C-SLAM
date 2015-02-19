@@ -51,6 +51,36 @@ landmarksGT = loadLandmarksGT('.');
 tracksFHP = loadTracks('.', numRectangles*4); 
 tracksAR = loadRectangles('.', numRectangles);
 
+% load FHP points
+pointsFHP = zeros(numRectangles*4, 3);
+for i = 1:numRectangles*4
+    logFHP = tracksFHP{i}{2};
+    if ~isempty(logFHP)
+        [ti, qi] = getAnchorFrame(xFHP, logFHP);
+        [rayi, omegai] = getHP(tracksFHP{i}{2});
+        pointsFHP(i, :) =  hpcartesian(ti', qi, rayi', omegai);      
+    end
+end
+
+% load rectangles points
+rectanglesAR = cell(numRectangles);
+for i = 1:numRectangles
+    logAR_Dim = tracksAR{i}{2};
+    logAR_HP = tracksAR{i}{3};
+    logAR_q = tracksAR{i}{4};
+    if ~isempty(logAR_HP)
+        %[ti, qi] = getAnchorFrame(xAR, logAR_HP);
+        %[rayi, omegai] = getHP(tracksFHP{i}{2});
+        
+        %ti = hpcartesian(ti', qi, rayi', omegai);
+        
+        %rectanglesAR{i} =       
+    else
+        rectanglesAR{i} = [];
+    end
+end
+
+
 %% Print trajectories and landmarks
 figure(1)
 clf
@@ -63,5 +93,8 @@ plotTrajectory(tgt, qgt, 'k');
 for i = 1:size(landmarksGT,1)
    plotLandmark(landmarksGT(i, :), i, 'rx', 'k');   
 end
+
+%plot fhp 3d points
+plot3(pointsFHP(:, 1), pointsFHP(:, 2), pointsFHP(:, 3), 'mo');
 
 axis equal

@@ -1,8 +1,10 @@
 function [ tracksAR ] = loadRectangles( path, numRectangles )
 %LOADRECTANGLES Summary of this function goes here
 %   Detailed explanation goes here
+
+tracksAR = cell(numRectangles, 4);
+
 for M = 0:numRectangles
-    tracksAR = cell(numRectangles, 4);
     edgename = sprintf('Track_%d', M);
     
     edgef = sprintf('%s/dataset/AR/%s.log',path, edgename);
@@ -16,6 +18,10 @@ for M = 0:numRectangles
         tracksAR{M+1}{3} = sortByT(stubbornLoad(FOhpf));
         tracksAR{M+1}{4} = sortByT(stubbornLoad(FOqf));
     else
+        tracksAR{M+1}{1} = [];
+        tracksAR{M+1}{2} = [];
+        tracksAR{M+1}{3} = [];
+        tracksAR{M+1}{4} = [];
         fprintf('missing track %d: %s\n', M, edgef)
     end
 end
