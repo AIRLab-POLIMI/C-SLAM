@@ -15,6 +15,7 @@ x(:, 1) = x(:, 1) / 1e9;
 % compute deltaDelta
 deltaDeltaAR = cell(size(xAR, 1) - 1, 1);
 timesAR = matchingTimes(xAR(:, 1)', x(:, 1)');
+deltaDeltaARnorm = zeros(size(xAR, 1) - 1, 1);
 for i=2:size(timesAR, 2)
     T2 = poseMatrix(tAR(i, :)',  qAR(i, :));
     T1 = poseMatrix(tAR(i - 1, :)',  qAR(i - 1, :));
@@ -27,10 +28,12 @@ for i=2:size(timesAR, 2)
     deltaGT = GT1^-1*GT2;
     
     deltaDeltaAR{i - 1} = deltaGT^-1 * deltaT;
+    deltaDeltaARnorm(i - 1) = norm(deltaDeltaAR{i-1}(1:3,4));
 end
 
 deltaDeltaFHP = cell(size(xFHP, 1) - 1, 1);
 timesFHP = matchingTimes(xFHP(:, 1)', x(:, 1)');
+deltaDeltaFHPnorm = zeros(size(xFHP, 1) - 1, 1);
 for i=2:size(timesFHP, 2)
     T2 = poseMatrix(tFHP(i, :)', qFHP(i, :));
     T1 = poseMatrix(tFHP(i - 1, :)', qFHP(i - 1, :));
@@ -43,6 +46,7 @@ for i=2:size(timesFHP, 2)
     deltaGT = GT1^-1*GT2;
     
     deltaDeltaFHP{i - 1} = deltaGT^-1 * deltaT;
+    deltaDeltaFHPnorm(i - 1) = norm(deltaDeltaFHP{i-1}(1:3,4));
 end
 
 %% Load landmarks results
@@ -109,3 +113,11 @@ for i = 1:size(rectanglesAR,1)
 end
 
 axis equal
+
+%% plot delta comparison
+
+figure
+hold on
+
+plot(deltaDeltaFHPnorm,'r') 
+plot(deltaDeltaARnorm,'b')
