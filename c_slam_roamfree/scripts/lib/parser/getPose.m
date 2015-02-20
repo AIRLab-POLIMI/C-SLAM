@@ -9,7 +9,7 @@ switch type
         
     case 'ros'
         t = log(:, 4:6);
-        q = log(:, 7:10);
+        q = [log(:,10) log(:, 7:9)];
         
     otherwise
         t = [];
