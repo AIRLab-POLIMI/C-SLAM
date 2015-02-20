@@ -67,13 +67,15 @@ tracksFHP = loadTracks('.', numRectangles*4);
 tracksAR = loadRectangles('.', numRectangles);
 
 % load FHP points
-pointsFHP = zeros(numRectangles*4, 3);
+pointsFHP = cell(numRectangles*4, 1);
 for i = 1:numRectangles*4
     logFHP = tracksFHP{i}{2};
     if ~isempty(logFHP)
         [ti, qi] = getAnchorFrame(xFHP, logFHP);
         [rayi, omegai] = getHP(tracksFHP{i}{2});
-        pointsFHP(i, :) =  hpcartesian(ti', qi, rayi', omegai);      
+        pointsFHP{i} =  hpcartesian(ti', qi, rayi', omegai)';      
+    else
+        pointsFHP{i} = [];
     end
 end
 
@@ -98,10 +100,52 @@ for i = 1:numRectangles
 end
 
 
+% compute FHP points error
+deltaTracksFHP = zeros(numRectangles*4, 3);
+deltaTracksFHPnorm = zeros(numRectangles*4, 1);
+for i = 1:4:size(pointsFHP, 1)
+    j = idivide(i, int32(4)) + 1;
+    
+    if ~isempty(pointsFHP{i})
+        deltaTracksFHP(i, :) = landmarksGT(j, 1:3) - pointsFHP{i};
+        deltaTracksFHP(i+1, :) = landmarksGT(j, 4:6) - pointsFHP{i+1};
+        deltaTracksFHP(i+2, :) = landmarksGT(j, 7:9) - pointsFHP{i+2};
+        deltaTracksFHP(i+3, :) = landmarksGT(j, 10:12) - pointsFHP{i+3};
+        
+        deltaTracksFHPnorm(i, :) = norm(deltaTracksFHP(i, :));
+        deltaTracksFHPnorm(i+1, :) = norm(deltaTracksFHP(i+1, :));
+        deltaTracksFHPnorm(i+2, :) = norm(deltaTracksFHP(i+2, :));
+        deltaTracksFHPnorm(i+3, :) = norm(deltaTracksFHP(i+3, :));
+    end
+end
+
+
+% compute rectangle points error
+deltaTracksAR = zeros(numRectangles*4, 3);
+deltaTracksARnorm = zeros(numRectangles*4, 1);
+for i = 1:4:size(deltaTracksFHP, 1)
+    
+    j = idivide(i, int32(4)) + 1;
+    rect = rectanglesAR{j};
+    
+    if ~isempty(rect)
+        deltaTracksAR(i, :) = landmarksGT(j, 1:3) - rect(1, :);
+        deltaTracksAR(i+1, :) = landmarksGT(j, 4:6) - rect(2, :);
+        deltaTracksAR(i+2, :) = landmarksGT(j, 7:9) - rect(3, :);
+        deltaTracksAR(i+3, :) = landmarksGT(j, 10:12) - rect(4, :);
+        
+        deltaTracksARnorm(i, :) = norm(deltaTracksAR(i, :));
+        deltaTracksARnorm(i+1, :) = norm(deltaTracksAR(i+1, :));
+        deltaTracksARnorm(i+2, :) = norm(deltaTracksAR(i+2, :));
+        deltaTracksARnorm(i+3, :) = norm(deltaTracksAR(i+3, :));
+    end
+end
+
 %% Print trajectories and landmarks
 figure(1)
 clf
 hold on
+title('Map')
 
 plotTrajectory(tFHP, qFHP, 'm');
 plotTrajectory(tAR, qAR, 'b');
@@ -112,7 +156,12 @@ for i = 1:size(landmarksGT,1)
 end
 
 %plot fhp 3d points
-plot3(pointsFHP(:, 1), pointsFHP(:, 2), pointsFHP(:, 3), 'mo');
+for i = 1:size(pointsFHP,1)
+    pointToPlot = pointsFHP{i};
+     if ~isempty(pointToPlot)
+        plot3(pointToPlot(:, 1), pointToPlot(:, 2), pointToPlot(:, 3), 'mo');
+     end
+end
 
 %plot rectangles
 for i = 1:size(rectanglesAR,1)
@@ -131,6 +180,7 @@ axis equal
 figure(2)
 clf
 hold on
+title('Translation norm error')
 
 plot(deltaDeltaFHPnorm(:, 1),'m') 
 plot(deltaDeltaARnorm(:, 1),'b')
@@ -139,10 +189,19 @@ plot(deltaDeltaARnorm(:, 1),'b')
 figure(3)
 clf
 hold on
+title('Angle norm error')
 
 plot(deltaDeltaFHPnorm(:, 2),'m') 
 plot(deltaDeltaARnorm(:, 2),'b')
 
+% delta tracks
+figure(4)
+clf
+hold on
+title('Track norm error')
+
+plot(deltaTracksFHPnorm, 'm');
+plot(deltaTracksARnorm, 'b');
 
 %% plot csv
 
@@ -175,5 +234,14 @@ for i = 1:size(deltaDeltaAR, 1)
 end
 
 csvwrite('./csv/deltaDeltaAR.csv', stampedDeltaDeltaAR)
+
+
+% print tracks error norm
+csvwrite('./csv/deltaTracksFHPnorm.csv', deltaTracksFHPnorm);
+csvwrite('./csv/deltaTracksARnorm.csv', deltaTracksARnorm);
+
+% print tracks error
+csvwrite('./csv/deltaTracksFHP.csv', deltaTracksFHP);
+csvwrite('./csv/deltaTracksAR.csv', deltaTracksAR);
 
 
