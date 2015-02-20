@@ -16,16 +16,22 @@ x(:, 1) = x(:, 1) / 1e9;
 deltaDeltaAR = cell(size(xAR, 1) - 1, 1);
 timesAR = matchingTimes(xAR(:, 1)', x(:, 1)');
 deltaDeltaARnorm = zeros(size(xAR, 1) - 1, 1);
+deltaARnorm = zeros(size(xAR, 1) - 1, 1); 
+deltaGTnorm = zeros(size(xAR, 1) - 1, 1);
 for i=2:size(timesAR, 2)
     T2 = poseMatrix(tAR(i, :)',  qAR(i, :));
     T1 = poseMatrix(tAR(i - 1, :)',  qAR(i - 1, :));
     deltaT = T1^-1*T2;
+    
+    deltaARnorm(i - 1) = norm(tAR(i, :) - tAR(i - 1, :));
     
     j2 = timesAR(i);
     j1 = timesAR(i - 1);
     GT2 = poseMatrix(tgt(j2, :)',  qgt(j2, :));
     GT1 = poseMatrix(tgt(j1, :)',  qgt(j1, :));
     deltaGT = GT1^-1*GT2;
+    
+    deltaGTnorm(i - 1) = norm(tgt(j2, :) - tgt(j1, :));
     
     deltaDeltaAR{i - 1} = deltaGT^-1 * deltaT;
     deltaDeltaARnorm(i - 1) = norm(deltaDeltaAR{i-1}(1:3,4));
@@ -34,10 +40,14 @@ end
 deltaDeltaFHP = cell(size(xFHP, 1) - 1, 1);
 timesFHP = matchingTimes(xFHP(:, 1)', x(:, 1)');
 deltaDeltaFHPnorm = zeros(size(xFHP, 1) - 1, 1);
+deltaFHPnorm = zeros(size(xAR, 1) - 1, 1); 
+
 for i=2:size(timesFHP, 2)
     T2 = poseMatrix(tFHP(i, :)', qFHP(i, :));
     T1 = poseMatrix(tFHP(i - 1, :)', qFHP(i - 1, :));
     deltaT = T1^-1*T2;
+    
+    deltaFHPnorm(i - 1) = norm(tFHP(i, :) - tFHP(i - 1, :));
     
     j2 = timesAR(i);
     j1 = timesAR(i - 1);
@@ -108,7 +118,7 @@ for i = 1:size(rectanglesAR,1)
     if ~isempty(rectanglesAR{i})
         rect = rectanglesAR{i};
         rect = [rect; rect(1, :)];
-        line(rect(:,1), rect(:,2), rect(:,3), 'Color', 'r');
+        line(rect(:,1), rect(:,2), rect(:,3), 'Color', 'b');
     end
 end
 
@@ -116,8 +126,16 @@ axis equal
 
 %% plot delta comparison
 
-figure
+figure(2)
 hold on
 
-plot(deltaDeltaFHPnorm,'r') 
+plot(deltaDeltaFHPnorm,'m') 
 plot(deltaDeltaARnorm,'b')
+
+
+figure(3)
+hold on
+
+plot(deltaARnorm, 'b');
+plot(deltaGTnorm, 'k');
+plot(deltaFHPnorm, 'm');
