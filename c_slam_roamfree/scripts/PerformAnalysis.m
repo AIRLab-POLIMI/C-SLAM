@@ -8,9 +8,16 @@ addpath('./lib/math','./lib/parser', './lib/loaders', './lib/plot', './lib/time'
 [x, xAR, xFHP] = loadDataset('.');
 x(:, 1) = x(:, 1) / 1e9;
 
-[tgt, qgt] = getPose(x, 'ros');
+[tgt, qgt_wr] = getPose(x, 'ros');
 [tAR, qAR] = getPose(xAR, 'pose');
 [tFHP, qFHP] = getPose(xFHP, 'pose');
+q_rc = [0.5, -0.5, 0.5, -0.5];
+
+%rotate the gt to be oriented like the camera camera
+qgt = zeros(size(qgt_wr,1), 4);
+for i = 1:size(qgt_wr,1)
+   qgt(i, :) = quatprod(qgt_wr(i, :), q_rc);
+end
 
 % compute deltaDelta
 deltaDeltaAR = cell(size(xAR, 1) - 1, 1);
