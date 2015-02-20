@@ -13,7 +13,7 @@ x(:, 1) = x(:, 1) / 1e9;
 [tFHP, qFHP] = getPose(xFHP, 'pose');
 q_rc = [0.5, -0.5, 0.5, -0.5];
 
-%rotate the gt to be oriented like the camera camera
+% rotate the gt to be oriented like the camera camera
 qgt = zeros(size(qgt_wr,1), 4);
 for i = 1:size(qgt_wr,1)
    qgt(i, :) = quatprod(qgt_wr(i, :), q_rc);
@@ -22,15 +22,12 @@ end
 % compute deltaDelta
 deltaDeltaAR = cell(size(xAR, 1) - 1, 1);
 timesAR = matchingTimes(xAR(:, 1)', x(:, 1)');
-deltaDeltaARnorm = zeros(size(xAR, 1) - 1, 1);
-deltaARnorm = zeros(size(xAR, 1) - 1, 1); 
-deltaGTnorm = zeros(size(xAR, 1) - 1, 1);
+deltaDeltaARnorm = zeros(size(xAR, 1) - 1, 2);
+
 for i=2:size(timesAR, 2)
     T2 = poseMatrix(tAR(i, :)',  qAR(i, :));
     T1 = poseMatrix(tAR(i - 1, :)',  qAR(i - 1, :));
     deltaT = T1^-1*T2;
-    
-    deltaARnorm(i - 1) = norm(tAR(i, :) - tAR(i - 1, :));
     
     j2 = timesAR(i);
     j1 = timesAR(i - 1);
@@ -38,23 +35,19 @@ for i=2:size(timesAR, 2)
     GT1 = poseMatrix(tgt(j1, :)',  qgt(j1, :));
     deltaGT = GT1^-1*GT2;
     
-    deltaGTnorm(i - 1) = norm(tgt(j2, :) - tgt(j1, :));
-    
     deltaDeltaAR{i - 1} = deltaGT^-1 * deltaT;
-    deltaDeltaARnorm(i - 1) = norm(deltaDeltaAR{i-1}(1:3,4));
+    deltaDeltaARnorm(i - 1, 1) = norm(extractTranslation(deltaDeltaAR{i-1}));
+    deltaDeltaARnorm(i - 1, 2) = norm(extractEuler(deltaDeltaAR{i-1}));
 end
 
 deltaDeltaFHP = cell(size(xFHP, 1) - 1, 1);
 timesFHP = matchingTimes(xFHP(:, 1)', x(:, 1)');
-deltaDeltaFHPnorm = zeros(size(xFHP, 1) - 1, 1);
-deltaFHPnorm = zeros(size(xAR, 1) - 1, 1); 
+deltaDeltaFHPnorm = zeros(size(xFHP, 1) - 1, 2);
 
 for i=2:size(timesFHP, 2)
     T2 = poseMatrix(tFHP(i, :)', qFHP(i, :));
     T1 = poseMatrix(tFHP(i - 1, :)', qFHP(i - 1, :));
     deltaT = T1^-1*T2;
-    
-    deltaFHPnorm(i - 1) = norm(tFHP(i, :) - tFHP(i - 1, :));
     
     j2 = timesAR(i);
     j1 = timesAR(i - 1);
@@ -63,7 +56,8 @@ for i=2:size(timesFHP, 2)
     deltaGT = GT1^-1*GT2;
     
     deltaDeltaFHP{i - 1} = deltaGT^-1 * deltaT;
-    deltaDeltaFHPnorm(i - 1) = norm(deltaDeltaFHP{i-1}(1:3,4));
+    deltaDeltaFHPnorm(i - 1, 1) = norm(extractTranslation(deltaDeltaFHP{i-1}));
+    deltaDeltaFHPnorm(i - 1, 2) = norm(extractEuler(deltaDeltaFHP{i-1}));
 end
 
 %% Load landmarks results
@@ -133,16 +127,53 @@ axis equal
 
 %% plot delta comparison
 
+% translation
 figure(2)
+clf
 hold on
 
-plot(deltaDeltaFHPnorm,'m') 
-plot(deltaDeltaARnorm,'b')
+plot(deltaDeltaFHPnorm(:, 1),'m') 
+plot(deltaDeltaARnorm(:, 1),'b')
 
-
+% angles
 figure(3)
+clf
 hold on
 
-plot(deltaARnorm, 'b');
-plot(deltaGTnorm, 'k');
-plot(deltaFHPnorm, 'm');
+plot(deltaDeltaFHPnorm(:, 2),'m') 
+plot(deltaDeltaARnorm(:, 2),'b')
+
+
+%% plot csv
+
+% print deltaFHPnorm with timestamp
+
+stampedDeltaDeltaFHPnorm = [xFHP(1:end-1, 1), deltaDeltaFHPnorm];
+csvwrite('./csv/deltaDeltaFHPnorm.csv', stampedDeltaDeltaFHPnorm)
+stampedDeltaDeltaARnorm = [xAR(1:end-1, 1), deltaDeltaARnorm];
+csvwrite('./csv/deltaDeltaARnorm.csv', stampedDeltaDeltaARnorm)
+
+% print euler and transation with timestamp
+
+stampedDeltaDeltaFHP = zeros(size(deltaDeltaFHP, 1), 7);
+for i = 1:size(deltaDeltaFHP, 1)
+    T = deltaDeltaFHP{i};
+    t = extractTranslation(T);
+    euler = extractEuler(T);
+    stampedDeltaDeltaFHP(i, :) = [ xFHP(i, 1), t', euler ];
+    
+end
+
+csvwrite('./csv/deltaDeltaFHP.csv', stampedDeltaDeltaFHP)
+
+stampedDeltaDeltaAR = zeros(size(deltaDeltaAR, 1), 7);
+for i = 1:size(deltaDeltaAR, 1)
+    T = deltaDeltaAR{i};
+    t = extractTranslation(T);
+    euler = extractEuler(T);
+    stampedDeltaDeltaAR(i, :) = [ xAR(i, 1), t', euler ];
+end
+
+csvwrite('./csv/deltaDeltaAR.csv', stampedDeltaDeltaAR)
+
+
