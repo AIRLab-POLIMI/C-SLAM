@@ -172,16 +172,11 @@ bool AnchoredRectangleHandler::initFeature(const std::string& sensor,
   _filter->addSensor(sensor_first, AnchoredRectangularObjectFirst, false,
       false);
   _filter->shareSensorFrame("Camera", sensor_first);
+
   _filter->shareParameter("Camera_CM", sensor_first + "_CM");
-
-  _filter->addConstantParameter(Euclidean2D, sensor_first + "_Dim", 0.0, dim0,
-      false);
-
-  _filter->addConstantParameter(Quaternion, sensor_first + "_FOq",
-      pv->getTimestamp(), foq0, false);
-
-  _filter->addConstantParameter(Euclidean3D, sensor_first + "_FOhp",
-      pv->getTimestamp(), fohp0, false);
+  _filter->shareParameter(sensor + "_Dim", sensor_first + "_Dim");
+  _filter->shareParameter(sensor + "_FOq", sensor_first + "_FOq");
+  _filter->shareParameter(sensor + "_FOhp", sensor_first + "_FOhp");
 
   /* prior on homogeneous point
    const double sigma_pixel = 1;
