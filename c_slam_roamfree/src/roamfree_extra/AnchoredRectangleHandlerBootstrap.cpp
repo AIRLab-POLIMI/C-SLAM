@@ -30,132 +30,132 @@
 using namespace ROAMestimation;
 using namespace std;
 
-namespace ROAMvision
-{
+namespace ROAMvision {
 AnchoredRectangleHandlerBootstrap::AnchoredRectangleHandlerBootstrap(
-			double initialDepth) :
-			AnchoredRectangleHandler(initialDepth)
-{
-	_bootstrap = true;
+    double initialDepth) :
+    AnchoredRectangleHandler(initialDepth) {
+  _bootstrap = true;
 }
 
 bool AnchoredRectangleHandlerBootstrap::addFeatureObservation(long int id,
-			double t, const Eigen::VectorXd &z, const Eigen::MatrixXd &cov)
-{
-	if (_bootstrap && AnchoredRectangleHandler::getNActiveFeatures() > 3)
-	{
-		_bootstrap = false;
-	}
+    double t, const Eigen::VectorXd &z, const Eigen::MatrixXd &cov) {
+  if (_bootstrap && AnchoredRectangleHandler::getNActiveFeatures() > 3) {
+    _bootstrap = false;
+  }
 
-	return AnchoredRectangleHandler::addFeatureObservation(id, t, z, cov);
+  return AnchoredRectangleHandler::addFeatureObservation(id, t, z, cov);
 }
 
 void AnchoredRectangleHandlerBootstrap::fixImmutableFeaturePoses(
-			const Eigen::VectorXd &pose, double percentageThreshold)
-{
-	map<double, unsigned int> candidates;
+    const Eigen::VectorXd &pose, double percentageThreshold) {
+  map<double, unsigned int> candidates;
 
-	for (auto& feature : _objects)
-	{
-		auto& map = feature.second.zHistory;
-		voteFixedPoseCandidates(candidates, map);
-	}
+  for (auto& feature : _objects) {
+    auto& map = feature.second.zHistory;
+    voteFixedPoseCandidates(candidates, map);
+  }
 
-	for (auto& candidate : candidates)
-	{
-		double percentage = static_cast<double>(candidate.second)
-					/ static_cast<double>(_objects.size());
+  for (auto& candidate : candidates) {
+    double percentage = static_cast<double>(candidate.second)
+        / static_cast<double>(_objects.size());
 
-		if (percentage >= percentageThreshold)
-		{
-			auto pose_ptr = _filter->getNearestPoseByTimestamp(candidate.first);
-			pose_ptr->setEstimate(pose);
-			pose_ptr->setFixed(true);
-		}
-	}
+    if (percentage >= percentageThreshold) {
+      auto pose_ptr = _filter->getNearestPoseByTimestamp(candidate.first);
+      pose_ptr->setEstimate(pose);
+      pose_ptr->setFixed(true);
+    }
+  }
 
 }
 
 bool AnchoredRectangleHandlerBootstrap::initFeature(const std::string& sensor,
-			const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv,
-			long int id)
-{
-	if (_bootstrap)
-	{
-		const Eigen::VectorXd &anchor_frame = pv->getEstimate();
-		Eigen::VectorXd dim0(2), f0(7), foq0(4), fohp0(3);
+    const Eigen::VectorXd& z, ROAMestimation::PoseVertexWrapper_Ptr pv,
+    long int id) {
+  if (_bootstrap) {
+    const Eigen::VectorXd &anchor_frame = pv->getEstimate();
+    Eigen::VectorXd dim0(2), f0(7), foq0(4), fohp0(3);
 
-		initRectangle(anchor_frame, _lambda, z, dim0, fohp0, foq0);
+    initRectangle(anchor_frame, _lambda, z, dim0, fohp0, foq0);
 
-		_filter->addSensor(sensor, AnchoredRectangularObject, false, false);
-		_filter->shareSensorFrame("Camera", sensor);
-		_filter->shareParameter("Camera_CM", sensor + "_CM");
+    _filter->addSensor(sensor, AnchoredRectangularObject, false, false);
+    _filter->shareSensorFrame("Camera", sensor);
+    _filter->shareParameter("Camera_CM", sensor + "_CM");
 
-		_filter->addConstantParameter(Euclidean2D, sensor + "_Dim", 0.0, dim0,
-					false);
+    _filter->addConstantParameter(Euclidean2D, sensor + "_Dim", 0.0, dim0,
+        false);
 
-		_filter->poseVertexAsParameter(pv, sensor + "_F");
+    _filter->poseVertexAsParameter(pv, sensor + "_F");
 
-		_filter->addConstantParameter(Quaternion, sensor + "_FOq", pv->getTimestamp(), foq0,
-					false);
+    _filter->addConstantParameter(Quaternion, sensor + "_FOq",
+        pv->getTimestamp(), foq0, false);
 
-		_filter->addConstantParameter(Euclidean3D, sensor + "_FOhp", pv->getTimestamp(), fohp0,
-					false);
+    _filter->addConstantParameter(Euclidean3D, sensor + "_FOhp",
+        pv->getTimestamp(), fohp0, false);
 
-		// prior on homogeneous point
-		const double sigma_pixel = 1;
+    // add the sensor for the first edge only
 
-		Eigen::MatrixXd prior_cov(3, 3);
+    std::string sensor_first = sensor + "_first";
 
-		prior_cov << sigma_pixel / pow(_fx, 2), 0, 0, 0, sigma_pixel
-					/ pow(_fy, 2), 0, 0, 0, pow(_lambda / 3.0, 2);
+    _filter->addSensor(sensor_first, AnchoredRectangularObjectFirst, false,
+        false);
+    _filter->shareSensorFrame("Camera", sensor_first);
+    _filter->shareParameter("Camera_CM", sensor_first + "_CM");
 
-		_filter->addPriorOnConstantParameter(Euclidean3DPrior, sensor + "_FOhp",
-					fohp0, prior_cov);
+    _filter->addConstantParameter(Euclidean2D, sensor_first + "_Dim", 0.0, dim0,
+        false);
 
-		//add to current track list
-		ObjectTrackDescriptor &d = _objects[id];
+    _filter->addConstantParameter(Quaternion, sensor_first + "_FOq",
+        pv->getTimestamp(), foq0, false);
 
-		d.anchorFrame = pv;
-		d.isInitialized = false;
-		d.initStrategy = new ObjectSufficientZChange(2.0, d.zHistory,
-					_K.data());
+    _filter->addConstantParameter(Euclidean3D, sensor_first + "_FOhp",
+        pv->getTimestamp(), fohp0, false);
 
-		//_filter->setRobustKernel(sensor, true, 3.0);
+    /* prior on homogeneous point
+     const double sigma_pixel = 1;
 
-		cerr << "[AnchoredRectangleHandler] New rectangle, id " << id << endl;
+     Eigen::MatrixXd prior_cov(3, 3);
 
-		return true;
+     prior_cov << sigma_pixel / pow(_fx, 2), 0, 0, 0, sigma_pixel / pow(_fy, 2), 0, 0, 0, pow(
+     _lambda / 3.0, 2);
 
-		return true;
+     _filter->addPriorOnConstantParameter(Euclidean3DPrior, sensor + "_FOhp",
+     fohp0, prior_cov);
+     //*/
 
-	}
-	else
-	{
-		return AnchoredRectangleHandler::initFeature(sensor, z, pv, id);
-	}
+    //add to current track list
+    ObjectTrackDescriptor &d = _objects[id];
+
+    d.anchorFrame = pv;
+    d.isInitialized = false;
+    d.initStrategy = new ObjectSufficientZChange(2.0, d.zHistory, _K.data());
+
+    //_filter->setRobustKernel(sensor, true, 3.0);
+
+    cerr << "[AnchoredRectangleHandler] New rectangle, id " << id << endl;
+
+    return true;
+
+    return true;
+
+  } else {
+    return AnchoredRectangleHandler::initFeature(sensor, z, pv, id);
+  }
 }
 
 void AnchoredRectangleHandlerBootstrap::voteFixedPoseCandidates(
-			std::map<double, unsigned int>& candidates,
-			ObjectObservationMap& map)
-{
-	auto it = map.begin();
-	Eigen::Matrix<double, 8, 1>& firstObservation = it->second.z;
+    std::map<double, unsigned int>& candidates, ObjectObservationMap& map) {
+  auto it = map.begin();
+  Eigen::Matrix<double, 8, 1>& firstObservation = it->second.z;
 
-	while (it != map.end())
-	{
-		if (it->second.z == firstObservation)
-		{ //TODO threshold over squared norm of difference
-			candidates[it->second.pose->getTimestamp()]++;
-			it++;
-		}
-		else
-		{
-			break;
-		}
+  while (it != map.end()) {
+    if (it->second.z == firstObservation) { //TODO threshold over squared norm of difference
+      candidates[it->second.pose->getTimestamp()]++;
+      it++;
+    } else {
+      break;
+    }
 
-	}
+  }
 }
 
 }
