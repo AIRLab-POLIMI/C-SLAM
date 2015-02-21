@@ -141,6 +141,24 @@ for i = 1:4:size(deltaTracksFHP, 1)
     end
 end
 
+% compute width and ff errors
+deltaDim = zeros(numRectangles, 2);
+for i = 1:numRectangles
+   if ~isempty(tracksAR{i}{2})
+       logAR_Dim = tracksAR{i}{2};
+       logAR_HP = tracksAR{i}{3};
+       [wbari, ffi] = getDimensions(logAR_Dim);
+       [~, omegai] = getHP(logAR_HP);
+
+       wi = wbari/omegai;
+       wgt = norm(landmarksGT(i, 1:3) - landmarksGT(i, 4:6));
+       hgt = norm(landmarksGT(i, 1:3) - landmarksGT(i, 10:12));
+       ffgt = wgt / hgt;
+
+       deltaDim(i, :) = [wi - wgt, ffi - ffgt];
+   end
+end
+
 %% Print trajectories and landmarks
 figure(1)
 clf
@@ -203,6 +221,20 @@ title('Track norm error')
 plot(deltaTracksFHPnorm, 'm');
 plot(deltaTracksARnorm, 'b');
 
+% delta w
+figure(5)
+clf
+hold on
+title('W error module');
+plot(deltaDim(: , 1));
+
+% delta dim
+figure(6)
+clf
+hold on
+title('ff error module'); 
+plot(deltaDim(: , 2));
+
 %% plot csv
 
 % print deltaFHPnorm with timestamp
@@ -244,4 +276,6 @@ csvwrite('./csv/deltaTracksARnorm.csv', deltaTracksARnorm);
 csvwrite('./csv/deltaTracksFHP.csv', deltaTracksFHP);
 csvwrite('./csv/deltaTracksAR.csv', deltaTracksAR);
 
+% print dim error
+csvwrite('./csv/deltaDim.csv', deltaDim);
 
