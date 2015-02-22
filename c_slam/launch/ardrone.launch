@@ -4,7 +4,6 @@
 <launch>
 	<!-- Launches the AR.Drone driver -->
 	<node name="ardrone_driver" pkg="ardrone_autonomy" type="ardrone_driver" output="screen" clear_params="true">
-		<param name="do_imu_caliberation" value="1" />
 		<param name="outdoor" value="0" />				<!-- If we are flying outdoors, will select more aggressive default settings -->
 		<param name="flight_without_shell" value="0" /> <!-- Changes internal controller gains if we are flying without the propeller guard -->
 

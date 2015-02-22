@@ -145,17 +145,17 @@ bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
 {
 	int min1 = min(v1[1], v1[3]);
 	int max1 = max(v1[1], v1[3]);
-	int l1 = max1 - min1;
+	int l1 = max1 - min1; //FIXME this is wrong. rotation is needed
 
 	int min2 = min(v2[1], v2[3]);
 	int max2 = max(v2[1], v2[3]);
-	int l2 = max1 - min1;
+	int l2 = max1 - min1; //FIXME this is wrong. rotation is needed
 
 	int overlap = max(0, min(max1, max2) - max(min1, min2));
 
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
-	//TODO: compute real overlap % using angle
+	//FIXME: compute real overlap % using angle
 	return percentualOverlap > quadP.verticalOverlap;
 
 }
@@ -165,17 +165,17 @@ bool QuadrilateralDetector::hasSufficientHorizontallOverlap(Vec4i& h1,
 {
 	int min1 = min(h1[0], h1[2]);
 	int max1 = max(h1[0], h1[2]);
-	int l1 = max1 - min1;
+	int l1 = max1 - min1; //FIXME this is wrong. rotation is needed
 
 	int min2 = min(h2[0], h2[2]);
 	int max2 = max(h2[0], h2[2]);
-	int l2 = max1 - min1;
+	int l2 = max1 - min1; //FIXME this is wrong. rotation is needed
 
 	int overlap = max(0, min(max1, max2) - max(min1, min2));
 
 	double percentualOverlap = (double) overlap / min(l1, l2);
 
-	//TODO: compute real overlap % using angle
+	//FIXME: compute real overlap % using angle
 	return percentualOverlap > quadP.horizontalOverlap;
 
 }
@@ -240,6 +240,7 @@ bool QuadrilateralDetector::hasSufficientSupportH(Vec4i& h, Point a, Point b)
 bool QuadrilateralDetector::hasSuficientCorners(cv::Point& x, cv::Point& y,
 			cv::Point& z, cv::Point& w)
 {
+	return true; ///FIXME TOGLIERE!!!
 	CornerResult xRes = cornerClassifier.getResult(x);
 	CornerResult yRes = cornerClassifier.getResult(y);
 	CornerResult zRes = cornerClassifier.getResult(z);

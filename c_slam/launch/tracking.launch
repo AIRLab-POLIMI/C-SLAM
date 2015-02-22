@@ -7,7 +7,7 @@
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
 	
-	<rosparam param="K">[565.59102697808, 0.0, 337.839450567586, 0.0, 563.936510489792, 199.522081717361, 0.0, 0.0, 1.0]</rosparam>
+	<rosparam param="K">[460.890258789062, 0.0, 343.462058902507, 0.0, 529.505432128906, 201.160554159542, 0.0, 0.0, 1.0]</rosparam>
 	
 	<!-- Camera processing -->
 	<group ns="$(arg camera_source)">
@@ -36,30 +36,12 @@
 	      type="c_vision_recognizer" 
 	      output="screen">
 	    <!-- canny params -->
-		<param name="canny_alpha" value="0.2" />
-		<param name="canny_apertureSize" value="3" />
-		<param name="canny_low" value="15" />    <!-- 10 -->
-		<param name="canny_high" value="45" />   <!-- 30 -->
 		<param name="canny_blur" value="3" />
 		
-		<!-- hough params -->
-		<param name="hough_rho" value="1" />
-		<param name="hough_teta" value="1.0" />
-		<param name="hough_threshold" value="50" />
-		<param name="hough_minLineLenght" value="20" />
-		<param name="hough_maxLineGap" value="15" />
+		<!-- Overlap params -->
+		<param name="quad_verticalOverlap" value="0.3" />
+		<param name="quad_horizontalOverlap" value="0.3" />
 		
-		<!-- line filter params -->
-		<param name="filter_maxDeltaHorizontal" value="10.0" />
-		<param name="filter_maxDeltaVertical" value="5.0" />
-		
-		<!-- cluster params -->
-		<param name="cluster_threshold" value="30" />
-		<param name="cluster_minPoints" value="4" />
-		<param name="cluster_maxDistance" value="15.0" />		
-		
-		<!-- classifier params -->
-		<param name="classifier_threshold" value="0.2" />
 	</node>	
 	
 	<node name="c_fuzzy_reasoner" 
