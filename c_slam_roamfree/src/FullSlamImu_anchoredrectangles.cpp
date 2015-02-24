@@ -107,7 +107,7 @@ void FullSlamImu_anchoredrectangles::tracksCb(
 	Eigen::VectorXd z(8);
 	z << msg.polygon.points[0].x, msg.polygon.points[0].y, msg.polygon.points[1].x, msg.polygon.points[1].y, msg.polygon.points[2].x, msg.polygon.points[2].y, msg.polygon.points[3].x, msg.polygon.points[3].y;
 
-	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(8, 8);
+	static const Eigen::MatrixXd cov = 0.25*Eigen::MatrixXd::Identity(8, 8);
 
 	tracksHandler->addFeatureObservation(msg.id, t, z, cov);
 

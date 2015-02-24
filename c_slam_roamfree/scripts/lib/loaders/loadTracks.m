@@ -3,7 +3,7 @@ function [ tracksFHP ] = loadTracks( path, numtracks )
 %   Detailed explanation goes here
 
 tracksFHP = cell(numtracks, 2);
-for M = 0:numtracks
+for M = 0:numtracks-1
     edgename = sprintf('Track_%d', M);
     
     edgef = sprintf('%s/dataset/FHP/%s.log',path, edgename);

@@ -7,12 +7,12 @@
 
 	<!-- Node that allows for playing and pausing the bag pragmatically -->
 	<include file="$(find rosbag_controller)/launch/rosbag_controller.launch">
-		<arg name="bag" value="$(find c_slam)/bags/firefly.bag"/>
+		<arg name="bag" value="$(find c_slam)/bags/firefly6.bag"/>
 	</include>
 	
     <node name="c_localization" 
           pkg="c_slam_roamfree" 
-          type="c_localization_anchoredrectangles"  
+          type="c_localization"  
           output="screen" 
           launch-prefix="">
     

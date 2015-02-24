@@ -101,7 +101,7 @@ void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg)
 
 	double t = msg.imageStamp.toSec();
 
-	static const Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(2, 2);
+	static const Eigen::MatrixXd cov = 0.25*Eigen::MatrixXd::Identity(2, 2);
 
 	for (int k = 0; k < 4; k++)
 	{

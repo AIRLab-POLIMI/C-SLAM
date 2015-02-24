@@ -4,7 +4,7 @@ function [ tracksAR ] = loadRectangles( path, numRectangles )
 
 tracksAR = cell(numRectangles, 4);
 
-for M = 0:numRectangles
+for M = 0:numRectangles-1
     edgename = sprintf('Track_%d', M);
     
     edgef = sprintf('%s/dataset/AR/%s.log',path, edgename);
