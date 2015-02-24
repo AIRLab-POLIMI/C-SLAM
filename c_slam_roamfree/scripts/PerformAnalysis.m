@@ -239,9 +239,10 @@ plot(deltaDim(: , 2));
 
 % print deltaFHPnorm with timestamp
 
-stampedDeltaDeltaFHPnorm = [xFHP(1:end-1, 1), deltaDeltaFHPnorm];
+% discard the first pose
+stampedDeltaDeltaFHPnorm = [xFHP(2:end-1, 1)-xFHP(2,1), deltaDeltaFHPnorm(2:end,:)];
 csvwrite('./csv/deltaDeltaFHPnorm.csv', stampedDeltaDeltaFHPnorm)
-stampedDeltaDeltaARnorm = [xAR(1:end-1, 1), deltaDeltaARnorm];
+stampedDeltaDeltaARnorm = [xAR(2:end-1, 1)-xFHP(2,1), deltaDeltaARnorm(2:end,:)];
 csvwrite('./csv/deltaDeltaARnorm.csv', stampedDeltaDeltaARnorm)
 
 % print euler and transation with timestamp
@@ -269,8 +270,11 @@ csvwrite('./csv/deltaDeltaAR.csv', stampedDeltaDeltaAR)
 
 
 % print tracks error norm
-csvwrite('./csv/deltaTracksFHPnorm.csv', deltaTracksFHPnorm);
-csvwrite('./csv/deltaTracksARnorm.csv', deltaTracksARnorm);
+
+fN = 1-0.25*3/2:0.25:(numRectangles+0.25*3/2);
+
+csvwrite('./csv/deltaTracksFHPnorm.csv', [fN' deltaTracksFHPnorm]);
+csvwrite('./csv/deltaTracksARnorm.csv', [fN' deltaTracksARnorm]);
 
 % print tracks error
 csvwrite('./csv/deltaTracksFHP.csv', deltaTracksFHP);
