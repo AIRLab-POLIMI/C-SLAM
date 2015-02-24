@@ -2,7 +2,7 @@
  * c_vision,
  *
  *
- * Copyright (C) 2014 Davide Tateo
+ * Copyright (C) 2015 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_vision.
@@ -21,24 +21,31 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ros/ros.h>
-
-#include "ParameterServer.h"
-#include "RecognizerLogic.h"
-
 #include "performances/PerformanceEstimator.h"
 
-int main(int argc, char *argv[])
+PerformanceEstimator::PerformanceEstimator(std::string& objectClass) :
+			objectClass(objectClass)
 {
-	ros::init(argc, argv, "cognitive_vision");
-	ros::NodeHandle n;
-
-	ParameterServer parameterServer;
-	RecognizerLogic logic(n, parameterServer);
-
-	ros::spin();
-
-	std::cout << "Recall for object " << pe->getObjectClass() << ": " << pe->getRecall() << std::endl;
-	std::cout << "hits :" << pe->getHit() << " total: " << pe->getTotal() << std::endl;
-
+	wasHit = false;
+	hit = 0;
+	total = 0;
 }
+
+void PerformanceEstimator::processNewFrame()
+{
+	total++;
+	wasHit = false;
+}
+
+void PerformanceEstimator::tryFeature(std::string& temptativeClass)
+{
+	if(!wasHit && temptativeClass == objectClass)
+	{
+		hit++;
+		wasHit = true;
+	}
+}
+
+std::string classname = "PossibleDoor";
+PerformanceEstimator* pe = new PerformanceEstimator(classname);
+

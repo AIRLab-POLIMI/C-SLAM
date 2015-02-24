@@ -38,9 +38,13 @@
 	    <!-- canny params -->
 		<param name="canny_blur" value="3" />
 		
+		<!-- Line params -->
+		<param name="filter_maxDeltaHorizontal" value="10.0" />
+		<param name="filter_maxDeltaVertical" value="10.0" />
+		
 		<!-- Overlap params -->
-		<param name="quad_verticalOverlap" value="0.3" />
-		<param name="quad_horizontalOverlap" value="0.3" />
+		<param name="quad_verticalOverlap" value="0.0" />
+		<param name="quad_horizontalOverlap" value="0.0" />
 		
 	</node>	
 	
