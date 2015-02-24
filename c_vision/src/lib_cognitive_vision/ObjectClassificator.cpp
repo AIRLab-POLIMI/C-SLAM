@@ -22,7 +22,10 @@
  */
 
 #include "ObjectClassificator.h"
-//#include <iostream> //TODO cancellare
+
+//FIXME levami
+#include "performances/PerformanceEstimator.h"
+//FIXME
 
 using namespace c_fuzzy;
 using namespace std;
@@ -71,6 +74,10 @@ void ObjectClassificator::labelFeatures()
 {
 	vector<ObjectClassification>& results = classification.response.results;
 
+	//FIXME LEVARE
+	pe->processNewFrame();
+	//FIXME
+
 	for (vector<ObjectClassification>::iterator i = results.begin();
 				i != results.end(); ++i)
 	{
@@ -82,6 +89,10 @@ void ObjectClassificator::labelFeatures()
 					j != outputs.end(); ++j)
 		{
 			feature.addClassification(j->className, j->membership);
+
+			//FIXME LEVARE
+			pe->tryFeature(j->className);
+			//FIXME
 		}
 	}
 

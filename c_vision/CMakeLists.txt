@@ -43,7 +43,8 @@ add_library(cognitive_vision STATIC
 			${LIB_VISION_SOURCE_DIR}/AdvancedDetector.cpp
 			${LIB_VISION_SOURCE_DIR}/SimpleDetector.cpp
 			${LIB_VISION_SOURCE_DIR}/ImageView.cpp 
-			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp)
+			${LIB_VISION_SOURCE_DIR}/ObjectClassificator.cpp
+			src/performances/PerformanceEstimator.cpp)
 			
 			
 
