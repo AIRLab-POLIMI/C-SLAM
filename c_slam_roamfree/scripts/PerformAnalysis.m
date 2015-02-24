@@ -49,8 +49,8 @@ for i=2:size(timesFHP, 2)
     T1 = poseMatrix(tFHP(i - 1, :)', qFHP(i - 1, :));
     deltaT = T1^-1*T2;
     
-    j2 = timesAR(i);
-    j1 = timesAR(i - 1);
+    j2 = timesFHP(i);
+    j1 = timesFHP(i - 1);
     GT2 = poseMatrix(tgt(j2, :)',  qgt(j2, :));
     GT1 = poseMatrix(tgt(j1, :)',  qgt(j1, :));
     deltaGT = GT1^-1*GT2;
