@@ -57,6 +57,10 @@ public:
 	int imu_N;
 	double imu_dt;
 
+	//Noise generation data
+	double gyro_stdev, acc_stdev, pixel_stdev;
+
+	Eigen::VectorXd gyro_generated_bias, acc_generated_bias;
 
 	//Camera calibration
 	Eigen::VectorXd K;

@@ -16,25 +16,32 @@
           output="screen" 
           launch-prefix="">
     
-     	<!-- Ros stuff -->
+    <!-- Ros stuff -->
 		<param name="trackedFrame" value="camera_link" />
-		<param name="imuTopic" value="/firefly/imu" />
+		<param name="imuTopic" value="/firefly/ground_truth/imu" />
 
 		<!-- Initial pose -->
 		<rosparam param="initialPose">[0.0, 0.0, 0.08, 0.5, -0.5, 0.5, -0.5]</rosparam>
 
 		<rosparam param="T_O_IMU">[0.0, 0.0, 0.0, 0.5, 0.5, -0.5, 0.5]</rosparam>
-
 		<rosparam param="T_O_CAMERA">[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]</rosparam>
+		
+		<!-- Noise Generation -->
+		<param name="accStd" value="0.04"/>
+		<param name="genAccBiasStd" value="0.1"/>
+		
+		<param name="gyroStd" value="0.0034"/>
+		<param name="genGyroBiasStd" value="0.01"/>
+		
+		<param name="pixelStd" value="2.0"/>
 
 		<!-- Imu bias -->
 		<param name="isAccBiasFixed" value="False" />
+		<!-- default to zero <rosparam param="accBias">[0.1939, 0.0921, -0.2989]</rosparam> -->
 
-		<rosparam param="accBias">[0.1939, 0.0921, -0.2989]</rosparam>
-
+		<!-- Gyro bias -->
 		<param name="isGyroBiasFixed" value="False" />
-
-		<rosparam param="gyroBias">[-0.0199, 0.0077, -0.0099]</rosparam>
+		<!-- default to zero <rosparam param="gyroBias">[-0.0199, 0.0077, -0.0099]</rosparam> -->
 
 		<!-- Imu data -->
 		<param name="imu_N" value="10" />
@@ -50,7 +57,7 @@
 
 		<!-- Optimization method -->
 		<param name="useGaussNewton" value="True" />
-		<param name="iterationN" value="10" />
+		<param name="iterationN" value="1" />
     </node>
           
 	 <node name="firefly_room_test" 

@@ -6,7 +6,7 @@ set output "draw_errors.eps"
 
 set datafile separator ","
 
-set lmargin 6
+set lmargin 5
 set rmargin 1
 
 set size 0.65,1.2
@@ -34,15 +34,16 @@ set tmargin 0
 set bmargin 0
 
 #set format x ""
+set format y "%.0f"
 
-set ylabel "translation error [m]" offset 1, 0
+set ylabel "translation error [cm]" offset 1, 0
 
 unset xtics
-set ytics autofreq 
+set ytics autofreq 5 
 
 
-plot "../csv/deltaDeltaFHPnorm.csv" using 1:($2) with filledcurve x1 ls 1 title "FHP", \
-     "../csv/deltaDeltaARnorm.csv" using 1:($2) with filledcurve x1 ls 2 title "FSP"
+plot "../csv/deltaDeltaFHPnorm.csv" using 1:($2 * 100) with filledcurve x1 ls 1 title "FHP", \
+     "../csv/deltaDeltaARnorm.csv" using 1:($2 * 100) with filledcurve x1 ls 2 title "FSP"
 
 
 ########## ANGULAR ERROR ##########
@@ -55,16 +56,15 @@ set tmargin 0
 set bmargin 0
 
 set format x "%.0f"
+set format y "%.0f"
 set xlabel "t [s]"
 
-set ylabel "angular error [rad]" offset 1, 0
+set ylabel "angular error [deg]" offset 1, 0
 
-set ytics autofreq
+set yrange [0:11]
+
+set ytics autofreq 2
 set xtics autofreq 10
 
-plot "../csv/deltaDeltaFHPnorm.csv" using 1:($3) with filledcurve x1 ls 1 title "FHP", \
-     "../csv/deltaDeltaARnorm.csv" using 1:($3) with filledcurve x1 ls 2 title "FSP"
-  
-     
-unset multiplot
-
+plot "../csv/deltaDeltaFHPnorm.csv" using 1:($3*180) with filledcurve x1 ls 1 title "FHP", \
+     "../csv/deltaDeltaARnorm.csv" using 1:($3*180) with filledcurve x1 ls 2 title "FSP"

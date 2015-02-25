@@ -37,7 +37,7 @@ public:
 			const Eigen::VectorXd &z, const Eigen::MatrixXd &cov);
 
 	void fixImmutableFeaturePoses(const Eigen::VectorXd &pose,
-			double percentageThreshold);
+			double percentageThreshold, double minZDistance);
 
 	inline bool bootstrapCompleted() const {
 		return !_bootstrap;
@@ -49,7 +49,7 @@ protected:
 
 	void voteFixedPoseCandidates(
 			std::map<double, unsigned int>& candidates,
-			ObjectObservationMap& map);
+			ObjectObservationMap& map, double minZDistance);
 
 	bool _bootstrap;
 };

@@ -39,6 +39,8 @@ public:
 	inline void setBias(const Eigen::VectorXd& accBias,
 				const Eigen::VectorXd& gyroBias)
 	{
+	  assert(!initialized); // if it is already initialized we can no longer set the biases
+
 		this->accBias = accBias;
 		this->gyroBias = gyroBias;
 	}

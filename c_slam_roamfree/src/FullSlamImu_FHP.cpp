@@ -8,8 +8,9 @@
 #include "FullSlamImu_FHP.h"
 
 #include <visualization_msgs/Marker.h>
-
 #include <roscpp/Empty.h>
+
+#include "NoiseGeneration.h"
 
 using namespace ROAMestimation;
 
@@ -42,7 +43,7 @@ void FullSlamImu_FHP::run() {
     /*&& tracksHandler->getNActiveFeatures() >= 3*/) {
       filter->getOldestPose()->setFixed(true);
       tracksHandler->fixImmutableFeaturePoses(
-          filter->getOldestPose()->getEstimate(), 1.0);
+          filter->getOldestPose()->getEstimate(), 0.75, config.pixel_stdev);
 
       //ROS_INFO("Run estimation");
       /*std::cerr << "Run estimation" << std::endl;
@@ -95,6 +96,8 @@ void FullSlamImu_FHP::tracksCb(const c_slam_msgs::TrackedObject& msg) {
     Eigen::VectorXd z(2);
 
     z << msg.polygon.points[k].x, msg.polygon.points[k].y;
+
+    add_gaussian_noise(z.data(), 2, 0.0, config.pixel_stdev);
 
     if (pointInImage(z))
       tracksHandler->addFeatureObservation(msg.id * 4 + k, t, z, cov);

@@ -10,6 +10,8 @@
 #include <visualization_msgs/Marker.h>
 #include <roscpp/Empty.h>
 
+#include "NoiseGeneration.h"
+
 using namespace ROAMestimation;
 using namespace ROAMvision;
 using namespace std;
@@ -50,7 +52,7 @@ void FullSlamImu_anchoredrectangles::run()
 		{
 			filter->getOldestPose()->setFixed(true);
 			tracksHandler->fixImmutableFeaturePoses(
-						filter->getOldestPose()->getEstimate(), 1.0);
+						filter->getOldestPose()->getEstimate(), 0.75, 4.0*config.pixel_stdev); // 1 pixel for each of the four measurements.
 
 			//ROS_INFO("Run estimation");
 			/*std::cerr << "Run estimation" << std::endl;
@@ -106,6 +108,8 @@ void FullSlamImu_anchoredrectangles::tracksCb(
 	// compute the center of mass
 	Eigen::VectorXd z(8);
 	z << msg.polygon.points[0].x, msg.polygon.points[0].y, msg.polygon.points[1].x, msg.polygon.points[1].y, msg.polygon.points[2].x, msg.polygon.points[2].y, msg.polygon.points[3].x, msg.polygon.points[3].y;
+
+	add_gaussian_noise(z.data(), 8, 0.0, config.pixel_stdev);
 
 	static const Eigen::MatrixXd cov = 0.25*Eigen::MatrixXd::Identity(8, 8);
 

@@ -47,12 +47,13 @@ bool AnchoredRectangleHandlerBootstrap::addFeatureObservation(long int id,
 }
 
 void AnchoredRectangleHandlerBootstrap::fixImmutableFeaturePoses(
-    const Eigen::VectorXd &pose, double percentageThreshold) {
+    const Eigen::VectorXd &pose, double percentageThreshold,
+    double minZDistance) {
   map<double, unsigned int> candidates;
 
   for (auto& feature : _objects) {
     auto& map = feature.second.zHistory;
-    voteFixedPoseCandidates(candidates, map);
+    voteFixedPoseCandidates(candidates, map, minZDistance);
   }
 
   for (auto& candidate : candidates) {
@@ -138,12 +139,20 @@ bool AnchoredRectangleHandlerBootstrap::initFeature(const std::string& sensor,
 }
 
 void AnchoredRectangleHandlerBootstrap::voteFixedPoseCandidates(
-    std::map<double, unsigned int>& candidates, ObjectObservationMap& map) {
+    std::map<double, unsigned int>& candidates, ObjectObservationMap& map,
+    double minZDistance) {
   auto it = map.begin();
   Eigen::Matrix<double, 8, 1>& firstObservation = it->second.z;
 
   while (it != map.end()) {
-    if (it->second.z == firstObservation) { //TODO threshold over squared norm of difference
+    const Eigen::VectorXd &cur = it->second.z;
+
+    if ((cur.segment(0, 2) - firstObservation.segment(0, 2)).norm()
+        + (cur.segment(2, 2) - firstObservation.segment(2, 2)).norm()
+        + (cur.segment(4, 2) - firstObservation.segment(4, 2)).norm()
+        + (cur.segment(6, 2) - firstObservation.segment(6, 2)).norm()
+        <= minZDistance) {
+
       candidates[it->second.pose->getTimestamp()]++;
       it++;
     } else {
