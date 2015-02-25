@@ -271,7 +271,9 @@ csvwrite('./csv/deltaDeltaAR.csv', stampedDeltaDeltaAR)
 
 % print tracks error norm
 
-fN = 1-0.25*3/2:0.25:(numRectangles+0.25*3/2);
+%fN = 1-0.25*3/2:0.25:(numRectangles+0.25*3/2);
+
+fN = 1:0.25:(numRectangles+1-0.01);
 
 csvwrite('./csv/deltaTracksFHPnorm.csv', [fN' deltaTracksFHPnorm]);
 csvwrite('./csv/deltaTracksARnorm.csv', [fN' deltaTracksARnorm]);

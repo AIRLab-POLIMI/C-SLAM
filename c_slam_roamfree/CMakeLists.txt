@@ -33,7 +33,8 @@ include_directories(include
 add_library(localization STATIC
             src/ImuHandler.cpp   
             src/FullSlamImu.cpp
-	        src/FullSlamConfig.cpp)
+	        src/FullSlamConfig.cpp
+	        src/NoiseGeneration.cpp)
 	        
 add_library(roamfree_extra STATIC
             src/roamfree_extra/ObjectInitializationStrategy.cpp
@@ -50,7 +51,7 @@ add_library(testing STATIC
 
 #Build localization executables
 add_executable(c_localization
-               src/FullSlamImu_FHP.cpp)
+               src/FullSlamImu_FHP.cpp               )
 
 add_executable(c_localization_rectangles
 	           src/FullSlamImu_rectangles.cpp)
