@@ -117,7 +117,7 @@ void FullSlamImu_anchoredrectangles::initCamera()
 {
 
 	tracksHandler = new AnchoredRectangleHandlerBootstrap(config.initialScale);
-	tracksHandler->setTimestampOffsetTreshold(1.0 / 5.0 / 2.0);
+	tracksHandler->setTimestampOffsetTreshold(config.imu_dt / 2.0);
 
 	tracksHandler->init(filter, "Track", config.T_O_CAMERA, config.K);
 }
