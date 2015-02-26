@@ -1,7 +1,7 @@
-C-Slam
+C_SLAM
 ======
 
-[C-Slam](http://airlab.ws.dei.polimi.it/index.php/C-SLAM), Is a Cognitive Self Localization And Mapping fremework, that works using knowledge about the world to recognise objects,, create a map and localize the robot.
+[C_SLAM](http://airlab.ws.dei.polimi.it/index.php/C-SLAM), Is a Cognitive Self Localization And Mapping fremework, that works using knowledge about the world to recognise objects,, create a map and localize the robot.
 The aim of this project is to work get a realiable SLAM system in noisy and mutable envirorment to perform navigation and path plannning tasks with low computational power, not to get a high precision SLAM system.
 
 
