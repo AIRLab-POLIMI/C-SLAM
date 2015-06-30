@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
 	ros::spin();
 
-	std::cout << "Recall for object " << pe->getObjectClass() << ": " << pe->getRecall() << std::endl;
-	std::cout << "hits :" << pe->getHit() << " total: " << pe->getTotal() << std::endl;
+	//std::cout << "Recall for object " << pe->getObjectClass() << ": " << pe->getRecall() << std::endl;
+	//std::cout << "hits :" << pe->getHit() << " total: " << pe->getTotal() << std::endl;
 
 }

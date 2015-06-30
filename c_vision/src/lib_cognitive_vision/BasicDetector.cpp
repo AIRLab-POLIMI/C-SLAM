@@ -24,8 +24,16 @@
 #include "BasicDetector.h"
 
 #include <opencv2/imgproc/imgproc.hpp>
-#include "QuadrilateralDetector.h"
+
 #include "CornerClassifier.h"
+
+#define ROMANONI
+
+#ifdef ROMANONI
+#include "ProbQuadDetector.h"
+#else
+#include "QuadrilateralDetector.h"
+#endif
 
 using namespace cv;
 
@@ -68,7 +76,7 @@ void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
 {
 	lineDetector.detect(image, roll, mask);
 
-	if(showCanny)
+	if (showCanny)
 		lineDetector.display();
 
 	verticalLines = lineDetector.getVerticalLines();
@@ -77,13 +85,21 @@ void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
 
 void BasicDetector::detectQuadrilaterals(bool skipCheck)
 {
-	CornerClassifier cornerClassifier(cornerParams, lineDetector.getCanny(), roll);
+#ifdef ROMANONI
+	ProbQuadDetector quadrilateralDetector(quadParams);
+	quadrilateralDetector.detect(*verticalLines, *horizontalLines);
+#else
+	CornerClassifier cornerClassifier(cornerParams, lineDetector.getCanny(),
+				roll);
 	QuadrilateralDetector quadrilateralDetector(quadParams, cornerClassifier);
 	quadrilateralDetector.detect(*verticalLines, *horizontalLines, true);
+#endif
+
 	rectangles = quadrilateralDetector.getRectangles();
 	poles = quadrilateralDetector.getPoles();
 }
 
 BasicDetector::~BasicDetector()
 {
+
 }

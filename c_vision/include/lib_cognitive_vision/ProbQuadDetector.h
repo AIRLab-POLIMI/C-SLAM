@@ -2,7 +2,7 @@
  * c_vision,
  *
  *
- * Copyright (C) 2013 Davide Tateo
+ * Copyright (C) 2015 Davide Tateo
  * Versione 1.0
  *
  * This file is part of c_vision.
@@ -21,8 +21,8 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QUADRILATERALDETECTOR_H_
-#define QUADRILATERALDETECTOR_H_
+#ifndef INCLUDE_PROBQUADDETECTOR_H_
+#define INCLUDE_PROBQUADDETECTOR_H_
 
 #include <vector>
 #include <opencv2/core/core.hpp>
@@ -33,16 +33,31 @@
 #include "Rectangle.h"
 #include "Pole.h"
 
-#include "CornerClassifier.h"
+#include <random>
 
-class QuadrilateralDetector
+class ProbQuadDetector
 {
+	template<int N, typename type>
+	struct vote_s
+	{
+		typedef std::map<unsigned int, typename vote_s<N-1, type>::t_multimap> t_multimap;
+	};
+
+	template<typename type>
+	struct vote_s<1, type>
+	{
+		typedef std::map<unsigned int, type> t_multimap;
+	};
+
+	typedef vote_s<4, int>::t_multimap t_vote;
+	typedef vote_s<4, double>::t_multimap t_counter;
+
+
 public:
-	QuadrilateralDetector(QDetectorParam& quadP, CornerClassifier& cornerClassifier);
+	ProbQuadDetector(QDetectorParam& quadP);
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
-				std::vector<cv::Vec4i>& horizontalLines,
-				bool skipCheck = false);
+				std::vector<cv::Vec4i>& horizontalLines);
 
 	inline std::vector<Pole>* getPoles() const
 	{
@@ -55,27 +70,24 @@ public:
 	}
 
 private:
-	bool findPoles(cv::Vec4i l1, cv::Vec4i l2);
-	//Quadrilater checks
-	bool hasSufficientVerticalOverlap(cv::Vec4i& v1, cv::Vec4i& v2);
-	bool hasSufficientHorizontallOverlap(cv::Vec4i& h1, cv::Vec4i& h2);
-	bool hasSufficientSupportV(cv::Vec4i& v, cv::Point a, cv::Point b);
-	bool hasSufficientSupportH(cv::Vec4i& h, cv::Point a, cv::Point b);
-	bool hasSufficientSupport(const cv::Point& x, const cv::Point& y,
-				const cv::Point& z, const cv::Point& w, cv::Vec4i& h1,
-				cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
-	bool hasSuficientCorners(cv::Point& x, cv::Point& y, cv::Point& z,
-				cv::Point& w);
+	unsigned int sampleCoordinate(unsigned int lo, unsigned int hi);
+	void buildRectangle(cv::Vec4i& v1, cv::Vec4i& v2, cv::Vec4i& h1, cv::Vec4i& h2);
+	void voteRectangles(unsigned int x, unsigned int y,
+				std::vector<cv::Vec4i>& verticalLines,
+				std::vector<cv::Vec4i>& horizontalLines);
 
 private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
 
-	CornerClassifier& cornerClassifier;
+	t_vote votes;
+	t_counter counts;
 
-	//Params
 	QDetectorParam& quadP;
 
+	//RANDOM STUFF
+	static std::random_device rd;
+	static std::mt19937 gen;
 };
 
-#endif /* QUADRILATERALDETECTOR_H_ */
+#endif /* INCLUDE_PROBQUADDETECTOR_H_ */

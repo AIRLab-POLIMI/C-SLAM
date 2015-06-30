@@ -22,6 +22,7 @@
  */
 
 #include "QuadrilateralDetector.h"
+#include "Lines.h"
 
 using namespace cv;
 using namespace std;
@@ -46,27 +47,27 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 		if (hasSufficientVerticalOverlap(v1, v2))
 		{
 
-			int midLine = getMidLine(v1, v2);
+			unsigned int midLine = Lines::getMidLine(v1, v2);
 
 			//else find possible squares
 			for (size_t j = 0; j + 1 < horizontalLines.size(); j++)
 			{
 				Vec4i& h1 = horizontalLines[j];
-				if (isNotExternal(v1, v2, h1) && isAboveMidline(h1, midLine))
+				if (Lines::between_h(v1, v2, h1) && Lines::above(h1, midLine))
 					for (size_t k = j + 1; k < horizontalLines.size(); k++)
 					{
 						Vec4i& h2 = horizontalLines[k];
 
-						if (isNotExternal(v1, v2, h2)
+						if (Lines::between_h(v1, v2, h2)
 									&& hasSufficientHorizontallOverlap(h1, h2)
-									&& !isAboveMidline(h2, midLine))
+									&& !Lines::above(h2, midLine))
 						{
 							Point x, y, z, w;
 
-							x = findInterception(h1, v1);
-							y = findInterception(h1, v2);
-							z = findInterception(h2, v2);
-							w = findInterception(h2, v1);
+							x = Lines::findInterception(h1, v1);
+							y = Lines::findInterception(h1, v2);
+							z = Lines::findInterception(h2, v2);
+							w = Lines::findInterception(h2, v1);
 
 							if (hasSuficientCorners(x, y, z, w)
 										&& hasSufficientSupport(x, y, z, w, h1,
@@ -85,38 +86,14 @@ void QuadrilateralDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 
 }
 
-Point QuadrilateralDetector::findInterception(Vec4i l1, Vec4i l2)
-{
-	Vec3d p0, p1, p2, p3;
-	Vec3d hl, vl;
-	Vec3d p;
-
-	//get the homogeneus coordinates
-	getPointsCoordinates(l1, p0, p1);
-	getPointsCoordinates(l2, p2, p3);
-
-	//get the lines and the interception point
-	hl = p0.cross(p1);
-	hl = hl / norm(hl);
-
-	vl = p2.cross(p3);
-	vl = vl / norm(vl);
-
-	p = hl.cross(vl);
-	p = p / p[2];
-
-	return Point(p[0], p[1]);
-
-}
-
 bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 {
 	double dx, dy;
 
 	Point p0, p1, p2, p3;
 
-	getPointsCoordinates(l1, p0, p1);
-	getPointsCoordinates(l2, p2, p3);
+	Lines::getPointsCoordinates(l1, p0, p1);
+	Lines::getPointsCoordinates(l2, p2, p3);
 
 	//calculate the average dx and dy
 	dx = max(norm(p0 - p2), norm(p1 - p3));
@@ -131,14 +108,6 @@ bool QuadrilateralDetector::findPoles(Vec4i l1, Vec4i l2)
 
 	return false;
 
-}
-
-int QuadrilateralDetector::getMidLine(const Vec4i& v1, const Vec4i& v2)
-{
-	int min1 = min(v1[1], v1[3]);
-	int max2 = max(v2[1], v2[3]);
-
-	return (min1 + max2) / 2;
 }
 
 bool QuadrilateralDetector::hasSufficientVerticalOverlap(Vec4i& v1, Vec4i& v2)
@@ -180,30 +149,6 @@ bool QuadrilateralDetector::hasSufficientHorizontallOverlap(Vec4i& h1,
 
 }
 
-bool QuadrilateralDetector::isNotExternal(Vec4i& v1, Vec4i& v2, Vec4i& h)
-{
-	int min1 = min(v1[0], v1[2]);
-	int min2 = min(v2[0], v2[2]);
-	int minx = min(min1, min2);
-
-	int max1 = max(v1[0], v1[2]);
-	int max2 = max(v2[0], v2[2]);
-	int maxx = max(max1, max2);
-
-	int minh = min(h[0], h[2]);
-	int maxh = max(h[0], h[2]);
-
-	bool isAtLeft = maxh < minx;
-	bool isAtRight = minh > maxx;
-
-	return !(isAtLeft || isAtRight);
-}
-
-bool QuadrilateralDetector::isAboveMidline(const Vec4i& h, int midLine)
-{
-	return h[1] < midLine && h[3] < midLine;
-}
-
 bool QuadrilateralDetector::hasSufficientSupport(const Point& x, const Point& y,
 			const Point& z, const Point& w, Vec4i& h1, Vec4i& h2, Vec4i& v1,
 			Vec4i& v2)
@@ -240,7 +185,7 @@ bool QuadrilateralDetector::hasSufficientSupportH(Vec4i& h, Point a, Point b)
 bool QuadrilateralDetector::hasSuficientCorners(cv::Point& x, cv::Point& y,
 			cv::Point& z, cv::Point& w)
 {
-	return true; ///FIXME TOGLIERE!!!
+	//return true; ///FIXME TOGLIERE!!!
 	CornerResult xRes = cornerClassifier.getResult(x);
 	CornerResult yRes = cornerClassifier.getResult(y);
 	CornerResult zRes = cornerClassifier.getResult(z);
@@ -253,19 +198,5 @@ bool QuadrilateralDetector::hasSuficientCorners(cv::Point& x, cv::Point& y,
 				+ wRes.countEmpty();
 
 	return compatible && emptyCount <= 1;
-}
-
-inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Point& i,
-			Point& j)
-{
-	i = Point(l[0], l[1]);
-	j = Point(l[2], l[3]);
-}
-
-inline void QuadrilateralDetector::getPointsCoordinates(Vec4i l, Vec3d& i,
-			Vec3d& j)
-{
-	i = Vec3d(l[0], l[1], 1);
-	j = Vec3d(l[2], l[3], 1);
 }
 

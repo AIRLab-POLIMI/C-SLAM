@@ -302,7 +302,7 @@ void Dispatcher::drawResults(Mat& coloredImage, const Rect& roi, Track& track)
 				track.getActiveKeypoints();
 	const vector<Point2f>& polygon = track.getTrackedPolygon();
 
-	rectangle(coloredImage, roi, Scalar(255, 255, 255));
+	//rectangle(coloredImage, roi, Scalar(255, 255, 255));
 	drawPolygon(coloredImage, polygon, Scalar(255, 255, 255));
 	drawKeypoints(coloredImage, trackedKeypoints, Scalar(255, 255, 255));
 	drawKeypoints(coloredImage, activeKeypoints, Scalar(255, 0, 0));
