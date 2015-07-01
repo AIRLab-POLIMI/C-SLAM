@@ -54,6 +54,11 @@ target_link_libraries(c_vision_detector cognitive_vision
 target_link_libraries(c_vision_recognizer cognitive_vision
 					  				      ${catkin_LIBRARIES})
 					  				      
+					  				      
+#Morphological test							       
+add_executable(morph_test src/Test.cpp)
+target_link_libraries(morph_test ${catkin_LIBRARIES})
+					  				      
 #add dependencies
 add_dependencies(cognitive_vision ${catkin_EXPORTED_TARGETS})
 add_dependencies(c_vision_detector ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
