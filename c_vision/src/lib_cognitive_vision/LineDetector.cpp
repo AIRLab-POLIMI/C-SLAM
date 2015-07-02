@@ -47,11 +47,18 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 	double high_thres;
 	double low_thres;
 
-	blur(input, blurred, Size(cannyP.blur, cannyP.blur));
+	//blur(input, blurred, Size(cannyP.blur, cannyP.blur));
+	//medianBlur(input, blurred, 5);
+	//GaussianBlur(input, blurred,  Size(cannyP.blur, cannyP.blur), 20);
+	//bilateralFilter(input, blurred, 5, 100, 100);
+
+	GaussianBlur(input, blurred, cv::Size(0, 0), 6);
+	addWeighted(input, 1.5, blurred, -0.5, 0, tmp);
+	bilateralFilter(tmp, blurred, 5, 150, 150);
 
 	if (cannyP.automatic)
 	{
-		high_thres = 0.6 * computeThreshold(blurred);
+		high_thres = 0.8*computeThreshold(blurred);
 		low_thres = high_thres * cannyP.alpha;
 	}
 	else

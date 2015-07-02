@@ -76,6 +76,11 @@ private:
 				std::vector<cv::Vec4i>& verticalLines,
 				std::vector<cv::Vec4i>& horizontalLines);
 
+	bool crispScore(unsigned int x, unsigned int y, cv::Vec4i& h1,
+				cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
+	double fuzzyScore(unsigned int x, unsigned int y, cv::Vec4i& h1,
+					cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
+
 private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;

@@ -22,7 +22,8 @@
  */
 
 #include "QuadrilateralDetector.h"
-#include "Lines.h"
+
+#include "../../include/lib_cognitive_vision/Lines.h"
 
 using namespace cv;
 using namespace std;

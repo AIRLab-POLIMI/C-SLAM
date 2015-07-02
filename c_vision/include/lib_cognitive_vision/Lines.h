@@ -21,8 +21,8 @@
  *  along with c_vision.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SRC_LIB_COGNITIVE_VISION_LINES_H_
-#define SRC_LIB_COGNITIVE_VISION_LINES_H_
+#ifndef INCLUDE_LIB_COGNITIVE_VISION_LINES_H_
+#define INCLUDE_LIB_COGNITIVE_VISION_LINES_H_
 
 #include <opencv2/opencv.hpp>
 
@@ -111,6 +111,52 @@ public:
 		return (v1[1] + v1[3] + v2[1] + v2[3]) / 4;
 	}
 
+	inline static cv::Vec2d projectPoint(unsigned int x, unsigned int y,
+				const cv::Vec4i& l)
+	{
+		cv::Point a, b;
+
+		getPointsCoordinates(l, a, b);
+
+		cv::Vec2d v(a.x - b.x, a.y - b.y);
+		cv::Vec2d p(x, y);
+		cv::Vec2d p0(a.x, a.y);
+		cv::Vec2d p1(b.x, b.y);
+
+		cv::Matx22d k = (v * v.t()) * (v.t() * v)[0];
+
+		return k * p + p0 - k * p0;
+
+	}
+
+	inline static double projectionDistanceFromSegment(unsigned int x,
+				unsigned int y, const cv::Vec4i& l)
+	{
+		cv::Point a, b;
+
+		getPointsCoordinates(l, a, b);
+
+		cv::Vec2d v(a.x - b.x, a.y - b.y);
+		cv::Vec2d p(x, y);
+		cv::Vec2d p1(a.x, a.y);
+		cv::Vec2d p2(b.x, b.y);
+
+		double test1 = -(v.t()*(p - p1))[0];
+		double test2 = (v.t()*(p - p2))[0];
+
+		double dist = std::min(test1, test2);
+
+		if(dist >= 0)
+		{
+			return 0.0;
+		}
+		else
+		{
+			return -dist / cv::norm(v);
+		}
+
+	}
+
 };
 
-#endif /* SRC_LIB_COGNITIVE_VISION_LINES_H_ */
+#endif /* INCLUDE_LIB_COGNITIVE_VISION_LINES_H_ */

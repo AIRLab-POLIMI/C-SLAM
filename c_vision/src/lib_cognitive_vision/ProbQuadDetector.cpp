@@ -22,9 +22,8 @@
  */
 
 #include "ProbQuadDetector.h"
-#include "Lines.h"
-
 #include <random>
+#include "../../include/lib_cognitive_vision/Lines.h"
 
 using namespace cv;
 using namespace std;
@@ -44,6 +43,37 @@ unsigned int ProbQuadDetector::sampleCoordinate(unsigned int lo,
 {
 	std::uniform_real_distribution<> dist(lo, hi);
 	return dist(gen);
+}
+
+bool ProbQuadDetector::crispScore(unsigned int x, unsigned int y,
+			Vec4i& h1, Vec4i& h2, Vec4i& v1, Vec4i& v2)
+{
+	return (!Lines::atLeft(h1, x) && !Lines::atRight(h1, x)
+				&& !Lines::atLeft(h2, x) && !Lines::atRight(h2, x)
+				&& !Lines::above(v1, y) && !Lines::below(v1, y)
+				&& !Lines::above(v2, y) && !Lines::below(v2, y)) ? 1 : 0;
+}
+
+double ProbQuadDetector::fuzzyScore(unsigned int x, unsigned int y,
+			Vec4i& h1, Vec4i& h2, Vec4i& v1, Vec4i& v2)
+{
+	const double maxDistance = 30;
+
+	double dist[4];
+
+	dist[0] = Lines::projectionDistanceFromSegment(x, y, h1);
+	dist[1] = Lines::projectionDistanceFromSegment(x, y, h2);
+	dist[2] = Lines::projectionDistanceFromSegment(x, y, v1);
+	dist[3] = Lines::projectionDistanceFromSegment(x, y, v2);
+
+	double score = 1.0;
+
+	for(unsigned int i = 0; i < 4; i++)
+	{
+		score *= std::max(0.0,(maxDistance - dist[i])/maxDistance);
+	}
+
+	return score;
 }
 
 void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
@@ -77,15 +107,12 @@ void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 											&& Lines::below(h2, y)
 											&& Lines::below(h2, midLine))
 								{
+
+									double score1 = crispScore(x, y, h1, h2, v1, v2);
+									double score2 = fuzzyScore(x, y, h1, h2, v1, v2);
+
 									//Romanoni test
-									if (!Lines::atLeft(h1, x)
-												&& !Lines::atRight(h1, x)
-												&& !Lines::atLeft(h2, x)
-												&& !Lines::atRight(h2, x)
-												&& !Lines::above(v1, y)
-												&& !Lines::below(v1, y)
-												&& !Lines::above(v2, y)
-												&& !Lines::below(v2, y))
+									if (score2 > 0.7)
 									{
 										votes[i][k1][j][k2] += 1;
 									}
@@ -105,7 +132,7 @@ void ProbQuadDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 			std::vector<cv::Vec4i>& horizontalLines)
 {
 
-	for (int n = 0; n < 100; n++)
+	for (int n = 0; n < 200; n++)
 	{
 		unsigned int x = sampleCoordinate(0, 640 - 1);
 		unsigned int y = sampleCoordinate(0, 360 - 1);
