@@ -60,6 +60,11 @@ struct QDetectorParam
 	double polesFormFactor;
 	double segmentSupport;
 
+	//ROMANONI params
+	int points;
+	double threshold;
+	double maxDistance;
+
 	Eigen::Matrix3d K;
 	Eigen::Matrix3d omega;
 };

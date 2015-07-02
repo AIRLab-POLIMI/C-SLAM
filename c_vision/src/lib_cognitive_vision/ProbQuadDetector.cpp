@@ -57,8 +57,6 @@ bool ProbQuadDetector::crispScore(unsigned int x, unsigned int y,
 double ProbQuadDetector::fuzzyScore(unsigned int x, unsigned int y,
 			Vec4i& h1, Vec4i& h2, Vec4i& v1, Vec4i& v2)
 {
-	const double maxDistance = 30;
-
 	double dist[4];
 
 	dist[0] = Lines::projectionDistanceFromSegment(x, y, h1);
@@ -70,7 +68,7 @@ double ProbQuadDetector::fuzzyScore(unsigned int x, unsigned int y,
 
 	for(unsigned int i = 0; i < 4; i++)
 	{
-		score *= std::max(0.0,(maxDistance - dist[i])/maxDistance);
+		score *= std::max(0.0,(quadP.maxDistance - dist[i])/quadP.maxDistance);
 	}
 
 	return score;
@@ -112,11 +110,7 @@ void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 									double score2 = fuzzyScore(x, y, h1, h2, v1, v2);
 
 									//Romanoni test
-									if (score2 > 0.7)
-									{
-										votes[i][k1][j][k2] += 1;
-									}
-
+									votes[i][k1][j][k2] += score2;
 									counts[i][k1][j][k2] += 1;
 								}
 							}
@@ -132,7 +126,7 @@ void ProbQuadDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 			std::vector<cv::Vec4i>& horizontalLines)
 {
 
-	for (int n = 0; n < 200; n++)
+	for (int n = 0; n < quadP.points; n++)
 	{
 		unsigned int x = sampleCoordinate(0, 640 - 1);
 		unsigned int y = sampleCoordinate(0, 360 - 1);
@@ -154,7 +148,7 @@ void ProbQuadDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 					double hits = pair4.second;
 					double tot = counts[pair1.first][pair2.first][pair3.first][pair4.first];
 
-					if(hits/tot > 0.5)
+					if(hits/tot > quadP.threshold)
 					{
 						Vec4i& v1 = verticalLines[pair1.first];
 						Vec4i& v2 = verticalLines[pair2.first];

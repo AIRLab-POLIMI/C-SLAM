@@ -78,6 +78,11 @@ void ParameterServer::update(c_vision::ParametersConfig &config, uint32_t level)
 	quadDetector.polesFormFactor = config.quad_polesFormFactor;
 	quadDetector.segmentSupport = config.quad_segmentSupport;
 
+	//set ROMANONI quadDetector parameters
+	quadDetector.points = config.rquad_points;
+	quadDetector.threshold = config.rquad_threshold;
+	quadDetector.maxDistance = config.rquad_maxDistance;
+
 	//set up corner classifier params
 	cornerClass.kernelSize = config.corner_kernelSize;
 	cornerClass.bucketWidth = config.corner_bucketWidth;
