@@ -1,0 +1,22 @@
+<!--
+Starts a PR2 Prosilica camera in streaming mode.
+This file exists mainly for backwards compatibility.
+-->
+
+<launch>
+	
+	<param name="/prosilica_driver/gain_auto_max" value="19" />
+	<param name="/prosilica_driver/auto_exposure" value="False" />
+	<param name="/prosilica_driver/exposure"      value="0.0025" />
+
+	<include file="$(find prosilica_camera)/launch/generic.launch">
+		<arg name="camera"       value="prosilica" />
+		<arg name="ip_address"   value="10.0.0.2" />
+		<arg name="trigger_mode" value="streaming" />
+		<arg name="frame_id"     value="prosilica_camera" />
+	</include>
+	
+	<include file="$(find xsens_driver_airlab)/launch/xsens.launch"/>
+  
+	<node pkg="rqt_image_view" type="rqt_image_view" respawn="false" name="rqt_image_view"/>
+</launch>
