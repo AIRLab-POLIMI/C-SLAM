@@ -138,6 +138,16 @@ public:
 		return cornerClass;
 	}
 
+	inline std::string getCameraSource()
+	{
+		return camera_source;
+	}
+
+	inline std::string getImuSource()
+	{
+		return imu_source;
+	}
+
 private:
 	void update(c_vision::ParametersConfig &config, uint32_t level);
 
@@ -154,6 +164,9 @@ private:
 	ClusterParam cluster;
 	ClassifierParam classifier;
 	DisplayParam display;
+
+	std::string camera_source;
+	std::string imu_source;
 
 };
 

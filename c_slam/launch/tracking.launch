@@ -3,9 +3,12 @@
 <!-- Launch file to run the test tracking system -->
 <launch>
 	<!-- Arguments -->
-	<arg name="camera_source" default="/ardrone" />
+	<arg name="camera_source" default="/prosilica" />
+	<arg name="imu_source" default="/xsens" />
 	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
 	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
+	<param name="camera_source" value="$(arg camera_source)" />
+	<param name="imu_source" value="$(arg imu_source)" />
 	
 	<rosparam param="K">[460.890258789062, 0.0, 343.462058902507, 0.0, 529.505432128906, 201.160554159542, 0.0, 0.0, 1.0]</rosparam>
 	
@@ -15,6 +18,16 @@
 	              pkg="image_proc" 
 	              type="image_proc" />
 	</group>
+	
+    <node pkg="tf" 
+          type="static_transform_publisher" 
+    	  name="imu_broadcaster" 
+    	  args="0 0 0 0 0 0 base_link imu 10" />
+    	  
+   	<node pkg="tf" 
+          type="static_transform_publisher" 
+    	  name="link1_broadcaster" 
+    	  args="0 0 0 0 0 0 base_link high_def_optical_frame 10" />
 	
 	<!-- System nodes -->
 	<node name="c_tracker" 

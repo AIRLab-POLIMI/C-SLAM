@@ -41,7 +41,7 @@ RecognizerLogic::RecognizerLogic(NodeHandle n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), infoCache(15), imageCache(15),
 			detector(parameters), dispP(parameters.getDisplayParams())
 {
-	cameraSubscriber = it.subscribeCamera("/ardrone/image_rect_color", 1,
+	cameraSubscriber = it.subscribeCamera(parameters.getCameraSource() + "/image_rect_color", 1,
 				&RecognizerLogic::handleCamera, this);
 	trackSubscriber = n.subscribe("tracks", 10, &RecognizerLogic::handleTrack,
 				this);

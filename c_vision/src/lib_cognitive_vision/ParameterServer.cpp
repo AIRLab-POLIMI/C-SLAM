@@ -42,6 +42,16 @@ ParameterServer::ParameterServer()
 					"Incorrect initial pose or no initial pose specified");
 	}
 
+	if (!ros::param::get("camera_source", camera_source))
+	{
+		throw runtime_error("No camera source specified");
+	}
+
+	if (!ros::param::get("imu_source", imu_source))
+	{
+		throw runtime_error("No imu source specified");
+	}
+
 	quadDetector.K;
 	quadDetector.K << K_std[0], K_std[1], K_std[2],
 	/*              */K_std[3], K_std[4], K_std[5],

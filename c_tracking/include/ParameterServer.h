@@ -77,6 +77,16 @@ public:
 		return matching;
 	}
 
+	inline std::string getCameraSource()
+	{
+		return camera_source;
+	}
+
+	inline std::string getImuSource()
+	{
+		return imu_source;
+	}
+
 private:
 	void update(c_tracking::ParametersConfig &config, uint32_t level);
 
@@ -89,6 +99,9 @@ private:
 	BoundingBoxparam boundingBox;
 	MatchingParam matching;
 	OutlierParam outlier;
+
+	std::string camera_source;
+	std::string imu_source;
 
 };
 

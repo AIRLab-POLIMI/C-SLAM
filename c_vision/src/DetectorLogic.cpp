@@ -35,7 +35,7 @@ DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 			BaseLogic(n, parameters), detector(parameters),
 			viewer("Detected Image")
 {
-	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
+	imageSubscriber = it.subscribe(parameters.getCameraSource() + "/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
 	publisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 10);
 }

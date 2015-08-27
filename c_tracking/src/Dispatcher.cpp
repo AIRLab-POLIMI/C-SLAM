@@ -39,9 +39,9 @@ Dispatcher::Dispatcher(ros::NodeHandle& n) :
 	toTrackSubscriber = n.subscribe("to_track", 1,
 				&Dispatcher::handleObjectTrackRequest, this);
 	trackPublisher = n.advertise<c_slam_msgs::TrackedObject>("tracks", 100);
-	imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1,
+	imageSubscriber = it.subscribe(parameterServer.getCameraSource() + "/image_rect_color", 1,
 				&Dispatcher::handleImage, this);
-	imuSubscriber = n.subscribe("/ardrone/imu", 1, &Dispatcher::handleImu,
+	imuSubscriber = n.subscribe(parameterServer.getImuSource() + "/imu", 1, &Dispatcher::handleImu,
 				this);
 
 	src_window = "Cognitive Tracking";

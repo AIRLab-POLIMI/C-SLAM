@@ -24,12 +24,26 @@
 #include "ParameterServer.h"
 
 #include <angles/angles.h>
+#include <ros/ros.h>
+#include <stdexcept>
+
+using namespace std;
 
 ParameterServer::ParameterServer()
 {
 	dynamic_reconfigure::Server<c_tracking::ParametersConfig>::CallbackType f;
 	f = boost::bind(&ParameterServer::update, this, _1, _2);
 	server.setCallback(f);
+
+	if (!ros::param::get("camera_source", camera_source))
+	{
+		throw runtime_error("No camera source specified");
+	}
+
+	if (!ros::param::get("imu_source", imu_source))
+	{
+		throw runtime_error("No imu source specified");
+	}
 }
 
 void ParameterServer::update(c_tracking::ParametersConfig &config,
@@ -45,7 +59,8 @@ void ParameterServer::update(c_tracking::ParametersConfig &config,
 	//Set the matching parameters
 	matching.minPercentage = config.matching_minPercentage;
 	matching.keyframePercentage = config.matching_keyframePercentage;
-	matching.keyFrameMaxAngle = angles::from_degrees(config.matching_keyFrameMaxAngle);
+	matching.keyFrameMaxAngle = angles::from_degrees(
+				config.matching_keyFrameMaxAngle);
 
 	//Set the outlier rejection parameters
 	outlier.maxAngle = angles::from_degrees(config.outlier_maxAngle);

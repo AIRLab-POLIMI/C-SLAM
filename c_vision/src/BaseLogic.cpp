@@ -34,7 +34,7 @@ using namespace cv;
 BaseLogic::BaseLogic(ros::NodeHandle& n, ParameterServer& parameters) :
 			n(n), it(n), classifierParam(parameters.getClassifierParams())
 {
-	imuSubscriber = n.subscribe("/ardrone/imu", 1, &BaseLogic::handleImu, this);
+	imuSubscriber = n.subscribe(parameters.getImuSource() + "/imu", 1, &BaseLogic::handleImu, this);
 
 	connectToClassificationServer();
 

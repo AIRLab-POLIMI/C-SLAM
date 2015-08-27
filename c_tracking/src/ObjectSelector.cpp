@@ -115,7 +115,9 @@ int main(int argc, char *argv[])
 	ros::NodeHandle n;
 	image_transport::ImageTransport it(n);
 
-	image_transport::Subscriber imageSubscriber = it.subscribe("/ardrone/image_rect_color", 1, &handleImage);
+	std::string camera_source;
+	ros::param::get("camera_source", camera_source);
+	image_transport::Subscriber imageSubscriber = it.subscribe(camera_source + "/image_rect_color", 1, &handleImage);
 	publisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 1000);
 
 	namedWindow(src_window);
