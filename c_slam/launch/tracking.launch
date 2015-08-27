@@ -24,10 +24,10 @@
     	  name="imu_broadcaster" 
     	  args="0 0 0 0 0 0 base_link imu 10" />
     	  
-   	<node pkg="tf" 
+	<node pkg="tf" 
           type="static_transform_publisher" 
-    	  name="link1_broadcaster" 
-    	  args="0 0 0 0 0 0 base_link high_def_optical_frame 10" />
+    	  name="camera_broadcaster" 
+    	  args="0 0 0 -0.5 0.5 -0.5 0.5 base_link high_def_optical_frame 10" />
 	
 	<!-- System nodes -->
 	<node name="c_tracker" 
