@@ -72,8 +72,6 @@ void LineDetector::detect(Mat& input, double roll, const cv::Mat& mask)
 	if (mask.empty())
 	{
 		canny = tmp;
-
-		//FIXME: delete this hack: it's a problem of current images
 		maskImage(canny);
 	}
 	else
@@ -124,11 +122,18 @@ int LineDetector::computeThreshold(cv::Mat& src)
 
 void LineDetector::maskImage(Mat& canny)
 {
-	//FIXME: delete this hack: it's a problem of current images
-	for (int i = 273; i < 273 + 124; i++)
+	/*for (int i = 273; i < 273 + 124; i++)
 		for (int j = canny.rows - 10; j < canny.rows; j++)
 		{
 			canny.at<uchar>(j, i) = 0;
+		}*/
+
+	for (int i = canny.rows - 2; i < canny.rows; i++)
+	{
+		for (int j = 0; j < canny.cols; j++)
+		{
+			canny.at<uchar>(i, j) = 0;
 		}
+	}
 }
 

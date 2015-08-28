@@ -57,7 +57,8 @@ public:
 	ProbQuadDetector(QDetectorParam& quadP);
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
-				std::vector<cv::Vec4i>& horizontalLines);
+				std::vector<cv::Vec4i>& horizontalLines,
+				unsigned int width, unsigned int height);
 
 	inline std::vector<Pole>* getPoles() const
 	{
@@ -67,6 +68,12 @@ public:
 	inline std::vector<Rectangle>* getRectangles() const
 	{
 		return rectangles;
+	}
+
+	//TODO remove
+	inline std::vector<cv::Point>* getPoints() const
+	{
+		return points;
 	}
 
 private:
@@ -84,6 +91,7 @@ private:
 private:
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
+	std::vector<cv::Point>* points;
 
 	t_vote votes;
 	t_counter counts;

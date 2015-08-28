@@ -32,6 +32,7 @@ ImageView::ImageView() :
 			viewName("")
 {
 	keyPoints = NULL;
+	points = NULL;
 	clusters = NULL;
 	verticalLines = NULL;
 	horizontalLines = NULL;
@@ -45,6 +46,7 @@ ImageView::ImageView(std::string viewName) :
 {
 	namedWindow(viewName);
 	keyPoints = NULL;
+	points = NULL;
 	clusters = NULL;
 	verticalLines = NULL;
 	horizontalLines = NULL;
@@ -60,6 +62,7 @@ ImageView::ImageView(size_t id)
 	viewName = ss.str();
 	cv::namedWindow(viewName);
 	keyPoints = NULL;
+	points = NULL;
 	clusters = NULL;
 	verticalLines = NULL;
 	horizontalLines = NULL;
@@ -80,6 +83,8 @@ void ImageView::display(Mat& frame)
 		displayRectanglesResults(frame);
 	if (poles)
 		displayPolesResults(frame);
+	if(points)
+		displayPointsResults(*points, frame);
 	drawAxis(frame);
 
 	imshow(viewName, frame);
@@ -124,6 +129,18 @@ void ImageView::displayKeypointsResults(const std::vector<KeyPoint>& keyPoints,
 	{
 		const KeyPoint& kp = keyPoints[i];
 		circle(frame, kp.pt, 2, Scalar(0, 0, 255));
+	}
+
+}
+
+void ImageView::displayPointsResults(const std::vector<Point>& points,
+			Mat& frame)
+{
+	//display results
+	for (size_t i = 0; i < points.size(); ++i)
+	{
+		const Point& pt = points[i];
+		circle(frame, pt, 2, Scalar(0, 0, 255));
 	}
 
 }

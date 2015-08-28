@@ -57,6 +57,11 @@ public:
 		this->keyPoints = keyPoints;
 	}
 
+	inline void setPoints(std::vector<cv::Point>* points)
+	{
+		this->points = points;
+	}
+
 	inline void setRoll(double roll)
 	{
 		this->roll = roll;
@@ -86,6 +91,8 @@ private:
 	void drawAxis(cv::Mat& input);
 	void displayKeypointsResults(const std::vector<cv::KeyPoint>& keyPoints,
 				cv::Mat& frame);
+	void displayPointsResults(const std::vector<cv::Point>& points,
+				cv::Mat& frame);
 	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
 	void displayRectanglesResults(cv::Mat& frame);
 	void displayPolesResults(cv::Mat& frame);
@@ -114,6 +121,7 @@ private:
 	std::string viewName;
 
 	std::vector<cv::KeyPoint>* keyPoints;
+	std::vector<cv::Point>* points;
 	std::vector<cv::Vec4i>* verticalLines;
 	std::vector<cv::Vec4i>* horizontalLines;
 

@@ -48,7 +48,10 @@ BasicDetector::BasicDetector(ParameterServer& parameters) :
 	verticalLines = NULL;
 	rectangles = NULL;
 	poles = NULL;
+	points = NULL;
 	roll = 0;
+	height = 0;
+	width = 0;
 }
 
 void BasicDetector::deleteDetections()
@@ -70,6 +73,12 @@ void BasicDetector::deleteDetections()
 		rectangles = NULL;
 		poles = NULL;
 	}
+
+	if(points)
+	{
+		delete points;
+		points = NULL;
+	}
 }
 
 void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
@@ -81,13 +90,18 @@ void BasicDetector::detectLines(Mat& image, const Mat& mask, bool showCanny)
 
 	verticalLines = lineDetector.getVerticalLines();
 	horizontalLines = lineDetector.getHorizontalLines();
+
+#ifdef ROMANONI
+	width = image.cols;
+	height = image.rows;
+#endif
 }
 
 void BasicDetector::detectQuadrilaterals(bool skipCheck)
 {
 #ifdef ROMANONI
 	ProbQuadDetector quadrilateralDetector(quadParams);
-	quadrilateralDetector.detect(*verticalLines, *horizontalLines);
+	quadrilateralDetector.detect(*verticalLines, *horizontalLines, width, height);
 #else
 	CornerClassifier cornerClassifier(cornerParams, lineDetector.getCanny(),
 				roll);
@@ -97,6 +111,7 @@ void BasicDetector::detectQuadrilaterals(bool skipCheck)
 
 	rectangles = quadrilateralDetector.getRectangles();
 	poles = quadrilateralDetector.getPoles();
+	points = quadrilateralDetector.getPoints();
 }
 
 BasicDetector::~BasicDetector()

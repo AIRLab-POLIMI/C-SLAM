@@ -50,6 +50,12 @@ public:
 		return rectangles;
 	}
 
+	std::vector<cv::Point>* getPoints() const
+	{
+		return points;
+	}
+
+
 	virtual ~BasicDetector();
 
 protected:
@@ -66,6 +72,8 @@ private:
 
 	//envirorment data
 	double roll;
+	unsigned int width;
+	unsigned int height;
 
 protected:
 	std::vector<cv::Vec4i>* verticalLines;
@@ -73,6 +81,7 @@ protected:
 
 	std::vector<Rectangle>* rectangles;
 	std::vector<Pole>* poles;
+	std::vector<cv::Point>* points;
 };
 
 #endif /* BASICDETECTOR_H_ */

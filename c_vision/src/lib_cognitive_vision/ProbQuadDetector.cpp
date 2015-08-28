@@ -34,8 +34,11 @@ std::mt19937 ProbQuadDetector::gen(ProbQuadDetector::rd());
 ProbQuadDetector::ProbQuadDetector(QDetectorParam& quadP) :
 			quadP(quadP)
 {
-	rectangles = new std::vector<Rectangle>();
-	poles = new std::vector<Pole>();
+	rectangles = new vector<Rectangle>();
+	poles = new vector<Pole>();
+
+	//TODO delete
+	points = new vector<Point>();
 }
 
 unsigned int ProbQuadDetector::sampleCoordinate(unsigned int lo,
@@ -123,15 +126,19 @@ void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 }
 
 void ProbQuadDetector::detect(std::vector<cv::Vec4i>& verticalLines,
-			std::vector<cv::Vec4i>& horizontalLines)
+			std::vector<cv::Vec4i>& horizontalLines, unsigned int width, unsigned int height)
 {
 
 	for (int n = 0; n < quadP.points; n++)
 	{
-		unsigned int x = sampleCoordinate(0, 640 - 1);
-		unsigned int y = sampleCoordinate(0, 360 - 1);
+		unsigned int x = sampleCoordinate(0, width - 1);
+		unsigned int y = sampleCoordinate(0, height - 1);
 
 		voteRectangles(x, y, verticalLines, horizontalLines);
+
+		//TODO delete me
+		Point p(x,y);
+		points->push_back(p);
 	}
 
 	for (auto& pair1 : votes)

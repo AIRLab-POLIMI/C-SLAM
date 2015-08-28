@@ -88,6 +88,7 @@ void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
 {
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
+	viewer.setPoints(detector.getPoints());
 	viewer.setRoll(roll);
 	viewer.display(cv_ptr->image);
 
