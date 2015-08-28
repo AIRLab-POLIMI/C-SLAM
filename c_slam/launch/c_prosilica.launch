@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<!-- Launch file to run the cognitive slam system -->
+<launch>
+	<!-- Arguments -->
+	<arg name="camera_source" default="/prosilica" />
+	<arg name="imu_source" default="/xsens" />
+	<arg name="classifierkb" default="$(find c_slam)/knowledgebase/knowledgebase.kb" />
+	<arg name="classifier" default="$(find c_slam)/knowledgebase/classifier.fuzzy" />
+	<param name="use_sim_time" value="true" />
+	<param name="camera_source" value="$(arg camera_source)" />
+	<param name="imu_source" value="$(arg imu_source)" />
+	
+	<rosparam param="K">[460.890258789062, 0.0, 343.462058902507, 0.0, 529.505432128906, 201.160554159542, 0.0, 0.0, 1.0]</rosparam>
+
+	<!-- Camera processing -->
+	<group ns="$(arg camera_source)">
+		<node name="image_proc" pkg="image_proc" type="image_proc" />
+	</group>
+	
+    <node pkg="tf" 
+          type="static_transform_publisher" 
+    	  name="imu_broadcaster" 
+    	  args="0 0 0 0 0 0 base_link imu 10" />
+    	  
+   	<node pkg="tf" 
+          type="static_transform_publisher" 
+    	  name="camera_broadcaster" 
+    	  args="0 0 0 -0.5 0.5 -0.5 0.5 base_link high_def_optical_frame 10" />
+
+
+	<!-- System nodes -->
+	<node name="c_vision_detector" pkg="c_vision" type="c_vision_detector"
+		output="screen">
+		<param name="canny_automatic" value="True" />
+		<param name="canny_alpha" value="0.5" />
+		<param name="canny_blur" value="3" />
+		<param name="hough_threshold" value="80" />
+		<param name="hough_minLineLenght" value="60" />
+		<param name="hough_maxLineGap" value="8" />
+		
+		<param name="filter_maxDeltaHorizontal" value="15.0" />
+		<param name="filter_maxDeltaVertical" value="15.0" />
+	</node>
+
+	<!-- <node name="c_vision_recognizer" pkg="c_vision" type="c_vision_recognizer"
+		output="screen">
+		 canny params
+		<param name="canny_automatic" value="True" />
+		<param name="canny_alpha" value="0.15" />
+	</node>  -->
+
+	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner"
+		  args="-c $(arg classifierkb) $(arg classifier)" 
+		  output="screen"/>
+
+	<!-- node name="c_tracker" pkg="c_tracking" type="c_tracker" output="screen" /--> 
+	
+	
+
+</launch> 
