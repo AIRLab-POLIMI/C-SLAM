@@ -55,7 +55,7 @@ ImageView::ImageView(std::string viewName) :
 	roll = 0;
 }
 
-ImageView::ImageView(size_t id)
+ImageView::ImageView(unsigned int id)
 {
 	stringstream ss;
 	ss << "Object " << id;
@@ -71,23 +71,23 @@ ImageView::ImageView(size_t id)
 	roll = 0;
 }
 
-void ImageView::display(Mat& frame)
+void ImageView::display()
 {
 	if (verticalLines)
-		displayLineResults(*verticalLines, frame);
+		displayLineResults(*verticalLines);
 	if (horizontalLines)
-		displayLineResults(*horizontalLines, frame);
+		displayLineResults(*horizontalLines);
 	if (clusters)
-		displayClustersResults(frame);
+		displayClustersResults();
 	if (rectangles)
-		displayRectanglesResults(frame);
+		displayRectanglesResults();
 	if (poles)
-		displayPolesResults(frame);
+		displayPolesResults();
 	if(points)
-		displayPointsResults(*points, frame);
-	drawAxis(frame);
+		displayPointsResults(*points);
+	drawAxis();
 
-	imshow(viewName, frame);
+	imshow(viewName, image);
 	cvWaitKey(1);
 }
 
@@ -96,11 +96,11 @@ ImageView::~ImageView()
 	cv::destroyWindow(viewName);
 }
 
-void ImageView::drawAxis(Mat& input)
+void ImageView::drawAxis()
 {
 	Point center, y1, y2, z1, z2;
-	center.x = input.cols / 2;
-	center.y = input.rows / 2;
+	center.x = image.cols / 2;
+	center.y = image.rows / 2;
 
 	double offset1 = 50 * sin(roll);
 	double offset2 = 50 * cos(roll);
@@ -115,49 +115,47 @@ void ImageView::drawAxis(Mat& input)
 	z2.x = center.x + offset1;
 	z2.y = center.y + offset2;
 
-	line(input, y1, y2, Scalar(0, 0, 0));
-	line(input, z1, z2, Scalar(0, 0, 0));
-	circle(input, center, 5, Scalar(0, 0, 0));
+	line(image, y1, y2, Scalar(0, 0, 0));
+	line(image, z1, z2, Scalar(0, 0, 0));
+	circle(image, center, 5, Scalar(0, 0, 0));
 
 }
 
-void ImageView::displayKeypointsResults(const std::vector<KeyPoint>& keyPoints,
-			Mat& frame)
+void ImageView::displayKeypointsResults(const std::vector<KeyPoint>& keyPoints)
 {
 	//display results
 	for (size_t i = 0; i < keyPoints.size(); ++i)
 	{
 		const KeyPoint& kp = keyPoints[i];
-		circle(frame, kp.pt, 2, Scalar(0, 0, 255));
+		circle(image, kp.pt, 2, Scalar(0, 0, 255));
 	}
 
 }
 
-void ImageView::displayPointsResults(const std::vector<Point>& points,
-			Mat& frame)
+void ImageView::displayPointsResults(const std::vector<Point>& points)
 {
 	//display results
 	for (size_t i = 0; i < points.size(); ++i)
 	{
 		const Point& pt = points[i];
-		circle(frame, pt, 2, Scalar(0, 0, 255));
+		circle(image, pt, 2, Scalar(0, 0, 255));
 	}
 
 }
 
-void ImageView::displayLineResults(vector<Vec4i>& lines, Mat& frame)
+void ImageView::displayLineResults(vector<Vec4i>& lines)
 {
 
 	//display lines
 	for (size_t i = 0; i < lines.size(); i++)
 	{
 		Vec4i l = lines[i];
-		line(frame, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255));
+		line(image, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255));
 	}
 
 }
 
-void ImageView::writeFeaturesClassifications(Mat& frame, Feature& feature)
+void ImageView::writeFeaturesClassifications(Feature& feature)
 {
 	int baseline = 0;
 	int currentHeightOffset = 0;
@@ -174,7 +172,7 @@ void ImageView::writeFeaturesClassifications(Mat& frame, Feature& feature)
 		Point textOrigin(featureCenter.x - textSize.width / 2,
 					featureCenter.y + currentHeightOffset + textSize.height);
 
-		putText(frame, text, textOrigin, FONT_HERSHEY_SIMPLEX, 0.4,
+		putText(image, text, textOrigin, FONT_HERSHEY_SIMPLEX, 0.4,
 					Scalar(0, 255, 0));
 
 		currentHeightOffset += 2 * baseline + 3;
@@ -182,30 +180,30 @@ void ImageView::writeFeaturesClassifications(Mat& frame, Feature& feature)
 
 }
 
-void ImageView::displayRectanglesResults(Mat& frame)
+void ImageView::displayRectanglesResults()
 {
-	drawContours(frame, rectangles, Scalar(0, 255, 0));
+	drawContours(image, rectangles, Scalar(0, 255, 0));
 
 	for (vector<Rectangle>::iterator i = rectangles->begin();
 				i != rectangles->end(); ++i)
 	{
-		writeFeaturesClassifications(frame, *i);
+		writeFeaturesClassifications(*i);
 	}
 
 }
 
-void ImageView::displayPolesResults(Mat& frame)
+void ImageView::displayPolesResults()
 {
-	drawContours(frame, poles, Scalar(0, 0, 255));
+	drawContours(image, poles, Scalar(0, 0, 255));
 }
 
-void ImageView::displayClustersResults(Mat& frame)
+void ImageView::displayClustersResults()
 {
 	/*display clusters*/
 	for (vector<Cluster>::iterator it = clusters->begin();
 				it != clusters->end(); ++it)
 	{
-		it->draw(frame, Scalar(255, 0, 0));
-		writeFeaturesClassifications(frame, *it);
+		it->draw(image, Scalar(255, 0, 0));
+		writeFeaturesClassifications(*it);
 	}
 }

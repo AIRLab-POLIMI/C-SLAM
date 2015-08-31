@@ -26,18 +26,22 @@
 
 #include <c_slam_msgs/NamedPolygon.h>
 
+#include "ViewerManager.h"
+
 namespace enc = sensor_msgs::image_encodings;
 
 using namespace std;
 using namespace cv;
 
 DetectorLogic::DetectorLogic(ros::NodeHandle& n, ParameterServer& parameters) :
-			BaseLogic(n, parameters), detector(parameters),
-			viewer("Detected Image")
+			BaseLogic(n, parameters), detector(parameters)
 {
 	imageSubscriber = it.subscribe(parameters.getCameraSource() + "/image_rect_color", 1,
 				&DetectorLogic::handleImage, this);
 	publisher = n.advertise<c_slam_msgs::NamedPolygon>("to_track", 10);
+
+	ViewerManager::getInstance().addView("Detection");
+	ViewerManager::getInstance().addView("Canny");
 }
 
 void DetectorLogic::handleImage(const sensor_msgs::ImageConstPtr& msg)
@@ -86,11 +90,18 @@ void DetectorLogic::classify(ros::Time t)
 
 void DetectorLogic::display(const cv_bridge::CvImagePtr& cv_ptr)
 {
-	viewer.setRectangles(detector.getRectangles());
-	viewer.setPoles(detector.getPoles());
-	viewer.setPoints(detector.getPoints());
-	viewer.setRoll(roll);
-	viewer.display(cv_ptr->image);
+	ImageView& view1 = ViewerManager::getInstance().getView("Detection");
+	ImageView& view2 = ViewerManager::getInstance().getView("Canny");
+
+	view1.setRectangles(detector.getRectangles());
+	view1.setPoles(detector.getPoles());
+	view1.setRoll(roll);
+	view1.setImage(cv_ptr->image);
+
+	view2.setPoints(detector.getPoints());
+
+	view1.display();
+	view2.display();
 
 	detector.deleteDetections();
 }

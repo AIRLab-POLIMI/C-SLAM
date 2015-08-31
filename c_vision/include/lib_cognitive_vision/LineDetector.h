@@ -64,9 +64,6 @@ private:
 	std::vector<cv::Vec4i>* verticalLines;
 	std::vector<cv::Vec4i>* horizontalLines;
 
-	ImageView viewer;
-
-	//FIXME temporary hack
 	void maskImage(cv::Mat& canny);
 };
 

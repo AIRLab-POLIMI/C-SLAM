@@ -41,11 +41,12 @@ class ImageView
 public:
 	ImageView();
 	ImageView(std::string viewName);
-	ImageView(std::size_t id);
+	ImageView(unsigned int id);
 
 	~ImageView();
 
-	void display(cv::Mat& frame);
+	//void display(cv::Mat& frame);
+	void display();
 
 	inline void setClusters(std::vector<Cluster>* clusters)
 	{
@@ -87,17 +88,20 @@ public:
 		this->poles = poles;
 	}
 
+	inline void setImage(const cv::Mat& image)
+	{
+		this->image = image;
+	}
+
 private:
-	void drawAxis(cv::Mat& input);
-	void displayKeypointsResults(const std::vector<cv::KeyPoint>& keyPoints,
-				cv::Mat& frame);
-	void displayPointsResults(const std::vector<cv::Point>& points,
-				cv::Mat& frame);
-	void displayLineResults(std::vector<cv::Vec4i>& lines, cv::Mat& frame);
-	void displayRectanglesResults(cv::Mat& frame);
-	void displayPolesResults(cv::Mat& frame);
-	void displayClustersResults(cv::Mat& frame);
-	void writeFeaturesClassifications(cv::Mat& frame, Feature& feature);
+	void drawAxis();
+	void displayKeypointsResults(const std::vector<cv::KeyPoint>& keyPoints);
+	void displayPointsResults(const std::vector<cv::Point>& points);
+	void displayLineResults(std::vector<cv::Vec4i>& lines);
+	void displayRectanglesResults();
+	void displayPolesResults();
+	void displayClustersResults();
+	void writeFeaturesClassifications(Feature& feature);
 
 	typedef std::vector<std::vector<cv::Point> > Contours;
 	template<class T>
@@ -119,6 +123,8 @@ private:
 
 private:
 	std::string viewName;
+
+	cv::Mat image;
 
 	std::vector<cv::KeyPoint>* keyPoints;
 	std::vector<cv::Point>* points;

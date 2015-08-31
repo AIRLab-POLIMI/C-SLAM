@@ -25,6 +25,8 @@
 
 #include "LineFilter.h"
 
+#include "ViewerManager.h"
+
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
@@ -34,7 +36,7 @@ using namespace cv;
 
 LineDetector::LineDetector(CannyParam& cannyP, HoughParam& houghP,
 			LFilterParam& filterP) :
-			cannyP(cannyP), houghP(houghP), filterP(filterP), viewer("Canny")
+			cannyP(cannyP), houghP(houghP), filterP(filterP)
 {
 	horizontalLines = NULL;
 	verticalLines = NULL;
@@ -97,9 +99,11 @@ void LineDetector::display()
 {
 	Mat colored;
 	cvtColor(canny, colored, CV_GRAY2BGR);
+
+	ImageView& viewer = ViewerManager::getInstance().getView("Canny");
 	viewer.setHorizontalLines(horizontalLines);
 	viewer.setVerticalLines(verticalLines);
-	viewer.display(colored);
+	viewer.setImage(colored);
 }
 
 int LineDetector::computeThreshold(cv::Mat& src)

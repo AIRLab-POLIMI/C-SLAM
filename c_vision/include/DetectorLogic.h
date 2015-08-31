@@ -31,7 +31,6 @@
 #include <sensor_msgs/image_encodings.h>
 
 #include "SimpleDetector.h"
-#include "ImageView.h"
 
 class DetectorLogic : public BaseLogic
 {
@@ -48,8 +47,6 @@ private:
 	//Data needed to detect objects
 	SimpleDetector detector;
 
-	//Data needed to display results
-	ImageView viewer;
 };
 
 #endif /* DETECTORLOGIC_H_ */

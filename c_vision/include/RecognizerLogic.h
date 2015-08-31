@@ -52,7 +52,7 @@ private:
 	void detect(cv::Mat& image, cv::Mat& mask, bool showCanny);
 	void classify(image_geometry::PinholeCameraModel& cameraModel,
 				cv::Rect& roi, ros::Time t, size_t id);
-	void display(cv::Mat& image, std::size_t id);
+	void display(cv::Mat& image, unsigned int id);
 
 	void rectify(ObjectClassificator& classificator,
 				image_geometry::PinholeCameraModel& cameraModel, cv::Rect& roi);
@@ -79,7 +79,6 @@ private:
 
 	//Visualization
 	DisplayParam& dispP;
-	std::map<std::size_t, ImageView> viewers;
 };
 
 #endif /* RECOGNIZERLOGIC_H_ */

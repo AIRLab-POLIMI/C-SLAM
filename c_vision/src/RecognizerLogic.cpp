@@ -28,6 +28,8 @@
 
 #include <c_slam_msgs/NamedPolygon.h>
 
+#include "ViewerManager.h"
+
 using namespace ros;
 using namespace sensor_msgs;
 using namespace image_geometry;
@@ -108,22 +110,19 @@ void RecognizerLogic::classify(PinholeCameraModel& cameraModel, Rect& roi, ros::
 
 }
 
-void RecognizerLogic::display(Mat& image, size_t id)
+void RecognizerLogic::display(Mat& image, unsigned int id)
 {
 	if(id != dispP.currentObject)
 		return;
 
-	if (viewers.count(id) == 0)
-	{
-		viewers[id] = ImageView(id);
-	}
-
-	ImageView& viewer = viewers[id];
+	ImageView& viewer = ViewerManager::getInstance().getView(id);
 	viewer.setRectangles(detector.getRectangles());
 	viewer.setPoles(detector.getPoles());
 	viewer.setClusters(detector.getClusters());
 	viewer.setRoll(roll);
-	viewer.display(image);
+	viewer.setImage(image);
+
+	viewer.display();
 
 }
 
