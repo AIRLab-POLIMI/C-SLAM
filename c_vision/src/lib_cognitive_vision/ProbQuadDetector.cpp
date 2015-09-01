@@ -73,6 +73,8 @@ bool ProbQuadDetector::crispScore(unsigned int x, unsigned int y,
 			return false;
 
 	}
+
+	return true;
 }
 
 double ProbQuadDetector::fuzzyScore(unsigned int x, unsigned int y,
@@ -128,11 +130,11 @@ void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 											&& Lines::below(h2, midLine))
 								{
 
-									double score1 = crispScore(x, y, h1, h2, v1, v2, canny);
+									bool ok = crispScore(x, y, h1, h2, v1, v2, canny);
 									double score2 = fuzzyScore(x, y, h1, h2, v1, v2);
 
 									//Dave test
-									votes[i][k1][j][k2] += score1;
+									votes[i][k1][j][k2] += ok ? 1 : 0;
 									counts[i][k1][j][k2] += 1;
 								}
 							}
