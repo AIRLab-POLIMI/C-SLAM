@@ -101,7 +101,7 @@ void BasicDetector::detectQuadrilaterals(bool skipCheck)
 {
 #ifdef ROMANONI
 	ProbQuadDetector quadrilateralDetector(quadParams);
-	quadrilateralDetector.detect(*verticalLines, *horizontalLines, width, height);
+	quadrilateralDetector.detect(*verticalLines, *horizontalLines, lineDetector.getCanny());
 #else
 	CornerClassifier cornerClassifier(cornerParams, lineDetector.getCanny(),
 				roll);

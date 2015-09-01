@@ -123,9 +123,9 @@ public:
 		cv::Vec2d p0(a.x, a.y);
 		cv::Vec2d p1(b.x, b.y);
 
-		cv::Matx22d k = (v * v.t()) * (v.t() * v)[0];
+		cv::Matx22d k = (v * v.t()) * (1.0 / (v.t() * v)[0]);
 
-		return k * p + p0 - k * p0;
+		return k * (p - p0) + p0;
 
 	}
 

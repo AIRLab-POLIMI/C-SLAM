@@ -58,7 +58,7 @@ public:
 
 	void detect(std::vector<cv::Vec4i>& verticalLines,
 				std::vector<cv::Vec4i>& horizontalLines,
-				unsigned int width, unsigned int height);
+				const cv::Mat& canny);
 
 	inline std::vector<Pole>* getPoles() const
 	{
@@ -81,10 +81,11 @@ private:
 	void buildRectangle(cv::Vec4i& v1, cv::Vec4i& v2, cv::Vec4i& h1, cv::Vec4i& h2);
 	void voteRectangles(unsigned int x, unsigned int y,
 				std::vector<cv::Vec4i>& verticalLines,
-				std::vector<cv::Vec4i>& horizontalLines);
+				std::vector<cv::Vec4i>& horizontalLines,
+				const cv::Mat& canny);
 
 	bool crispScore(unsigned int x, unsigned int y, cv::Vec4i& h1,
-				cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
+				cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2, const cv::Mat& canny);
 	double fuzzyScore(unsigned int x, unsigned int y, cv::Vec4i& h1,
 					cv::Vec4i& h2, cv::Vec4i& v1, cv::Vec4i& v2);
 

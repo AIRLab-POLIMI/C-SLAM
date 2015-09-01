@@ -49,12 +49,30 @@ unsigned int ProbQuadDetector::sampleCoordinate(unsigned int lo,
 }
 
 bool ProbQuadDetector::crispScore(unsigned int x, unsigned int y,
-			Vec4i& h1, Vec4i& h2, Vec4i& v1, Vec4i& v2)
+			Vec4i& h1, Vec4i& h2, Vec4i& v1, Vec4i& v2, const Mat& canny)
 {
-	return (!Lines::atLeft(h1, x) && !Lines::atRight(h1, x)
-				&& !Lines::atLeft(h2, x) && !Lines::atRight(h2, x)
-				&& !Lines::above(v1, y) && !Lines::below(v1, y)
-				&& !Lines::above(v2, y) && !Lines::below(v2, y)) ? 1 : 0;
+	Vec2d p[4];
+	p[0] = Lines::projectPoint(x, y, h1);
+	p[1] = Lines::projectPoint(x, y, h2);
+	p[2] = Lines::projectPoint(x, y, v1);
+	p[3] = Lines::projectPoint(x, y, v2);
+
+	for(unsigned int i = 0; i < 4; i++)
+	{
+		int xp = p[i][0];
+		int yp = p[i][1];
+
+		int xr = std::min(std::max(0, xp-1), canny.cols-1);
+		int yr = std::min(std::max(0, yp-1), canny.rows-1);
+		int w = std::min(canny.cols - xr, 3);
+		int h = std::min(canny.rows - yr, 3);
+
+		Rect roi(xr, yr, w, h);
+
+		if(countNonZero(canny(roi)) == 0)
+			return false;
+
+	}
 }
 
 double ProbQuadDetector::fuzzyScore(unsigned int x, unsigned int y,
@@ -79,7 +97,8 @@ double ProbQuadDetector::fuzzyScore(unsigned int x, unsigned int y,
 
 void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 			std::vector<cv::Vec4i>& verticalLines,
-			std::vector<cv::Vec4i>& horizontalLines)
+			std::vector<cv::Vec4i>& horizontalLines,
+			const cv::Mat& canny)
 {
 	for (size_t i = 0; i + 1 < verticalLines.size(); i++)
 	{
@@ -109,11 +128,11 @@ void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 											&& Lines::below(h2, midLine))
 								{
 
-									double score1 = crispScore(x, y, h1, h2, v1, v2);
+									double score1 = crispScore(x, y, h1, h2, v1, v2, canny);
 									double score2 = fuzzyScore(x, y, h1, h2, v1, v2);
 
-									//Romanoni test
-									votes[i][k1][j][k2] += score2;
+									//Dave test
+									votes[i][k1][j][k2] += score1;
 									counts[i][k1][j][k2] += 1;
 								}
 							}
@@ -126,15 +145,15 @@ void ProbQuadDetector::voteRectangles(unsigned int x, unsigned int y,
 }
 
 void ProbQuadDetector::detect(std::vector<cv::Vec4i>& verticalLines,
-			std::vector<cv::Vec4i>& horizontalLines, unsigned int width, unsigned int height)
+			std::vector<cv::Vec4i>& horizontalLines, const Mat& canny)
 {
 
 	for (int n = 0; n < quadP.points; n++)
 	{
-		unsigned int x = sampleCoordinate(0, width - 1);
-		unsigned int y = sampleCoordinate(0, height - 1);
+		unsigned int x = sampleCoordinate(0, canny.cols - 1);
+		unsigned int y = sampleCoordinate(0, canny.rows - 1);
 
-		voteRectangles(x, y, verticalLines, horizontalLines);
+		voteRectangles(x, y, verticalLines, horizontalLines, canny);
 
 		//TODO delete me
 		Point p(x,y);
