@@ -62,10 +62,10 @@ bool ProbQuadDetector::crispScore(unsigned int x, unsigned int y,
 		int xp = p[i][0];
 		int yp = p[i][1];
 
-		int xr = std::min(std::max(0, xp-1), canny.cols-1);
-		int yr = std::min(std::max(0, yp-1), canny.rows-1);
-		int w = std::min(canny.cols - xr, 3);
-		int h = std::min(canny.rows - yr, 3);
+		int xr = std::min(std::max(0, xp-2), canny.cols-1);
+		int yr = std::min(std::max(0, yp-2), canny.rows-1);
+		int w = std::min(canny.cols - xr, 4);
+		int h = std::min(canny.rows - yr, 4);
 
 		Rect roi(xr, yr, w, h);
 

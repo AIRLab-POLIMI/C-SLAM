@@ -82,16 +82,10 @@ void ParameterServer::update(c_vision::ParametersConfig &config, uint32_t level)
 	lineFilter.maxDeltaHorizontal = config.filter_maxDeltaHorizontal;
 	lineFilter.maxDeltaVertical = config.filter_maxDeltaVertical;
 
-	//set quadDetector parameters
-	quadDetector.verticalOverlap = config.quad_verticalOverlap;
-	quadDetector.horizontalOverlap = config.quad_horizontalOverlap;
-	quadDetector.polesFormFactor = config.quad_polesFormFactor;
-	quadDetector.segmentSupport = config.quad_segmentSupport;
-
 	//set ROMANONI quadDetector parameters
-	quadDetector.points = config.rquad_points;
-	quadDetector.threshold = config.rquad_threshold;
-	quadDetector.maxDistance = config.rquad_maxDistance;
+	quadDetector.points = config.quad_points;
+	quadDetector.threshold = config.quad_threshold;
+	quadDetector.maxDistance = config.quad_maxDistance;
 
 	//set up corner classifier params
 	cornerClass.kernelSize = config.corner_kernelSize;

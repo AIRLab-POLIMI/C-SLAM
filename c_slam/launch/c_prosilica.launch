@@ -39,8 +39,8 @@
 		<param name="hough_minLineLenght" value="60" />
 		<param name="hough_maxLineGap" value="8" />
 		
-		<param name="filter_maxDeltaHorizontal" value="15.0" />
-		<param name="filter_maxDeltaVertical" value="15.0" />
+		<param name="filter_maxDeltaHorizontal" value="20.0" />
+		<param name="filter_maxDeltaVertical" value="20.0" />
 	</node>
 
 	<!-- <node name="c_vision_recognizer" pkg="c_vision" type="c_vision_recognizer"
