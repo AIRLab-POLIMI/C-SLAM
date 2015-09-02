@@ -55,15 +55,11 @@ struct LFilterParam
 
 struct QDetectorParam
 {
-	double verticalOverlap;
-	double horizontalOverlap;
-	double polesFormFactor;
-	double segmentSupport;
-
 	//ROMANONI params
 	int points;
 	double threshold;
 	double maxDistance;
+	int minPoints;
 
 	Eigen::Matrix3d K;
 	Eigen::Matrix3d omega;

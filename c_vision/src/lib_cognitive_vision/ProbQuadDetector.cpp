@@ -176,7 +176,7 @@ void ProbQuadDetector::detect(std::vector<cv::Vec4i>& verticalLines,
 					double hits = pair4.second;
 					double tot = counts[pair1.first][pair2.first][pair3.first][pair4.first];
 
-					if(hits/tot > quadP.threshold)
+					if(tot > quadP.minPoints && hits/tot > quadP.threshold)
 					{
 						Vec4i& v1 = verticalLines[pair1.first];
 						Vec4i& v2 = verticalLines[pair2.first];
