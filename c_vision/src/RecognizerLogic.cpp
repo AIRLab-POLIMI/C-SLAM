@@ -120,7 +120,11 @@ void RecognizerLogic::display(Mat& image, unsigned int id)
 	viewer.setPoles(detector.getPoles());
 	viewer.setClusters(detector.getClusters());
 	viewer.setRoll(roll);
-	viewer.setImage(image);
+
+	cv::Mat bigImage(360, 640, CV_8UC3, cv::Scalar(0,0,0));
+
+	image.copyTo(bigImage(Rect(0, 0, image.cols, image.rows)));
+	viewer.setImage(bigImage);
 
 	viewer.display();
 

@@ -29,6 +29,7 @@
 		<!-- canny params -->
 		<param name="canny_automatic" value="True" />
 		<param name="canny_alpha" value="0.15" />
+		<param name="displayer_currentObject" value="1" />
 	</node>
 
 	<node name="c_fuzzy_reasoner" pkg="c_fuzzy" type="c_fuzzy_reasoner"
