@@ -16,6 +16,10 @@ c_fuzzy/include/lib_tree_classifier/TreeClassifierParser.tab.h
 c_fuzzy/include/lib_tree_classifier/location.hh                                                                                                                                 
 c_fuzzy/include/lib_tree_classifier/position.hh                                                                                                                                
 c_fuzzy/include/lib_tree_classifier/stack.hh 
+c_fuzzy/src/lib_fuzzy/FuzzyParser.tab.cpp
+c_fuzzy/src/lib_fuzzy/FuzzyScanner.cpp
+c_fuzzy/src/lib_tree_classifier/TreeClassifierParser.tab.cpp
+c_fuzzy/src/lib_tree_classifier/TreeClassifierScanner.cpp
 # symbolic link
 c_slam/bags
 # Python precompiled files #
